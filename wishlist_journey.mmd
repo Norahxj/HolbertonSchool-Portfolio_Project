@@ -1,0 +1,11 @@
+graph TD
+    A[Child Adds Wishlist Item] -->|POST /wishlist| B(Wishlist Table)
+    B --> C[System Calculates Progress]
+    C --> D[Child Tracks Progress]
+    D -->|GET /wishlist/progress| E(Progress Bar)
+    E --> F{Target Reached?}
+    F -->|Yes| G{Notify Parent & Child}
+    F -->|No| D
+    G --> H[Parent Fulfills Wish]
+    H -->|PATCH /wishlist| I[Mark as Completed]
+    I --> J[Update Child Dashboard]
