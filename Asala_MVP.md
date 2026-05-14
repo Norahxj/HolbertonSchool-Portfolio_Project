@@ -94,9 +94,7 @@ The project team consists of four members with an initial role distribution base
 
 Although responsibilities are initially distributed, the team follows a collaborative approach where members support each other across different parts of the project when needed.
 
----
-
-### **Initial Team Meeting**
+**Initial Team Meeting**
 The team held an initial meeting to introduce all members and establish a shared understanding of the project’s goals.  
 During this meeting, each member presented:
 
@@ -106,9 +104,7 @@ During this meeting, each member presented:
 
 This introduction helped the team identify complementary skills and build a strong collaborative foundation.
 
----
-
-### **Initial Role Assignment**
+**Initial Role Assignment**
 To ensure an organized start for Stage 1, the team assigned temporary roles:
 
 - **Temporary Project Manager:** Responsible for coordinating tasks, organizing meetings, and tracking progress.  
@@ -118,9 +114,7 @@ To ensure an organized start for Stage 1, the team assigned temporary roles:
 
 These roles are flexible and may be adjusted in later stages based on team needs.
 
----
-
-### **Team Communication & Collaboration Norms**
+ **Team Communication & Collaboration Norms**
 To maintain smooth collaboration, the team established clear communication norms:
 
 - **Primary communication platform:** Google Meet for weekly meetings  
