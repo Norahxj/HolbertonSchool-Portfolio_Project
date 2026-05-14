@@ -90,58 +90,148 @@ The project team consists of four members with an initial role distribution base
 - **Mnar Alzahrani:** Backend Development  
 - **Manar Althqfi:** Backend Development  
 - **Mariam Backroush:** Database Design and Management  
-- **Nora Aljuhani:** Frontend Development  
+- **Nora Aljuhani:** Frontend Development 
 
-Although responsibilities are initially distributed, the team follows a collaborative approach where members support each other across different parts of the project when needed.
+### Initial Team Meeting
+- The team held an initial meeting to introduce all members and establish a shared understanding of the project’s goals.  
+- Each member presented:
+  - Their academic and technical background  
+  - Their strengths (backend logic, UI design, database structuring, documentation, etc.)  
+  - Their interests (mobile development, UX, problem‑solving, system design)  
+- This meeting helped the team identify complementary skills and build a strong collaborative foundation.
 
-**Initial Team Meeting**
-The team held an initial meeting to introduce all members and establish a shared understanding of the project’s goals.  
-During this meeting, each member presented:
+### Initial Role Assignment
+- To ensure an organized start for Stage 1, the team assigned temporary roles:
+  - **Temporary Project Manager:** Coordinates tasks and meetings  
+  - **Research Lead:** Explores and validates ideas  
+  - **Documentation Lead:** Structures and writes documentation  
+  - **Brainstorming Facilitator:** Guides ideation sessions and ensures equal participation  
+- These roles are flexible and may be adjusted in later stages.
 
-- Their **academic and technical background**  
-- Their **strengths**, such as backend logic, UI design, database structuring, or documentation  
-- Their **interests**, including mobile development, problem‑solving, UX, or system design  
+### Communication & Collaboration Norms
+- The team relied on **WhatsApp** for daily communication and quick updates.  
+- Weekly meetings were conducted through **Google Meet every Thursday at 6:30 PM**.  
+- Decisions were made collectively through discussion and consensus.  
+- GitHub was used for file sharing and maintaining project materials.  
+- The team followed an inclusivity rule ensuring every member could speak, contribute ideas, and provide feedback.  
+- Although responsibilities were initially distributed, the team maintained a collaborative approach where members supported each other across different parts of the project.
 
-This introduction helped the team identify complementary skills and build a strong collaborative foundation.
-
-**Initial Role Assignment**
-To ensure an organized start for Stage 1, the team assigned temporary roles:
-
-- **Temporary Project Manager:** Responsible for coordinating tasks, organizing meetings, and tracking progress.  
-- **Research Lead:** Handles idea exploration and feasibility validation.  
-- **Documentation Lead:** Structures and writes the project documentation.  
-- **Brainstorming Facilitator:** Guides ideation sessions and ensures equal participation.
-
-These roles are flexible and may be adjusted in later stages based on team needs.
-
- **Team Communication & Collaboration Norms**
-To maintain smooth collaboration, the team established clear communication norms:
-
-- **Primary communication platform:** Google Meet for weekly meetings  
-- **Weekly meeting schedule:** Every week at **6:30 PM**  
-- **Daily communication:** Through a shared group chat for quick updates  
-- **Decision‑making:** Group discussion followed by consensus  
-- **File sharing:** GitHub repository for all project materials  
-- **Inclusivity rule:** Every member must have the opportunity to speak, contribute, and provide feedback  
-
-These norms ensure transparency, equal participation, and efficient teamwork throughout the project.
+---
 
 ## Research and Brainstorming
 
-The team researched common problems within the local community and explored different technology-based solutions.
+### Individual and Group Research
+- Each team member conducted both individual and group research to explore potential project ideas.  
+- Research focused on real‑world problems, current industry trends, and opportunities for innovative digital solutions.  
+- The goal was to gather a wide range of insights before starting the brainstorming phase.
 
-Several brainstorming sessions were conducted to discuss ideas, evaluate their feasibility, and refine potential project concepts.
+### Brainstorming Sessions
+The team organized multiple brainstorming sessions to generate and refine ideas using structured creativity techniques:
 
-The team also analyzed existing applications and explored ways to improve or redesign certain concepts to better fit the target audience and project goals.
+#### Mind Mapping
+- A visual mind map was created to connect related concepts and explore different problem areas.  
+- This helped the team expand ideas naturally and identify patterns or themes worth exploring.
 
+#### SCAMPER Framework
+- The team applied the SCAMPER method to think creatively about improving or transforming existing ideas:
+  - **Substitute**  
+  - **Combine**  
+  - **Adapt**  
+  - **Modify**  
+  - **Put to another use**  
+  - **Eliminate**  
+  - **Reverse**  
+- This technique encouraged the team to think beyond traditional solutions.
 
-## Ideas Explored
+#### “How Might We” Questions
+- The team used open‑ended HMW questions to frame opportunities and spark problem‑solving discussions.  
+- Examples included:  
+  - *How might we simplify a daily task for users?*  
+  - *How might we improve accessibility in digital tools?*  
+  - *How might we create a solution that reduces user frustration?*
 
-### API Performance Monitoring Platform
-A platform designed to help developers monitor and analyze API performance by tracking endpoints, response times, status codes, and error patterns.
+### Outcome of Brainstorming
+- These structured techniques helped the team generate a diverse set of ideas.  
+- The team documented all ideas before moving to the evaluation phase in Task 3.
 
-Reason for rejection:
-The idea was technically strong but highly backend-focused and lacked the broader social and family-oriented impact the team wanted to achieve.
+---
+
+## Idea Evaluation
+
+### Evaluation Criteria
+The team defined a clear set of evaluation criteria to assess all proposed ideas objectively. These criteria helped ensure that the selected idea would be feasible, impactful, and aligned with the team’s technical capabilities. The criteria included:
+
+- **Feasibility:** Can the idea be realistically implemented within the project timeline and with available skills?  
+- **Potential Impact:** Does the idea solve a meaningful problem or provide value to users?  
+- **Technical Alignment:** Does the idea match the team’s strengths in backend, frontend, and database development?  
+- **Scalability:** Can the idea grow or be expanded in future stages?  
+- **User Need:** Is there a clear audience that would benefit from the solution?
+
+### Scoring and Ranking
+- The team created a scoring rubric to evaluate each idea based on the criteria above.  
+- Each idea was assigned a score from **1 to 5** for every criterion.  
+- Scores were then totaled to generate a final ranking.  
+- This structured scoring method helped the team compare ideas fairly and avoid bias.
+
+### Risks and Constraints
+For each idea, the team identified potential risks and limitations to better understand challenges before selecting the final MVP:
+
+- **Technical Risks:**  
+  - Complexity of implementation  
+  - Integration challenges  
+  - Need for advanced features beyond the team’s current skill set  
+
+- **Time Constraints:**  
+  - Ideas requiring extensive development time were considered less suitable for the project timeline  
+
+- **User Adoption Risks:**  
+  - Unclear target audience  
+  - Low real‑world demand  
+
+- **Resource Limitations:**  
+  - Tools or technologies that may not be accessible  
+  - Features requiring external APIs or paid services  
+
+Identifying these risks early helped the team eliminate ideas that were too complex or unrealistic for the project scope.
+
+---
+## Idea Evaluation
+
+### Evaluation Criteria
+The team defined a clear set of evaluation criteria to assess all proposed ideas objectively. These criteria helped ensure that the selected idea would be feasible, impactful, and aligned with the team’s technical capabilities. The criteria included:
+
+- **Feasibility:** Can the idea be realistically implemented within the project timeline and with available skills?  
+- **Potential Impact:** Does the idea solve a meaningful problem or provide value to users?  
+- **Technical Alignment:** Does the idea match the team’s strengths in backend, frontend, and database development?  
+- **Scalability:** Can the idea grow or be expanded in future stages?  
+- **User Need:** Is there a clear audience that would benefit from the solution?
+
+### Scoring and Ranking
+- The team created a scoring rubric to evaluate each idea based on the criteria above.  
+- Each idea was assigned a score from **1 to 5** for every criterion.  
+- Scores were then totaled to generate a final ranking.  
+- This structured scoring method helped the team compare ideas fairly and avoid bias.
+
+### Risks and Constraints
+For each idea, the team identified potential risks and limitations to better understand challenges before selecting the final MVP:
+
+- **Technical Risks:**  
+  - Complexity of implementation  
+  - Integration challenges  
+  - Need for advanced features beyond the team’s current skill set  
+
+- **Time Constraints:**  
+  - Ideas requiring extensive development time were considered less suitable for the project timeline  
+
+- **User Adoption Risks:**  
+  - Unclear target audience  
+  - Low real‑world demand  
+
+- **Resource Limitations:**  
+  - Tools or technologies that may not be accessible  
+  - Features requiring external APIs or paid services  
+
+Identifying these risks early helped the team eliminate ideas that were too complex or unrealistic for the project scope.
 
 ---
 
@@ -211,6 +301,52 @@ The project includes several workflow diagrams that describe how users interact 
 - [Reward Journey](./diagrams/reward_journey.mmd)
 - [Task Journey](./diagrams/task_journey.mmd)
 - [Wishlist Journey](./diagrams/wishlist_journey.mmd)
+---
+## Documentation
+
+### Organizing All Project Ideas
+- The team documented every idea generated during the brainstorming phase.  
+- Each idea included a short description, its purpose, and the problem it aimed to solve.  
+- This documentation ensured that no idea was lost and allowed the team to revisit concepts in future project stages.
+
+### Strengths and Weaknesses of Each Idea
+- For every idea, the team listed both positive aspects (strengths and opportunities) and negative aspects (weaknesses and threats).  
+- This helped the team understand the potential of each idea and identify challenges early.  
+- The evaluation supported a more objective comparison between ideas.
+
+### Reasons for Rejecting Ideas
+- The team clearly documented why certain ideas were not selected as the final MVP.  
+- Reasons included:
+  - Large project scope  
+  - High dependency on real‑time data  
+  - Need for specialized domain knowledge  
+  - Difficulty in attracting early users  
+- This transparency ensured that the decision-making process was well‑justified and traceable.
+
+### Final MVP Summary
+- The team summarized the chosen MVP concept **Asalah**, including:
+  - The core idea  
+  - Target audience  
+  - Main features  
+  - Cultural and financial value  
+- This summary serves as a reference point for future development stages.
+
+### Team Overview
+- A brief overview of the team members, their roles, and their contributions was included.  
+- This section highlights how collaboration and diverse skills contributed to shaping the final MVP.
+
+### Documentation Structure
+- All documentation was organized within the project repository to ensure clarity and easy access.  
+- The structure includes:
+  - Concept overview  
+  - Brainstorming outputs  
+  - Evaluation tables  
+  - Rejected ideas  
+  - Workflow diagrams  
+  - Final MVP decision  
+- This structured approach ensures that future team members or reviewers can easily understand the project’s progression.
+
+---
 
 ## Conclusion
 
