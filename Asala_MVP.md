@@ -85,14 +85,52 @@ Noor (Points) which can grant wishes and requests.
 
 ## Team Formation
 
-The project team consists of four members with an initial role distribution based on interests and technical strengths.
+The project team consists of four members with an initial role distribution based on interests and technical strengths:
 
-- Mnar Alzahrani: Backend Development
-- Manar Althqfi: Backend Development
-- Mariam Backroush : Database Design and Management
-- Nora Aljuhani: Frontend Development
+- **Mnar Alzahrani:** Backend Development  
+- **Manar Althqfi:** Backend Development  
+- **Mariam Backroush:** Database Design and Management  
+- **Nora Aljuhani:** Frontend Development  
 
 Although responsibilities are initially distributed, the team follows a collaborative approach where members support each other across different parts of the project when needed.
+
+---
+
+### **Initial Team Meeting**
+The team held an initial meeting to introduce all members and establish a shared understanding of the project’s goals.  
+During this meeting, each member presented:
+
+- Their **academic and technical background**  
+- Their **strengths**, such as backend logic, UI design, database structuring, or documentation  
+- Their **interests**, including mobile development, problem‑solving, UX, or system design  
+
+This introduction helped the team identify complementary skills and build a strong collaborative foundation.
+
+---
+
+### **Initial Role Assignment**
+To ensure an organized start for Stage 1, the team assigned temporary roles:
+
+- **Temporary Project Manager:** Responsible for coordinating tasks, organizing meetings, and tracking progress.  
+- **Research Lead:** Handles idea exploration and feasibility validation.  
+- **Documentation Lead:** Structures and writes the project documentation.  
+- **Brainstorming Facilitator:** Guides ideation sessions and ensures equal participation.
+
+These roles are flexible and may be adjusted in later stages based on team needs.
+
+---
+
+### **Team Communication & Collaboration Norms**
+To maintain smooth collaboration, the team established clear communication norms:
+
+- **Primary communication platform:** Google Meet for weekly meetings  
+- **Weekly meeting schedule:** Every week at **6:30 PM**  
+- **Daily communication:** Through a shared group chat for quick updates  
+- **Decision‑making:** Group discussion followed by consensus  
+- **File sharing:** GitHub repository for all project materials  
+- **Inclusivity rule:** Every member must have the opportunity to speak, contribute, and provide feedback  
+
+These norms ensure transparency, equal participation, and efficient teamwork throughout the project.
 
 ## Research and Brainstorming
 
