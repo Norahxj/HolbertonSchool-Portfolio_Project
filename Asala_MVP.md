@@ -1,4 +1,4 @@
-								# MVP Concept: "Asalah" -  The Gamified Value-Based Financial app 
+								MVP Concept: "Asalah" -  The Gamified Value-Based Financial app 
 
 - Concept Overview:
 
