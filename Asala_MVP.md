@@ -195,43 +195,37 @@ For each idea, the team identified potential risks and limitations to better und
 Identifying these risks early helped the team eliminate ideas that were too complex or unrealistic for the project scope.
 
 ---
-## Idea Evaluation
+## Decision and Refinement
 
-### Evaluation Criteria
-The team defined a clear set of evaluation criteria to assess all proposed ideas objectively. These criteria helped ensure that the selected idea would be feasible, impactful, and aligned with the team’s technical capabilities. The criteria included:
+### Selecting the Final MVP Idea
+- After evaluating all proposed ideas using the scoring rubric from Task 3, the team selected the idea with the highest overall score and strongest alignment with the project goals.  
+- The decision was made collectively based on feasibility, user value, and technical suitability.  
+- The chosen MVP was selected because it addressed a clear problem, had a well‑defined target audience, and could be realistically implemented within the project timeline.
 
-- **Feasibility:** Can the idea be realistically implemented within the project timeline and with available skills?  
-- **Potential Impact:** Does the idea solve a meaningful problem or provide value to users?  
-- **Technical Alignment:** Does the idea match the team’s strengths in backend, frontend, and database development?  
-- **Scalability:** Can the idea grow or be expanded in future stages?  
-- **User Need:** Is there a clear audience that would benefit from the solution?
+### Enhancements and Focus Areas
+- Once the MVP idea was selected, the team discussed potential enhancements and specific challenges to focus on during development.  
+- These enhancements were chosen to improve usability, increase value for users, and ensure the solution stands out.  
+- The team also identified which features should be included in the MVP and which could be added in future iterations.
 
-### Scoring and Ranking
-- The team created a scoring rubric to evaluate each idea based on the criteria above.  
-- Each idea was assigned a score from **1 to 5** for every criterion.  
-- Scores were then totaled to generate a final ranking.  
-- This structured scoring method helped the team compare ideas fairly and avoid bias.
+### Problem Definition
+- The team clearly defined the core problem the MVP aims to solve.  
+- This included understanding the root cause of the issue, how it affects users, and why existing solutions are insufficient.  
+- A clear problem definition helped guide the design and development process.
 
-### Risks and Constraints
-For each idea, the team identified potential risks and limitations to better understand challenges before selecting the final MVP:
+### Target Audience
+- The team identified the primary users who would benefit from the MVP.  
+- User characteristics such as age group, needs, behaviors, and challenges were considered.  
+- Understanding the audience ensured that the solution would be relevant and user‑centered.
 
-- **Technical Risks:**  
-  - Complexity of implementation  
-  - Integration challenges  
-  - Need for advanced features beyond the team’s current skill set  
+### Key Features
+- The team outlined the essential features required for the MVP to function effectively.  
+- These features were selected based on user needs, feasibility, and project scope.  
+- Additional features were documented for potential future development.
 
-- **Time Constraints:**  
-  - Ideas requiring extensive development time were considered less suitable for the project timeline  
-
-- **User Adoption Risks:**  
-  - Unclear target audience  
-  - Low real‑world demand  
-
-- **Resource Limitations:**  
-  - Tools or technologies that may not be accessible  
-  - Features requiring external APIs or paid services  
-
-Identifying these risks early helped the team eliminate ideas that were too complex or unrealistic for the project scope.
+### Expected Outcomes
+- The team defined the expected outcomes of the MVP, including how it will improve the user experience or solve the identified problem.  
+- Expected outcomes also included measurable benefits such as increased efficiency, reduced frustration, or improved accessibility.  
+- These outcomes will help evaluate the success of the MVP after implementation.
 
 ---
 
