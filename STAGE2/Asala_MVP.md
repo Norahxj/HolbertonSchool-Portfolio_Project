@@ -35,8 +35,8 @@ The purpose of the *Asalah* project is to provide a culturally aligned, gamified
 
 | Team Member | Role |
 |-------------|------|
-| **Mnar Alzahrani** | Backend Development |
-| **Manar Althqfi** | Backend Development |
+| **Mnar Alzahrani** | Backend Developer |
+| **Manar Althqfi** | Backend Developer |
 | **Mariam Backroush** | Project Manager, Database Design and Management |
 | **Norah Aljuhani** | Team Lead, Frontend Development and Frontend‑Backend Testing |
 
