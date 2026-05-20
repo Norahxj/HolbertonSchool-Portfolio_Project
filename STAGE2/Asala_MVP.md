@@ -18,9 +18,10 @@ The purpose of the *Asalah* project is to provide a culturally aligned, gamified
 
 ### **1.1 Stakeholders (Task 1)**  
 
-#### **Internal Stakeholders**  
-- Project team members (developers, database designer, tester).  
-- Course instructors and supervisors who provide guidance and evaluation.
+#### Internal Stakeholders  
+- Project team members responsible for development and testing.  
+- Family members and close relatives participating in early feedback and usability evaluation.  
+- Course instructors and supervisors providing academic guidance and assessment.
 
 #### **External Stakeholders**  
 - Saudi families (primary users).  
