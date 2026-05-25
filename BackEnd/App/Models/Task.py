@@ -1,28 +1,53 @@
-from enum import Enum
-from uuid import UUID
+from app.extensions import db
+from app.models.base_model import BaseModel
 from datetime import datetime
-from typing import Optional
 
-class TaskStatus(Enum):
-	PENDING = "PENDING"
-	APPROVED = "APPROVED"
-	REJECTED = "REJECTED"
 
-class Task:
-	def __init__(self, id: UUID, child_id: UUID, title: str, description: str, points: int, status: TaskStatus, created_by: UUID, approved_at: Optional[datetime] = None):
-		self.id = id
-		self.child_id = child_id
-		self.title = title
-		self.description = description
-		self.points = points
-		self.status = status
-		self.created_by = created_by
-		self.approved_at = approved_at
+class Task(BaseModel):
+	"""
+	Task model - represents a task assigned to a child.
+	Fields:
+	- title: Name of the task
+	- description: Details about the task
+	- child_id: ID of the child assigned to the task
+	- points: Reward points for completing the task
+	- status: Current status (PENDING, APPROVED, REJECTED)
+	- created_by: ID of the user/parent who created the task
+	- approved_at: Timestamp when the task was approved
+	"""
+	__tablename__ = "tasks"
+
+	title = db.Column(db.String(100), nullable=False)
+	description = db.Column(db.String(500), nullable=False)
+	child_id = db.Column(db.String(36), nullable=False)  # UUID as string
+	points = db.Column(db.Integer, nullable=False)
+	status = db.Column(db.String(20), default="PENDING", nullable=False)  # PENDING, APPROVED, REJECTED
+	created_by = db.Column(db.String(36), nullable=False)  # UUID as string
+	approved_at = db.Column(db.DateTime, nullable=True)
+	created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
 	def approve(self):
-		self.status = TaskStatus.APPROVED
+		"""Mark the task as approved and set the approval timestamp"""
+		self.status = "APPROVED"
 		self.approved_at = datetime.now()
+		db.session.commit()
 
 	def reject(self):
-		self.status = TaskStatus.REJECTED
+		"""Mark the task as rejected and clear the approval timestamp"""
+		self.status = "REJECTED"
 		self.approved_at = None
+		db.session.commit()
+
+	def to_dict(self):
+		"""Convert the task to a dictionary for API responses"""
+		return {
+			"id": self.id,
+			"title": self.title,
+			"description": self.description,
+			"child_id": self.child_id,
+			"points": self.points,
+			"status": self.status,
+			"created_by": self.created_by,
+			"approved_at": self.approved_at,
+			"created_at": self.created_at
+		}
