@@ -19,12 +19,11 @@ class Task(BaseModel):
 
 	title = db.Column(db.String(100), nullable=False)
 	description = db.Column(db.String(500), nullable=False)
-	child_id = db.Column(db.String(36), nullable=False)  # UUID as string
+	child_id = db.Column(db.String(36), db.ForeignKey("children.id"), nullable=False)  
 	points = db.Column(db.Integer, nullable=False)
 	status = db.Column(db.String(20), default="PENDING", nullable=False)  # PENDING, APPROVED, REJECTED
-	created_by = db.Column(db.String(36), nullable=False)  # UUID as string
+	created_by = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)  
 	approved_at = db.Column(db.DateTime, nullable=True)
-	created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
 	def approve(self):
 		"""Mark the task as approved and set the approval timestamp"""

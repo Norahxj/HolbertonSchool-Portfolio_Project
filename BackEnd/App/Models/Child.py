@@ -10,3 +10,4 @@ class Child(BaseModel):
         db.ForeignKey("users.id"),
         nullable=False
     )
+    tasks = db.relationship("Task", backref="child", lazy=True)

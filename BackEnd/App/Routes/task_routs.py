@@ -38,7 +38,7 @@ class TaskListResource(Resource):
 			"points": task.points,
 			"status": task.status,
 			"created_by": task.created_by,
-			"created_at": task.created_at
+			"created_at": task.created_at.isoformat()
 		}, 201
 
 	@api.response(200, "Tasks retrieved successfully")
@@ -57,7 +57,7 @@ class TaskListResource(Resource):
 				"points": task.points,
 				"status": task.status,
 				"created_by": task.created_by,
-				"created_at": task.created_at
+				"created_at": task.created_at.isoformat()
 			}
 			for task in tasks
 		], 200
@@ -86,8 +86,8 @@ class TaskResource(Resource):
 			"points": task.points,
 			"status": task.status,
 			"created_by": task.created_by,
-			"approved_at": task.approved_at,
-			"created_at": task.created_at
+			"approved_at": task.approved_at.isoformat() if task.approved_at else None,
+			"created_at": task.created_at.isoformat()
 		}, 200
 
 	@api.expect(task_update_model, validate=True)
@@ -113,7 +113,7 @@ class TaskResource(Resource):
 			"points": task.points,
 			"status": task.status,
 			"created_by": task.created_by,
-			"created_at": task.created_at
+			"created_at": task.created_at.isoformat()
 		}, 200
 
 	@api.response(204, "Task deleted successfully")
@@ -150,7 +150,7 @@ class TaskApproveResource(Resource):
 			"id": task.id,
 			"title": task.title,
 			"status": task.status,
-			"approved_at": task.approved_at
+			"approved_at": task.approved_at.isoformat() if task.approved_at else None
 		}, 200
 
 
@@ -193,7 +193,7 @@ class TaskByChildResource(Resource):
 				"description": task.description,
 				"points": task.points,
 				"status": task.status,
-				"created_at": task.created_at
+				"created_at": task.created_at.isoformat()
 			}
 			for task in tasks
 		], 200
@@ -221,7 +221,7 @@ class TaskByStatusResource(Resource):
 				"title": task.title,
 				"child_id": task.child_id,
 				"status": task.status,
-				"created_at": task.created_at
+				"created_at": task.created_at.isoformat()
 			}
 			for task in tasks
 		], 200
