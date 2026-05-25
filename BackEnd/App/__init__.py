@@ -1,6 +1,7 @@
 from flask import Flask
 from app.extensions import db, jwt, bcrypt
 from flask_restx import Api
+from app.routes.user_routs import api as user_ns
 from app.routes.child_routs import api as child_ns
 
 
@@ -16,6 +17,7 @@ def create_app():
     jwt.init_app(app)
 
     api = Api(app, title='Asalah API', version="1.0", doc='/swagger')
+    api.add_namespace(user_ns, path='/api/users')
     api.add_namespace(child_ns, path='/api/children')
 
     return app
