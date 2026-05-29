@@ -61,3 +61,47 @@ class ChildResource(Resource):
             "age": child.age,
             "parent_id": child.parent_id
         }, 200
+    
+    @api.expect(child_update_model, validate=True)
+    @api.response(200, "Child updated successfully")
+    @api.response(404, "Child not found")
+    def put(self, child_id):
+        child_data = api.payload
+        child = child_service.update_child(child_id, child_data)
+
+        if not child:
+            return {"error": "Child not found"}, 404
+
+        return {
+            "id": child.id,
+            "name": child.name,
+            "age": child.age,
+            "parent_id": child.parent_id
+        }, 200
+
+    @api.response(204, "Child deleted successfully")
+    @api.response(404, "Child not found")
+    def delete(self, child_id):
+        child = child_service.delete_child(child_id)
+
+        if not child:
+            return {"error": "Child not found"}, 404
+
+        return "", 204
+    
+@api.route("/parent/<parent_id>")
+class ChildrenByParentResource(Resource):
+
+    @api.response(200, "Children retrieved successfully")
+    def get(self, parent_id):
+        children = child_service.get_children_by_parent(parent_id)
+
+        return [
+            {
+                "id": child.id,
+                "name": child.name,
+                "age": child.age,
+                "parent_id": child.parent_id
+            }
+            for child in children
+        ], 200
