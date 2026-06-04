@@ -1,0 +1,6 @@
+flask==2.3.0
+flask-sqlalchemy==3.0.5
+flask-restx==0.5.1
+flask-bcrypt==1.0.1
+flask-jwt-extended==4.5.2
+python-dotenv==1.0.0

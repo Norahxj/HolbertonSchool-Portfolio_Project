@@ -3,26 +3,28 @@
 # Routes follow the Flask-RESTX pattern for consistency with the rest of the application
 
 from flask_restx import Namespace, Resource
-from app.api_models.task_model import get_task_models
-from app.services.task_service import TaskService
+from App.api_models.task_model import get_task_models
+from App.Services.task_service import TaskService, DailyFeedbackService
 
 
 api = Namespace("tasks", description="Task operations")
 task_service = TaskService()
-task_model, task_update_model, task_status_model = get_task_models(api)
+feedback_service = DailyFeedbackService()
+task_model, task_update_model, task_status_model, daily_feedback_model, daily_feedback_update_model = get_task_models(api)
 
 
 @api.route("/")
 class TaskListResource(Resource):
-	"""Resource for managing all tasks (GET all, POST create)"""
+	"""Resource for creating tasks"""
 
 	@api.expect(task_model, validate=True)
 	@api.response(201, "Task created successfully")
 	@api.response(400, "Invalid input")
 	def post(self):
 		"""
-		Create a new task.
+		Create a new task (ONCE, DAILY, or WEEKLY).
 		Calls the service layer to add the task to the database.
+		For WEEKLY tasks, provide recurrence_day (0=Monday to 6=Sunday, 4=Friday).
 		"""
 		task_data = api.payload
 		task = task_service.create_task(task_data)
@@ -30,37 +32,7 @@ class TaskListResource(Resource):
 		if task is None:
 			return {"error": "Failed to create task"}, 400
 		
-		return {
-			"id": task.id,
-			"title": task.title,
-			"description": task.description,
-			"child_id": task.child_id,
-			"points": task.points,
-			"status": task.status,
-			"created_by": task.created_by,
-			"created_at": task.created_at
-		}, 201
-
-	@api.response(200, "Tasks retrieved successfully")
-	def get(self):
-		"""
-		Retrieve all tasks.
-		Calls the service layer to fetch all tasks from the database.
-		"""
-		tasks = task_service.get_tasks()
-		return [
-			{
-				"id": task.id,
-				"title": task.title,
-				"description": task.description,
-				"child_id": task.child_id,
-				"points": task.points,
-				"status": task.status,
-				"created_by": task.created_by,
-				"created_at": task.created_at
-			}
-			for task in tasks
-		], 200
+		return task.to_dict(), 201
 
 
 @api.route("/<task_id>")
@@ -78,17 +50,7 @@ class TaskResource(Resource):
 		if task is None:
 			return {"error": "Task not found"}, 404
 		
-		return {
-			"id": task.id,
-			"title": task.title,
-			"description": task.description,
-			"child_id": task.child_id,
-			"points": task.points,
-			"status": task.status,
-			"created_by": task.created_by,
-			"approved_at": task.approved_at,
-			"created_at": task.created_at
-		}, 200
+		return task.to_dict(), 200
 
 	@api.expect(task_update_model, validate=True)
 	@api.response(200, "Task updated successfully")
@@ -96,7 +58,7 @@ class TaskResource(Resource):
 	@api.response(400, "Invalid input")
 	def put(self, task_id):
 		"""
-		Update a task's details (title, description, points).
+		Update a task's details (title, description, points, task_type, recurrence_day).
 		Calls the service layer and returns 404 if not found.
 		"""
 		task_data = api.payload
@@ -105,16 +67,7 @@ class TaskResource(Resource):
 		if task is None:
 			return {"error": "Task not found"}, 404
 		
-		return {
-			"id": task.id,
-			"title": task.title,
-			"description": task.description,
-			"child_id": task.child_id,
-			"points": task.points,
-			"status": task.status,
-			"created_by": task.created_by,
-			"created_at": task.created_at
-		}, 200
+		return task.to_dict(), 200
 
 	@api.response(204, "Task deleted successfully")
 	@api.response(404, "Task not found")
@@ -146,12 +99,7 @@ class TaskApproveResource(Resource):
 		if task is None:
 			return {"error": "Task not found"}, 404
 		
-		return {
-			"id": task.id,
-			"title": task.title,
-			"status": task.status,
-			"approved_at": task.approved_at
-		}, 200
+		return task.to_dict(), 200
 
 
 @api.route("/<task_id>/reject")
@@ -169,11 +117,7 @@ class TaskRejectResource(Resource):
 		if task is None:
 			return {"error": "Task not found"}, 404
 		
-		return {
-			"id": task.id,
-			"title": task.title,
-			"status": task.status
-		}, 200
+		return task.to_dict(), 200
 
 
 @api.route("/child/<child_id>")
@@ -186,17 +130,166 @@ class TaskByChildResource(Resource):
 		Retrieve all tasks assigned to a specific child.
 		"""
 		tasks = task_service.get_tasks_by_child(child_id)
-		return [
-			{
-				"id": task.id,
-				"title": task.title,
-				"description": task.description,
-				"points": task.points,
-				"status": task.status,
-				"created_at": task.created_at
-			}
-			for task in tasks
-		], 200
+		return [task.to_dict() for task in tasks], 200
+
+
+@api.route("/status/<status>")
+class TaskByStatusResource(Resource):
+	"""Resource for retrieving tasks by status"""
+
+	@api.response(200, "Tasks retrieved successfully")
+	def get(self, status):
+		"""
+		Retrieve all tasks with a specific status (PENDING, APPROVED, REJECTED).
+		"""
+		if status not in ["PENDING", "APPROVED", "REJECTED"]:
+			return {"error": "Invalid status"}, 400
+		
+		tasks = task_service.get_tasks_by_status(status)
+		return [task.to_dict() for task in tasks], 200
+
+
+@api.route("/daily/all")
+class DailyTasksResource(Resource):
+	"""Resource for retrieving all daily tasks"""
+
+	@api.response(200, "Daily tasks retrieved successfully")
+	def get(self):
+		"""
+		Retrieve all daily recurring tasks.
+		"""
+		tasks = task_service.get_daily_tasks()
+		return [task.to_dict() for task in tasks], 200
+
+
+@api.route("/weekly/all")
+class WeeklyTasksResource(Resource):
+	"""Resource for retrieving all weekly tasks"""
+
+	@api.response(200, "Weekly tasks retrieved successfully")
+	def get(self):
+		"""
+		Retrieve all weekly recurring tasks.
+		"""
+		tasks = task_service.get_weekly_tasks()
+		return [task.to_dict() for task in tasks], 200
+
+
+@api.route("/weekly/day/<int:day>")
+class WeeklyTasksByDayResource(Resource):
+	"""Resource for retrieving weekly tasks by specific day"""
+
+	@api.response(200, "Weekly tasks for day retrieved successfully")
+	@api.response(400, "Invalid day")
+	def get(self, day):
+		"""
+		Retrieve weekly tasks for a specific day of the week.
+		day: 0=Monday, 1=Tuesday, 2=Wednesday, 3=Thursday, 4=Friday, 5=Saturday, 6=Sunday
+		"""
+		if day < 0 or day > 6:
+			return {"error": "Invalid day. Must be between 0-6 (0=Monday, 6=Sunday)"}, 400
+		
+		tasks = task_service.get_weekly_tasks_by_day(day)
+		return [task.to_dict() for task in tasks], 200
+
+
+# Daily Feedback Routes
+@api.route("/feedback/")
+class DailyFeedbackListResource(Resource):
+	"""Resource for creating daily feedback"""
+
+	@api.expect(daily_feedback_model, validate=True)
+	@api.response(201, "Daily feedback created successfully")
+	@api.response(400, "Invalid input")
+	def post(self):
+		"""
+		Create daily feedback for a child.
+		Feedback includes emoji rating (1=Happy😊, 2=Neutral😐, 3=Sad😢) and optional text.
+		"""
+		feedback_data = api.payload
+		feedback = feedback_service.create_daily_feedback(feedback_data)
+		
+		if feedback is None:
+			return {"error": "Failed to create daily feedback"}, 400
+		
+		return feedback.to_dict(), 201
+
+
+@api.route("/feedback/<feedback_id>")
+class DailyFeedbackResource(Resource):
+	"""Resource for managing a specific daily feedback"""
+
+	@api.response(200, "Daily feedback retrieved successfully")
+	@api.response(404, "Daily feedback not found")
+	def get(self, feedback_id):
+		"""
+		Retrieve a specific daily feedback by its ID.
+		"""
+		feedback = feedback_service.get_daily_feedback(feedback_id)
+		if feedback is None:
+			return {"error": "Daily feedback not found"}, 404
+		
+		return feedback.to_dict(), 200
+
+	@api.expect(daily_feedback_update_model, validate=True)
+	@api.response(200, "Daily feedback updated successfully")
+	@api.response(404, "Daily feedback not found")
+	def put(self, feedback_id):
+		"""
+		Update daily feedback (emoji and/or text).
+		"""
+		feedback_data = api.payload
+		feedback = feedback_service.update_daily_feedback(feedback_id, feedback_data)
+		
+		if feedback is None:
+			return {"error": "Daily feedback not found"}, 404
+		
+		return feedback.to_dict(), 200
+
+	@api.response(204, "Daily feedback deleted successfully")
+	@api.response(404, "Daily feedback not found")
+	def delete(self, feedback_id):
+		"""
+		Delete daily feedback from the database.
+		"""
+		success = feedback_service.delete_daily_feedback(feedback_id)
+		
+		if not success:
+			return {"error": "Daily feedback not found"}, 404
+		
+		return "", 204
+
+
+@api.route("/feedback/child/<child_id>")
+class ChildFeedbackResource(Resource):
+	"""Resource for retrieving all feedback for a child"""
+
+	@api.response(200, "Child feedback retrieved successfully")
+	def get(self, child_id):
+		"""
+		Retrieve all daily feedback for a specific child.
+		Results are ordered by date (newest first).
+		"""
+		feedbacks = feedback_service.get_child_feedback(child_id)
+		return [feedback.to_dict() for feedback in feedbacks], 200
+
+
+@api.route("/feedback/child/<child_id>/<date>")
+class ChildFeedbackByDateResource(Resource):
+	"""Resource for retrieving feedback for a child on a specific date"""
+
+	@api.response(200, "Feedback retrieved successfully")
+	@api.response(404, "Feedback not found for this date")
+	def get(self, child_id, date):
+		"""
+		Retrieve daily feedback for a specific child on a specific date.
+		Date format: YYYY-MM-DD
+		"""
+		feedback = feedback_service.get_feedback_by_date(child_id, date)
+		if feedback is None:
+			return {"error": "No feedback found for this date"}, 404
+		
+		return feedback.to_dict(), 200
 
 
 @api.route("/status/<status>")

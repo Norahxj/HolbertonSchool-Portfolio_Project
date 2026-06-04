@@ -1,4 +1,4 @@
-from app.extensions import db
+from App.Extensions import db
 import uuid
 from datetime import datetime
 
