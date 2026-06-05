@@ -1,0 +1,349 @@
+# MVP Concept: "Asalah" -  The Gamified Value-Based Financial app
+## Introduction
+### Concept Overview
+
+Asalah (meaning "Trust" or "Stewardship" in Arabic) is a gamified financial rewards platform designed specifically for Saudi families.
+It bridges the gap between traditional values and modern financial literacy by allowing parents to reward children for activities rooted 
+in Saudi culture, religion, and family traditions.
+
+### Target Audience
+
+- Primary Users: Saudi parents (aged 25-45) who are concerned about their children's spending habits and value systems.
+
+- Secondary Users: Children (aged 6-15) who are increasingly influenced by digital consumption and gaming.
+
+
+### Problem
+
+Impulsive spending and consumerism among Saudi youth.
+
+### Observation
+
+Existing banking solutions lack engaging, culturally relevant financial education.
+
+### Opportunity
+
+An underdeveloped market for gamified financial literacy tailored to Saudi families.
+
+## Introducing Asalah
+
+### Concept
+
+A gamified financial rewards platform for Saudi families.
+
+### Core Idea
+
+Reward children for activities rooted in Saudi culture, religion, and family traditions.
+
+### Goal
+
+Foster financial literacy, responsible spending, and strong values.
+
+### Core Features
+
+- Tradition & Culture: Rewards for active participation in family gatherings, serving guests, and showing respect to elders.
+
+- Religion: Rewards for consistent morning prayers, charitable donations, memorizing Surahs, and many others.
+
+- Chores & Responsibility: Taking responsibility for specific household areas. Earning points for disconnecting from screens during family time.
+
+- Financial Values: Higher parental bonuses for long-term savings. Budgeting tasks where children keep a percentage of savings.
+
+### Reward Mechanics
+
+Noor (Points) which can grant wishes and requests. 
+
+### Positive Aspects (Strengths & Opportunities)
+
+- Cultural & Religious Alignment.
+
+- Addresses Real Need: Combats impulsive spending, promotes financial education.
+
+- Parental Control: Customizable tasks and rewards.
+
+- Gamified Engagement: Proven mechanics for fun and effective learning.
+
+### Negative Aspects (Weaknesses & Threats)
+
+- Parental Engagement: Requires consistent parental involvement for success.
+
+- Shifting Youth Preferences: Need continuous innovation to maintain relevance.
+
+- Designing 2 interfaces one for parent users and another for children users.
+
+### From Concept to Reality
+
+1. Create UI/UX prototypes and conduct parent focus groups.
+
+2. Create diagrams to understand the relations of the backend.
+
+3. Creating a task-based database system.
+
+4. Develop frontend interfaces for both parents and children.
+
+5. Pilot Launch with 10 Saudi Families.
+
+## Team Formation
+
+The project team consists of four members with an initial role distribution based on interests and technical strengths:
+
+- **Mnar Alzahrani:** Backend Development  
+- **Manar Althqfi:** Backend Development  
+- **Mariam Backroush:** Database Design and Management  
+- **Nora Aljuhani:** Frontend Development 
+
+### Initial Team Meeting
+- The team held an initial meeting to introduce all members and establish a shared understanding of the project’s goals.  
+- Each member presented:
+  - Their academic and technical background  
+  - Their strengths (backend logic, UI design, database structuring, documentation, etc.)  
+  - Their interests (mobile development, UX, problem‑solving, system design)  
+- This meeting helped the team identify complementary skills and build a strong collaborative foundation.
+
+### Initial Role Assignment
+- To ensure an organized start for Stage 1, the team assigned temporary roles:
+  - **Temporary Project Manager:** Coordinates tasks and meetings  
+  - **Research Lead:** Explores and validates ideas  
+  - **Documentation Lead:** Structures and writes documentation  
+  - **Brainstorming Facilitator:** Guides ideation sessions and ensures equal participation  
+- These roles are flexible and may be adjusted in later stages.
+
+### Communication & Collaboration Norms
+- The team relied on **WhatsApp** for daily communication and quick updates.  
+- Weekly meetings were conducted through **Google Meet every Thursday at 6:30 PM**.  
+- Decisions were made collectively through discussion and consensus.  
+- GitHub was used for file sharing and maintaining project materials.  
+- The team followed an inclusivity rule ensuring every member could speak, contribute ideas, and provide feedback.  
+- Although responsibilities were initially distributed, the team maintained a collaborative approach where members supported each other across different parts of the project.
+
+---
+
+## Research and Brainstorming
+
+### Individual and Group Research
+- Each team member conducted both individual and group research to explore potential project ideas.  
+- Research focused on real‑world problems, current industry trends, and opportunities for innovative digital solutions.  
+- The goal was to gather a wide range of insights before starting the brainstorming phase.
+
+### Brainstorming Sessions
+The team organized multiple brainstorming sessions to generate and refine ideas using structured creativity techniques:
+
+#### Mind Mapping
+- A visual mind map was created to connect related concepts and explore different problem areas.  
+- This helped the team expand ideas naturally and identify patterns or themes worth exploring.
+
+#### SCAMPER Framework
+- The team applied the SCAMPER method to think creatively about improving or transforming existing ideas:
+  - **Substitute**  
+  - **Combine**  
+  - **Adapt**  
+  - **Modify**  
+  - **Put to another use**  
+  - **Eliminate**  
+  - **Reverse**  
+- This technique encouraged the team to think beyond traditional solutions.
+
+#### “How Might We” Questions
+- The team used open‑ended HMW questions to frame opportunities and spark problem‑solving discussions.  
+- Examples included:  
+  - *How might we simplify a daily task for users?*  
+  - *How might we improve accessibility in digital tools?*  
+  - *How might we create a solution that reduces user frustration?*
+
+### Outcome of Brainstorming
+- These structured techniques helped the team generate a diverse set of ideas.  
+- The team documented all ideas before moving to the evaluation phase in Task 3.
+
+---
+
+## Idea Evaluation
+
+### Evaluation Criteria
+The team defined a clear set of evaluation criteria to assess all proposed ideas objectively. These criteria helped ensure that the selected idea would be feasible, impactful, and aligned with the team’s technical capabilities. The criteria included:
+
+- **Feasibility:** Can the idea be realistically implemented within the project timeline and with available skills?  
+- **Potential Impact:** Does the idea solve a meaningful problem or provide value to users?  
+- **Technical Alignment:** Does the idea match the team’s strengths in backend, frontend, and database development?  
+- **Scalability:** Can the idea grow or be expanded in future stages?  
+- **User Need:** Is there a clear audience that would benefit from the solution?
+
+### Scoring and Ranking
+- The team created a scoring rubric to evaluate each idea based on the criteria above.  
+- Each idea was assigned a score from **1 to 5** for every criterion.  
+- Scores were then totaled to generate a final ranking.  
+- This structured scoring method helped the team compare ideas fairly and avoid bias.
+
+### Risks and Constraints
+For each idea, the team identified potential risks and limitations to better understand challenges before selecting the final MVP:
+
+- **Technical Risks:**  
+  - Complexity of implementation  
+  - Integration challenges  
+  - Need for advanced features beyond the team’s current skill set  
+
+- **Time Constraints:**  
+  - Ideas requiring extensive development time were considered less suitable for the project timeline  
+
+- **User Adoption Risks:**  
+  - Unclear target audience  
+  - Low real‑world demand  
+
+- **Resource Limitations:**  
+  - Tools or technologies that may not be accessible  
+  - Features requiring external APIs or paid services  
+
+Identifying these risks early helped the team eliminate ideas that were too complex or unrealistic for the project scope.
+
+---
+## Decision and Refinement
+
+### Selecting the Final MVP Idea
+- After evaluating all proposed ideas using the scoring rubric from Task 3, the team selected the idea with the highest overall score and strongest alignment with the project goals.  
+- The decision was made collectively based on feasibility, user value, and technical suitability.  
+- The chosen MVP was selected because it addressed a clear problem, had a well‑defined target audience, and could be realistically implemented within the project timeline.
+
+### Enhancements and Focus Areas
+- Once the MVP idea was selected, the team discussed potential enhancements and specific challenges to focus on during development.  
+- These enhancements were chosen to improve usability, increase value for users, and ensure the solution stands out.  
+- The team also identified which features should be included in the MVP and which could be added in future iterations.
+
+### Problem Definition
+- The team clearly defined the core problem the MVP aims to solve.  
+- This included understanding the root cause of the issue, how it affects users, and why existing solutions are insufficient.  
+- A clear problem definition helped guide the design and development process.
+
+### Target Audience
+- The team identified the primary users who would benefit from the MVP.  
+- User characteristics such as age group, needs, behaviors, and challenges were considered.  
+- Understanding the audience ensured that the solution would be relevant and user‑centered.
+
+### Key Features
+- The team outlined the essential features required for the MVP to function effectively.  
+- These features were selected based on user needs, feasibility, and project scope.  
+- Additional features were documented for potential future development.
+
+### Expected Outcomes
+- The team defined the expected outcomes of the MVP, including how it will improve the user experience or solve the identified problem.  
+- Expected outcomes also included measurable benefits such as increased efficiency, reduced frustration, or improved accessibility.  
+- These outcomes will help evaluate the success of the MVP after implementation.
+
+---
+
+### Events & Community Platform
+A platform that combines Saudi events, museums, exhibitions, and hackathons while helping users connect with others and form teams for activities and competitions.
+
+Reason for rejection:
+The idea required continuous real-time event updates and depended heavily on building a large active community during the early stages.
+
+---
+
+### Digital Art Marketplace
+A platform connecting artists with customers, allowing creators to showcase and sell artwork directly through the application.
+
+Reason for rejection:
+The concept relied heavily on attracting both artists and buyers simultaneously, making early adoption difficult.
+
+---
+
+### Smart Travel Planner
+A smart travel planning application focused on organizing trips inside Saudi Arabia based on budget, interests, activities, and transportation planning.
+
+Reason for rejection:
+The project scope was considered too large due to integrations, data management, and real-time activity coordination.
+
+---
+
+### Mutmainnah
+A culturally-focused support application designed to assist Saudi mothers during the postpartum period through health tracking, reminders, and emotional support tools.
+
+Reason for rejection:
+The concept required deeper medical research and more specialized domain knowledge than the team could currently support.
+
+## Evaluation Criteria
+
+The team evaluated project ideas based on several factors to determine the most suitable MVP concept.
+
+- Feasibility: The ability to realistically develop the project within the available timeline.
+
+- Impact: The potential of the project to solve a real-world problem.
+
+- Scalability: The possibility of expanding the platform in the future.
+
+- Technical Alignment: How well the project matched the team’s technical interests and skills.
+
+- Uniqueness: The originality and distinctiveness of the idea.
+
+- Target Audience Relevance: The relevance of the idea to the intended users and local community.
+
+
+## Idea Evaluation and Ranking
+
+| Idea | Feasibility | Impact | Scalability | Total |
+|---|---|---|---|---|
+| Asalah | 9 | 10 | 9 | 28 |
+| API Monitoring | 8 | 7 | 8 | 23 |
+| Events Platform | 7 | 8 | 7 | 22 |
+| Art Marketplace | 7 | 6 | 7 | 20 |
+
+## Initial System Workflows
+
+The project includes several workflow diagrams that describe how users interact with the platform and how different backend processes operate.
+
+### Workflow Files
+
+- [Badge Journey](./diagrams/badge_journey.mmd)
+- [Reward Journey](./diagrams/reward_journey.mmd)
+- [Task Journey](./diagrams/task_journey.mmd)
+- [Wishlist Journey](./diagrams/wishlist_journey.mmd)
+---
+## Documentation
+
+### Organizing All Project Ideas
+- The team documented every idea generated during the brainstorming phase.  
+- Each idea included a short description, its purpose, and the problem it aimed to solve.  
+- This documentation ensured that no idea was lost and allowed the team to revisit concepts in future project stages.
+
+### Strengths and Weaknesses of Each Idea
+- For every idea, the team listed both positive aspects (strengths and opportunities) and negative aspects (weaknesses and threats).  
+- This helped the team understand the potential of each idea and identify challenges early.  
+- The evaluation supported a more objective comparison between ideas.
+
+### Reasons for Rejecting Ideas
+- The team clearly documented why certain ideas were not selected as the final MVP.  
+- Reasons included:
+  - Large project scope  
+  - High dependency on real‑time data  
+  - Need for specialized domain knowledge  
+  - Difficulty in attracting early users  
+- This transparency ensured that the decision-making process was well‑justified and traceable.
+
+### Final MVP Summary
+- The team summarized the chosen MVP concept **Asalah**, including:
+  - The core idea  
+  - Target audience  
+  - Main features  
+  - Cultural and financial value  
+- This summary serves as a reference point for future development stages.
+
+### Team Overview
+- A brief overview of the team members, their roles, and their contributions was included.  
+- This section highlights how collaboration and diverse skills contributed to shaping the final MVP.
+
+### Documentation Structure
+- All documentation was organized within the project repository to ensure clarity and easy access.  
+- The structure includes:
+  - Concept overview  
+  - Brainstorming outputs  
+  - Evaluation tables  
+  - Rejected ideas  
+  - Workflow diagrams  
+  - Final MVP decision  
+- This structured approach ensures that future team members or reviewers can easily understand the project’s progression.
+
+---
+
+## Conclusion
+
+After evaluating multiple project ideas, the team selected Asalah as the final MVP concept due to its cultural relevance, social impact, scalability, and alignment with the team’s goals and technical interests.
+
+The project aims to combine financial literacy, gamification, and family values into an engaging platform designed specifically for Saudi families. The team will continue refining the concept and developing the technical architecture throughout the upcoming project stages.
