@@ -1,10 +1,8 @@
 from flask import Flask
 from App.Extensions import db, jwt, bcrypt
-from flask_restx import Api
-from App.Routes.task_routs import api as task_ns
-from App.api_models.dashboard_controller import dashboard_bp
-
-
+from App.Routes.task_routs import task_ns
+from flask_restx import Api 
+ 
 def create_app():
     app = Flask(__name__)
 
@@ -18,8 +16,5 @@ def create_app():
 
     api = Api(app, title='Asalah API', version="1.0", doc='/swagger')
     api.add_namespace(task_ns, path='/api/tasks')
-    
-    # Register dashboard blueprint
-    app.register_blueprint(dashboard_bp)
 
     return app

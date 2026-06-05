@@ -31,10 +31,38 @@ class TaskListResource(Resource):
 		
 		if task is None:
 			return {"error": "Failed to create task"}, 400
-		
 		return task.to_dict(), 201
+		return {
+			"id": task.id,
+			"title": task.title,
+			"description": task.description,
+			"child_id": task.child_id,
+			"points": task.points,
+			"status": task.status,
+			"created_by": task.created_by,
+			"created_at": task.created_at.isoformat()
+		}, 201
 
-
+	@api.response(200, "Tasks retrieved successfully")
+	def get(self):
+		"""
+		Retrieve all tasks.
+		Calls the service layer to fetch all tasks from the database.
+		"""
+		tasks = task_service.get_tasks()
+		return [
+			{
+				"id": task.id,
+				"title": task.title,
+				"description": task.description,
+				"child_id": task.child_id,
+				"points": task.points,
+				"status": task.status,
+				"created_by": task.created_by,
+				"created_at": task.created_at.isoformat()
+			}
+			for task in tasks
+		], 200
 @api.route("/<task_id>")
 class TaskResource(Resource):
 	"""Resource for managing a specific task"""
@@ -49,9 +77,18 @@ class TaskResource(Resource):
 		task = task_service.get_task(task_id)
 		if task is None:
 			return {"error": "Task not found"}, 404
-		
 		return task.to_dict(), 200
-
+		return {
+			"id": task.id,
+			"title": task.title,
+			"description": task.description,
+			"child_id": task.child_id,
+			"points": task.points,
+			"status": task.status,
+			"created_by": task.created_by,
+			"approved_at": task.approved_at.isoformat() if task.approved_at else None,
+			"created_at": task.created_at.isoformat()
+		}, 200
 	@api.expect(task_update_model, validate=True)
 	@api.response(200, "Task updated successfully")
 	@api.response(404, "Task not found")
@@ -66,9 +103,19 @@ class TaskResource(Resource):
 		
 		if task is None:
 			return {"error": "Task not found"}, 404
-		
+		if isinstance(task, str) and task.startswith("Invalid"):
+			return {"error": task}, 400
 		return task.to_dict(), 200
-
+		return {
+			"id": task.id,
+			"title": task.title,
+			"description": task.description,
+			"child_id": task.child_id,
+			"points": task.points,
+			"status": task.status,
+			"created_by": task.created_by,
+			"created_at": task.created_at.isoformat()
+		}, 200
 	@api.response(204, "Task deleted successfully")
 	@api.response(404, "Task not found")
 	def delete(self, task_id):
@@ -98,10 +145,14 @@ class TaskApproveResource(Resource):
 		task = task_service.approve_task(task_id)
 		if task is None:
 			return {"error": "Task not found"}, 404
-		
 		return task.to_dict(), 200
-
-
+		return{
+			"id": task.id,
+			"title": task.title,
+			"status": task.status,
+			"approved_at": task.approved_at.isoformat() if task.approved_at else None
+		}, 200
+	
 @api.route("/<task_id>/reject")
 class TaskRejectResource(Resource):
 	"""Resource for rejecting tasks"""
@@ -193,8 +244,7 @@ class WeeklyTasksByDayResource(Resource):
 		return [task.to_dict() for task in tasks], 200
 
 
-# Daily Feedback Routes
-بشيلها 
+# Daily Feedback Routes 
 @api.route("/feedback/")
 class DailyFeedbackListResource(Resource):
 	"""Resource for creating daily feedback"""
@@ -291,7 +341,17 @@ class ChildFeedbackByDateResource(Resource):
 			return {"error": "No feedback found for this date"}, 404
 		
 		return feedback.to_dict(), 200
-
+		return [
+			{
+				"id": task.id,
+				"title": task.title,
+				"description": task.description,
+				"points": task.points,
+				"status": task.status,
+				"created_at": task.created_at.isoformat()
+			}
+			for task in tasks
+		], 200
 
 @api.route("/status/<status>")
 class TaskByStatusResource(Resource):
@@ -315,7 +375,7 @@ class TaskByStatusResource(Resource):
 				"title": task.title,
 				"child_id": task.child_id,
 				"status": task.status,
-				"created_at": task.created_at
+				"created_at": task.created_at.isoformat()
 			}
 			for task in tasks
 		], 200

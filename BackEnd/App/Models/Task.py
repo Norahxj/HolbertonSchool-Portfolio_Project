@@ -24,7 +24,7 @@ class Task(BaseModel):
 
 	title = db.Column(db.String(100), nullable=False)
 	description = db.Column(db.String(500), nullable=False)
-	child_id = db.Column(db.String(36), nullable=False)  # UUID as string
+	child_id = db.Column(db.String(36), db.ForeignKey("children.id"), nullable=False)  
 	points = db.Column(db.Integer, nullable=False)
 	status = db.Column(db.String(20), default="PENDING", nullable=False)  # PENDING, APPROVED, REJECTED
 	task_type = db.Column(db.String(20), default="ONCE", nullable=False)  # ONCE, DAILY, WEEKLY
@@ -33,8 +33,8 @@ class Task(BaseModel):
 	is_auto_verified = db.Column(db.Boolean, default=False, nullable=False)
 	verification_type = db.Column(db.String(20), default="MANUAL", nullable=False)  # AUTO or MANUAL
 	created_by = db.Column(db.String(36), nullable=False)  # UUID as string
+	created_by = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)  
 	approved_at = db.Column(db.DateTime, nullable=True)
-	created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
 	def approve(self):
 		"""Mark the task as approved and set the approval timestamp"""

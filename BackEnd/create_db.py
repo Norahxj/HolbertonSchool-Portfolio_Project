@@ -16,6 +16,3 @@ with app.app_context():
     print("  - users")
     print("  - children")
     print("  - tasks")
-    print("  - daily_feedback")
-    print("  - points")
-    print("  - rewards")
