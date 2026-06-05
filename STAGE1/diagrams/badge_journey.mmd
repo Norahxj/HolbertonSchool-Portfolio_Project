@@ -1,9 +1,0 @@
-graph TD
-    A[Child Completes Task] --> B[System Checks Conditions]
-    B -->|Query Task & Badge Tables| C{Conditions Met?}
-    C -->|Yes| D[Award Badge]
-    C -->|No| E[Continue Tracking]
-    D -->|POST /child-badges| F(Child-Badge Table)
-    F --> G{Notify Child}
-    G --> H[Celebratory Animation]
-    H --> I[Update Profile]

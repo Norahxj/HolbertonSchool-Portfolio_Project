@@ -13,7 +13,6 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 
 
 # ============ POINTS ENDPOINTS ============
-
 @dashboard_bp.route('/points/daily/<child_id>', methods=['GET'])
 def get_daily_points(child_id):
 	"""Get daily points summary for a child"""
