@@ -10,10 +10,10 @@ The platform focuses on combining financial literacy, family values, cultural re
 
 | Team Member | Role |
 |---|---|
-| Mnar Alzahrani | Backend Development |
-| Manar Althqfi | Backend Development |
-| Mariam Backroush | Database Design and Management |
-| Norah Aljuhani | Frontend Development & Frontend-Backend Testing |
+| Mnar Alzahrani | Backend Developer |
+| Manar Althqfi | Backend Developer |
+| Mariam Backroush | Project Manager, Database Design and Management |
+| Norah Aljuhani | Team Lead, Frontend Development and Frontend-Backend Testing |
 
 ## MVP Concept
 
@@ -25,7 +25,7 @@ The MVP will include two main interfaces:
 ## Target Users
 
 - Saudi parents aged 25–45
-- Children aged 6–15
+- Children aged 6–16
 
 ## Main Features
 
@@ -41,23 +41,41 @@ The MVP will include two main interfaces:
 ## Project Stages
 
 ### Stage 1: Team Formation and Idea Development
+
 In this stage, the team formed roles, established communication methods, researched possible MVP ideas, evaluated them, and selected **Asalah** as the final project concept.
 
-### Stage 2: Project Charter
-To be added later.
+### Stage 2: Project Charter Development
+
+In this stage, the team created the Project Charter for **Asalah**. The charter defines the project purpose, SMART objectives, stakeholders, team roles, project scope, risks, mitigation strategies, and a high-level project timeline.
+
+The Project Charter helps establish a shared understanding of the project and provides a reference point for future decisions during technical documentation and MVP development.
+
+Key elements completed in Stage 2 include:
+
+- Project purpose and MVP objectives
+- Internal and external stakeholders
+- Team roles and responsibilities
+- In-scope and out-of-scope items
+- Potential risks and mitigation plans
+- High-level project timeline and milestones
 
 ### Stage 3: Technical Documentation
+
 To be added later.
 
 ### Stage 4: MVP Development
+
 To be added later.
 
 ### Stage 5: Project Closure
+
 To be added later.
 
 ## Current Status
 
-The project has completed **Stage 1: Team Formation and Idea Development**.
+The project has completed **Stage 1: Team Formation and Idea Development** and **Stage 2: Project Charter Development**.
+
+The team is preparing to move into **Stage 3: Technical Documentation**, which will focus on system requirements, user stories, diagrams, database planning, API planning, and system workflows.
 
 ## Repository Structure
 
