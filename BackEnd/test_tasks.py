@@ -4,8 +4,8 @@
 import pytest
 from uuid import uuid4
 from datetime import datetime
-from App.api_models.task_model import TaskModel, TaskStatus
-from App.Services import task_service
+from app.api_models.task_model import TaskModel, TaskStatus
+from app.services import task_service
 
 # Fixture to create a sample task for testing
 @pytest.fixture

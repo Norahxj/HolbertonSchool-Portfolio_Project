@@ -1,5 +1,5 @@
-from App.Extensions import db
-from App.Models.Child import Child
+from app.extensions import db
+from app.models.child import Child
 
 class ChildService:
     def create_child(self, child_data):

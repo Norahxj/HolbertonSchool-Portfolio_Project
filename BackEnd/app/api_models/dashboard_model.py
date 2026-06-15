@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 from functools import wraps
-from App.Services.reward_service import (
+from app.services.reward_service import (
 	PointService, 
 	RewardService, 
 	DailyProgressService
 )
-from App.Models.Point import Point
-from App.Models.Reward import Reward
-from App.Models.DailyFeedback import DailyFeedback
+from app.models.point import Point
+from app.models.reward import Reward
+from app.models.daily_feedback import DailyFeedback
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 

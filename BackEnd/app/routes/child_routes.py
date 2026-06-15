@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 
-from App.Services.child_service import ChildService
-from App.api_models.child_model import get_child_models
+from app.services.child_service import ChildService
+from app.api_models.child_model import get_child_models
 
 
 api = Namespace("children", description="Child operations")

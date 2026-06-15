@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource
-from App.api_models.user_model import get_user_models
-from App.Services.user_service import UserService
+from app.api_models.user_model import get_user_models
+from app.services.user_service import UserService
 
 
 api = Namespace("users", description="User operations")

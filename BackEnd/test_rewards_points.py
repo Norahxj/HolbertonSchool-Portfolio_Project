@@ -1,9 +1,9 @@
 import json
-from App import create_app
-from App.Extensions import db
-from App.Models.Point import Point
-from App.Models.Reward import Reward
-from App.Models.DailyFeedback import DailyFeedback
+from app import create_app
+from app.extensions import db
+from app.models.point import Point
+from app.models.reward import Reward
+from app.models.daily_feedback import DailyFeedback
 from datetime import datetime, timedelta
 
 app = create_app()
@@ -107,7 +107,7 @@ def test_services():
 	"""Test the Services"""
 	print("\n🧪 Testing Services...\n")
 	
-	from App.Services.reward_service import PointService, RewardService, DailyProgressService
+	from app.services.reward_service import PointService, RewardService, DailyProgressService
 	
 	with app.app_context():
 		# Test PointService

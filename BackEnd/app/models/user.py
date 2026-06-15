@@ -1,5 +1,5 @@
-from App.Extensions import db
-from App.Models.base_model import BaseModel
+from app.extensions import db
+from app.models.base_model import BaseModel
 
 
 class User(BaseModel):

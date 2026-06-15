@@ -3,8 +3,8 @@
 # Routes follow the Flask-RESTX pattern for consistency with the rest of the application
 
 from flask_restx import Namespace, Resource
-from App.api_models.task_model import get_task_models
-from App.Services.task_service import TaskService, DailyFeedbackService
+from app.api_models.task_model import get_task_models
+from app.services.task_service import TaskService, DailyFeedbackService
 
 
 api = Namespace("tasks", description="Task operations")
