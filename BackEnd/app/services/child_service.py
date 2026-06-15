@@ -40,3 +40,34 @@ class ChildService:
         db.session.delete(child)
         db.session.commit()
         return child
+
+
+    def get_child_for_parent(self, child_id, parent_id):
+        return Child.query.filter_by(id=child_id, parent_id=parent_id).first()
+
+
+    def update_child_for_parent(self, child_id, parent_id, child_data):
+        child = self.get_child_for_parent(child_id, parent_id)
+
+        if not child:
+            return None
+
+        if "name" in child_data:
+            child.name = child_data["name"]
+
+        if "age" in child_data:
+            child.age = child_data["age"]
+
+        db.session.commit()
+        return child
+
+
+    def delete_child_for_parent(self, child_id, parent_id):
+        child = self.get_child_for_parent(child_id, parent_id)
+
+        if not child:
+            return None
+
+        db.session.delete(child)
+        db.session.commit()
+        return child

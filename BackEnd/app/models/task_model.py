@@ -32,7 +32,6 @@ class Task(BaseModel):
 	category = db.Column(db.String(50), nullable=True)  # Daily Chores, Culture, Financial, Religion
 	is_auto_verified = db.Column(db.Boolean, default=False, nullable=False)
 	verification_type = db.Column(db.String(20), default="MANUAL", nullable=False)  # AUTO or MANUAL
-	created_by = db.Column(db.String(36), nullable=False)  # UUID as string
 	created_by = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)  
 	approved_at = db.Column(db.DateTime, nullable=True)
 
