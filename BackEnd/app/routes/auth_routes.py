@@ -17,6 +17,7 @@ class RegisterResource(Resource):
 
     @api.expect(register_model, validate=True)
     @api.response(201, "User registered successfully")
+    @api.response(400, "Invalid input")
     @api.response(400, "Email already registered")
     def post(self):
         user_data = api.payload

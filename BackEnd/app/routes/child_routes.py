@@ -24,7 +24,10 @@ class ChildListResource(Resource):
         child_data = api.payload
         child_data["parent_id"] = parent_id
 
-        child = child_service.create_child(child_data)
+        child, error = child_service.create_child(child_data)
+
+        if error:
+            return {"error": error}, 400
 
         return {
             "id": child.id,
@@ -82,7 +85,10 @@ class ChildResource(Resource):
         parent_id = get_jwt_identity()
         child_data = api.payload
 
-        child = child_service.update_child_for_parent(child_id, parent_id, child_data)
+        child, error = child_service.update_child_for_parent(child_id, parent_id, child_data)
+
+        if error:
+            return {"error": error}, 400
 
         if not child:
             return {"error": "Child not found"}, 404
