@@ -5,9 +5,9 @@ from app.services.reward_service import (
 	RewardService, 
 	DailyProgressService
 )
-from app.models.point import Point
-from app.models.reward import Reward
-from app.models.daily_feedback import DailyFeedback
+from backEnd.app.models.point_model import Point
+from backEnd.app.models.reward_model import Reward
+from backEnd.app.models.daily_feedback_model import DailyFeedback
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 

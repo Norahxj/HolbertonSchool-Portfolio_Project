@@ -1,7 +1,7 @@
-from app.models.point import Point
-from app.models.reward import Reward
-from app.models.daily_feedback import DailyFeedback
-from app.models.task import Task
+from backEnd.app.models.point_model import Point
+from backEnd.app.models.reward_model import Reward
+from backEnd.app.models.daily_feedback_model import DailyFeedback
+from backEnd.app.models.task_model import Task
 from app.extensions import db
 from datetime import datetime, timedelta
 

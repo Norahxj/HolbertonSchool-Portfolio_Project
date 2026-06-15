@@ -1,9 +1,9 @@
 import json
 from app import create_app
 from app.extensions import db
-from app.models.point import Point
-from app.models.reward import Reward
-from app.models.daily_feedback import DailyFeedback
+from backEnd.app.models.point_model import Point
+from backEnd.app.models.reward_model import Reward
+from backEnd.app.models.daily_feedback_model import DailyFeedback
 from datetime import datetime, timedelta
 
 app = create_app()
