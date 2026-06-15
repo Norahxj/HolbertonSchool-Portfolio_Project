@@ -1,5 +1,5 @@
 from app.extensions import db, bcrypt
-from backEnd.app.models.user_model import User
+from app.models.user_model import User
 
 
 class UserService:

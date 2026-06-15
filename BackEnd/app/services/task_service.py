@@ -3,7 +3,7 @@
 # All database operations go through this service
 
 from app.extensions import db
-from backEnd.app.models.task_model import Task
+from app.models.task_model import Task
 
 
 class TaskService:
@@ -233,7 +233,7 @@ class DailyFeedbackService:
 		Returns:
 			Created DailyFeedback object or None if error
 		"""
-		from backEnd.app.models.daily_feedback_model import DailyFeedback
+		from app.models.daily_feedback_model import DailyFeedback
 		from datetime import datetime as dt
 		
 		try:
@@ -265,7 +265,7 @@ class DailyFeedbackService:
 		Returns:
 			DailyFeedback object if found, None if not found or error
 		"""
-		from backEnd.app.models.daily_feedback_model import DailyFeedback
+		from app.models.daily_feedback_model import DailyFeedback
 		
 		try:
 			return DailyFeedback.query.get(feedback_id)
@@ -281,7 +281,7 @@ class DailyFeedbackService:
 		Returns:
 			List of DailyFeedback objects for the child
 		"""
-		from backEnd.app.models.daily_feedback_model import DailyFeedback
+		from app.models.daily_feedback_model import DailyFeedback
 		
 		try:
 			return DailyFeedback.query.filter_by(child_id=child_id).order_by(DailyFeedback.feedback_date.desc()).all()
@@ -298,7 +298,7 @@ class DailyFeedbackService:
 		Returns:
 			DailyFeedback object if found, None if not found or error
 		"""
-		from backEnd.app.models.daily_feedback_model import DailyFeedback
+		from app.models.daily_feedback_model import DailyFeedback
 		from datetime import datetime as dt
 		
 		try:
@@ -320,7 +320,7 @@ class DailyFeedbackService:
 		Returns:
 			Updated DailyFeedback object or None if not found or error
 		"""
-		from backEnd.app.models.daily_feedback_model import DailyFeedback
+		from app.models.daily_feedback_model import DailyFeedback
 		
 		try:
 			feedback = DailyFeedback.query.get(feedback_id)
@@ -347,7 +347,7 @@ class DailyFeedbackService:
 		Returns:
 			True if deleted successfully, False otherwise
 		"""
-		from backEnd.app.models.daily_feedback_model import DailyFeedback
+		from app.models.daily_feedback_model import DailyFeedback
 		
 		try:
 			feedback = DailyFeedback.query.get(feedback_id)

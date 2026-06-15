@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource
-from backEnd.app.api_models.user_api import get_user_models
+from app.api_models.user_api import get_user_models
 from app.services.user_service import UserService
 
 
