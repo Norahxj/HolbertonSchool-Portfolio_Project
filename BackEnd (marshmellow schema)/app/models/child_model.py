@@ -10,8 +10,8 @@ class Child(BaseModel):
     parent_id = Column(String(60), ForeignKey('users.id'), nullable=False)  
     full_name = Column(String(120), nullable=False) 
     date_of_birth = Column(DateTime, nullable=False) 
-    gender = Column(String(10), nullable=True)  
-    avatar_url = Column(String(255), nullable=True)  
+    gender = Column(String(10), nullable=True) # ليش سترينق  
+    avatar_url = Column(String(255), nullable=True)  # مايحتاج
     current_noor_points = Column(Integer, default=0)  
 
     # Define relationships to other models
@@ -25,7 +25,7 @@ class Child(BaseModel):
     def __repr__(self):
         return f'<Child {self.full_name}>'
     
-    def to_dict(self):
+    def to_dict(self): # الافضل بسيرفر 
         return {
             'id': self.id,
             'parent_id': self.parent_id,

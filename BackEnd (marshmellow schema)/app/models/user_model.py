@@ -7,10 +7,10 @@ from .base_model import BaseModel
 class User(BaseModel):
     __tablename__ = 'users'  
 
-    full_name = Column(String(120), nullable=False)
+    full_name = Column(String(120), nullable=False) #first and last name is better
     email = Column(String(120), unique=True, nullable=False)
     password_hash = Column(String(128), nullable=False)
-    is_parent = Column(Boolean, default=True)  
+    is_parent = Column(Boolean, default=True)  # الخيار يعطي الاهل صالحيه انه ممكن يصير ادمن 
     
     # Define relationships to other models
     children = relationship('Child', back_populates='parent', lazy=True)
@@ -23,7 +23,7 @@ class User(BaseModel):
         return f'<User {self.email}>'
 
     # Convert the object to a dictionary
-    def to_dict(self):
+    def to_dict(self): # الافضل يكون بسيرفر
         return {
             'id': self.id,
             'full_name': self.full_name,

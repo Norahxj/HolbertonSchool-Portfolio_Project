@@ -10,7 +10,7 @@ Base = declarative_base()
 class BaseModel(Base):
     __abstract__ = True
 # Unique identifier for each record
-    id = Column(String(60), primary_key=True, nullable=False)
+    id = Column(String(60), primary_key=True, nullable=False) #uuid
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 

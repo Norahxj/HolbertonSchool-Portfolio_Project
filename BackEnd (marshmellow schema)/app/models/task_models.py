@@ -7,11 +7,12 @@ from .base_model import BaseModel
 # Define the TaskCategory model
 class TaskCategory(BaseModel):
     __tablename__ = 'task_categories'  
-
-    name_en = Column(String(100), unique=True, nullable=False)  # English name of the category.
+# ليش تحطين خيار عربي وانجليزي
+    name_en = Column(String(100), unique=True, nullable=False)  # English name of the category. 
     name_ar = Column(String(100), unique=True, nullable=False)  # Arabic name of the category.
     description_en = Column(Text, nullable=True)
     description_ar = Column(Text, nullable=True)
+    # المفروض يكون اختياراتي 
 
     # Define relationships
     suggested_tasks = relationship('SuggestedTask', back_populates='category', lazy=True)
@@ -41,7 +42,7 @@ class SuggestedTask(BaseModel):
     name_ar = Column(String(255), nullable=False)
     description_en = Column(Text, nullable=True)
     description_ar = Column(Text, nullable=True)
-    min_age = Column(Integer, default=6) 
+    min_age = Column(Integer, default=6) # وشدخل العمر 
     max_age = Column(Integer, default=16)
     default_points = Column(Integer, default=10)
     category = relationship('TaskCategory', back_populates='suggested_tasks') 

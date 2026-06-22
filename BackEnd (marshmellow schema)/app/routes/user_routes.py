@@ -10,7 +10,7 @@ user_bp = Blueprint("user", __name__, url_prefix="/users")
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
-@user_bp.route("/<string:user_id>", methods=["GET"])
+@user_bp.route("/<string:user_id>", methods=["GET"]) #change the way of the routes
 @jwt_required()
 def get_user(user_id):
     """Get user details by ID."""
