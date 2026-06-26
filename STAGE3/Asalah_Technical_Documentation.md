@@ -13,47 +13,36 @@ This technical documentation translates the project objectives and requirements 
 The goal of this document is to provide a clear blueprint for building the Asalah MVP and to align the team on the project’s technical direction.
 
 ---
-
 ## 2. MVP Scope
 
-The MVP will include two main interfaces:
+The MVP is designed to provide a core functional loop for parents and children to manage tasks, Noor Points, the Wishlist, and rewards. It consists of two primary interfaces:
 
-* Parent Interface
-* Child Interface
+### 2.1 Parent Interface Features
+*   **Authentication:** Register and secure login.
+*   **Child Management:** Create and manage child profiles.
+*   **Task Management:** Create, assign, and track tasks.
+*   **Point System:** Assign specific Noor Points to individual tasks.
+*   **Task Review:** Review, approve, or reject completed tasks.
+*   **Reward Management:** Create and manage weekly rewards available for the child.
+*   **Progress Tracking:** View and monitor individual child progress.
 
-### Parent MVP Features
+### 2.2 Child Interface Features
+*   **Dashboard:** View assigned tasks.
+*   **Interaction:** Mark tasks as completed to trigger parent review.
+*   **Balance:** View current Noor Points balance.
+*   **Wishlist:** Manage the list of desired items/wishes the child is collecting points for.
+*   **Rewards:** View available rewards set by the parents.
+*   **Progress:** Track personal task completion and point accumulation.
 
-* Register and log in
-* Create and manage child profiles
-* Create and assign tasks
-* Assign Noor Points to tasks
-* Review completed tasks
-* Approve or reject completed tasks
-* Create and manage rewards
-* Approve or reject reward redemption requests
-* Track child progress
-
-### Child MVP Features
-
-* View assigned tasks
-* Mark tasks as completed
-* View Noor Points balance
-* View available rewards
-* Request reward redemption
-* Track basic progress
-
-### Features Not Included in MVP
-
-The following features may be considered in future versions but are not required for the MVP:
-
-* AI-generated task suggestions
-* Push notifications
-* Advanced badges and achievements
-* Family challenges
-* Advanced analytics
-* Avatar customization
-* Payment integration
-
+### 2.3 Features Out of Scope (Future Versions)
+To ensure the MVP is completed within the project timeline, the following features are reserved for future updates:
+*   **AI:** AI-generated task suggestions.
+*   **Communication:** Push notifications.
+*   **Gamification:** Advanced badges and complex achievements.
+*   **Social:** Family challenges.
+*   **Analytics:** Advanced behavioral analytics.
+*   **Personalization:** Avatar customization.
+*   **Financial:** Real-money payment integration.
 ---
 
 ## 3. User Stories and Mockups
@@ -65,14 +54,12 @@ The purpose of this section is to define the main MVP features from the user’s
 Since Asalah includes a mobile user interface, mockups will be created for the main screens to visualize the user experience before implementation.
 
 ---
-
 ## 3.2 User Types
 
-| User Type | Description                                                                                            |
-| --------- | ------------------------------------------------------------------------------------------------------ |
-| Parent    | The main account owner who manages children, tasks, rewards, approvals, and progress.                  |
-| Child     | The user who views tasks, completes tasks, earns Noor Points, views rewards, and requests redemptions. |
-
+| User Type | Description |
+| --------- | ----------- |
+| **Parent** | The administrator of the account. Responsible for managing child profiles, defining tasks with assigned Noor Points, approving task completions, creating reward pools, and monitoring overall behavioral progress. |
+| **Child** | The end-user who interacts with the task list, marks tasks as completed, tracks their accumulated Noor Points, maintains a personalized "Wishlist," and views available rewards to work toward. |
 ---
 
 ## 3.3 Prioritized User Stories
@@ -85,61 +72,71 @@ The user stories are prioritized using the MoSCoW method:
 * **Won’t Have:** Not planned for the MVP.
 
 ---
+## 1. Must Have User Stories
 
-### Must Have User Stories
-
-| Priority  | User Story                                                                                                          |
-| --------- | ------------------------------------------------------------------------------------------------------------------- |
-| Must Have | As a parent, I want to create an account, so that I can manage my family’s financial learning experience.           |
-| Must Have | As a parent, I want to log in securely, so that I can access my family dashboard.                                   |
-| Must Have | As a parent, I want to create child profiles, so that each child can have their own tasks, points, and progress.    |
-| Must Have | As a parent, I want to create tasks for my children, so that I can encourage responsible habits and learning.       |
-| Must Have | As a parent, I want to assign Noor Points to each task, so that children understand the value of effort and reward. |
-| Must Have | As a child, I want to view my assigned tasks, so that I know what I need to complete.                               |
-| Must Have | As a child, I want to mark a task as completed, so that my parent can review it.                                    |
-| Must Have | As a parent, I want to approve or reject completed tasks, so that Noor Points are only awarded after confirmation.  |
-| Must Have | As a child, I want to earn Noor Points after completing approved tasks, so that I feel motivated to continue.       |
-| Must Have | As a parent, I want to create rewards, so that children have meaningful goals to work toward.                       |
-| Must Have | As a child, I want to view available rewards, so that I can choose what I want to redeem.                           |
-| Must Have | As a child, I want to request a reward using my Noor Points, so that I can exchange progress for a reward.          |
-| Must Have | As a parent, I want to approve or reject reward redemption requests, so that I can manage the reward process.       |
-
----
-
-### Should Have User Stories
-
-| Priority    | User Story                                                                                                                  |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Should Have | As a parent, I want to view each child’s progress, so that I can understand their activity and improvement.                 |
-| Should Have | As a child, I want to see my Noor Points balance, so that I can track how close I am to a reward.                           |
-| Should Have | As a child, I want to see my completed tasks, so that I can feel proud of my progress.                                      |
-| Should Have | As a parent, I want to edit or delete tasks, so that I can update responsibilities when needed.                             |
-| Should Have | As a parent, I want to edit or delete rewards, so that I can manage reward options easily.                                  |
-| Should Have | As a user, I want the application to support Arabic as the primary language, so that Saudi families can use it comfortably. |
+| Priority | User Story |
+| :--- | :--- |
+| **Must Have** | As a parent, I want to create a master account and add multiple child accounts (with email and password), so that each child has their own profile. |
+| **Must Have** | As a parent, I want to receive a verification code on my device when my child logs in, so that I can approve their access and secure the application. |
+| **Must Have** | As a child, I want to log in using the email and password my parents made for me and wait for their verification, so that I can access my screen safely. |
+| **Must Have** | As a child, I want to see only my assigned tasks on my screen, so that I know exactly what I need to do. |
+| **Must Have** | As a parent, I want to categorize tasks into Financial, Religious, and Daily lists, so that I can teach my child financial sense and the value of things. |
+| **Must Have** | As a parent, I want to set the task frequency to daily, weekly, or just once a day, so that I can customize the routine for my child. |
+| **Must Have** | As a child, I want to click "I completed the task" so that it goes to a "Pending" status, instead of giving me points right away. |
+| **Must Have** | As a parent, I want to review the tasks my child marked as completed, so that I can click "Yes" and change its status to Completed. |
+| **Must Have** | As a parent, I want an "Automatic Approval" option when creating a task, so that it skips the Pending status and gives points automatically. |
+| **Must Have** | As a parent, I want to provide feedback using Emojis and a side comment box after confirming a task, so that I can motivate my child. |
+| **Must Have** | As a child, I want to receive Noor Points instantly into my dashboard after parent approval, so that I can see my balance grow. |
+| **Must Have** | As a child, I want to put exactly 5 wishes in my Wishlist, so that I can save my Noor Points to buy them. |
+| **Must Have** | As a parent, I want to review my child's 5 wishes and approve between 1 and 3, so that I can control achievable goals. |
+| **Must Have** | As a parent, I want to set a goal (e.g., 5,000 points) for the wishlist, so that I can teach my child commitment. |
+| **Must Have** | As a child, I want to view available rewards every Thursday under 5 categories, regardless of parent approval status. |
+| **Must Have** | As a parent, I want to choose from 5 system reward categories or write a custom reward, so that I can tailor the incentive. |
+| **Must Have** | As a parent, I want to approve or deny the weekly reward based on my child's consistency, so that I can teach commitment. |
+| **Must Have** | As a user, I want full support for the Arabic language, so that Saudi families can use the app comfortably. |
+| **Must Have** | As a parent, I want to view each child’s progress history, so that I can understand their development. |
+| **Must Have** | As a child, I want to see my total Noor Points balance, so that I can track my progress toward rewards. |
+| **Must Have** | As a child, I want to view my previously completed tasks, so that I can feel proud of my achievements. |
+| **Must Have** | As a parent, I want to edit or delete tasks, so that I can manage responsibilities when circumstances change. |
+| **Must Have** | As a parent, I want to edit or delete rewards, so that I can manage incentives easily. |
+| **Must Have** | As a child, I want to see a "Progress Star" for Noor Points, so that I can visually track my growth. |
+| **Must Have** | As a user, I want to switch between Arabic and English languages, so that I have flexible usage options. |
 
 ---
 
-### Could Have User Stories
+## 2. Should Have User Stories
 
-| Priority   | User Story                                                                                                                  |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Could Have | As a child, I want to see a progress star for Noor Points, so that I can visually understand my growth.                     |
-| Could Have | As a parent, I want to receive notifications when a task is completed, so that I can review it quickly.                     |
-| Could Have | As a user, I want to switch between Arabic and English, so that the application can support different language preferences. |
-| Could Have | As a parent, I want to create recurring tasks, so that I do not need to repeat the same task manually.                      |
+| Priority | User Story |
+| :--- | :--- |
+| **Should Have** | As a parent, I want to receive in-app notifications when a task is completed, so that I can review it promptly. |
+| **Should Have** | As a parent, I want to view simple weekly performance statistics, so that I can identify the most consistent tasks. |
+| **Should Have** | As a child, I want to see a progress bar for each wish, so that I know how many points I need to reach my goal. |
+| **Should Have** | As a parent, I want an option to "Freeze Points," so that I can temporarily stop rewards if needed. |
+| **Should Have** | As a user, I want a "Dark Mode" option, so that I can reduce eye strain during evening use. |
+| **Should Have** | As a parent, I want to receive short weekly financial education tips, so that I can better guide my child. |
 
 ---
 
-### Won’t Have for MVP
+## 3. Could Have User Stories
 
-| Priority   | User Story                                                                                           |
-| ---------- | ---------------------------------------------------------------------------------------------------- |
-| Won’t Have | As a parent, I want AI-generated task suggestions, so that I can receive automatic task ideas.       |
-| Won’t Have | As a family, I want to join family challenges, so that multiple children can compete or collaborate. |
-| Won’t Have | As a parent, I want advanced analytics reports, so that I can study long-term behavior trends.       |
-| Won’t Have | As a child, I want to customize my avatar, so that I can personalize my profile.                     |
-| Won’t Have | As a user, I want push notifications, so that I can receive updates outside the app.                 |
+| Priority | User Story |
+| :--- | :--- |
+| **Could Have** | As a parent, I want to export child performance reports (PDF), so that I can print or share them. |
+| **Could Have** | As a parent, I want to create "Bonus Tasks" with double points, so that I can motivate my child for special efforts. |
+| **Could Have** | As a child, I want to earn "Achievement Badges" for streaks, so that I feel more engaged. |
+| **Could Have** | As a child, I want a "Forgot Password" feature via email, so that I can recover my account independently. |
 
+---
+
+## 4. Won’t Have for MVP
+
+| Priority | User Story |
+| :--- | :--- |
+| **Won’t Have** | As a parent, I want AI-generated task suggestions, so that I can receive automatic task ideas. |
+| **Won’t Have** | As a family, I want to join family challenges, so that multiple children can compete. |
+| **Won’t Have** | As a parent, I want advanced behavior analytics reports, so that I can study long-term trends. |
+| **Won’t Have** | As a child, I want to customize my avatar, so that I can personalize my profile. |
+| **Won’t Have** | As a user, I want real-time Push Notifications outside the app, so that I stay updated. |
 ---
 
 ## 3.4 Mockups
@@ -189,98 +186,8 @@ Asalah will use a **client-server architecture**. The Flutter mobile application
 ---
 
 ## 4.2 High-Level System Architecture Diagram
-
-```mermaid
-flowchart LR
-    subgraph Users["Users"]
-        Parent["Parent User"]
-        Child["Child User"]
-    end
-
-    subgraph Frontend["Frontend Layer<br/>Flutter Mobile App"]
-        ParentUI["Parent Interface<br/>Dashboard, Child Profiles, Tasks, Rewards"]
-        ChildUI["Child Interface<br/>Dashboard, Assigned Tasks, Noor Points, Rewards"]
-        SharedUI["Shared Screens<br/>Welcome, Login, Register"]
-        APIClient["API Client<br/>JSON Requests and Responses"]
-    end
-
-    subgraph Backend["Backend Layer<br/>Python Flask API"]
-        AuthAPI["Authentication API<br/>Register / Login"]
-        ChildrenAPI["Children API<br/>Child Profile Management"]
-        TasksAPI["Tasks API<br/>Create, Complete, Approve, Reject"]
-        RewardsAPI["Rewards API<br/>Rewards and Redemptions"]
-        PointsAPI["Noor Points API<br/>Balance, History, Progress"]
-    end
-
-    subgraph Logic["Business Logic Layer"]
-        AuthLogic["Authentication Logic"]
-        ChildLogic["Child Profile Logic"]
-        TaskLogic["Task Workflow Logic"]
-        RewardLogic["Reward Redemption Logic"]
-        PointsLogic["Noor Points Calculation Logic"]
-    end
-
-    subgraph Data["Data Access Layer"]
-        ORM["Flask-SQLAlchemy ORM"]
-        Models["Backend Models<br/>User, Child, Task, Reward, Redemption, NoorPointsTransaction"]
-    end
-
-    subgraph DB["Database Layer<br/>Relational Database"]
-        UsersTable[("users")]
-        ChildrenTable[("children")]
-        TasksTable[("tasks")]
-        RewardsTable[("rewards")]
-        RedemptionsTable[("redemptions")]
-        TransactionsTable[("noor_points_transactions")]
-    end
-
-    subgraph Future["Future External Services<br/>Not Required for MVP"]
-        Email["Email Service"]
-        Notifications["Push Notifications"]
-        AI["AI Task Suggestions"]
-        Storage["Cloud Storage"]
-    end
-
-    Parent --> ParentUI
-    Child --> ChildUI
-
-    ParentUI --> APIClient
-    ChildUI --> APIClient
-    SharedUI --> APIClient
-
-    APIClient -->|"HTTPS REST API<br/>JSON"| AuthAPI
-    APIClient -->|"HTTPS REST API<br/>JSON"| ChildrenAPI
-    APIClient -->|"HTTPS REST API<br/>JSON"| TasksAPI
-    APIClient -->|"HTTPS REST API<br/>JSON"| RewardsAPI
-    APIClient -->|"HTTPS REST API<br/>JSON"| PointsAPI
-
-    AuthAPI --> AuthLogic
-    ChildrenAPI --> ChildLogic
-    TasksAPI --> TaskLogic
-    RewardsAPI --> RewardLogic
-    PointsAPI --> PointsLogic
-
-    AuthLogic --> ORM
-    ChildLogic --> ORM
-    TaskLogic --> ORM
-    RewardLogic --> ORM
-    PointsLogic --> ORM
-
-    ORM --> Models
-
-    Models --> UsersTable
-    Models --> ChildrenTable
-    Models --> TasksTable
-    Models --> RewardsTable
-    Models --> RedemptionsTable
-    Models --> TransactionsTable
-
-    AuthAPI -. "Future integration" .-> Email
-    TasksAPI -. "Future integration" .-> Notifications
-    RewardsAPI -. "Future integration" .-> Notifications
-    TasksAPI -. "Future integration" .-> AI
-    ParentUI -. "Future integration" .-> Storage
-```
+ 
+ here will be a digram 
 
 ---
 
@@ -320,271 +227,151 @@ The purpose of this section is to define the internal structure of the Asalah MV
 
 ---
 
-## 5.2 Frontend Components
+### 5.2 Frontend Components
 
-The frontend will be developed using Flutter. It will include shared screens, parent-specific screens, and child-specific screens.
+| Component | Description |
+| :--- | :--- |
+| **WelcomeScreen** | Introduces the application and provides main entry points. |
+| **LoginScreen** | Handles login for both Parent (using parent credentials) and Child (using child email and password via the "I am a Child" option). |
+| **RegisterScreen** | Handles parent account registration. |
+| **ParentDashboard** | Overview of all children, pending task reviews, and household progress. |
+| **ChildProfilesScreen** | Lists and manages child profiles linked to the parent account. |
+| **CreateChildProfileScreen** | Form for the parent to create a child profile (including setting the child's unique email and password). |
+| **TaskManagementScreen** | Displays active tasks, status, and assignment oversight. |
+| **CreateTaskScreen** | Form to create tasks, set Noor Points, and define approval requirements. |
+| **TaskReviewScreen** | Allows parents to approve/reject tasks by reviewing daily feedback (emoji/comment). |
+| **RewardManagementScreen** | Displays and manages the rewards set by the parents. |
+| **CreateRewardScreen** | Form for parents to add new rewards to the rewards pool. |
+| **ChildDashboard** | Main interface for the child showing Noor Points balance, active tasks, and quick stats. |
+| **AssignedTasksScreen** | List of current tasks assigned to the child with the ability to mark them as completed. |
+| **WishlistScreen** | Dedicated screen for the child to add, manage, and track progress toward their personal wishlist items. |
+| **NoorPointsScreen** | Detailed view of point accumulation history. |
+| **RewardsStoreScreen** | Displays available rewards set by the parent; allows the child to request redemptions. |
+| **ProgressScreen** | Visual tracking of task completion and behavioral progress over time. |
+---
+## 5.3 Backend Classes
 
-| Component                | Description                                |
-| ------------------------ | ------------------------------------------ |
-| WelcomeScreen            | Introduces the application.                |
-| LoginScreen              | Handles parent login.                      |
-| RegisterScreen           | Handles parent registration.               |
-| ParentDashboard          | Shows parent overview.                     |
-| ChildProfilesScreen      | Displays and manages child profiles.       |
-| CreateChildProfileScreen | Allows parent to create a child profile.   |
-| TaskManagementScreen     | Displays and manages tasks.                |
-| CreateTaskScreen         | Allows parent to create tasks.             |
-| TaskReviewScreen         | Allows parent to approve or reject tasks.  |
-| RewardManagementScreen   | Displays and manages rewards.              |
-| CreateRewardScreen       | Allows parent to create rewards.           |
-| ChildDashboard           | Shows child tasks, points, and rewards.    |
-| AssignedTasksScreen      | Displays assigned tasks.                   |
-| TaskDetailsScreen        | Shows task details.                        |
-| NoorPointsScreen         | Displays points balance and history.       |
-| RewardsStoreScreen       | Displays available rewards.                |
-| RewardRequestScreen      | Allows child to request reward redemption. |
-| ProgressScreen           | Shows child progress.                      |
+The backend is developed using Python Flask and Flask-SQLAlchemy. All core business objects inherit from the `BaseModel` to ensure consistency and maintain audit trails.
+
+### BaseModel (Abstract)
+The foundation for all entities, providing standard metadata.
+
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| id | UUID | Unique identifier. |
+| createdAt | DateTime | Timestamp of creation. |
+| updatedAt | DateTime | Timestamp of the last update. |
 
 ---
 
-## 5.3 Backend Classes
-
-The backend will be developed using Python Flask and Flask-SQLAlchemy. The main backend classes will represent the core business objects in the application.
-
 ### User Class
+Represents the parent account responsible for managing the system.
 
-The `User` class represents the parent account.
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| firstName | String | Parent's first name. |
+| lastName | String | Parent's last name. |
+| email | String | Email address (login identifier). |
+| hash_password | String | Encrypted password. |
+| isActive | Boolean | Account active status. |
 
-| Attribute     | Type     | Description                 |
-| ------------- | -------- | --------------------------- |
-| id            | Integer  | Unique user ID.             |
-| full_name     | String   | Parent full name.           |
-| email         | String   | Parent email address.       |
-| password_hash | String   | Hashed password.            |
-| role          | String   | User role, default: parent. |
-| created_at    | DateTime | Account creation date.      |
-| updated_at    | DateTime | Last update date.           |
-
-| Method                   | Description                                           |
-| ------------------------ | ----------------------------------------------------- |
-| set_password(password)   | Hashes and stores the password.                       |
-| check_password(password) | Validates entered password against the password hash. |
-| to_dict()                | Converts user object to dictionary format.            |
+* **Methods**: `createChild()`, `createTask()`, `approveTask()`, `sendFeedback()`, `createReward()`.
 
 ---
 
 ### Child Class
+Represents a child profile linked to a parent.
 
-The `Child` class represents a child profile created by a parent.
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| parentId | UUID | Foreign key referencing the User. |
+| firstName | String | Child's first name. |
+| lastName | String | Child's last name. |
+| email | String | Child's login email. |
+| hash_password | String | Encrypted password. |
+| totalPoints | Integer | Accumulated "Noor Points" balance. |
 
-| Attribute      | Type     | Description                  |
-| -------------- | -------- | ---------------------------- |
-| id             | Integer  | Unique child ID.             |
-| parent_id      | Integer  | Foreign key linked to user.  |
-| name           | String   | Child name.                  |
-| age            | Integer  | Child age.                   |
-| avatar         | String   | Optional avatar reference.   |
-| points_balance | Integer  | Current Noor Points balance. |
-| created_at     | DateTime | Profile creation date.       |
-| updated_at     | DateTime | Last update date.            |
-
-| Method                | Description                                  |
-| --------------------- | -------------------------------------------- |
-| add_points(points)    | Adds Noor Points to the child balance.       |
-| deduct_points(points) | Deducts Noor Points after reward redemption. |
-| to_dict()             | Converts child object to dictionary format.  |
+* **Methods**: `viewTasks()`, `completeTask()`, `viewWishlist()`, `viewRewards()`.
 
 ---
 
 ### Task Class
+Represents tasks assigned to a child by the parent.
 
-The `Task` class represents a task created by a parent and assigned to a child.
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| childId | UUID | Foreign key referencing the Child. |
+| title | String | Task title. |
+| description | String | Task description. |
+| category | String | Task category. |
+| points | Integer | Assigned Noor Points. |
+| status | String | Current task status. |
+| frequency | String | Task recurrence frequency. |
+| requiresApproval | Boolean | Indicates if parent approval is needed. |
 
-| Attribute    | Type     | Description                                |
-| ------------ | -------- | ------------------------------------------ |
-| id           | Integer  | Unique task ID.                            |
-| parent_id    | Integer  | Foreign key linked to user.                |
-| child_id     | Integer  | Foreign key linked to child.               |
-| title        | String   | Task title.                                |
-| description  | Text     | Task description.                          |
-| points_value | Integer  | Noor Points assigned to the task.          |
-| status       | String   | pending, completed, approved, or rejected. |
-| due_date     | DateTime | Optional due date.                         |
-| created_at   | DateTime | Task creation date.                        |
-| updated_at   | DateTime | Last update date.                          |
+* **Methods**: `complete()`, `approve()`.
 
-| Method           | Description                                |
-| ---------------- | ------------------------------------------ |
-| mark_completed() | Updates task status to completed.          |
-| approve_task()   | Updates task status to approved.           |
-| reject_task()    | Updates task status to rejected.           |
-| to_dict()        | Converts task object to dictionary format. |
+---
+
+### DailyFeedback Class
+Stores feedback linked to a specific completed task.
+
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| taskId | UUID | Foreign key referencing the Task. |
+| emoji | String | Visual feedback indicator. |
+| comment | String | Detailed feedback text. |
+
+* **Methods**: `addFeedback()`.
+
+---
+
+### Wishlist Class
+Manages the items a child wishes to obtain with points.
+
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| childId | UUID | Foreign key referencing the Child. |
+| itemName | String | Name of the desired item. |
+| targetPoints | Integer | Points required for the item. |
+| status | String | Current status of the wish. |
+
+* **Methods**: `addItem()`, `removeItem()`.
 
 ---
 
 ### Reward Class
+Defines the rewards created by parents for children.
 
-The `Reward` class represents a reward created by a parent.
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| childId | UUID | Foreign key referencing the Child. |
+| title | String | Reward title. |
+| category | String | Reward category. |
+| source | String | Source or provider of the reward. |
+| status | String | Reward availability status. |
 
-| Attribute       | Type     | Description                                |
-| --------------- | -------- | ------------------------------------------ |
-| id              | Integer  | Unique reward ID.                          |
-| parent_id       | Integer  | Foreign key linked to user.                |
-| title           | String   | Reward title.                              |
-| description     | Text     | Reward description.                        |
-| points_required | Integer  | Noor Points required to redeem the reward. |
-| is_available    | Boolean  | Reward availability status.                |
-| created_at      | DateTime | Reward creation date.                      |
-| updated_at      | DateTime | Last update date.                          |
-
-| Method              | Description                                  |
-| ------------------- | -------------------------------------------- |
-| activate_reward()   | Makes reward available.                      |
-| deactivate_reward() | Makes reward unavailable.                    |
-| to_dict()           | Converts reward object to dictionary format. |
-
----
-
-### Redemption Class
-
-The `Redemption` class represents a child’s request to redeem a reward.
-
-| Attribute  | Type     | Description                       |
-| ---------- | -------- | --------------------------------- |
-| id         | Integer  | Unique redemption ID.             |
-| child_id   | Integer  | Foreign key linked to child.      |
-| reward_id  | Integer  | Foreign key linked to reward.     |
-| status     | String   | requested, approved, or rejected. |
-| created_at | DateTime | Request creation date.            |
-| updated_at | DateTime | Last update date.                 |
-
-| Method               | Description                                      |
-| -------------------- | ------------------------------------------------ |
-| approve_redemption() | Approves the reward redemption.                  |
-| reject_redemption()  | Rejects the reward redemption.                   |
-| to_dict()            | Converts redemption object to dictionary format. |
-
----
-
-### NoorPointsTransaction Class
-
-The `NoorPointsTransaction` class stores the history of earned, redeemed, or adjusted Noor Points.
-
-| Attribute        | Type     | Description                            |
-| ---------------- | -------- | -------------------------------------- |
-| id               | Integer  | Unique transaction ID.                 |
-| child_id         | Integer  | Foreign key linked to child.           |
-| task_id          | Integer  | Optional foreign key linked to task.   |
-| reward_id        | Integer  | Optional foreign key linked to reward. |
-| points           | Integer  | Number of points added or deducted.    |
-| transaction_type | String   | earned, redeemed, or adjusted.         |
-| created_at       | DateTime | Transaction creation date.             |
-
-| Method                        | Description                                       |
-| ----------------------------- | ------------------------------------------------- |
-| create_earned_transaction()   | Records points earned from an approved task.      |
-| create_redeemed_transaction() | Records points deducted after reward redemption.  |
-| to_dict()                     | Converts transaction object to dictionary format. |
+* **Methods**: `create()`, `approve()`.
 
 ---
 
 ## 5.4 Database Design
 
-Asalah will use a relational database because the MVP includes structured data with clear relationships between parents, children, tasks, rewards, redemptions, and Noor Points.
+The system utilizes a relational database structure to maintain integrity between all entities defined in the class diagram.
 
-### Database Tables
-
-| Table                    | Purpose                                            |
-| ------------------------ | -------------------------------------------------- |
-| users                    | Stores parent account information.                 |
-| children                 | Stores child profiles.                             |
-| tasks                    | Stores assigned tasks and task statuses.           |
-| rewards                  | Stores rewards created by parents.                 |
-| redemptions              | Stores child reward redemption requests.           |
-| noor_points_transactions | Stores history of earned and redeemed Noor Points. |
-
+| Table | Purpose |
+| :--- | :--- |
+| Users | Stores parent account details and system management. |
+| Children | Stores child profile data and point balances. |
+| Tasks | Manages task assignments and completion statuses. |
+| Wishlist | Tracks child goals and target points. |
+| Rewards | Stores available reward items. |
+| DailyFeedback | Links qualitative feedback to completed tasks. |
 ---
 
 ## 5.5 ER Diagram
-
-```mermaid
-erDiagram
-    USERS ||--o{ CHILDREN : owns
-    USERS ||--o{ TASKS : creates
-    USERS ||--o{ REWARDS : creates
-
-    CHILDREN ||--o{ TASKS : receives
-    CHILDREN ||--o{ REDEMPTIONS : requests
-    REWARDS ||--o{ REDEMPTIONS : is_requested_for
-
-    CHILDREN ||--o{ NOOR_POINTS_TRANSACTIONS : has
-    TASKS ||--o| NOOR_POINTS_TRANSACTIONS : may_generate
-    REWARDS ||--o{ NOOR_POINTS_TRANSACTIONS : may_generate
-
-    USERS {
-        int id PK
-        string full_name
-        string email UK
-        string password_hash
-        string role
-        datetime created_at
-        datetime updated_at
-    }
-
-    CHILDREN {
-        int id PK
-        int parent_id FK
-        string name
-        int age
-        string avatar
-        int points_balance
-        datetime created_at
-        datetime updated_at
-    }
-
-    TASKS {
-        int id PK
-        int parent_id FK
-        int child_id FK
-        string title
-        text description
-        int points_value
-        string status
-        datetime due_date
-        datetime created_at
-        datetime updated_at
-    }
-
-    REWARDS {
-        int id PK
-        int parent_id FK
-        string title
-        text description
-        int points_required
-        boolean is_available
-        datetime created_at
-        datetime updated_at
-    }
-
-    REDEMPTIONS {
-        int id PK
-        int child_id FK
-        int reward_id FK
-        string status
-        datetime created_at
-        datetime updated_at
-    }
-
-    NOOR_POINTS_TRANSACTIONS {
-        int id PK
-        int child_id FK
-        int task_id FK
-        int reward_id FK
-        int points
-        string transaction_type
-        datetime created_at
-    }
-```
+ 
+ here will be degram
 
 ---
 
@@ -600,24 +387,24 @@ The `noor_points_transactions` table is separated from the `children` table beca
 
 ### 6.1 Purpose
 
-The purpose of this section is to show how components interact during key Asalah MVP use cases.
+The purpose of this section is to illustrate how the application components interact during key Asalah MVP use cases, ensuring a seamless flow between parents, children, and the backend infrastructure.
 
-The sequence diagrams include the following components:
+The sequence diagrams involve the following components:
 
-| Component   | Description                        |
-| ----------- | ---------------------------------- |
-| Parent      | Parent user using the application. |
-| Child       | Child user using the application.  |
-| Flutter App | Mobile frontend.                   |
-| Flask API   | Backend server.                    |
-| Database    | Data storage layer.                |
+| Component | Description |
+| :--- | :--- |
+| **Parent** | The parent user managing the account and household. |
+| **Child** | The child user interacting with assigned tasks and rewards. |
+| **Flutter App** | The cross-platform mobile frontend. |
+| **Flask API** | The backend server handling business logic and authentication. |
+| **Database** | The persistent storage layer (SQLAlchemy models). |
 
-The key interactions selected are:
+The key interaction scenarios selected are:
 
-1. Parent login
-2. Parent creates a task
-3. Child completes a task and parent approves it
-4. Child requests reward redemption
+1. **User Authentication:** Unified login flow for both Parent and Child accounts.
+2. **Task Creation:** Parent defines a task, assigns points, and sets approval requirements.
+3. **Task Lifecycle:** Child completes a task, provides daily feedback, and Parent performs approval.
+4. **Reward Redemption:** Child requests reward redemption based on accumulated Noor Points.
 
 ---
 
@@ -648,7 +435,41 @@ sequenceDiagram
 ```
 
 ---
+## 6.3 chaild Login Sequence Diagram
 
+```mermaid
+sequenceDiagram
+    title Use Case: Child Login
+
+    actor Child
+    actor Parent
+    participant FlutterApp as Flutter App
+    participant FlaskAPI as Flask API
+    participant Database as Database
+
+    Child->>FlutterApp: Select "I am a Child"
+    Child->>FlutterApp: Enter email and password
+    FlutterApp->>FlaskAPI: POST /api/child-login
+
+    FlaskAPI->>Database: Find child by email
+    Database-->>FlaskAPI: Return child record
+
+    alt Valid credentials
+        FlaskAPI->>FlaskAPI: Verify password hash
+        FlaskAPI-->>Parent: Send verification request
+
+        Parent->>FlutterApp: Approve child login
+        FlutterApp->>FlaskAPI: Confirm approval
+
+        FlaskAPI-->>FlutterApp: 200 OK { child, token }
+        FlutterApp-->>Child: Redirect to Child Dashboard
+
+    else Invalid credentials
+        FlaskAPI-->>FlutterApp: 401 Unauthorized
+        FlutterApp-->>Child: Display login error
+    end
+```
+---
 ## 6.3 Parent Creates Task Sequence Diagram
 
 ```mermaid
@@ -682,7 +503,6 @@ sequenceDiagram
         FlutterApp-->>Parent: Display access error
     end
 ```
-
 ---
 
 ## 6.4 Child Completes Task and Parent Approves It Sequence Diagram
@@ -784,335 +604,186 @@ sequenceDiagram
 
 ## 6.6 Sequence Diagram Justification
 
-The selected sequence diagrams represent the most important MVP flows:
+The selected sequence diagrams illustrate the core MVP interactions of the **Asalah** system. These include:
 
-* Parent login
-* Task creation
-* Task completion and parent approval
-* Noor Points update
-* Reward redemption request
+- Parent authentication.
+- Task creation by the parent.
+- Task completion by the child and subsequent parent approval.
+- Automatic Noor Points update.
+- Weekly reward evaluation.
 
-These interactions are central to the value of Asalah because they connect task responsibility, parent confirmation, points, and rewards.
+These flows form the backbone of **Asalah's** value proposition because they tightly connect:
 
----
-
-## 7. External and Internal APIs
-
-### 7.1 Purpose
-
-The purpose of this section is to define how the Asalah system communicates with external services and how the frontend communicates with the backend through internal REST API endpoints.
+- **Responsibility** (Tasks)
+- **Accountability** (Parent Approval)
+- **Motivation** (Noor Points)
+- **Positive Reinforcement** (Weekly Rewards)
 
 ---
 
-## 7.2 External APIs
+## 7. Internal API Overview
 
-For the MVP version of Asalah, no external APIs are required.
+The Asalah application uses a RESTful API architecture to manage communication between the Flutter frontend and the Flask backend.
 
-The core MVP features can be implemented using the Flutter frontend, Flask backend, and relational database.
-
-Possible future external services include:
-
-| External API / Service    | Possible Use                                                    | MVP Status          |
-| ------------------------- | --------------------------------------------------------------- | ------------------- |
-| Email Service API         | Account verification and password reset.                        | Not included in MVP |
-| Push Notification Service | Notify parents when children complete tasks or request rewards. | Not included in MVP |
-| AI Service API            | Suggest age-appropriate tasks for children.                     | Not included in MVP |
-| Cloud Storage API         | Store child avatars or uploaded media.                          | Not included in MVP |
-| Payment API               | Not required because Noor Points are not real money.            | Not included in MVP |
+| Item | Format |
+| :--- | :--- |
+| **Protocol** | HTTPS |
+| **API Style** | REST |
+| **Request/Response** | JSON |
+| **Authentication** | Token-based (JWT) |
+| **Base URL** | `/api` |
 
 ---
 
-## 7.3 Internal API Overview
+## 7.1 Authentication Endpoints
 
-| Item            | Format                             |
-| --------------- | ---------------------------------- |
-| Protocol        | HTTP / HTTPS                       |
-| API Style       | REST                               |
-| Request Format  | JSON                               |
-| Response Format | JSON                               |
-| Authentication  | Token-based authentication planned |
-| Base URL        | `/api`                             |
+| Endpoint | Method | Purpose |
+| :--- | :--- | :--- |
+| `/api/register` | `POST` | Register parent account. |
+| `/api/login` | `POST` | Parent login (returns token). |
+| `/api/child-login` | `POST` | Child login (returns token). |
 
 ---
 
-## 7.4 Authentication Endpoints
+## 7.2 Child Profile Endpoints
 
-### Register Parent Account
+| Endpoint | Method | Purpose |
+| :--- | :--- | :--- |
+| `/api/children` | `GET` | List all children. |
+| `/api/children` | `POST` | Create a new child profile. |
+| `/api/children/<id>` | `GET` | Get specific child profile. |
+| `/api/children/<id>` | `PUT` | Update child profile details. |
+| `/api/children/<id>` | `DELETE` | Delete a child profile. |
 
-| Field         | Description                  |
-| ------------- | ---------------------------- |
-| URL Path      | `/api/register`              |
-| HTTP Method   | `POST`                       |
-| Purpose       | Create a new parent account. |
-| Input Format  | JSON                         |
-| Output Format | JSON                         |
+---
 
-Request body:
+## 7.3 Task & Feedback Endpoints
 
+| Endpoint | Method | Purpose |
+| :--- | :--- | :--- |
+| `/api/tasks` | `POST` | Create a new task. |
+| `/api/tasks` | `GET` | Get all tasks (filtered by child/parent). |
+| `/api/tasks/<id>` | `GET` | Get specific task details. |
+| `/api/tasks/<id>` | `PUT` | Update task. |
+| `/api/tasks/<id>` | `DELETE` | Delete task. |
+| `/api/tasks/<id>/complete` | `POST` | Child marks task as completed. |
+| `/api/tasks/<id>/feedback` | `POST` | Submit daily feedback (emoji/comment). |
+| `/api/tasks/<id>/approve` | `POST` | Parent approves task and awards points. |
+| `/api/tasks/<id>/reject` | `POST` | Parent rejects task. |
+
+### Example Feedback JSON
 ```json
 {
-  "full_name": "Parent User",
-  "email": "parent@example.com",
-  "password": "securePassword123"
+  "emoji": "🌟",
+  "comment": "Great job today!"
 }
+
 ```
-
-Success response:
-
-```json
-{
-  "message": "Account created successfully",
-  "user": {
-    "id": 1,
-    "full_name": "Parent User",
-    "email": "parent@example.com",
-    "role": "parent"
-  }
-}
-```
-
 ---
+# 7.4 Wishlist Endpoints
 
-### Login
+| Endpoint | Method | Purpose |
+| :--- | :---: | :--- |
+| `/api/wishlist` | `GET` | Retrieve the child's wishlist. |
+| `/api/wishlist` | `POST` | Add a new wishlist item. |
+| `/api/wishlist/<id>` | `PUT` | Update a wishlist item. |
+| `/api/wishlist/<id>` | `DELETE` | Remove a wishlist item. |
 
-| Field         | Description                                              |
-| ------------- | -------------------------------------------------------- |
-| URL Path      | `/api/login`                                             |
-| HTTP Method   | `POST`                                                   |
-| Purpose       | Authenticate a parent and allow access to the dashboard. |
-| Input Format  | JSON                                                     |
-| Output Format | JSON                                                     |
-
-Request body:
+## Example Wishlist Item JSON
 
 ```json
 {
-  "email": "parent@example.com",
-  "password": "securePassword123"
-}
-```
-
-Success response:
-
-```json
-{
-  "message": "Login successful",
-  "token": "example-auth-token",
-  "user": {
-    "id": 1,
-    "full_name": "Parent User",
-    "email": "parent@example.com",
-    "role": "parent"
-  }
+  "title": "New Coloring Book",
+  "cost_in_points": 120
 }
 ```
 
 ---
 
-## 7.5 Child Profile Endpoints
+# 7.5 Weekly Rewards Endpoints
 
-| Endpoint                   | Method | Purpose                                                        |
-| -------------------------- | ------ | -------------------------------------------------------------- |
-| `/api/children`            | GET    | Retrieve all child profiles connected to the logged-in parent. |
-| `/api/children`            | POST   | Create a new child profile.                                    |
-| `/api/children/<child_id>` | PUT    | Update a child profile.                                        |
-| `/api/children/<child_id>` | DELETE | Delete a child profile.                                        |
+*(No Redeem – No Points – Weekly Approval System)*
 
-Example create child request:
+## Weekly Rewards Logic
+
+- Rewards appear to the child every Thursday.
+- Rewards depend on task completion.
+- Parent decides whether to **Approve** or **Reject** the reward.
+- No redeeming process is required.
+- No points are deducted.
+- Points are only used for the Wishlist.
+
+## Endpoints
+
+| Endpoint | Method | Purpose |
+| :--- | :---: | :--- |
+| `/api/rewards/week` | `GET` | Get the current week's rewards for the child. |
+| `/api/rewards/generate` | `POST` | Generate weekly rewards (Thursday). |
+| `/api/rewards/<id>/approve` | `POST` | Parent approves the reward. |
+| `/api/rewards/<id>/reject` | `POST` | Parent rejects the reward. |
+
+## Example Weekly Reward JSON
 
 ```json
 {
-  "name": "Child User",
-  "age": 10,
-  "avatar": "star_avatar.png"
+  "reward_name": "Choose Friday Movie",
+  "description": "Child gets to pick the family movie.",
+  "week_start": "2026-06-25",
+  "week_end": "2026-07-01",
+  "status": "PENDING"
 }
 ```
 
-Example response:
+## Example Approve JSON
 
 ```json
 {
-  "message": "Child profile created successfully",
-  "child": {
-    "id": 1,
-    "name": "Child User",
-    "age": 10,
-    "avatar": "star_avatar.png",
-    "points_balance": 0
-  }
-}
-```
-
----
-
-## 7.6 Task Endpoints
-
-| Endpoint                        | Method | Purpose                                             |
-| ------------------------------- | ------ | --------------------------------------------------- |
-| `/api/tasks`                    | GET    | Retrieve tasks.                                     |
-| `/api/tasks`                    | POST   | Create a new task and assign it to a child.         |
-| `/api/tasks/<task_id>`          | PUT    | Update an existing task.                            |
-| `/api/tasks/<task_id>`          | DELETE | Delete a task.                                      |
-| `/api/tasks/<task_id>/complete` | POST   | Mark a task as completed.                           |
-| `/api/tasks/<task_id>/approve`  | POST   | Approve a completed task and add Noor Points.       |
-| `/api/tasks/<task_id>/reject`   | POST   | Reject a completed task without adding Noor Points. |
-
-Example create task request:
-
-```json
-{
-  "child_id": 1,
-  "title": "Organize study desk",
-  "description": "Clean and organize the study desk.",
-  "points_value": 10,
-  "due_date": "2026-06-30"
-}
-```
-
-Example response:
-
-```json
-{
-  "message": "Task created successfully",
-  "task": {
-    "id": 1,
-    "child_id": 1,
-    "title": "Organize study desk",
-    "description": "Clean and organize the study desk.",
-    "points_value": 10,
-    "status": "pending",
-    "due_date": "2026-06-30"
-  }
+  "status": "APPROVED",
+  "note": "Great job finishing all tasks this week!"
 }
 ```
 
 ---
 
-## 7.7 Reward and Redemption Endpoints
+# 7.6 Noor Points & Progress Endpoints
 
-| Endpoint                                   | Method | Purpose                     |
-| ------------------------------------------ | ------ | --------------------------- |
-| `/api/rewards`                             | GET    | Retrieve available rewards. |
-| `/api/rewards`                             | POST   | Create a new reward.        |
-| `/api/rewards/<reward_id>`                 | PUT    | Update reward details.      |
-| `/api/rewards/<reward_id>`                 | DELETE | Delete a reward.            |
-| `/api/rewards/<reward_id>/redeem`          | POST   | Request reward redemption.  |
-| `/api/redemptions/<redemption_id>/approve` | POST   | Approve reward redemption.  |
-| `/api/redemptions/<redemption_id>/reject`  | POST   | Reject reward redemption.   |
+| Endpoint | Method | Purpose |
+| :--- | :---: | :--- |
+| `/api/children/<id>/points` | `GET` | Get the child's current point balance. |
+| `/api/children/<id>/history` | `GET` | Get point transaction history. |
+| `/api/children/<id>/progress` | `GET` | Get weekly/monthly progress summary. |
 
-Example create reward request:
+## Example Points JSON
 
 ```json
 {
-  "title": "Family movie night",
-  "description": "Choose a movie for family night.",
-  "points_required": 50,
-  "is_available": true
-}
-```
-
-Example reward response:
-
-```json
-{
-  "message": "Reward created successfully",
-  "reward": {
-    "id": 1,
-    "title": "Family movie night",
-    "description": "Choose a movie for family night.",
-    "points_required": 50,
-    "is_available": true
-  }
+  "total_points": 340,
+  "earned_from_tasks": 300,
+  "earned_from_feedback": 40
 }
 ```
 
 ---
 
-## 7.8 Noor Points and Progress Endpoints
+# 7.7 Common Error Responses
 
-| Endpoint                                  | Method | Purpose                                         |
-| ----------------------------------------- | ------ | ----------------------------------------------- |
-| `/api/children/<child_id>/points`         | GET    | Retrieve a child’s current Noor Points balance. |
-| `/api/children/<child_id>/points/history` | GET    | Retrieve Noor Points transaction history.       |
-| `/api/children/<child_id>/progress`       | GET    | Retrieve a simple child progress summary.       |
-
-Example points response:
-
-```json
-{
-  "child_id": 1,
-  "points_balance": 130
-}
-```
-
-Example progress response:
-
-```json
-{
-  "child_id": 1,
-  "completed_tasks": 8,
-  "approved_tasks": 6,
-  "rejected_tasks": 2,
-  "points_balance": 130,
-  "redeemed_rewards": 1
-}
-```
+| Status Code | Description |
+| :---: | :--- |
+| `400` | Bad Request. |
+| `401` | Unauthorized. |
+| `403` | Forbidden. |
+| `404` | Not Found. |
+| `500` | Internal Server Error. |
 
 ---
 
-## 7.9 Common Error Responses
+# 7.8 API Design Justification
 
-Validation error:
+The API follows RESTful principles to ensure scalability, maintainability, and a clean architecture. JSON is used as the standard data format because it integrates seamlessly with Flutter applications. Authentication is secured using JWT to protect both parent and child sessions.
 
-```json
-{
-  "error": "Missing required fields"
-}
-```
+Unlike traditional reward systems, weekly rewards are not redeemed using points. Instead, they are automatically generated based on the child's completed tasks, and the parent simply approves or rejects them. This approach encourages positive behavior while avoiding a marketplace-style reward system.
 
-Unauthorized error:
-
-```json
-{
-  "error": "Authentication required"
-}
-```
-
-Forbidden error:
-
-```json
-{
-  "error": "You do not have permission to access this resource"
-}
-```
-
-Not found error:
-
-```json
-{
-  "error": "Resource not found"
-}
-```
-
-Server error:
-
-```json
-{
-  "error": "Internal server error"
-}
-```
-
----
-
-## 7.10 API Design Justification
-
-RESTful API design was selected because it provides a clear and organized way for the Flutter frontend to communicate with the Flask backend.
-
-JSON was selected because it is lightweight, readable, and commonly used in mobile applications.
-
-Swagger/OpenAPI will be used to document backend API endpoints and support API testing.
-
-External APIs are excluded from the MVP because the current version can deliver the main product value without third-party services.
+Points are reserved exclusively for the Wishlist feature, providing children with long-term motivation to consistently complete tasks and achieve their goals.
 
 ---
 
