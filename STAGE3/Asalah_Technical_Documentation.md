@@ -187,7 +187,7 @@ Asalah will use a **client-server architecture**. The Flutter mobile application
 
 ## 4.2 High-Level System Architecture Diagram
  
- here will be a digram 
+ ![alt text](<high Diagram.drawio.png>)
 
 ---
 
@@ -369,9 +369,9 @@ The system utilizes a relational database structure to maintain integrity betwee
 | DailyFeedback | Links qualitative feedback to completed tasks. |
 ---
 
-## 5.5 ER Diagram
- 
- here will be degram
+## 5.5 ER Digraam
+
+![alt text](ER-digraam.png) 
 
 ---
 
