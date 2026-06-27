@@ -6,6 +6,9 @@ from app.services.auth_service import AuthService
 from app.models.user_model import User
 from marshmallow import ValidationError
 from app.schemas import RegisterSchema, LoginSchema, UserResponseSchema
+from flask_jwt_extended import jwt_required, get_jwt
+from app.extensions import jwt_blocklist
+from app.models.revoked_token_model import RevokedToken
 
 
 api = Namespace("auth", description="Authentication operations")
@@ -77,3 +80,22 @@ class MeResource(Resource):
             return {"error": "User not found"}, 404
 
         return user_response_schema.dump(user), 200
+    
+
+
+@api.route("/logout")
+class Logout(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+
+        existing_token = RevokedToken.query.filter_by(jti=jti).first()
+
+        if not existing_token:
+            revoked_token = RevokedToken(jti=jti)
+            db.session.add(revoked_token)
+            db.session.commit()
+
+        return {
+            "message": "Logged out successfully"
+        }, 200
