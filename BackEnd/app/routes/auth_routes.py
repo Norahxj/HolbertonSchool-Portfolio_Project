@@ -4,10 +4,14 @@ from app.extensions import db
 from app.api_models.auth_api import get_auth_models
 from app.services.auth_service import AuthService
 from app.models.user_model import User
+from marshmallow import ValidationError
+from app.schemas import RegisterSchema, LoginSchema, UserResponseSchema
 
 
 api = Namespace("auth", description="Authentication operations")
-
+register_schema = RegisterSchema()
+login_schema = LoginSchema()
+user_response_schema = UserResponseSchema()
 auth_service = AuthService()
 register_model, login_model, token_model, user_response_model = get_auth_models(api)
 
@@ -18,23 +22,20 @@ class RegisterResource(Resource):
     @api.expect(register_model, validate=True)
     @api.response(201, "User registered successfully")
     @api.response(400, "Invalid input")
-    @api.response(400, "Email already registered")
+    @api.response(409, "Email already registered")
     def post(self):
-        user_data = api.payload
+        try:
+            data = register_schema.load(api.payload)
+        except ValidationError as err:
+            return {"errors": err.messages}, 400
 
-        user, error = auth_service.register(user_data)
+        user, error = auth_service.register(data)
 
         if error:
             status_code = 409 if error == "Email already registered" else 400
             return {"error": error}, status_code
 
-        return {
-            "id": user.id,
-            "full_name": user.full_name,
-            "email": user.email,
-            "role": user.role,
-            "is_active": user.is_active
-        }, 201
+        return user_response_schema.dump(user), 201
 
 
 @api.route("/login")
@@ -44,11 +45,14 @@ class LoginResource(Resource):
     @api.marshal_with(token_model, code=200)
     @api.response(401, "Invalid email or password")
     def post(self):
-        login_data = api.payload
+        try:
+            data = login_schema.load(api.payload)
+        except ValidationError as err:
+            return {"errors": err.messages}, 400
 
         result, error = auth_service.login(
-            login_data["email"],
-            login_data["password"]
+            data["email"],
+            data["password"]
         )
 
         if error:
@@ -64,6 +68,7 @@ class MeResource(Resource):
     @api.doc(security="JWT")
     @api.response(200, "Current user retrieved successfully")
     @api.response(401, "Missing or invalid token")
+    @api.response(404, "User not found")
     def get(self):
         user_id = get_jwt_identity()
         user = db.session.get(User, user_id)
@@ -71,10 +76,4 @@ class MeResource(Resource):
         if not user:
             return {"error": "User not found"}, 404
 
-        return {
-            "id": user.id,
-            "full_name": user.full_name,
-            "email": user.email,
-            "role": user.role,
-            "is_active": user.is_active
-        }, 200
+        return user_response_schema.dump(user), 200

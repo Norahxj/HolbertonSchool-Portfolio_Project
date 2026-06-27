@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_restx import Api
 from app.extensions import db, jwt, bcrypt
+from app.config import Config
+
 
 from app.routes.auth_routes import api as auth_ns
 from app.routes.user_routes import api as user_ns
@@ -23,6 +25,7 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///asalah.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = "super-secret-key"
+    app.config.from_object(Config)
 
     app.config["JWT_HEADER_TYPE"] = ""
 
