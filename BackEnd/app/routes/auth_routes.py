@@ -1,13 +1,11 @@
 from flask_restx import Namespace, Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.api_models.auth_api import get_auth_models
 from app.services.auth_service import AuthService
 from app.models.user_model import User
 from marshmallow import ValidationError
 from app.schemas import RegisterSchema, LoginSchema, UserResponseSchema
-from flask_jwt_extended import jwt_required, get_jwt
-from app.extensions import jwt_blocklist
+from flask_jwt_extended import jwt_required, get_jwt,  get_jwt_identity
 from app.models.revoked_token_model import RevokedToken
 
 
@@ -85,6 +83,7 @@ class MeResource(Resource):
 
 @api.route("/logout")
 class Logout(Resource):
+    @api.doc(security="JWT")
     @jwt_required()
     def post(self):
         jti = get_jwt()["jti"]

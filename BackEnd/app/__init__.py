@@ -6,7 +6,6 @@ from flask import Flask
 from flask_restx import Api
 from app.extensions import db, jwt, bcrypt
 from app.config import Config
-from app.extensions import jwt_blocklist
 
 from app.routes.auth_routes import api as auth_ns
 from app.routes.user_routes import api as user_ns
