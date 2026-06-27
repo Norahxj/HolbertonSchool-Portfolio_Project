@@ -44,7 +44,12 @@ class AuthService:
         if not bcrypt.check_password_hash(user.password_hash, password):
             return None, "Invalid email or password"
 
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={
+                "role": user.role
+            }
+        )
 
         return {
             "access_token": access_token,

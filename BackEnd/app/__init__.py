@@ -22,9 +22,6 @@ authorizations = {
 def create_app():
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///asalah.db"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["JWT_SECRET_KEY"] = "super-secret-key"
     app.config.from_object(Config)
 
     app.config["JWT_HEADER_TYPE"] = ""

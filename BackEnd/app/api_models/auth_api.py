@@ -17,8 +17,7 @@ def get_auth_models(api):
         "id": fields.String(description="User ID"),
         "full_name": fields.String(description="Full name"),
         "email": fields.String(description="Email"),
-        "role": fields.String(description="User role"),
-        "is_active": fields.Boolean(description="User status")
+        "role": fields.String(description="User role")
     })
 
     token_model = api.model("TokenResponse", {

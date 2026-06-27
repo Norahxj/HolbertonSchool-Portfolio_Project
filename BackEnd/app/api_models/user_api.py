@@ -10,8 +10,7 @@ def get_user_models(api):
 
     user_update_model = api.model("UserUpdate", {
         "full_name": fields.String(description="Full name of the user"),
-        "email": fields.String(description="User email"),
-        "is_active": fields.Boolean(description="User account status")
+        "email": fields.String(description="User email")
     })
     
     return user_model, user_update_model
