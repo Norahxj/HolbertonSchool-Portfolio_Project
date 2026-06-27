@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import Flask
 from flask_restx import Api
 from app.extensions import db, jwt, bcrypt
@@ -8,6 +12,7 @@ from app.routes.auth_routes import api as auth_ns
 from app.routes.user_routes import api as user_ns
 from app.routes.child_routes import api as child_ns
 from app.routes.task_routes import api as task_ns
+
 
 
 authorizations = {
