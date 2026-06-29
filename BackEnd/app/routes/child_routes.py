@@ -32,7 +32,10 @@ class ChildListResource(Resource):
         except ValidationError as err:
             return {"errors": err.messages}, 400
 
-        child = child_service.create_child(parent_id, child_data)
+        child, error = child_service.create_child(parent_id, child_data)
+
+        if error == "email_exists":
+            return {"error": "Child email already registered"}, 409
 
         return child_response_schema.dump(child), 201
 
@@ -73,14 +76,13 @@ class ChildResource(Resource):
         if not child_data:
             return {"error": "No fields provided for update"}, 400
 
-        child = child_service.update_child_for_parent(
-            child_id,
-            parent_id,
-            child_data
-        )
+        child, error = child_service.update_child_for_parent(child_id, parent_id, child_data)
 
-        if not child:
+        if error == "not_found":
             return {"error": "Child not found"}, 404
+
+        if error == "email_exists":
+            return {"error": "Child email already registered"}, 409
 
         return child_response_schema.dump(child), 200
 

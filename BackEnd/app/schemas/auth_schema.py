@@ -40,3 +40,7 @@ class LoginSchema(Schema):
     password = fields.String(
         required=True
     )
+
+class ChildLoginSchema(Schema):
+    email = fields.Email(required=True)
+    password = fields.String(required=True)

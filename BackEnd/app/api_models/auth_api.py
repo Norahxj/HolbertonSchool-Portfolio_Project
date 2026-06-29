@@ -26,4 +26,18 @@ def get_auth_models(api):
         "user": fields.Nested(user_response_model)
     })
 
-    return register_model, login_model, token_model, user_response_model
+    child_response_model = api.model("ChildAuthResponse", {
+        "id": fields.String(description="Child ID"),
+        "name": fields.String(description="Child name"),
+        "email": fields.String(description="Child email"),
+        "parent_id": fields.String(description="Parent ID"),
+        "role": fields.String(description="Role")
+    })
+
+    child_token_model = api.model("ChildTokenResponse", {
+        "access_token": fields.String(description="JWT access token"),
+        "refresh_token": fields.String(description="JWT refresh token"),
+        "child": fields.Nested(child_response_model)
+    })
+
+    return register_model, login_model, token_model, user_response_model, child_token_model
