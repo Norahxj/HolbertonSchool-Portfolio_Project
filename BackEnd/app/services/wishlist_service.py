@@ -81,7 +81,7 @@ class WishlistService:
     @staticmethod
     def get_progress(child_id, current_points):
         wishes = Wishlist.query.filter_by(child_id=child_id).all()
-    
+        
         return {
                 "child_id": child_id,
                 "current_points": current_points,
