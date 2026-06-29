@@ -57,10 +57,17 @@ class TaskCreateSchema(Schema):
             raise ValidationError("Description cannot be empty.")
         
     @validates_schema
-    def validate_weekly_task(self, data, **kwargs):
-        if data.get("task_type") == "WEEKLY" and data.get("recurrence_day") is None:
+    def validate_recurrence_day(self, data, **kwargs):
+        task_type = data.get("task_type")
+
+        if task_type == "WEEKLY" and data.get("recurrence_day") is None:
             raise ValidationError({
                 "recurrence_day": ["recurrence_day is required for WEEKLY tasks."]
+            })
+
+        if task_type in ["ONCE", "DAILY"] and data.get("recurrence_day") is not None:
+            raise ValidationError({
+                "recurrence_day": ["recurrence_day is only allowed for WEEKLY tasks."]
             })
 
 
@@ -87,8 +94,15 @@ class TaskUpdateSchema(Schema):
             raise ValidationError("Description cannot be empty.")
         
     @validates_schema
-    def validate_weekly_task(self, data, **kwargs):
-        if data.get("task_type") == "WEEKLY" and data.get("recurrence_day") is None:
+    def validate_recurrence_day(self, data, **kwargs):
+        task_type = data.get("task_type")
+
+        if task_type == "WEEKLY" and data.get("recurrence_day") is None:
             raise ValidationError({
                 "recurrence_day": ["recurrence_day is required for WEEKLY tasks."]
+            })
+
+        if task_type in ["ONCE", "DAILY"] and data.get("recurrence_day") is not None:
+            raise ValidationError({
+            "recurrence_day": ["recurrence_day is only allowed for WEEKLY tasks."]
             })
