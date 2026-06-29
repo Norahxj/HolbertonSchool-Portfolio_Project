@@ -8,7 +8,7 @@ class WishlistResponseSchema(Schema):
     target_points = fields.Integer()
     status = fields.String()
     created_at = fields.DateTime()
-
+    updated_at = fields.DateTime()
 
 class WishlistCreateSchema(Schema):
     child_id = fields.String(required=True)
