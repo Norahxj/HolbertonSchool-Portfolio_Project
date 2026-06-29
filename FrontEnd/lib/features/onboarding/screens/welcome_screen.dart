@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../widgets/role_card.dart';
+import '../../auth/screens/auth_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final bool isArabic;
@@ -79,7 +80,15 @@ class WelcomeScreen extends StatelessWidget {
                       englishTitle: 'Parent',
                       icon: Icons.family_restroom,
                       onTap: () {
-                        // Later: navigate to parent auth screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AuthScreen(
+                              isArabic: isArabic,
+                              onLanguageToggle: onLanguageToggle,
+                            ),
+                          ),
+                        );
                       },
                     ),
                     const SizedBox(width: AppSpacing.md),
