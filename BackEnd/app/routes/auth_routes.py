@@ -5,7 +5,7 @@ from app.services.auth_service import AuthService
 from app.models.user_model import User
 from marshmallow import ValidationError
 from app.schemas import RegisterSchema, LoginSchema, UserResponseSchema
-from flask_jwt_extended import jwt_required, get_jwt,  get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt,  get_jwt_identity, create_access_token
 from app.models.revoked_token_model import RevokedToken
 
 
@@ -60,6 +60,31 @@ class LoginResource(Resource):
             return {"error": error}, 401
 
         return result, 200
+    
+
+@api.route("/refresh")
+class RefreshResource(Resource):
+
+    @api.doc(security="JWT")
+    @jwt_required(refresh=True)
+    def post(self):
+        user_id = get_jwt_identity()
+
+        user = db.session.get(User, user_id)
+
+        if not user:
+            return {"error": "User not found"}, 404
+
+        new_access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={
+                "role": user.role
+            }
+        )
+
+        return {
+            "access_token": new_access_token
+        }, 200
 
 
 @api.route("/me")
@@ -97,4 +122,23 @@ class Logout(Resource):
 
         return {
             "message": "Logged out successfully"
+        }, 200
+    
+
+@api.route("/logout-refresh")
+class LogoutRefresh(Resource):
+    @api.doc(security="JWT")
+    @jwt_required(refresh=True)
+    def post(self):
+        jti = get_jwt()["jti"]
+
+        existing_token = RevokedToken.query.filter_by(jti=jti).first()
+
+        if not existing_token:
+            revoked_token = RevokedToken(jti=jti)
+            db.session.add(revoked_token)
+            db.session.commit()
+
+        return {
+            "message": "Refresh token logged out successfully"
         }, 200

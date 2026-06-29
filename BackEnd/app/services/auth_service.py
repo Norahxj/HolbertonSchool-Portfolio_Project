@@ -1,4 +1,4 @@
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 from app.extensions import db, bcrypt
 from app.models.user_model import User
 from sqlalchemy.exc import IntegrityError
@@ -13,10 +13,8 @@ class AuthService:
         email = user_data["email"].strip().lower()
         password = user_data["password"]
         existing_user = User.query.filter_by(email=email).first()
-
         if existing_user:
             return None, "Email already registered"
-
         user = User(
             full_name=full_name,
             email=email,
@@ -31,7 +29,6 @@ class AuthService:
         except IntegrityError:
             db.session.rollback()
             return None, "Email already registered"
-
         return user, None
 
     def login(self, email, password):
@@ -46,12 +43,16 @@ class AuthService:
 
         access_token = create_access_token(
             identity=str(user.id),
-            additional_claims={
-                "role": user.role
-            }
+            additional_claims={"role": user.role}
+        )
+
+        refresh_token = create_refresh_token(
+            identity=str(user.id),
+            additional_claims={"role": user.role}
         )
 
         return {
             "access_token": access_token,
+            "refresh_token": refresh_token,
             "user": user_response_schema.dump(user)
         }, None

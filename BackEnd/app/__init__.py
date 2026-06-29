@@ -57,6 +57,11 @@ def create_app():
     def missing_token_callback(error):
         return {"error": "Authorization token is required"}, 401
 
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return {"error": "Token has been revoked"}, 401
+    
     api = Api(
         app,
         title="Asalah API",

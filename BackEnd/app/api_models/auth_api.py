@@ -22,6 +22,7 @@ def get_auth_models(api):
 
     token_model = api.model("TokenResponse", {
         "access_token": fields.String(description="JWT access token"),
+        "refresh_token": fields.String,
         "user": fields.Nested(user_response_model)
     })
 
