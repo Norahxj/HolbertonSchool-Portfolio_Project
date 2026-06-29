@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, validates, ValidationError
 
 
 class UserResponseSchema(Schema):
@@ -15,3 +15,8 @@ class UserUpdateSchema(Schema):
     )
 
     email = fields.Email(required=False)
+
+    @validates("full_name")
+    def validate_full_name(self, value):
+        if not value.strip():
+            raise ValidationError("Full name cannot be empty.")

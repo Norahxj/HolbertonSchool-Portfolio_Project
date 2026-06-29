@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.models.user_model import User
+from sqlalchemy.exc import IntegrityError
 
 
 class UserService:
@@ -26,7 +27,12 @@ class UserService:
 
             user.email = email
 
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+        return None, "email_exists"
+
         return user, None
     
     def delete_user(self, user_id):
