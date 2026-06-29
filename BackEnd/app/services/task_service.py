@@ -76,11 +76,11 @@ class TaskService:
         if "task_type" in task_data:
             task.task_type = task_data["task_type"]
 
-            if task_data["task_type"] != "WEEKLY":
-                task.recurrence_day = None
-
-        if "recurrence_day" in task_data:
-            task.recurrence_day = task_data["recurrence_day"]
+        if task.task_type == "WEEKLY":
+            if "recurrence_day" in task_data:
+                task.recurrence_day = task_data["recurrence_day"]
+        else:
+            task.recurrence_day = None
 
         if "category" in task_data:
             task.category = task_data["category"]
