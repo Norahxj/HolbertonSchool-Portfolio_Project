@@ -39,6 +39,8 @@ class CurrentUserResource(Resource):
 
         try:
             user_data = user_update_schema.load(api.payload)
+            if not user_data:
+                return {"error": "No fields provided for update"}, 400
         except ValidationError as err:
             return {"errors": err.messages}, 400
 
