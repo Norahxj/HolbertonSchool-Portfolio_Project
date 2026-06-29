@@ -124,24 +124,24 @@ class TaskService:
         db.session.commit()
         return task
     
-def complete_task_for_child(self, task_id, child_id):
-    task = Task.query.filter_by(
-        id=task_id,
-        child_id=child_id
-    ).first()
+    def complete_task_for_child(self, task_id, child_id):
+        task = Task.query.filter_by(
+            id=task_id,
+            child_id=child_id
+        ).first()
 
-    if not task:
-        return None, "task_not_found"
+        if not task:
+            return None, "task_not_found"
 
-    if task.status in ["PENDING_REVIEW", "APPROVED"]:
-        return None, "task_already_completed"
+        if task.status in ["PENDING_REVIEW", "APPROVED"]:
+            return None, "task_already_completed"
 
-    if task.is_auto_verified:
-        task.status = "APPROVED"
-        task.approved_at = datetime.now()
-    else:
-        task.status = "PENDING_REVIEW"
-        task.approved_at = None
+        if task.is_auto_verified:
+            task.status = "APPROVED"
+            task.approved_at = datetime.now()
+        else:
+            task.status = "PENDING_REVIEW"
+            task.approved_at = None
 
-    db.session.commit()
-    return task, None
+        db.session.commit()
+        return task, None

@@ -155,13 +155,30 @@ class MeResource(Resource):
     @api.response(401, "Missing or invalid token")
     @api.response(404, "User not found")
     def get(self):
-        user_id = get_jwt_identity()
-        user = db.session.get(User, user_id)
+        identity = get_jwt_identity()
+        claims = get_jwt()
+        role = claims.get("role")
+        if role == "parent":
+            user = db.session.get(User, identity)
+            if not user:
+                return {"error": "User not found"}, 404
+            return user_response_schema.dump(user), 200
+    
+        if role == "child":
+            child = db.session.get(Child, identity)
+            if not child:
+                return {"error": "Child not found"}, 404
+            
+            return {
+            "id": str(child.id),
+            "full_name": child.full_name,
+            "email": child.email,
+            "role": "child",
+            "parent_id": str(child.parent_id)
+        }, 200
 
-        if not user:
-            return {"error": "User not found"}, 404
+        return {"error": "Invalid role"}, 403
 
-        return user_response_schema.dump(user), 200
     
 
 

@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
 
 from app.api_models.user_api import get_user_models
@@ -21,8 +21,10 @@ class CurrentUserResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     def get(self):
+        claims = get_jwt()
         user_id = get_jwt_identity()
-
+        if claims.get("role") != "parent":
+            return {"error": "Parent access only"}, 403
         user = user_service.get_user(user_id)
 
         if not user:
