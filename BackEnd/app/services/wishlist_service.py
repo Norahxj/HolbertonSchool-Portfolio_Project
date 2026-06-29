@@ -1,6 +1,6 @@
 from app.extensions import db
-from app.models.wishlist_models import Wishlist
-from app.models.child_models import Child
+from app.model.wishlist_model import Wishlist
+from app.model.child_model import Child
 
 
 class WishlistService:
