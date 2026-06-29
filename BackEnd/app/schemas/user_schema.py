@@ -17,6 +17,6 @@ class UserUpdateSchema(Schema):
     email = fields.Email(required=False)
 
     @validates("full_name")
-    def validate_full_name(self, value):
+    def validate_full_name(self, value, **kwargs):
         if not value.strip():
             raise ValidationError("Full name cannot be empty.")
