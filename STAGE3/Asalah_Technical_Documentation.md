@@ -371,7 +371,7 @@ The system utilizes a relational database structure to maintain integrity betwee
 
 ## 5.5 ER Digraam
 
-![alt text](ER-digraam.png) 
+![alt text](<ER. Diagram.drawio.png>)
 
 ---
 
