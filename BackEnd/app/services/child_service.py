@@ -1,15 +1,21 @@
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db, bcrypt
 from app.models.child_model import Child
+from app.models.user_model import User
 
 
 class ChildService:
 
     def create_child(self, parent_id, child_data):
+        email = child_data["email"].strip().lower()
+        existing_user = User.query.filter_by(email=email).first()
+        existing_child = Child.query.filter_by(email=email).first()
+        if existing_user or existing_child:
+            return None, "email_exists"
         child = Child(
             name=child_data["name"].strip(),
             age=child_data["age"],
-            email=child_data["email"].strip().lower(),
+            email=email,
             password_hash=bcrypt.generate_password_hash(child_data["password"]).decode("utf-8"),
             parent_id=parent_id
         )

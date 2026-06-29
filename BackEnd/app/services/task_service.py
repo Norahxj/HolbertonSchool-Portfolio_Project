@@ -149,3 +149,7 @@ class TaskService:
 
         db.session.commit()
         return task, None
+    
+
+    def get_tasks_for_child(self, child_id):
+        return Task.query.filter_by(child_id=child_id).all()

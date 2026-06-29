@@ -3,6 +3,7 @@ from app.extensions import db, bcrypt
 from app.models.user_model import User
 from sqlalchemy.exc import IntegrityError
 from app.schemas.user_schema import UserResponseSchema
+from app.models.child_model import Child
 
 user_response_schema = UserResponseSchema()
 
@@ -13,7 +14,8 @@ class AuthService:
         email = user_data["email"].strip().lower()
         password = user_data["password"]
         existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
+        existing_child = Child.query.filter_by(email=email).first()
+        if existing_user or existing_child:
             return None, "Email already registered"
         user = User(
             full_name=full_name,

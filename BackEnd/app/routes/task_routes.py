@@ -202,3 +202,20 @@ class TaskCompleteResource(Resource):
             return {"error": "Task already completed or waiting for review"}, 400
 
         return task_response_schema.dump(task), 200
+    
+@api.route("/my-tasks")
+class ChildTasksResource(Resource):
+
+    @api.doc(security="JWT")
+    @jwt_required()
+    def get(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "child":
+            return {"error": "Child access required"}, 403
+
+        child_id = get_jwt_identity()
+
+        tasks = task_service.get_tasks_for_child(child_id)
+
+        return tasks_response_schema.dump(tasks), 200
