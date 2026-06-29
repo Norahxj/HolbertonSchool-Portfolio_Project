@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validate, validates, ValidationError
+from marshmallow import Schema, fields, validate, validates, ValidationError, validates_schema
 
 
 class TaskResponseSchema(Schema):
@@ -55,6 +55,13 @@ class TaskCreateSchema(Schema):
     def validate_description(self, value, **kwargs):
         if not value.strip():
             raise ValidationError("Description cannot be empty.")
+        
+    @validates_schema
+    def validate_weekly_task(self, data, **kwargs):
+        if data.get("task_type") == "WEEKLY" and data.get("recurrence_day") is None:
+            raise ValidationError({
+                "recurrence_day": ["recurrence_day is required for WEEKLY tasks."]
+            })
 
 
 class TaskUpdateSchema(Schema):
