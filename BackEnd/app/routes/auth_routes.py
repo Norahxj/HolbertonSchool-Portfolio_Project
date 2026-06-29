@@ -122,6 +122,11 @@ class RefreshResource(Resource):
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
     def post(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "parent":
+            return {"error": "Parent refresh only"}, 403
+
         user_id = get_jwt_identity()
 
         user = db.session.get(User, user_id)

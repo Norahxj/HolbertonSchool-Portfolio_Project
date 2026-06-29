@@ -12,7 +12,8 @@ def get_child_models(api):
     child_update_model = api.model("ChildUpdate", {
         "name": fields.String(required=False, description="Child name"),
         "age": fields.Integer(required=False, description="Child age"),
-        "email": fields.String(required=False, description="Child email")
+        "email": fields.String(required=False, description="Child email"),
+        "password": fields.String(required=False, description="Child password")
     })
 
     return child_model, child_update_model
