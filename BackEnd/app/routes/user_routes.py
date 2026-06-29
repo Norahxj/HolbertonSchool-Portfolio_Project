@@ -37,7 +37,10 @@ class CurrentUserResource(Resource):
     @jwt_required()
     @api.expect(user_update_model, validate=True)
     def put(self):
+        claims = get_jwt()
         user_id = get_jwt_identity()
+        if claims.get("role") != "parent":
+            return {"error": "Parent access only"}, 403
 
         try:
             user_data = user_update_schema.load(api.payload)
@@ -60,7 +63,10 @@ class CurrentUserResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     def delete(self):
+        claims = get_jwt()
         user_id = get_jwt_identity()
+        if claims.get("role") != "parent":
+            return {"error": "Parent access only"}, 403
 
         deleted = user_service.delete_user(user_id)
 
