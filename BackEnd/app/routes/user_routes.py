@@ -18,8 +18,7 @@ class UserListResource(Resource):
                 "id": user.id,
                 "full_name": user.full_name,
                 "email": user.email,
-                "role": user.role,
-                "is_active": user.is_active
+                "role": user.role
             }
             for user in users
         ], 200
@@ -38,8 +37,7 @@ class UserResource(Resource):
             "id": user.id,
             "full_name": user.full_name,
             "email": user.email,
-            "role": user.role,
-            "is_active": user.is_active
+            "role": user.role
         }, 200
     
     @api.expect(user_update_model, validate=True)
@@ -60,23 +58,18 @@ class UserResource(Resource):
             "id": user.id,
             "full_name": user.full_name,
             "email": user.email,
-            "role": user.role,
-            "is_active": user.is_active
+            "role": user.role
         }, 200
     
-    @api.response(200, "User deactivated successfully")
+    @api.response(200, "User deleted successfully")
     @api.response(404, "User not found")
     def delete(self, user_id):
-        user = user_service.deactivate_user(user_id)
+        deleted = user_service.delete_user(user_id)
 
-        if not user:
+        if not deleted:
             return {"error": "User not found"}, 404
 
-        return {
-            "message": "User deactivated successfully",
-            "id": user.id,
-            "is_active": user.is_active
-        }, 200
+        return {"message": "User deleted successfully"}, 200
     
     
 

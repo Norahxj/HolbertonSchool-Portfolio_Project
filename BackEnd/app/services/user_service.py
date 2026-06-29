@@ -40,18 +40,15 @@ class UserService:
 
             user.email = user_data["email"]
 
-        if "is_active" in user_data:
-            user.is_active = user_data["is_active"]
-
         db.session.commit()
         return user
     
-    def deactivate_user(self, user_id):
-        user = User.query.get(user_id)
+    def delete_user(self, user_id):
+        user = db.session.get(User, user_id)
 
         if not user:
             return None
 
-        user.is_active = False
+        db.session.delete(user)
         db.session.commit()
-        return user
+        return True
