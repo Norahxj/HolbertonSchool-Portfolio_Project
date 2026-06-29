@@ -5,7 +5,7 @@ class ChildResponseSchema(Schema):
     id = fields.String()
     name = fields.String()
     age = fields.Integer()
-    parent_id = fields.String()
+    
 
 
 class ChildCreateSchema(Schema):
