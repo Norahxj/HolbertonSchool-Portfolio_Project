@@ -79,16 +79,14 @@ class WishlistService:
         return [wish.to_dict() for wish in wishes], 200
     
     @staticmethod
-    def get_progress(child_id, wish_id):
-        wish = Wishlist.query.filter_by(id=wish_id, child_id=child_id).first()
-        if not wish:
-            return {"error": "Wish not found"}, 404
-
+    def get_progress(child_id, current_points):
+        wishes = Wishlist.query.filter_by(child_id=child_id).all()
+    
         return {
-            "wish_id": wish.id,
-            "target_points": wish.target_points,
-            "status": wish.status
-        }, 200
+                "child_id": child_id,
+                "current_points": current_points,
+                "wishes": [wish.to_dict() for wish in wishes]
+            }, 200
 
     @staticmethod
     def update_wish(wish_id, data):
