@@ -10,12 +10,14 @@ from app.models.revoked_token_model import RevokedToken
 from app.models.child_model import Child
 from app.extensions import bcrypt
 from flask_jwt_extended import create_refresh_token
+from app.schemas.child_schema import ChildResponseSchema
 
 
 api = Namespace("auth", description="Authentication operations")
 register_schema = RegisterSchema()
 login_schema = LoginSchema()
 user_response_schema = UserResponseSchema()
+child_response_schema = ChildResponseSchema()
 auth_service = AuthService()
 register_model, login_model, token_model, user_response_model, child_token_model = get_auth_models(api)
 
@@ -169,13 +171,7 @@ class MeResource(Resource):
             if not child:
                 return {"error": "Child not found"}, 404
             
-            return {
-            "id": str(child.id),
-            "full_name": child.full_name,
-            "email": child.email,
-            "role": "child",
-            "parent_id": str(child.parent_id)
-        }, 200
+            return child_response_schema.dump(child), 200
 
         return {"error": "Invalid role"}, 403
 
