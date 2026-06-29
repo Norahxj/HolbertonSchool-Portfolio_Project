@@ -25,23 +25,26 @@ class UserService:
         return User.query.all()
     
     def update_user(self, user_id, user_data):
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
 
         if not user:
-            return None
+            return None, "not_found"
 
         if "full_name" in user_data:
-            user.full_name = user_data["full_name"]
+            user.full_name = user_data["full_name"].strip()
 
         if "email" in user_data:
-            existing_user = User.query.filter_by(email=user_data["email"]).first()
-            if existing_user and existing_user.id != user_id:
-                return "email_exists"
+            email = user_data["email"].strip().lower()
 
-            user.email = user_data["email"]
+            existing_user = User.query.filter_by(email=email).first()
+
+            if existing_user and existing_user.id != user_id:
+                return None, "email_exists"
+
+            user.email = email
 
         db.session.commit()
-        return user
+        return user, None
     
     def delete_user(self, user_id):
         user = db.session.get(User, user_id)
