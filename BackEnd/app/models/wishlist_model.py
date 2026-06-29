@@ -35,12 +35,10 @@ class Wishlist(BaseModel):
         db.session.commit()
 
     def to_dict(self):
-        """Convert the wish to a dictionary for API responses."""
-        return {
-            "id": self.id,
-            "child_id": self.child_id,
-            "name": self.name,
-            "target_points": self.target_points,
-            "status": self.status,
-            "created_at": self.created_at
-        }
+    return {
+        "id": self.id,
+        "child_id": self.child_id,
+        "name": self.name,
+        "target_points": self.target_points,
+        "status": self.status,
+    }
