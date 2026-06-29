@@ -40,7 +40,6 @@ class Wishlist(BaseModel):
             "id": self.id,
             "child_id": self.child_id,
             "name": self.name,
-            "description": self.description,
             "target_points": self.target_points,
             "status": self.status,
             "created_at": self.created_at
