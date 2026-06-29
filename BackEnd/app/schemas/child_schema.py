@@ -8,6 +8,10 @@ class ChildResponseSchema(Schema):
     age = fields.Integer()
     email = fields.Email()
     parent_id = fields.String()
+    role = fields.Method("get_role")
+
+    def get_role(self, obj):
+        return "child"
 
 
 class ChildCreateSchema(Schema):
