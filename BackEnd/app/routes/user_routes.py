@@ -13,8 +13,7 @@ user_service = UserService()
 user_response_schema = UserResponseSchema()
 user_update_schema = UserUpdateSchema()
 
-user_model, user_update_model = get_user_models(api)
-
+user_response_model, user_update_model = get_user_models(api)
 
 @api.route("/me")
 class CurrentUserResource(Resource):
