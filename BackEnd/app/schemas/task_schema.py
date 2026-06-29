@@ -40,12 +40,7 @@ class TaskCreateSchema(Schema):
 
     is_auto_verified = fields.Boolean(required=False, load_default=False)
 
-    verification_type = fields.String(
-        required=False,
-        load_default="MANUAL",
-        validate=validate.OneOf(["AUTO", "MANUAL"])
-    )
-
+    
     @validates("title")
     def validate_title(self, value, **kwargs):
         if not value.strip():
@@ -81,7 +76,6 @@ class TaskUpdateSchema(Schema):
     category = fields.String(required=False, allow_none=True, validate=validate.Length(max=50))
 
     is_auto_verified = fields.Boolean(required=False)
-    verification_type = fields.String(required=False, validate=validate.OneOf(["AUTO", "MANUAL"]))
 
     @validates("title")
     def validate_title(self, value, **kwargs):

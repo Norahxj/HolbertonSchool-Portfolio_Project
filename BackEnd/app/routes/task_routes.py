@@ -188,9 +188,12 @@ class TaskCompleteResource(Resource):
 
         child_id = get_jwt_identity()
 
-        task = task_service.complete_task_for_child(task_id, child_id)
+        task, error = task_service.complete_task_for_child(task_id, child_id)
 
-        if not task:
+        if error == "task_not_found":
             return {"error": "Task not found"}, 404
+
+        if error == "task_already_completed":
+            return {"error": "Task already completed or waiting for review"}, 400
 
         return task_response_schema.dump(task), 200

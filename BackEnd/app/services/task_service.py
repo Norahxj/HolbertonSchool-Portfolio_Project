@@ -25,7 +25,7 @@ class TaskService:
             recurrence_day=task_data.get("recurrence_day"),
             category=task_data.get("category"),
             is_auto_verified=task_data.get("is_auto_verified", False),
-            verification_type=task_data.get("verification_type", "MANUAL"),
+            verification_type="AUTO" if task_data.get("is_auto_verified", False) else "MANUAL",
             created_by=parent_id,
             status="PENDING"
         )
@@ -87,9 +87,7 @@ class TaskService:
 
         if "is_auto_verified" in task_data:
             task.is_auto_verified = task_data["is_auto_verified"]
-
-        if "verification_type" in task_data:
-            task.verification_type = task_data["verification_type"]
+            task.verification_type = "AUTO" if task.is_auto_verified else "MANUAL"
 
         db.session.commit()
         return task
@@ -126,17 +124,24 @@ class TaskService:
         db.session.commit()
         return task
     
-    def complete_task_for_child(self, task_id, child_id):
-        task = Task.query.filter_by(
-            id=task_id,
-            child_id=child_id
-        ).first()
+def complete_task_for_child(self, task_id, child_id):
+    task = Task.query.filter_by(
+        id=task_id,
+        child_id=child_id
+    ).first()
 
-        if not task:
-            return None
+    if not task:
+        return None, "task_not_found"
 
+    if task.status in ["PENDING_REVIEW", "APPROVED"]:
+        return None, "task_already_completed"
+
+    if task.is_auto_verified:
+        task.status = "APPROVED"
+        task.approved_at = datetime.now()
+    else:
         task.status = "PENDING_REVIEW"
         task.approved_at = None
 
-        db.session.commit()
-        return task
+    db.session.commit()
+    return task, None

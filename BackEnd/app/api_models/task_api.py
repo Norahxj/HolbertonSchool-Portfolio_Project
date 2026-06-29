@@ -10,9 +10,8 @@ def get_task_models(api):
         "task_type": fields.String(description="ONCE, DAILY, or WEEKLY"),
         "recurrence_day": fields.Integer(description="0-6 for weekly tasks"),
         "category": fields.String(description="Task category"),
-        "is_auto_verified": fields.Boolean(description="Auto verified"),
-        "verification_type": fields.String(description="AUTO or MANUAL")
-    })
+        "is_auto_verified": fields.Boolean(description="Auto verified")
+        })
 
     task_update_model = api.model("TaskUpdate", {
         "title": fields.String(description="Task title"),
@@ -21,8 +20,7 @@ def get_task_models(api):
         "task_type": fields.String(description="ONCE, DAILY, or WEEKLY"),
         "recurrence_day": fields.Integer(description="0-6 for weekly tasks"),
         "category": fields.String(description="Task category"),
-        "is_auto_verified": fields.Boolean(description="Auto verified"),
-        "verification_type": fields.String(description="AUTO or MANUAL")
+        "is_auto_verified": fields.Boolean(description="Auto verified")
     })
 
     return task_create_model, task_update_model
