@@ -1,7 +1,5 @@
-from app.dotenv import load_dotenv
-
-
-load_dotenv()
+from flask import Flask
+import os
 
 from flask import Flask
 from flask_restx import Api
