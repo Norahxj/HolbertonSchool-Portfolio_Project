@@ -108,13 +108,7 @@ class ChildLoginResource(Resource):
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "child": {
-                "id": child.id,
-                "name": child.name,
-                "email": child.email,
-                "parent_id": child.parent_id,
-                "role": "child"
-            }
+            "child": child_response_schema.dump(child)
         }, 200
     
 
@@ -125,27 +119,40 @@ class RefreshResource(Resource):
     @jwt_required(refresh=True)
     def post(self):
         claims = get_jwt()
+        role = claims.get("role")
+        identity = get_jwt_identity()
+        if role == "parent":
+            user = db.session.get(User, identity)
 
-        if claims.get("role") != "parent":
-            return {"error": "Parent refresh only"}, 403
+            if not user:
+                return {"error": "User not found"}, 404
 
-        user_id = get_jwt_identity()
+            new_access_token = create_access_token(
+                identity=str(user.id),
+                additional_claims={
+                    "role": user.role
+                }
+            )
 
-        user = db.session.get(User, user_id)
+            return {
+                "access_token": new_access_token
+            }, 200
+    
+        if role == "child":
+            child = db.session.get(Child, identity)
 
-        if not user:
-            return {"error": "User not found"}, 404
-
-        new_access_token = create_access_token(
-            identity=str(user.id),
-            additional_claims={
-                "role": user.role
-            }
-        )
-
-        return {
-            "access_token": new_access_token
-        }, 200
+            if not child:
+                return {"error": "Child not found"}, 404
+            
+            new_access_token = create_access_token(
+                identity=str(child.id),
+                additional_claims={
+                    "role": "child",
+                    "parent_id": str(child.parent_id)
+                }
+            )
+            return {"access_token": new_access_token}, 200
+        return {"error": "Invalid role"}, 403
 
 
 @api.route("/me")
