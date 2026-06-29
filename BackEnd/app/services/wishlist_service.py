@@ -77,3 +77,41 @@ class WishlistService:
     def get_child_wishlist(child_id):
         wishes = Wishlist.query.filter_by(child_id=child_id).all()
         return [wish.to_dict() for wish in wishes], 200
+    
+    @staticmethod
+    def get_progress(child_id, wish_id):
+        wish = Wishlist.query.filter_by(id=wish_id, child_id=child_id).first()
+        if not wish:
+            return {"error": "Wish not found"}, 404
+
+        return {
+            "wish_id": wish.id,
+            "target_points": wish.target_points,
+            "status": wish.status
+        }, 200
+
+    @staticmethod
+    def update_wish(wish_id, data):
+        wish = Wishlist.query.filter_by(id=wish_id).first()
+        if not wish:
+            return {"error": "Wish not found"}, 404
+
+        if "name" in data:
+            wish.name = data["name"]
+
+        if "target_points" in data:
+            wish.target_points = data["target_points"]
+
+        db.session.commit()
+        return wish.to_dict(), 200
+
+    @staticmethod
+    def delete_wish(wish_id):
+        wish = Wishlist.query.filter_by(id=wish_id).first()
+        if not wish:
+            return {"error": "Wish not found"}, 404
+
+        db.session.delete(wish)
+        db.session.commit()
+
+        return {"message": "Wish deleted"}, 200
