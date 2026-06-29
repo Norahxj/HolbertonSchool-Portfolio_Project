@@ -149,10 +149,13 @@ class TaskApproveResource(Resource):
         if error:
             return error
 
-        task = task_service.approve_task_for_parent(task_id, parent_id)
+        task, error = task_service.approve_task_for_parent(task_id, parent_id)
 
-        if not task:
+        if error == "task_not_found":
             return {"error": "Task not found"}, 404
+
+        if error == "task_not_pending_review":
+            return {"error": "Task is not waiting for review"}, 400
 
         return task_response_schema.dump(task), 200
 
@@ -168,11 +171,13 @@ class TaskRejectResource(Resource):
         if error:
             return error
 
-        task = task_service.reject_task_for_parent(task_id, parent_id)
+        task, error = task_service.reject_task_for_parent(task_id, parent_id)
 
-        if not task:
+        if error == "task_not_found":
             return {"error": "Task not found"}, 404
 
+        if error == "task_not_pending_review":
+            return {"error": "Task is not waiting for review"}, 400
         return task_response_schema.dump(task), 200
     
 @api.route("/<task_id>/complete")

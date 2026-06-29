@@ -106,23 +106,27 @@ class TaskService:
         task = self.get_task_for_parent(task_id, parent_id)
 
         if not task:
-            return None
+            return None, "task_not_found"
+        if task.status != "PENDING_REVIEW":
+            return None, "task_not_pending_review"
 
         task.status = "APPROVED"
         task.approved_at = datetime.now()
         db.session.commit()
-        return task
+        return task, None
 
     def reject_task_for_parent(self, task_id, parent_id):
         task = self.get_task_for_parent(task_id, parent_id)
 
         if not task:
-            return None
+            return None, "task_not_found"
+        if task.status != "PENDING_REVIEW":
+            return None, "task_not_pending_review"
 
         task.status = "REJECTED"
         task.approved_at = None
         db.session.commit()
-        return task
+        return task, None
     
     def complete_task_for_child(self, task_id, child_id):
         task = Task.query.filter_by(
