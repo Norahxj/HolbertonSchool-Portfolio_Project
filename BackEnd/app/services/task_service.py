@@ -125,3 +125,18 @@ class TaskService:
         task.approved_at = None
         db.session.commit()
         return task
+    
+    def complete_task_for_child(self, task_id, child_id):
+        task = Task.query.filter_by(
+            id=task_id,
+            child_id=child_id
+        ).first()
+
+        if not task:
+            return None
+
+        task.status = "PENDING_REVIEW"
+        task.approved_at = None
+
+        db.session.commit()
+        return task

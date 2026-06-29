@@ -42,7 +42,19 @@ class ChildService:
             child.age = child_data["age"]
 
         if "email" in child_data:
-            child.email = child_data["email"].strip().lower()
+            email = child_data["email"].strip().lower()
+
+            existing_child = Child.query.filter_by(email=email).first()
+
+            if existing_child and str(existing_child.id) != str(child_id):
+                return None, "email_exists"
+
+            child.email = email
+            
+        if "password" in child_data:
+            child.password_hash = bcrypt.generate_password_hash(
+                child_data["password"]
+            ).decode("utf-8")
 
         try:
             db.session.commit()

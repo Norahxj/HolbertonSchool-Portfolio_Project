@@ -26,6 +26,7 @@ class ChildUpdateSchema(Schema):
     name = fields.String(required=False, validate=validate.Length(min=2, max=100))
     age = fields.Integer(required=False, validate=validate.Range(min=1, max=18))
     email = fields.Email(required=False)
+    password = fields.String(required=False, validate=validate_password)
 
     @validates("name")
     def validate_name(self, value, **kwargs):

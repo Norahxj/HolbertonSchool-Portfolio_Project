@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
 
 from app.api_models.task_api import get_task_models
@@ -17,6 +17,12 @@ task_update_schema = TaskUpdateSchema()
 
 task_create_model, task_update_model = get_task_models(api)
 
+def require_parent():
+    claims = get_jwt()
+    if claims.get("role") != "parent":
+        return {"error": "Parent access required"}, 403
+    return None
+
 
 @api.route("/")
 class TaskListResource(Resource):
@@ -26,6 +32,9 @@ class TaskListResource(Resource):
     @api.expect(task_create_model, validate=True)
     def post(self):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         try:
             task_data = task_create_schema.load(api.payload)
@@ -43,6 +52,9 @@ class TaskListResource(Resource):
     @jwt_required()
     def get(self):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         tasks = task_service.get_tasks_for_parent(parent_id)
 
@@ -56,6 +68,9 @@ class TaskResource(Resource):
     @jwt_required()
     def get(self, task_id):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         task = task_service.get_task_for_parent(task_id, parent_id)
 
@@ -69,6 +84,9 @@ class TaskResource(Resource):
     @api.expect(task_update_model, validate=True)
     def put(self, task_id):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         try:
             task_data = task_update_schema.load(api.payload)
@@ -89,6 +107,9 @@ class TaskResource(Resource):
     @jwt_required()
     def delete(self, task_id):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         deleted = task_service.delete_task_for_parent(task_id, parent_id)
 
@@ -105,6 +126,9 @@ class TasksByChildResource(Resource):
     @jwt_required()
     def get(self, child_id):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         tasks = task_service.get_tasks_by_child_for_parent(child_id, parent_id)
 
@@ -121,6 +145,9 @@ class TaskApproveResource(Resource):
     @jwt_required()
     def put(self, task_id):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         task = task_service.approve_task_for_parent(task_id, parent_id)
 
@@ -137,8 +164,31 @@ class TaskRejectResource(Resource):
     @jwt_required()
     def put(self, task_id):
         parent_id = get_jwt_identity()
+        error = require_parent()
+        if error:
+            return error
 
         task = task_service.reject_task_for_parent(task_id, parent_id)
+
+        if not task:
+            return {"error": "Task not found"}, 404
+
+        return task_response_schema.dump(task), 200
+    
+@api.route("/<task_id>/complete")
+class TaskCompleteResource(Resource):
+
+    @api.doc(security="JWT")
+    @jwt_required()
+    def put(self, task_id):
+        claims = get_jwt()
+
+        if claims.get("role") != "child":
+            return {"error": "Child access required"}, 403
+
+        child_id = get_jwt_identity()
+
+        task = task_service.complete_task_for_child(task_id, child_id)
 
         if not task:
             return {"error": "Task not found"}, 404
