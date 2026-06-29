@@ -78,11 +78,11 @@ class WishlistService:
         wishes = Wishlist.query.filter_by(child_id=child_id).all()
         return [wish.to_dict() for wish in wishes], 200
     
-    @staticmethod
+        @staticmethod
     def get_progress(child_id, current_points):
         wishes = Wishlist.query.filter_by(child_id=child_id).all()
-        
-        return {
+    
+            return {
                 "child_id": child_id,
                 "current_points": current_points,
                 "wishes": [wish.to_dict() for wish in wishes]
