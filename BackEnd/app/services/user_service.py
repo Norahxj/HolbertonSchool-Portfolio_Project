@@ -31,7 +31,7 @@ class UserService:
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-        return None, "email_exists"
+            return None, "email_exists"
 
         return user, None
     
