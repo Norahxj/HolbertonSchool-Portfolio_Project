@@ -1,6 +1,7 @@
 from app.extensions import db
 from app.models.user_model import User
 from sqlalchemy.exc import IntegrityError
+from app.models.child_model import Child
 
 
 class UserService:
@@ -21,6 +22,9 @@ class UserService:
             email = user_data["email"].strip().lower()
 
             existing_user = User.query.filter_by(email=email).first()
+            existing_child = Child.query.filter_by(email=email).first()
+            if existing_child:
+                return None, "email_exists"
 
             if existing_user and str(existing_user.id) != str(user_id):
                 return None, "email_exists"

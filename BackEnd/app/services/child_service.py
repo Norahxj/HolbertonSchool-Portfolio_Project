@@ -49,8 +49,11 @@ class ChildService:
 
         if "email" in child_data:
             email = child_data["email"].strip().lower()
-
+            existing_user = User.query.filter_by(email=email).first()
             existing_child = Child.query.filter_by(email=email).first()
+
+            if existing_user:
+                return None, "email_exists"
 
             if existing_child and str(existing_child.id) != str(child_id):
                 return None, "email_exists"
