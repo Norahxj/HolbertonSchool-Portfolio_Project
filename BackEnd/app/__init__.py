@@ -1,4 +1,5 @@
-from dotenv import load_dotenv
+from app.dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -11,6 +12,7 @@ from app.routes.auth_routes import api as auth_ns
 from app.routes.user_routes import api as user_ns
 from app.routes.child_routes import api as child_ns
 from app.routes.task_routes import api as task_ns
+from app.routes.wishlist_routes import api as wishlist_ns 
 
 
 
@@ -74,5 +76,6 @@ def create_app():
     api.add_namespace(user_ns, path="/api/users")
     api.add_namespace(child_ns, path="/api/children")
     api.add_namespace(task_ns, path="/api/tasks")
+    api.add_namespace(wishlist_ns, path="/api/wishlists")
 
     return app
