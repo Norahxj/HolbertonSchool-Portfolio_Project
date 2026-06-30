@@ -47,7 +47,7 @@ class WishlistListResource(Resource):
 
         wishes, status = wishlist_service.get_child_wishlist(child_id)
 
-        return wishlist_list_response_schema.dump(wishes), status
+        return wishlist_list_response_schema.dump(wishes), 200
 
 
 @api.route("/add")
@@ -74,7 +74,7 @@ class WishlistCreateResource(Resource):
         if not wish:
             return {"error": status}, 400
 
-        return wishlist_response_schema.dump(wish), status
+        return wishlist_response_schema.dump(wish), 201
 
 
 @api.route("/<string:wish_id>/approve")
@@ -102,7 +102,7 @@ class WishlistApproveResource(Resource):
         if not wish:
             return {"error": status}, 400
 
-        return wishlist_response_schema.dump(wish), status
+        return wishlist_response_schema.dump(wish), 200
 
 
 @api.route("/<string:wish_id>/reject")
@@ -124,8 +124,7 @@ class WishlistRejectResource(Resource):
         if not wish:
             return {"error": status}, 404
 
-        return {"message": "Wish deleted successfully"}, status
-
+        return wishlist_response_schema.dump(wish), 200
 
 @api.route("/status")
 class WishlistStatusResource(Resource):
@@ -140,4 +139,4 @@ class WishlistStatusResource(Resource):
 
         result, status = wishlist_service.get_wishlist_status(child_id)
 
-        return result, status
+        return result, 200

@@ -5,28 +5,42 @@ from app.models.point_model import ChildPoints
 
 
 class WishlistService:
-
+    
     def add_wish(self, child_id, name):
-        child = Child.query.filter_by(id=child_id).first()
+    child = Child.query.filter_by(id=child_id).first()
 
-        if not child:
-            return None, "child_not_found"
+    if not child:
+        return None, "child_not_found"
 
-        wishes_count = Wishlist.query.filter_by(child_id=child_id).count()
+    wishes_count = Wishlist.query.filter_by(child_id=child_id).count()
 
-        if wishes_count >= 5:
-            return None, "wishlist_limit_reached"
+    if wishes_count >= 5:
+        return None, "wishlist_limit_reached"
 
-        wish = Wishlist(
-            child_id=child_id,
-            name=name.strip(),
-            status="PENDING"
-        )
+    name = name.strip()
 
-        db.session.add(wish)
-        db.session.commit()
+    if not name:
+        return None, "invalid_name"
 
-        return wish, None
+    existing_wish = Wishlist.query.filter_by(
+        child_id=child_id,
+        name=name
+    ).first()
+
+    if existing_wish:
+        return None, "wish_already_exists"
+
+    wish = Wishlist(
+        child_id=child_id,
+        name=name,
+        status="PENDING"
+    )
+
+    db.session.add(wish)
+    db.session.commit()
+
+    return wish, None
+
 
     def get_child_wishlist(self, child_id):
         wishes = Wishlist.query.filter_by(child_id=child_id).all()
@@ -46,6 +60,9 @@ class WishlistService:
         if not wish:
             return None, "wish_not_found"
 
+        if target_points <= 0:
+            return None, "invalid_target_points"
+
         if wish.status != "PENDING":
             return None, "wish_already_processed"
 
@@ -53,27 +70,29 @@ class WishlistService:
         wish.target_points = target_points
 
         db.session.commit()
-
         return wish, None
 
     def reject_wish(self, parent_id, wish_id):
-        wish = (
-            Wishlist.query
-            .join(Child, Wishlist.child_id == Child.id)
-            .filter(
-                Wishlist.id == wish_id,
-                Child.parent_id == parent_id
-            )
-            .first()
+       wish = (
+        Wishlist.query
+        .join(Child, Wishlist.child_id == Child.id)
+        .filter(
+            Wishlist.id == wish_id,
+            Child.parent_id == parent_id
         )
+        .first()
+    )
 
-        if not wish:
+         if not wish:
             return None, "wish_not_found"
 
-        db.session.delete(wish)
-        db.session.commit()
+        if wish.status != "PENDING":
+            return None, "wish_already_processed"
 
-        return True, None
+        wish.status = "REJECTED"
+        
+        db.session.commit()
+        return wish, None
 
     def get_wishlist_status(self, child_id):
         child_points = ChildPoints.query.filter_by(child_id=child_id).first()
