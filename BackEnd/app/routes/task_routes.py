@@ -23,7 +23,7 @@ def require_parent():
 class TaskListResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
-    @api.expect(task_create_model, validate=True)
+    @api.expect(task_create_model)
     def post(self):
         parent_id = get_jwt_identity()
         error = require_parent()
@@ -65,7 +65,7 @@ class TaskResource(Resource):
 
     @api.doc(security="JWT")
     @jwt_required()
-    @api.expect(task_update_model, validate=True)
+    @api.expect(task_update_model)
     def put(self, task_id):
         parent_id = get_jwt_identity()
         error = require_parent()
