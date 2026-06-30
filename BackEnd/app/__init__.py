@@ -14,6 +14,7 @@ from app.routes.user_routes import api as user_ns
 from app.routes.child_routes import api as child_ns
 from app.routes.task_routes import api as task_ns
 from app.routes.wishlist_routes import api as wishlist_ns 
+from app.routes.daily_feedback_routes import api as daily_feedback_ns
 
 
 
@@ -78,5 +79,5 @@ def create_app():
     api.add_namespace(child_ns, path="/api/children")
     api.add_namespace(task_ns, path="/api/tasks")
     api.add_namespace(wishlist_ns, path="/api/wishlists")
-
+    api.add_namespace(daily_feedback_ns, path="/api/daily-feedback")
     return app

@@ -35,6 +35,7 @@ class Task(BaseModel):
 	created_by = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)  
 	approved_at = db.Column(db.DateTime, nullable=True)
 
+
 	def approve(self):
 		"""Mark the task as approved and set the approval timestamp"""
 		self.status = "APPROVED"

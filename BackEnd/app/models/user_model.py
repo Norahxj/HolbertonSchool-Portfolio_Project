@@ -10,3 +10,5 @@ class User(BaseModel):
     role = db.Column(db.String(20), default="parent", nullable=False)
     children = db.relationship("Child",backref="parent",lazy=True, cascade="all, delete-orphan")
     tasks = db.relationship("Task", backref="creator", lazy=True, cascade="all, delete")
+    
+    feedback = db.relationship("DailyFeedback", backref="parent", lazy=True, cascade="all, delete-orphan")
