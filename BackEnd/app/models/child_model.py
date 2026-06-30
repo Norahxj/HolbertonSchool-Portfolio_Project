@@ -17,4 +17,4 @@ class Child(BaseModel):
     age = db.Column(db.Integer, nullable=False)
     access_code = db.Column(db.String(6), unique=True, nullable=False)
     guardians = db.relationship("User", secondary=child_guardians, backref=db.backref("children", lazy=True), lazy=True)
-    feedback = db.relationship("DailyFeedback", backref="child", lazy=True, cascade="all, delete-orphan")
+    daily_feedbacks = db.relationship("DailyFeedback", backref="child", lazy=True, cascade="all, delete-orphan")

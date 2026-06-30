@@ -4,6 +4,7 @@ from app.models.base_model import BaseModel
 
 class TaskAssignment(BaseModel):
     __tablename__ = "task_assignments"
+    __table_args__ = (db.UniqueConstraint("task_id", "child_id", name="unique_task_child_assignment"),)
 
     task_id = db.Column(db.String(36), db.ForeignKey("tasks.id"), nullable=False)
     child_id = db.Column(db.String(36), db.ForeignKey("children.id"), nullable=False)
