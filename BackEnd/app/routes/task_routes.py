@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
-
 from app.api_models.task_api import get_task_models
 from app.services.task_service import TaskService
 from app.schemas import TaskResponseSchema, TaskCreateSchema, TaskUpdateSchema

@@ -1,6 +1,5 @@
 from flask_restx import fields
 
-
 def get_task_models(api):
     task_create_model = api.model("TaskCreate", {
         "child_id": fields.String(required=True, description="Child ID"),

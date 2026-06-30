@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from app.extensions import db
 from app.models.task_model import Task
 from app.models.child_model import Child
