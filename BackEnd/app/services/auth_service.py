@@ -4,10 +4,30 @@ from app.models.user_model import User
 from sqlalchemy.exc import IntegrityError
 from app.schemas.user_schema import UserResponseSchema
 from app.models.child_model import Child
+from app.schemas.child_schema import ChildResponseSchema
 
+child_response_schema = ChildResponseSchema()
 user_response_schema = UserResponseSchema()
 
 class AuthService:
+
+    def _create_tokens(self, identity, role):
+        access_token = create_access_token(
+            identity=str(identity),
+            additional_claims={"role": role}
+        )
+
+        refresh_token = create_refresh_token(
+            identity=str(identity),
+            additional_claims={"role": role}
+        )
+
+        return access_token, refresh_token
+    
+    def create_access_token_only(self, identity, role):
+        return create_access_token(
+            identity=str(identity), additional_claims={"role": role}
+        )
 
     def register(self, user_data):
         full_name = user_data["full_name"].strip()
@@ -42,15 +62,7 @@ class AuthService:
         if not bcrypt.check_password_hash(user.password_hash, password):
             return None, "Invalid email or password"
 
-        access_token = create_access_token(
-            identity=str(user.id),
-            additional_claims={"role": user.role}
-        )
-
-        refresh_token = create_refresh_token(
-            identity=str(user.id),
-            additional_claims={"role": user.role}
-        )
+        access_token, refresh_token = self._create_tokens(user.id, user.role)
 
         return {
             "access_token": access_token,
@@ -65,23 +77,10 @@ class AuthService:
         if not child:
             return None, "Invalid access code"
 
-        access_token = create_access_token(
-            identity=str(child.id),
-            additional_claims={"role": "child"}
-        )
-
-        refresh_token = create_refresh_token(
-            identity=str(child.id),
-            additional_claims={"role": "child"}
-        )
+        access_token, refresh_token = self._create_tokens(child.id, "child")
 
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "child": {
-                "id": child.id,
-                "name": child.name,
-                "age": child.age,
-                "role": "child"
-            }
+            "child": child_response_schema.dump(child)
         }, None
