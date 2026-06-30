@@ -2,10 +2,12 @@ from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
 
-from app.api_models.dailyfeedback_api import get_daily_feedback_models
-from app.services.dailyfeedback_service import DailyFeedbackService
-from app.schemas import DailyFeedbackCreateSchema, DailyFeedbackResponseSchema
-
+from app.api_models.daily_feedback_api import get_daily_feedback_models
+from app.services.daily_feedback_service import DailyFeedbackService
+from app.schemas.daily_feedback_schema import (
+    DailyFeedbackCreateSchema,
+    DailyFeedbackResponseSchema
+)
 
 api = Namespace("daily-feedback", description="Daily feedback operations")
 

@@ -1,115 +1,108 @@
 from app.extensions import db
 from app.models.wishlist_model import Wishlist
 from app.models.child_model import Child
-from app.models.points_model import ChildPoints
-from app.models.points_history_model import PointsHistory
+from app.models.point_model import ChildPoints
 
 
 class WishlistService:
 
-    @staticmethod
-    def add_wish(child_id, name):
+    def add_wish(self, child_id, name):
         child = Child.query.filter_by(id=child_id).first()
+
         if not child:
-            return None, 404
+            return None, "child_not_found"
 
-        existing_wishes = Wishlist.query.filter_by(child_id=child_id).count()
-        if existing_wishes >= 5:
-            return None, 400
+        wishes_count = Wishlist.query.filter_by(child_id=child_id).count()
 
-        new_wish = Wishlist(
+        if wishes_count >= 5:
+            return None, "wishlist_limit_reached"
+
+        wish = Wishlist(
             child_id=child_id,
-            name=name,
+            name=name.strip(),
             status="PENDING"
         )
 
-        db.session.add(new_wish)
+        db.session.add(wish)
         db.session.commit()
-        return new_wish, 201
 
-    @staticmethod
-    def approve_wish(wish_id, target_points):
-        wish = Wishlist.query.filter_by(id=wish_id).first()
+        return wish, None
+
+    def get_child_wishlist(self, child_id):
+        wishes = Wishlist.query.filter_by(child_id=child_id).all()
+        return wishes, None
+
+    def approve_wish(self, parent_id, wish_id, target_points):
+        wish = (
+            Wishlist.query
+            .join(Child, Wishlist.child_id == Child.id)
+            .filter(
+                Wishlist.id == wish_id,
+                Child.parent_id == parent_id
+            )
+            .first()
+        )
+
         if not wish:
-            return None, 404
+            return None, "wish_not_found"
 
-        approved_count = Wishlist.query.filter_by(
-            child_id=wish.child_id,
-            target_points=target_points,
-            status="APPROVED"
-        ).count()
+        if wish.status != "PENDING":
+            return None, "wish_already_processed"
 
-        if approved_count >= 3:
-            return None, 400
+        wish.status = "APPROVED"
+        wish.target_points = target_points
 
-        wish.approve()
-        return wish, 200
+        db.session.commit()
 
-    @staticmethod
-    def reject_wish(wish_id):
-        wish = Wishlist.query.filter_by(id=wish_id).first()
+        return wish, None
+
+    def reject_wish(self, parent_id, wish_id):
+        wish = (
+            Wishlist.query
+            .join(Child, Wishlist.child_id == Child.id)
+            .filter(
+                Wishlist.id == wish_id,
+                Child.parent_id == parent_id
+            )
+            .first()
+        )
+
         if not wish:
-            return None, 404
-
-        wish.reject()
-        return wish, 200
+            return None, "wish_not_found"
 
         db.session.delete(wish)
         db.session.commit()
-        return {"message":" wish rejected"}, 200
 
-    @staticmethod
-    def get_child_wishlist(child_id):
-        wishes = Wishlist.query.filter_by(child_id=child_id).all()
-        return wishes, 200
-   
-    @staticmethod
-    def get_progress(child_id):
-    # Get child's current points
-    child_points = ChildPoints.query.filter_by(child_id=child_id).first()
-    current_points = child_points.total_points if child_points else 0
+        return True, None
 
-    # Get all wishes for the child
-    wishes = Wishlist.query.filter_by(child_id=child_id).all()
+    def get_wishlist_status(self, child_id):
+        child_points = ChildPoints.query.filter_by(child_id=child_id).first()
+        total_points = child_points.total_points if child_points else 0
 
-    # Build progress list
-    wishes_progress = []
-    for wish in wishes:
-        target = wish.target_points or 0
+        wishes = Wishlist.query.filter_by(
+            child_id=child_id,
+            status="APPROVED"
+        ).all()
 
-        if target == 0:
+        result = []
+
+        for wish in wishes:
+            target = wish.target_points or 0
+
             progress = 0
-        else:
-            progress = round((current_points / target) * 100, 2)
+            if target > 0:
+                progress = min(total_points, target)
 
-        wishes_progress.append({
-            "id": wish.id,
-            "name": wish.name,
-            "target_points": target,
-            "status": wish.status,
-            "progress_percentage": progress,
-            "created_at": wish.created_at,
-            "updated_at": wish.updated_at
-        })
+            result.append({
+                "wish_id": wish.id,
+                "name": wish.name,
+                "target_points": target,
+                "current_points": progress,
+                "remaining": max(target - progress, 0),
+                "is_completed": progress >= target
+            })
 
-    # Final response
-    return {
-        "child_id": child_id,
-        "current_points": current_points,
-        "wishes": wishes_progress
-    }, 200
-
-    @staticmethod
-    def update_wish(wish_id, data):
-        wish = Wishlist.query.filter_by(id=wish_id).first()
-        if not wish:
-            return None, 404
-
-        if "name" in data:
-            wish.name = data["name"]
-
-        if "target_points" in data:
-            wish.target_points = data["target_points"]
-
-        db.session.commit()
-        return wish, 200
+        return {
+            "child_id": child_id,
+            "wishes": result
+        }, None

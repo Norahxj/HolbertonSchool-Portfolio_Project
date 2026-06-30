@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models.dailyfeedback_model import DailyFeedback
+from app.models.daily_feedback_model import DailyFeedback
 from app.models.task_model import Task
 from app.models.child_model import Child
 
