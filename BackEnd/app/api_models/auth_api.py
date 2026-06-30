@@ -34,7 +34,6 @@ def get_auth_models(api):
         "id": fields.String(description="Child ID"),
         "name": fields.String(description="Child name"),
         "age": fields.Integer(description="Child age"),
-        "access_code": fields.String(description="Child access code"),
         "role": fields.String(description="Role")
     })
 

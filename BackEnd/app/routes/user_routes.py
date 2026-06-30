@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
-
 from app.api_models.user_api import get_user_models
 from app.services.user_service import UserService
 from app.schemas import UserResponseSchema, UserUpdateSchema
