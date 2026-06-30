@@ -6,7 +6,7 @@ class TaskResponseSchema(Schema):
     description = fields.String()
     points = fields.Integer()
     task_frequency = fields.String()
-    recurrence_day = fields.String(allow_none=True)
+    recurrence_day = fields.Integer(allow_none=True)
     category = fields.String(allow_none=True)
     is_auto_verified = fields.Boolean()
     created_by = fields.String()
