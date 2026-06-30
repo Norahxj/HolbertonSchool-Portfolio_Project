@@ -17,14 +17,6 @@ class Wishlist(BaseModel):
 
     child = db.relationship("Child", backref="wishlists", lazy=True)
 
-    def approve(self):
-        self.status = "APPROVED"
-        db.session.commit()
-
-    def reject(self):
-        self.status = "REJECTED"
-        db.session.commit()
-
     def to_dict(self):
         return {
             "id": self.id,

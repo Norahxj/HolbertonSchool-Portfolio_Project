@@ -1,7 +1,10 @@
 from flask import Flask
-import os
 
-from flask import Flask
+from app.dotenv import load_dotenv
+
+load_dotenv()
+
+
 from flask_restx import Api
 from app.extensions import db, jwt, bcrypt
 from app.config import Config

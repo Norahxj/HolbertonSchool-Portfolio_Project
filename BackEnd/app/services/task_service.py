@@ -113,6 +113,7 @@ class TaskService:
         task.status = "APPROVED"
         task.approved_at = datetime.now()
         db.session.commit()
+        
         return task, None
 
     def reject_task_for_parent(self, task_id, parent_id):
