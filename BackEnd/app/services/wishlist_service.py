@@ -8,7 +8,7 @@ from app.models.points_history_model import PointsHistory
 class WishlistService:
 
     @staticmethod
-    def add_wish(child_id, name, target_points=0):
+    def add_wish(child_id, name):
         child = Child.query.filter_by(id=child_id).first()
         if not child:
             return None, 404
@@ -20,7 +20,6 @@ class WishlistService:
         new_wish = Wishlist(
             child_id=child_id,
             name=name,
-            target_points=target_points,
             status="PENDING"
         )
 
@@ -29,13 +28,14 @@ class WishlistService:
         return new_wish, 201
 
     @staticmethod
-    def approve_wish(wish_id):
+    def approve_wish(wish_id, target_points):
         wish = Wishlist.query.filter_by(id=wish_id).first()
         if not wish:
             return None, 404
 
         approved_count = Wishlist.query.filter_by(
             child_id=wish.child_id,
+            target_points=target_points,
             status="APPROVED"
         ).count()
 
@@ -54,18 +54,9 @@ class WishlistService:
         wish.reject()
         return wish, 200
 
-    @staticmethod
-    def set_goal(child_id, goal_points):
-        child = Child.query.filter_by(id=child_id).first()
-        if not child:
-            return None, 404
-
-        Wishlist.query.filter_by(child_id=child_id).update({
-            "target_points": goal_points
-        })
-
+        db.session.delete(wish)
         db.session.commit()
-        return {"message": "Goal updated", "goal_points": goal_points}, 200
+        return {"message":" wish rejected"}, 200
 
     @staticmethod
     def get_child_wishlist(child_id):
@@ -122,49 +113,3 @@ class WishlistService:
 
         db.session.commit()
         return wish, 200
-
-    @staticmethod
-    def delete_wish(wish_id):
-        wish = Wishlist.query.filter_by(id=wish_id).first()
-        if not wish:
-            return None, 404
-
-        db.session.delete(wish)
-        db.session.commit()
-        return True, 200
-@staticmethod
-    def redeem_wish(child_id, wish_id):
-        # Get the wish
-        wish = Wishlist.query.filter_by(id=wish_id, child_id=child_id).first()
-        if not wish:
-            return None, "wish_not_found"
-
-        # Get child's current points
-        child_points = ChildPoints.query.filter_by(child_id=child_id).first()
-        if not child_points:
-            return None, "no_points_record"
-
-        # Check if child has enough points
-        if child_points.total_points < wish.target_points:
-            return None, "not_enough_points"
-
-        # Deduct points
-        child_points.total_points -= wish.target_points
-        db.session.commit()
-
-        # Update wish status
-        wish.status = "REDEEMED"
-        db.session.commit()
-
-        # Record history
-        history = PointsHistory(
-            child_id=child_id,
-            points=-wish.target_points,
-            action="WISH_REDEEMED",
-            source_id=wish.id,
-            note=f"Redeemed wish: {wish.name}"
-        )
-        db.session.add(history)
-        db.session.commit()
-
-        return wish, None

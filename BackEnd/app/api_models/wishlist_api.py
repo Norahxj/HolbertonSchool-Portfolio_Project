@@ -18,19 +18,14 @@ def get_wishlist_models(api):
 
     # Approve Wishlist Model
     wishlist_approve_model = api.model("WishlistApprove", {
-        "wish_id": fields.String(required=True, description="Wish ID to approve")
+        "wish_id": fields.String(required=True, description="Wish ID to approve"),
+        "target_points": fields.Integer(required=True, description="Target points for the wish")
     })
 
     # Reject Wishlist Model
     wishlist_reject_model = api.model("WishlistReject", {
         "wish_id": fields.String(required=True, description="Wish ID to reject")
-    })
-
-    # Set Goal Model
-    wishlist_goal_model = api.model("WishlistGoal", {
-        "child_id": fields.String(required=True, description="Child ID"),
-        "goal_points": fields.Integer(required=True, description="Wishlist goal points")
-    })
+    })  
 
     # Progress Model
     wishlist_progress_model = api.model("WishlistProgress", {
@@ -42,6 +37,5 @@ def get_wishlist_models(api):
         wishlist_update_model,
         wishlist_approve_model,
         wishlist_reject_model,
-        wishlist_goal_model,
         wishlist_progress_model
     )

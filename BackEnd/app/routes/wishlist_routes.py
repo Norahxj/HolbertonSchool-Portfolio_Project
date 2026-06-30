@@ -9,7 +9,6 @@ from app.schemas.wishlist_schema import (
     WishlistUpdateSchema,
     WishlistApproveSchema,
     WishlistRejectSchema,
-    WishlistGoalSchema,
     WishlistProgressSchema
 )
 from app.api_models.wishlist_api import get_wishlist_models
@@ -26,7 +25,6 @@ wishlist_create_schema = WishlistCreateSchema()
 wishlist_update_schema = WishlistUpdateSchema()
 wishlist_approve_schema = WishlistApproveSchema()
 wishlist_reject_schema = WishlistRejectSchema()
-wishlist_goal_schema = WishlistGoalSchema()
 wishlist_progress_schema = WishlistProgressSchema()
 
 (
@@ -34,7 +32,6 @@ wishlist_progress_schema = WishlistProgressSchema()
     wishlist_update_model,
     wishlist_approve_model,
     wishlist_reject_model,
-    wishlist_goal_model,
     wishlist_progress_model
 ) = get_wishlist_models(api)
 
@@ -101,8 +98,8 @@ class WishlistResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.expect(wishlist_update_model, validate=True)
-    def put(self, wish_id):
-        error = require_child()
+    def put(self, wish_id): ##
+        error = require_parent()
         if error:
             return error
 
@@ -170,29 +167,6 @@ class WishlistRejectResource(Resource):
         wish, status = wishlist_service.reject_wish(data["wish_id"])
         return wishlist_response_schema.dump(wish), status
 
-
-@api.route("/set-goal")
-class WishlistGoalResource(Resource):
-
-    @api.doc(security="JWT")
-    @jwt_required()
-    @api.expect(wishlist_goal_model, validate=True)
-    def put(self):
-        error = require_parent()
-        if error:
-            return error
-
-        try:
-            data = wishlist_goal_schema.load(api.payload)
-        except ValidationError as err:
-            return {"errors": err.messages}, 400
-
-        result, status = wishlist_service.set_goal(
-            child_id=data["child_id"],
-            goal_points=data["goal_points"]
-        )
-
-        return result, status
 
 
 @api.route("/progress")

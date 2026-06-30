@@ -13,7 +13,6 @@ class WishlistResponseSchema(Schema):
 class WishlistCreateSchema(Schema):
     child_id = fields.String(required=True)
     name = fields.String(required=True, validate=validate.Length(min=2, max=100))
-    target_points = fields.Integer(required=False, load_default=0, validate=validate.Range(min=0))
 
     @validates("name")
     def validate_name(self, value, **kwargs):
@@ -37,11 +36,6 @@ class WishlistApproveSchema(Schema):
 
 class WishlistRejectSchema(Schema):
     wish_id = fields.String(required=True)
-
-
-class WishlistGoalSchema(Schema):
-    child_id = fields.String(required=True)
-    goal_points = fields.Integer(required=True, validate=validate.Range(min=1))
 
 
 class WishlistProgressSchema(Schema):
