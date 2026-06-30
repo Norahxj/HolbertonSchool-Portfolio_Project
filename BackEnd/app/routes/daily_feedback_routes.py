@@ -4,10 +4,7 @@ from marshmallow import ValidationError
 
 from app.api_models.dailyfeedback_api import get_daily_feedback_models
 from app.services.dailyfeedback_service import DailyFeedbackService
-from app.schemas import (
-    DailyFeedbackCreateSchema,
-    DailyFeedbackResponseSchema
-)
+from app.schemas import DailyFeedbackCreateSchema, DailyFeedbackResponseSchema
 
 
 api = Namespace("daily-feedback", description="Daily feedback operations")

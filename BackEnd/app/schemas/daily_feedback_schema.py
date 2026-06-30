@@ -13,7 +13,6 @@ ALLOWED_EMOJIS = [
 class DailyFeedbackResponseSchema(Schema):
     id = fields.String()
     task_id = fields.String()
-    parent_id = fields.String()
     emoji = fields.String()
     created_at = fields.DateTime()
 

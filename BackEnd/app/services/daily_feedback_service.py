@@ -30,7 +30,6 @@ class DailyFeedbackService:
 
         feedback = DailyFeedback(
             task_id=task.id,
-            parent_id=parent_id,
             emoji=feedback_data["emoji"]
         )
 
