@@ -44,6 +44,8 @@ class UserService:
 
         if not user:
             return None
+        
+        user.children.clear()
 
         db.session.delete(user)
         db.session.commit()
