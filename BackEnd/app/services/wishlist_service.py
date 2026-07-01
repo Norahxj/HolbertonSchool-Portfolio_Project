@@ -16,18 +16,18 @@ class WishlistService:
         if wishes_count >= 5:
             return None, "wishlist_limit_reached"
 
-    name = name.strip()
-    if not name:
-        return None, "invalid_name"
+        name = name.strip()
+        if not name:
+            return None, "invalid_name"
 
-    existing_wish = Wishlist.query.filter_by(child_id=child_id,name=name).first()
-    if existing_wish:
-        return None, "wish_already_exists"
+        existing_wish = Wishlist.query.filter_by(child_id=child_id,name=name).first()
+        if existing_wish:
+            return None, "wish_already_exists"
 
-    wish = Wishlist(child_id=child_id,name=name,status="PENDING")
-    db.session.add(wish)
-    db.session.commit()
-     return wish, None
+        wish = Wishlist(child_id=child_id,name=name,status="PENDING")
+        db.session.add(wish)
+        db.session.commit()
+        return wish, None
 
 
     def get_child_wishlist(self, child_id):
@@ -62,7 +62,7 @@ class WishlistService:
         return wish, None
 
     def reject_wish(self, parent_id, wish_id):
-       wish = (
+        wish = (
         Wishlist.query
         .join(Child, Wishlist.child_id == Child.id)
         .filter(
@@ -72,7 +72,7 @@ class WishlistService:
         .first()
     )
 
-         if not wish:
+        if not wish:
             return None, "wish_not_found"
 
         if wish.status != "PENDING":

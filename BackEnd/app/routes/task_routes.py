@@ -34,6 +34,9 @@ class TaskListResource(Resource):
         except ValidationError as err:
             return {"errors": err.messages}, 400
         task, error = task_service.create_task(parent_id, task_data)
+        if error == "duplicate_child_ids":
+            return {"error": "Duplicate child IDs are not allowed"}, 400
+
         if error == "child_not_found":
             return {"error": "Child not found"}, 404
         return task_response_schema.dump(task), 201
@@ -77,9 +80,11 @@ class TaskResource(Resource):
             return {"errors": err.messages}, 400
         if not task_data:
             return {"error": "No fields provided for update"}, 400
-        task = task_service.update_task_for_parent(task_id, parent_id, task_data)
-        if not task:
+        task, error = task_service.update_task_for_parent(task_id, parent_id, task_data)
+        if error == "not_found":
             return {"error": "Task not found"}, 404
+        if error == "invalid_recurrence_day":
+            return {"error": "Invalid recurrence_day for selected task_frequency"}, 400
         return task_response_schema.dump(task), 200
 
     @api.doc(security="JWT")

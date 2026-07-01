@@ -22,6 +22,8 @@ class TaskService:
     
     def create_task(self, parent_id, task_data):
         child_ids = task_data["child_ids"]
+        if len(child_ids) != len(set(child_ids)):
+            return None, "duplicate_child_ids"
         children = [
             self._get_child_for_parent(child_id, parent_id)
             for child_id in child_ids
@@ -47,12 +49,8 @@ class TaskService:
         child = self._get_child_for_parent(child_id, parent_id)
         if not child:
             return None
-        return (
-            Task.query.join(TaskAssignment).filter(
-            TaskAssignment.child_id == child_id,
-            Task.created_by == parent_id
-            ).all()
-        )
+        return (Task.query.join(TaskAssignment)
+        .filter(TaskAssignment.child_id == child_id).all())
     
     def get_task_for_parent(self, task_id, parent_id):
         return Task.query.filter_by(id=task_id, created_by=parent_id).first()
@@ -61,23 +59,28 @@ class TaskService:
         task = self.get_task_for_parent(task_id, parent_id)
         if not task:
             return None
+        new_frequency = task_data.get("task_frequency", task.task_frequency)
+        new_recurrence_day = task_data.get("recurrence_day", task.recurrence_day)
+        if new_frequency in ["ONCE", "DAILY"]:
+            new_recurrence_day = None
+        elif new_frequency == "WEEKLY":
+            if new_recurrence_day is None or new_recurrence_day < 0 or new_recurrence_day > 6:
+                return None, "invalid_recurrence_day"
+        elif new_frequency == "MONTHLY":
+            if new_recurrence_day is None or new_recurrence_day < 1 or new_recurrence_day > 31:
+                return None, "invalid_recurrence_day"
         if "title" in task_data:
             task.title = task_data["title"].strip()
         if "description" in task_data:
             task.description = task_data["description"].strip()
         if "points" in task_data:
             task.points = task_data["points"]
-        if "task_frequency" in task_data:
-            task.task_frequency = task_data["task_frequency"]
-        if task.task_frequency in ["WEEKLY", "MONTHLY"]:
-            if "recurrence_day" in task_data:
-                task.recurrence_day = task_data["recurrence_day"]
-        else:
-            task.recurrence_day = None
         if "category" in task_data:
             task.category = task_data["category"]
         if "is_auto_verified" in task_data:
             task.is_auto_verified = task_data["is_auto_verified"]
+        task.task_frequency = new_frequency
+        task.recurrence_day = new_recurrence_day
         db.session.commit()
         return task
 
