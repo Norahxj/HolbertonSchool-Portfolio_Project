@@ -842,142 +842,142 @@ Future versions may integrate:
 ## 7.1 Authentication Endpoints
 
 | Endpoint | Method | Purpose |
-| :--- | :--- | :--- |
-| `/api/register` | `POST` | Register parent account. |
-| `/api/login` | `POST` | Parent login (returns token). |
-| `/api/child-login` | `POST` | Child login (returns token). |
+| :--- | :---: | :--- |
+| `/api/register` | `POST` | Register a new parent account. |
+| `/api/login` | `POST` | Authenticate a parent and return a JWT token. |
+| `/api/child-login` | `POST` | Authenticate a child and request parent approval before granting access. |
 
 ---
-## 7.2 Child Profile Endpoints
+
+## 7.2 Child Management Endpoints
 
 | Endpoint | Method | Purpose |
-| :--- | :--- | :--- |
-| `/api/children` | `GET` | List all children. |
+| :--- | :---: | :--- |
+| `/api/children` | `GET` | Retrieve all child profiles. |
 | `/api/children` | `POST` | Create a new child profile. |
-| `/api/children/<id>` | `GET` | Get specific child profile. |
-| `/api/children/<id>` | `PUT` | Update child profile details. |
-| `/api/children/<id>` | `DELETE` | Delete a child profile. |
+| `/api/children/<id>` | `GET` | Retrieve a specific child profile. |
+| `/api/children/<id>` | `PUT` | Update child information. |
+| `/api/children/<id>` | `DELETE` | Remove a child profile. |
 
 ---
 
-## 7.3 Task & Feedback Endpoints
+## 7.3 Task Endpoints
 
 | Endpoint | Method | Purpose |
-| :--- | :--- | :--- |
+| :--- | :---: | :--- |
+| `/api/tasks` | `GET` | Retrieve all tasks. |
 | `/api/tasks` | `POST` | Create a new task. |
-| `/api/tasks` | `GET` | Get all tasks (filtered by child/parent). |
-| `/api/tasks/<id>` | `GET` | Get specific task details. |
-| `/api/tasks/<id>` | `PUT` | Update task. |
-| `/api/tasks/<id>` | `DELETE` | Delete task. |
-| `/api/tasks/<id>/complete` | `POST` | Child marks task as completed. |
-| `/api/tasks/<id>/feedback` | `POST` | Submit daily feedback (emoji/comment). |
-| `/api/tasks/<id>/approve` | `POST` | Parent approves task and awards points. |
-| `/api/tasks/<id>/reject` | `POST` | Parent rejects task. |
+| `/api/tasks/<id>` | `GET` | Retrieve task details. |
+| `/api/tasks/<id>` | `PUT` | Update an existing task. |
+| `/api/tasks/<id>` | `DELETE` | Delete a task. |
 
-### Example Feedback JSON
-```json
-{
-  "emoji": "🌟",
-  "comment": "Great job today!"
-}
-
-```
 ---
-# 7.4 Wishlist Endpoints
+
+## 7.4 Task Assignment Endpoints
 
 | Endpoint | Method | Purpose |
 | :--- | :---: | :--- |
-| `/api/wishlist` | `GET` | Retrieve the child's wishlist. |
-| `/api/wishlist` | `POST` | Add a new wishlist item. |
+| `/api/task-assignments` | `POST` | Assign a task to a child. |
+| `/api/task-assignments` | `GET` | Retrieve task assignments. |
+| `/api/task-assignments/<id>/complete` | `POST` | Mark an assigned task as completed. |
+| `/api/task-assignments/<id>/approve` | `POST` | Approve a completed task and award Noor Points. |
+
+---
+
+## 7.5 Daily Feedback Endpoints
+
+| Endpoint | Method | Purpose |
+| :--- | :---: | :--- |
+| `/api/daily-feedback` | `POST` | Submit daily feedback for a child. |
+| `/api/daily-feedback/<child_id>` | `GET` | Retrieve a child's daily feedback history. |
+
+### Example Daily Feedback JSON
+
+```json
+{
+  "child_id": "uuid",
+  "mood": "Happy"
+}
+```
+
+---
+
+## 7.6 Wishlist Endpoints
+
+| Endpoint | Method | Purpose |
+| :--- | :---: | :--- |
+| `/api/wishlist` | `GET` | Retrieve wishlist items. |
+| `/api/wishlist` | `POST` | Create a wishlist item. |
 | `/api/wishlist/<id>` | `PUT` | Update a wishlist item. |
-| `/api/wishlist/<id>` | `DELETE` | Remove a wishlist item. |
+| `/api/wishlist/<id>` | `DELETE` | Delete a wishlist item. |
 
-## Example Wishlist Item JSON
+### Example Wishlist JSON
 
 ```json
 {
-  "title": "New Coloring Book",
-  "cost_in_points": 120
+  "name": "New Coloring Book",
+  "target_points": 120
 }
 ```
 
 ---
 
-# 7.5 Weekly Rewards Endpoints
-
-*(No Redeem – No Points – Weekly Approval System)*
-
-## Weekly Rewards Logic
-
-- Rewards appear to the child every Thursday.
-- Rewards depend on task completion.
-- Parent decides whether to **Approve** or **Reject** the reward.
-- No redeeming process is required.
-- No points are deducted.
-- Points are only used for the Wishlist.
-
-## Endpoints
+## 7.7 Reward Endpoints
 
 | Endpoint | Method | Purpose |
 | :--- | :---: | :--- |
-| `/api/rewards/week` | `GET` | Get the current week's rewards for the child. |
-| `/api/rewards/generate` | `POST` | Generate weekly rewards (Thursday). |
-| `/api/rewards/<id>/approve` | `POST` | Parent approves the reward. |
-| `/api/rewards/<id>/reject` | `POST` | Parent rejects the reward. |
+| `/api/rewards` | `GET` | Retrieve rewards assigned to a child. |
+| `/api/rewards` | `POST` | Create a new reward. |
+| `/api/rewards/<id>` | `PUT` | Update reward information. |
+| `/api/rewards/<id>` | `DELETE` | Delete a reward. |
+| `/api/rewards/<id>/approve` | `POST` | Approve a reward. |
 
-## Example Weekly Reward JSON
+### Example Reward JSON
 
 ```json
 {
   "reward_name": "Choose Friday Movie",
-  "description": "Child gets to pick the family movie.",
-  "week_start": "2026-06-25",
-  "week_end": "2026-07-01",
+  "description": "Child chooses the family movie.",
+  "reward_type": "Weekly",
   "status": "PENDING"
 }
 ```
 
-## Example Approve JSON
-
-```json
-{
-  "status": "APPROVED",
-  "note": "Great job finishing all tasks this week!"
-}
-```
-
 ---
 
-# 7.6 Noor Points & Progress Endpoints
+## 7.8 Noor Points Endpoints
 
 | Endpoint | Method | Purpose |
 | :--- | :---: | :--- |
-| `/api/children/<id>/points` | `GET` | Get the child's current point balance. |
-| `/api/children/<id>/history` | `GET` | Get point transaction history. |
-| `/api/children/<id>/progress` | `GET` | Get weekly/monthly progress summary. |
+| `/api/points/<child_id>` | `GET` | Retrieve the child's current Noor Points balance. |
 
-## Example Points JSON
+### Example Points JSON
 
 ```json
 {
-  "total_points": 340,
-  "earned_from_tasks": 300,
-  "earned_from_feedback": 40
+  "total_points": 340
 }
 ```
 
 ---
 
-# 7.7 Common Error Responses
+## 7.9 Dashboard Endpoints
+
+| Endpoint | Method | Purpose |
+| :--- | :---: | :--- |
+| `/api/dashboard` | `GET` | Retrieve dashboard summary and statistics for the authenticated user. |
+
+---
+
+## 7.10 Common Error Responses
 
 | Status Code | Description |
 | :---: | :--- |
-| `400` | Bad Request. |
-| `401` | Unauthorized. |
-| `403` | Forbidden. |
-| `404` | Not Found. |
-| `500` | Internal Server Error. |
-
+| `400` | Bad Request |
+| `401` | Unauthorized |
+| `403` | Forbidden |
+| `404` | Resource Not Found |
+| `500` | Internal Server Error |
 ---
 
 # 7.8 API Design Justification
