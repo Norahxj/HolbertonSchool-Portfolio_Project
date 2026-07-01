@@ -17,9 +17,7 @@ def get_wishlist_models(api):
     })
 
     wishlist_reject_model = api.model("WishlistReject", {})
-
     wishlist_progress_model = api.model("WishlistProgress", {})
-
     return (
         wishlist_create_model,
         wishlist_update_model,
