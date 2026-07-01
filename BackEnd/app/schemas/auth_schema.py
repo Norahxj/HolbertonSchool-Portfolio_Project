@@ -1,7 +1,6 @@
 import re
 from marshmallow import Schema, ValidationError, fields, validate
 
-
 def validate_password(password):
     if len(password) < 8:
         raise ValidationError("Password must be at least 8 characters long.")
@@ -14,7 +13,6 @@ def validate_password(password):
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-+=/\\[\]]", password):
         raise ValidationError("Password must contain at least one special character.")
 
-
 class RegisterSchema(Schema):
     full_name = fields.String(
         required=True,
@@ -25,7 +23,6 @@ class RegisterSchema(Schema):
         required=True,
         validate=validate_password
     )
-
 
 class LoginSchema(Schema):
     email = fields.Email(required=True)
