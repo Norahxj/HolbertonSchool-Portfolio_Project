@@ -13,6 +13,10 @@ def get_auth_models(api):
         "password": fields.String(required=True, description="Password")
     })
 
+    child_login_model = api.model("ChildLogin", {
+        "access_code": fields.String(required=True, description="6-digit child access code")
+    })
+
     user_response_model = api.model("UserResponse", {
         "id": fields.String(description="User ID"),
         "full_name": fields.String(description="Full name"),
@@ -29,8 +33,7 @@ def get_auth_models(api):
     child_response_model = api.model("ChildAuthResponse", {
         "id": fields.String(description="Child ID"),
         "name": fields.String(description="Child name"),
-        "email": fields.String(description="Child email"),
-        "parent_id": fields.String(description="Parent ID"),
+        "age": fields.Integer(description="Child age"),
         "role": fields.String(description="Role")
     })
 
@@ -40,4 +43,4 @@ def get_auth_models(api):
         "child": fields.Nested(child_response_model)
     })
 
-    return register_model, login_model, token_model, user_response_model, child_token_model
+    return (register_model, login_model, child_login_model, token_model, user_response_model, child_token_model)
