@@ -189,35 +189,78 @@ Asalah will use a **client-server architecture**. The Flutter mobile application
 
 ## 4.2 High-Level System Architecture Diagram
  
- ![alt text](<high Diagram.drawio.png>)
+ ```mermaid
+flowchart TD
 
+    A[Parent / Child]
+
+    B[Front-end]
+
+    C[Back-end API]
+
+    D[Validation Layer]
+
+    E[Service Layer]
+
+    F[Data Models]
+
+    G[(Database)]
+
+    H[API Documentation]
+
+    A --> B
+
+    B --> C
+
+    C --> D
+
+    D --> E
+
+    E --> F
+
+    F --> G
+
+    G --> F
+
+    F --> E
+
+    E --> C
+
+    C --> B
+
+    C -. Documents .-> H
+```
 ---
-
 ## 4.3 System Architecture Explanation
 
-The system architecture is divided into clear layers:
+The system architecture is organized into multiple layers, where each layer has a specific responsibility. This separation improves maintainability, scalability, and simplifies future development.
 
-| Layer                    | Description                                                                                  |
+| Layer | Description |
 | ------------------------ | -------------------------------------------------------------------------------------------- |
-| Users                    | Parent and child users who interact with the mobile application.                             |
-| Frontend Layer           | Flutter mobile app containing parent screens, child screens, shared screens, and API client. |
-| Backend Layer            | Flask REST API that receives requests and returns JSON responses.                            |
-| Business Logic Layer     | Handles application rules such as task approval, reward redemption, and points calculation.  |
-| Data Access Layer        | Uses Flask-SQLAlchemy ORM to connect backend models to database tables.                      |
-| Database Layer           | Stores users, children, tasks, rewards, redemptions, and Noor Points transactions.           |
-| Future External Services | Services that may be added later but are not required for the MVP.                           |
+| Users | Parent and child users who interact with the mobile application. |
+| Front-end Layer | Provides the user interfaces for parents and children, sends HTTP requests, and displays responses received from the back-end. |
+| Back-end API Layer | Exposes REST API endpoints, processes client requests, and returns JSON responses. |
+| Validation Layer | Validates incoming requests and serializes responses using Marshmallow schemas before processing business logic. |
+| Business Logic Layer | Implements the application's core functionality, including authentication, task management, task approval, rewards, wishlist management, daily feedback, and Noor Points calculation. |
+| Data Access Layer | Uses SQLAlchemy ORM to map Python models to database tables and manage data persistence. |
+| Database Layer | Stores users, children, task assignments, rewards, wishlist items, daily feedback, Noor Points, and authentication data. |
+| API Documentation Layer | Provides interactive API documentation and testing through Swagger using Flask-RESTX. |
 
 ---
 
 ## 4.4 System Architecture Justification
 
-Flutter was selected because it supports cross-platform mobile development from one codebase. This allows the team to build a consistent mobile experience for Android and iOS.
+The front-end was designed as a separate layer to provide an intuitive interface for both parents and children while communicating with the back-end through RESTful APIs.
 
-Python Flask was selected because it is lightweight, flexible, and suitable for building RESTful APIs for an MVP.
+The back-end was implemented using Python Flask because it is lightweight, modular, and well suited for developing REST APIs for an MVP.
 
-Flask-SQLAlchemy was selected because it allows the team to represent database tables as Python models and interact with the database in a cleaner way.
+Marshmallow was selected to validate request data and serialize responses, ensuring consistent communication between the client and server.
 
-A layered architecture was selected because it separates responsibilities between the frontend, backend API, business logic, data access, and database. This improves maintainability, testing, and future scalability.
+SQLAlchemy ORM was chosen because it simplifies database operations by mapping database tables to Python classes, improving code readability and maintainability.
+
+A layered architecture was adopted to separate presentation, business logic, validation, and data access responsibilities. This approach makes the system easier to maintain, test, and extend as new features are introduced.
+
+Swagger (Flask-RESTX) was integrated to automatically document the REST APIs, making development, testing, and future integration easier.
 
 ---
 
@@ -252,128 +295,294 @@ The purpose of this section is to define the internal structure of the Asalah MV
 | **ProgressScreen** | Visual tracking of task completion and behavioral progress over time. |
 ---
 ## 5.3 Backend Classes
-
-The backend is developed using Python Flask and Flask-SQLAlchemy. All core business objects inherit from the `BaseModel` to ensure consistency and maintain audit trails.
+The backend is developed using Python Flask and Flask-SQLAlchemy. All core business entities inherit from `BaseModel` to ensure consistency and maintain common metadata across the system.
 
 ### BaseModel (Abstract)
+
 The foundation for all entities, providing standard metadata.
 
 | Attribute | Type | Description |
 | :--- | :--- | :--- |
 | id | UUID | Unique identifier. |
-| createdAt | DateTime | Timestamp of creation. |
-| updatedAt | DateTime | Timestamp of the last update. |
+| created_at | DateTime | Timestamp of creation. |
+| updated_at | DateTime | Timestamp of the last update. |
 
 ---
 
 ### User Class
-Represents the parent account responsible for managing the system.
+
+Represents a parent account responsible for managing children, tasks, rewards, and feedback.
 
 | Attribute | Type | Description |
 | :--- | :--- | :--- |
-| firstName | String | Parent's first name. |
-| lastName | String | Parent's last name. |
-| email | String | Email address (login identifier). |
-| hash_password | String | Encrypted password. |
-| isActive | Boolean | Account active status. |
+| full_name | String | Parent's full name. |
+| email | String | Email address used for login. |
+| password_hash | String | Encrypted password. |
+| role | String | User role (default: Parent). |
 
-* **Methods**: `createChild()`, `createTask()`, `approveTask()`, `sendFeedback()`, `createReward()`.
+**Relationships**
+
+- Creates Tasks
+- Writes Daily Feedback
+- Reviews Wishlist items
+- Assigns Rewards
+- Connected to Children through the Child_Guardians table
 
 ---
 
 ### Child Class
-Represents a child profile linked to a parent.
+
+Represents a child profile managed by one or more guardians.
 
 | Attribute | Type | Description |
 | :--- | :--- | :--- |
-| parentId | UUID | Foreign key referencing the User. |
-| firstName | String | Child's first name. |
-| lastName | String | Child's last name. |
-| email | String | Child's login email. |
-| hash_password | String | Encrypted password. |
-| totalPoints | Integer | Accumulated "Noor Points" balance. |
+| name | String | Child's full name. |
+| age | Integer | Child's age. |
+| access_code | String | Unique login access code. |
 
-* **Methods**: `viewTasks()`, `completeTask()`, `viewWishlist()`, `viewRewards()`.
+**Relationships**
+
+- Linked to Users through Child_Guardians
+- Has many Task Assignments
+- Has many Wishlist items
+- Has many Rewards
+- Has many Daily Feedback records
+- Has one Child Points record
 
 ---
 
 ### Task Class
-Represents tasks assigned to a child by the parent.
+
+Represents a reusable task created by a parent.
 
 | Attribute | Type | Description |
 | :--- | :--- | :--- |
-| childId | UUID | Foreign key referencing the Child. |
 | title | String | Task title. |
 | description | String | Task description. |
+| points | Integer | Noor Points awarded after approval. |
+| task_frequency | String | Task recurrence frequency. |
+| recurrence_day | Integer | Day of recurrence (if applicable). |
 | category | String | Task category. |
-| points | Integer | Assigned Noor Points. |
-| status | String | Current task status. |
-| frequency | String | Task recurrence frequency. |
-| requiresApproval | Boolean | Indicates if parent approval is needed. |
+| is_auto_verified | Boolean | Indicates whether approval is automatic. |
+| created_by | UUID | Reference to the parent who created the task. |
 
-* **Methods**: `complete()`, `approve()`.
+**Relationships**
+
+- Created by a User
+- Assigned to Children through Task Assignments
+
+---
+
+### TaskAssignment Class
+
+Represents the assignment of a task to a specific child.
+
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| task_id | UUID | Reference to the assigned task. |
+| child_id | UUID | Reference to the assigned child. |
+| status | String | Current task status. |
+| completed_at | DateTime | Completion timestamp. |
+| approved_at | DateTime | Approval timestamp. |
 
 ---
 
 ### DailyFeedback Class
-Stores feedback linked to a specific completed task.
+
+Stores daily emotional feedback submitted by a parent for a child.
 
 | Attribute | Type | Description |
 | :--- | :--- | :--- |
-| taskId | UUID | Foreign key referencing the Task. |
-| emoji | String | Visual feedback indicator. |
-| comment | String | Detailed feedback text. |
-
-* **Methods**: `addFeedback()`.
+| child_id | UUID | Reference to the child. |
+| created_by | UUID | Reference to the parent. |
+| mood | String | Selected mood or emoji. |
 
 ---
 
 ### Wishlist Class
-Manages the items a child wishes to obtain with points.
+
+Represents wishlist items created by a child.
 
 | Attribute | Type | Description |
 | :--- | :--- | :--- |
-| childId | UUID | Foreign key referencing the Child. |
-| itemName | String | Name of the desired item. |
-| targetPoints | Integer | Points required for the item. |
-| status | String | Current status of the wish. |
-
-* **Methods**: `addItem()`, `removeItem()`.
+| child_id | UUID | Reference to the child. |
+| name | String | Wishlist item name. |
+| target_points | Integer | Points required to achieve the goal. |
+| status | String | Current wishlist status. |
+| reviewed_by | UUID | Parent who reviewed the wishlist item. |
 
 ---
 
 ### Reward Class
-Defines the rewards created by parents for children.
+
+Represents weekly rewards assigned by parents.
 
 | Attribute | Type | Description |
 | :--- | :--- | :--- |
-| childId | UUID | Foreign key referencing the Child. |
-| title | String | Reward title. |
-| category | String | Reward category. |
-| source | String | Source or provider of the reward. |
-| status | String | Reward availability status. |
+| child_id | UUID | Reference to the child. |
+| reward_name | String | Reward title. |
+| description | String | Reward description. |
+| reward_type | String | Reward category or type. |
+| status | String | Current reward status. |
+| assigned_by | UUID | Parent who assigned the reward. |
 
-* **Methods**: `create()`, `approve()`.
+---
+
+### ChildPoints Class
+
+Stores the accumulated Noor Points for each child.
+
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| child_id | UUID | Reference to the child. |
+| total_points | Integer | Total accumulated Noor Points. |
 
 ---
 
 ## 5.4 Database Design
 
-The system utilizes a relational database structure to maintain integrity between all entities defined in the class diagram.
+The system uses a relational database implemented with PostgreSQL and Flask-SQLAlchemy. The design maintains data integrity through primary keys, foreign keys, and relationship tables.
 
 | Table | Purpose |
 | :--- | :--- |
-| Users | Stores parent account details and system management. |
-| Children | Stores child profile data and point balances. |
-| Tasks | Manages task assignments and completion statuses. |
-| Wishlist | Tracks child goals and target points. |
-| Rewards | Stores available reward items. |
-| DailyFeedback | Links qualitative feedback to completed tasks. |
+| Users | Stores parent account information. |
+| Children | Stores child profiles. |
+| Child_Guardians | Links parents and children (many-to-many relationship). |
+| Tasks | Stores reusable tasks created by parents. |
+| Task_Assignments | Assigns tasks to children and tracks completion status. |
+| Daily_Feedback | Stores parent feedback for children. |
+| Wishlists | Stores children's wishlist items. |
+| Rewards | Stores weekly rewards assigned by parents. |
+| Child_Points | Stores each child's current Noor Points balance. |
+| Revoked_Tokens | Stores revoked JWT tokens for secure logout. |
 ---
 
 ## 5.5 ER Digraam
 
-![alt text](ER-digraammm.png)
+```mermaid
+erDiagram
+
+    USERS {
+        UUID id PK
+        string full_name
+        string email
+        string password_hash
+        string role
+        datetime created_at
+        datetime updated_at
+    }
+
+    CHILDREN {
+        UUID id PK
+        string name
+        int age
+        string access_code
+        datetime created_at
+        datetime updated_at
+    }
+
+    CHILD_GUARDIANS {
+        UUID user_id FK
+        UUID child_id FK
+        string relation_type
+    }
+
+    TASKS {
+        UUID id PK
+        string title
+        string description
+        int points
+        string task_frequency
+        int recurrence_day
+        string category
+        boolean is_auto_verified
+        UUID created_by FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    TASK_ASSIGNMENTS {
+        UUID id PK
+        UUID task_id FK
+        UUID child_id FK
+        string status
+        datetime completed_at
+        datetime approved_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    DAILY_FEEDBACK {
+        UUID id PK
+        UUID child_id FK
+        UUID created_by FK
+        string mood
+        datetime created_at
+        datetime updated_at
+    }
+
+    WISHLISTS {
+        UUID id PK
+        UUID child_id FK
+        string name
+        int target_points
+        string status
+        UUID reviewed_by FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    REWARDS {
+        UUID id PK
+        UUID child_id FK
+        string reward_name
+        string description
+        string reward_type
+        string status
+        UUID assigned_by FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    CHILD_POINTS {
+        UUID id PK
+        UUID child_id FK
+        int total_points
+        datetime created_at
+        datetime updated_at
+    }
+
+    REVOKED_TOKENS {
+        UUID id PK
+        string jti
+        datetime created_at
+        datetime updated_at
+    }
+
+    USERS ||--o{ TASKS : creates
+
+    USERS ||--o{ DAILY_FEEDBACK : writes
+
+    USERS ||--o{ WISHLISTS : reviews
+
+    USERS ||--o{ REWARDS : assigns
+
+    USERS ||--o{ CHILD_GUARDIANS : manages
+
+    CHILDREN ||--o{ CHILD_GUARDIANS : belongs_to
+
+    TASKS ||--o{ TASK_ASSIGNMENTS : assigned_as
+
+    CHILDREN ||--o{ TASK_ASSIGNMENTS : receives
+
+    CHILDREN ||--o{ DAILY_FEEDBACK : has
+
+    CHILDREN ||--o{ WISHLISTS : owns
+
+    CHILDREN ||--o{ REWARDS : receives
+
+    CHILDREN ||--|| CHILD_POINTS : has
+```
 
 ---
 
@@ -417,58 +626,55 @@ sequenceDiagram
     title Use Case 1: Parent Login
 
     actor Parent
-    participant FlutterApp as Flutter App
-    participant FlaskAPI as Flask API
-    participant Database as Database
+    participant FrontEnd as Front-end
+    participant BackEnd as Back-end
+    participant Database
 
-    Parent->>FlutterApp: Enter email and password
-    FlutterApp->>FlaskAPI: POST /api/login { email, password }
-    FlaskAPI->>Database: Search for user by email
-    Database-->>FlaskAPI: Return user record
+    Parent->>FrontEnd: Enter email and password
+    FrontEnd->>BackEnd: Submit login request
+    BackEnd->>Database: Retrieve parent account
+    Database-->>BackEnd: Return account information
 
     alt Valid credentials
-        FlaskAPI->>FlaskAPI: Check password hash
-        FlaskAPI-->>FlutterApp: 200 OK { message, user, token }
-        FlutterApp-->>Parent: Redirect to Parent Dashboard
-    else Invalid email or password
-        FlaskAPI-->>FlutterApp: 401 Unauthorized { error }
-        FlutterApp-->>Parent: Display login error message
+        BackEnd->>BackEnd: Verify password
+        BackEnd-->>FrontEnd: Authentication successful
+        FrontEnd-->>Parent: Display Parent Dashboard
+    else Invalid credentials
+        BackEnd-->>FrontEnd: Authentication failed
+        FrontEnd-->>Parent: Display login error
     end
 ```
-
 ---
 ## 6.3 chaild Login Sequence Diagram
 
 ```mermaid
 sequenceDiagram
-    title Use Case: Child Login
+    title Use Case 2: Child Login
 
     actor Child
     actor Parent
-    participant FlutterApp as Flutter App
-    participant FlaskAPI as Flask API
-    participant Database as Database
+    participant FrontEnd as Front-end
+    participant BackEnd as Back-end
+    participant Database
 
-    Child->>FlutterApp: Select "I am a Child"
-    Child->>FlutterApp: Enter email and password
-    FlutterApp->>FlaskAPI: POST /api/child-login
-
-    FlaskAPI->>Database: Find child by email
-    Database-->>FlaskAPI: Return child record
+    Child->>FrontEnd: Enter child credentials
+    FrontEnd->>BackEnd: Submit login request
+    BackEnd->>Database: Retrieve child account
+    Database-->>BackEnd: Return account information
 
     alt Valid credentials
-        FlaskAPI->>FlaskAPI: Verify password hash
-        FlaskAPI-->>Parent: Send verification request
+        BackEnd->>BackEnd: Verify password
+        BackEnd-->>Parent: Send login approval request
 
-        Parent->>FlutterApp: Approve child login
-        FlutterApp->>FlaskAPI: Confirm approval
+        Parent->>FrontEnd: Approve child login
+        FrontEnd->>BackEnd: Confirm approval
 
-        FlaskAPI-->>FlutterApp: 200 OK { child, token }
-        FlutterApp-->>Child: Redirect to Child Dashboard
+        BackEnd-->>FrontEnd: Login successful
+        FrontEnd-->>Child: Display Child Dashboard
 
     else Invalid credentials
-        FlaskAPI-->>FlutterApp: 401 Unauthorized
-        FlutterApp-->>Child: Display login error
+        BackEnd-->>FrontEnd: Authentication failed
+        FrontEnd-->>Child: Display login error
     end
 ```
 ---
@@ -476,33 +682,28 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    title Use Case 2: Parent Creates a Task
+    title Use Case 3: Parent Creates a Task
 
     actor Parent
-    participant FlutterApp as Flutter App
-    participant FlaskAPI as Flask API
-    participant Database as Database
+    participant FrontEnd as Front-end
+    participant BackEnd as Back-end
+    participant Database
 
-    Parent->>FlutterApp: Open Create Task Screen
-    Parent->>FlutterApp: Enter task details
-    FlutterApp->>FlaskAPI: POST /api/tasks { child_id, title, description, points_value, due_date }
+    Parent->>FrontEnd: Create a new task
+    FrontEnd->>BackEnd: Submit task information
 
-    FlaskAPI->>FlaskAPI: Validate required fields
-    FlaskAPI->>FlaskAPI: Validate points value
-    FlaskAPI->>Database: Check that child belongs to parent
-    Database-->>FlaskAPI: Return child record
+    BackEnd->>BackEnd: Validate task information
+    BackEnd->>Database: Verify child profile
+    Database-->>BackEnd: Return child information
 
-    alt Valid task data
-        FlaskAPI->>Database: Insert new task record with status pending
-        Database-->>FlaskAPI: Return created task
-        FlaskAPI-->>FlutterApp: 201 Created { message, task }
-        FlutterApp-->>Parent: Display task in Task Management Screen
-    else Missing or invalid fields
-        FlaskAPI-->>FlutterApp: 400 Bad Request { error }
-        FlutterApp-->>Parent: Display validation error
-    else Child does not belong to parent
-        FlaskAPI-->>FlutterApp: 403 Forbidden { error }
-        FlutterApp-->>Parent: Display access error
+    alt Valid task
+        BackEnd->>Database: Save task
+        Database-->>BackEnd: Task created
+        BackEnd-->>FrontEnd: Task created successfully
+        FrontEnd-->>Parent: Display updated task list
+    else Invalid information
+        BackEnd-->>FrontEnd: Validation error
+        FrontEnd-->>Parent: Display error message
     end
 ```
 ---
@@ -511,52 +712,47 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    title Use Case 3: Child Completes Task and Parent Approves It
+    title Use Case 4: Child Completes Task and Parent Approves It
 
     actor Child
     actor Parent
-    participant FlutterApp as Flutter App
-    participant FlaskAPI as Flask API
-    participant Database as Database
+    participant FrontEnd as Front-end
+    participant BackEnd as Back-end
+    participant Database
 
-    Child->>FlutterApp: Open Assigned Tasks Screen
-    Child->>FlutterApp: Mark task as completed
-    FlutterApp->>FlaskAPI: POST /api/tasks/{task_id}/complete
+    Child->>FrontEnd: Mark task as completed
+    FrontEnd->>BackEnd: Submit completion request
 
-    FlaskAPI->>Database: Find task by task_id
-    Database-->>FlaskAPI: Return task record
-    FlaskAPI->>FlaskAPI: Validate task belongs to child
+    BackEnd->>Database: Retrieve task
+    Database-->>BackEnd: Return task information
 
     alt Task is valid
-        FlaskAPI->>Database: Update task status to completed
-        Database-->>FlaskAPI: Confirm task update
-        FlaskAPI-->>FlutterApp: 200 OK { message, task }
-        FlutterApp-->>Child: Show task as waiting for parent approval
+        BackEnd->>Database: Update task status to Pending
+        Database-->>BackEnd: Status updated
+        BackEnd-->>FrontEnd: Completion recorded
+        FrontEnd-->>Child: Display waiting for approval
     else Invalid task
-        FlaskAPI-->>FlutterApp: 404 or 403 Error { error }
-        FlutterApp-->>Child: Display task error message
+        BackEnd-->>FrontEnd: Request rejected
+        FrontEnd-->>Child: Display error message
     end
 
-    Parent->>FlutterApp: Open Task Review Screen
-    Parent->>FlutterApp: Approve completed task
-    FlutterApp->>FlaskAPI: POST /api/tasks/{task_id}/approve
+    Parent->>FrontEnd: Review completed task
+    FrontEnd->>BackEnd: Submit approval decision
 
-    FlaskAPI->>Database: Find task by task_id
-    Database-->>FlaskAPI: Return task record
-    FlaskAPI->>FlaskAPI: Validate task status is completed
-    FlaskAPI->>FlaskAPI: Validate parent owns task
+    BackEnd->>Database: Retrieve task
+    Database-->>BackEnd: Return task information
 
-    alt Task can be approved
-        FlaskAPI->>Database: Update task status to approved
-        FlaskAPI->>Database: Add Noor Points to child balance
-        FlaskAPI->>Database: Insert Noor Points transaction
-        Database-->>FlaskAPI: Return updated task and points balance
-        FlaskAPI-->>FlutterApp: 200 OK { message, task, points_balance }
-        FlutterApp-->>Parent: Show task approved successfully
-        FlutterApp-->>Child: Update Noor Points balance
-    else Task already approved
-        FlaskAPI-->>FlutterApp: 409 Conflict { error }
-        FlutterApp-->>Parent: Display duplicate approval error
+    alt Approval granted
+        BackEnd->>Database: Update task status
+        BackEnd->>Database: Update Noor Points
+        BackEnd->>Database: Save points transaction
+        Database-->>BackEnd: Confirmation
+        BackEnd-->>FrontEnd: Approval successful
+        FrontEnd-->>Parent: Display confirmation
+        FrontEnd-->>Child: Update Noor Points balance
+    else Already processed
+        BackEnd-->>FrontEnd: Approval rejected
+        FrontEnd-->>Parent: Display error message
     end
 ```
 
@@ -566,39 +762,34 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    title Use Case 4: Child Requests Reward Redemption
+    title Use Case 5: Weekly Reward Approval
 
     actor Child
-    participant FlutterApp as Flutter App
-    participant FlaskAPI as Flask API
-    participant Database as Database
+    actor Parent
+    participant FrontEnd as Front-end
+    participant BackEnd as Back-end
+    participant Database
 
-    Child->>FlutterApp: Open Rewards Store Screen
-    Child->>FlutterApp: Select reward
-    Child->>FlutterApp: Request redemption
+    Child->>FrontEnd: View weekly rewards
+    FrontEnd->>BackEnd: Request available rewards
 
-    FlutterApp->>FlaskAPI: POST /api/rewards/{reward_id}/redeem { child_id }
+    BackEnd->>Database: Retrieve weekly rewards
+    Database-->>BackEnd: Return rewards
+    BackEnd-->>FrontEnd: Display available rewards
+    FrontEnd-->>Child: Show weekly rewards
 
-    FlaskAPI->>Database: Find reward by reward_id
-    Database-->>FlaskAPI: Return reward details
+    Parent->>FrontEnd: Review child's weekly performance
+    FrontEnd->>BackEnd: Submit approval decision
 
-    FlaskAPI->>Database: Find child by child_id
-    Database-->>FlaskAPI: Return child points balance
+    BackEnd->>Database: Update reward status
+    Database-->>BackEnd: Confirmation
 
-    FlaskAPI->>FlaskAPI: Validate reward is available
-    FlaskAPI->>FlaskAPI: Check if child has enough Noor Points
-
-    alt Child has enough points
-        FlaskAPI->>Database: Insert redemption record with status requested
-        Database-->>FlaskAPI: Return redemption request
-        FlaskAPI-->>FlutterApp: 201 Created { message, redemption }
-        FlutterApp-->>Child: Display request submitted message
-    else Not enough Noor Points
-        FlaskAPI-->>FlutterApp: 400 Bad Request { error }
-        FlutterApp-->>Child: Display more points needed message
-    else Reward unavailable
-        FlaskAPI-->>FlutterApp: 400 Bad Request { error }
-        FlutterApp-->>Child: Display reward unavailable message
+    alt Reward approved
+        BackEnd-->>FrontEnd: Reward approved
+        FrontEnd-->>Child: Display approved reward
+    else Reward rejected
+        BackEnd-->>FrontEnd: Reward rejected
+        FrontEnd-->>Child: Display rejection message
     end
 ```
 
@@ -636,7 +827,18 @@ The Asalah application uses a RESTful API architecture to manage communication b
 | **Base URL** | `/api` |
 
 ---
+## 7. External APIs
 
+The current MVP does not use any third-party external APIs.
+
+All application functionality is implemented internally through the Flask REST API and PostgreSQL database.
+
+Future versions may integrate:
+
+- Firebase Cloud Messaging (Push Notifications)
+- OpenAI API (AI Task Suggestions)
+- Email Service (OTP Verification)
+---
 ## 7.1 Authentication Endpoints
 
 | Endpoint | Method | Purpose |
@@ -646,7 +848,6 @@ The Asalah application uses a RESTful API architecture to manage communication b
 | `/api/child-login` | `POST` | Child login (returns token). |
 
 ---
-
 ## 7.2 Child Profile Endpoints
 
 | Endpoint | Method | Purpose |
