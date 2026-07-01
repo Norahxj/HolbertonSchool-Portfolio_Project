@@ -143,6 +143,8 @@ The user stories are prioritized using the MoSCoW method:
 
 Mockups will be created using **Figma** because it is collaborative, accessible, and suitable for mobile application design.
 
+URL: https://www.figma.com/design/HbF4PEXKYssQPenE5rxNCr/Asalah-App-Mockups?node-id=0-1&t=3RT1nbYPW3UCWVBB-1
+
 The mockups will follow these design principles:
 
 * Arabic-first interface
