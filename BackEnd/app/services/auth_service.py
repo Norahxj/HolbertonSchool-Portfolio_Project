@@ -1,5 +1,6 @@
 from flask_jwt_extended import create_access_token, create_refresh_token
 from app.extensions import bcrypt
+from app.models.user_model import User
 from app.schemas.user_schema import UserResponseSchema
 from app.schemas.child_schema import ChildResponseSchema
 from app.repositories.auth_repository import AuthRepository
@@ -106,7 +107,7 @@ class AuthService:
             child_data["role"] = "child"
             return child_data, None, 200
 
-        return child_data, None, 200
+        return None, "Invalid role", 403
     
     def logout(self, jti):
         self.auth_repository.revoke_token(jti)

@@ -76,7 +76,7 @@ The user stories are prioritized using the MoSCoW method:
 
 | Priority | User Story |
 | :--- | :--- |
-| **Must Have** | AAs a parent, I want to create child profiles with a unique access code so each child can log in easily so that each child has their own profile. |
+| **Must Have** | As a parent, I want to create child profiles with a unique access code so each child can log in easily so that each child has their own profile. |
 | **Must Have** | As a parent, I want to receive a verification code on my device when my child logs in, so that I can approve their access and secure the application. |
 | **Must Have** | As a child, I want to log in using my access code my parents made for me and wait for their verification, so that I can access my screen safely. |
 | **Must Have** | As a child, I want to see only my assigned tasks on my screen, so that I know exactly what I need to do. |
