@@ -13,4 +13,3 @@ class Task(BaseModel):
 	is_auto_verified = db.Column(db.Boolean, default=False, nullable=False)
 	created_by = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)  
 	assignments = db.relationship("TaskAssignment", backref="task", lazy=True, cascade="all, delete-orphan")
- 
