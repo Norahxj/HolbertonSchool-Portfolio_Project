@@ -7,39 +7,27 @@ from app.models.point_model import ChildPoints
 class WishlistService:
     
     def add_wish(self, child_id, name):
-    child = Child.query.filter_by(id=child_id).first()
-
-    if not child:
-        return None, "child_not_found"
-
-    wishes_count = Wishlist.query.filter_by(child_id=child_id).count()
-
-    if wishes_count >= 5:
-        return None, "wishlist_limit_reached"
+        child = Child.query.filter_by(id=child_id).first()
+    
+        if not child:
+            return None, "child_not_found"
+        
+        wishes_count = Wishlist.query.filter_by(child_id=child_id).count()
+        if wishes_count >= 5:
+            return None, "wishlist_limit_reached"
 
     name = name.strip()
-
     if not name:
         return None, "invalid_name"
 
-    existing_wish = Wishlist.query.filter_by(
-        child_id=child_id,
-        name=name
-    ).first()
-
+    existing_wish = Wishlist.query.filter_by(child_id=child_id,name=name).first()
     if existing_wish:
         return None, "wish_already_exists"
 
-    wish = Wishlist(
-        child_id=child_id,
-        name=name,
-        status="PENDING"
-    )
-
+    wish = Wishlist(child_id=child_id,name=name,status="PENDING")
     db.session.add(wish)
     db.session.commit()
-
-    return wish, None
+     return wish, None
 
 
     def get_child_wishlist(self, child_id):
@@ -68,6 +56,7 @@ class WishlistService:
 
         wish.status = "APPROVED"
         wish.target_points = target_points
+        wish.reviewed_by = parent_id
 
         db.session.commit()
         return wish, None
@@ -90,6 +79,7 @@ class WishlistService:
             return None, "wish_already_processed"
 
         wish.status = "REJECTED"
+        wish.reviewed_by = parent_id
         
         db.session.commit()
         return wish, None
@@ -98,30 +88,19 @@ class WishlistService:
         child_points = ChildPoints.query.filter_by(child_id=child_id).first()
         total_points = child_points.total_points if child_points else 0
 
-        wishes = Wishlist.query.filter_by(
-            child_id=child_id,
-            status="APPROVED"
-        ).all()
-
+        wishes = Wishlist.query.filter_by(child_id=child_id,status="APPROVED").all()
+        
         result = []
-
         for wish in wishes:
             target = wish.target_points or 0
-
-            progress = 0
-            if target > 0:
-                progress = min(total_points, target)
-
+            current_points = min(total_points, target) if target > 0 else 0
             result.append({
-                "wish_id": wish.id,
-                "name": wish.name,
-                "target_points": target,
-                "current_points": progress,
-                "remaining": max(target - progress, 0),
-                "is_completed": progress >= target
+                 "wish_id": wish.id,
+                 "name": wish.name,
+                 "target_points": target,
+                 "current_points": current_points,
+                 "remaining": max(target - current_points, 0),
+                "is_completed": current_points >= target
             })
 
-        return {
-            "child_id": child_id,
-            "wishes": result
-        }, None
+        return {"child_id": child_id,"wishes": result}, None
