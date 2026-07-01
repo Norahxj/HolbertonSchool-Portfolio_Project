@@ -76,9 +76,9 @@ The user stories are prioritized using the MoSCoW method:
 
 | Priority | User Story |
 | :--- | :--- |
-| **Must Have** | As a parent, I want to create a master account and add multiple child accounts (with email and password), so that each child has their own profile. |
+| **Must Have** | AAs a parent, I want to create child profiles with a unique access code so each child can log in easily so that each child has their own profile. |
 | **Must Have** | As a parent, I want to receive a verification code on my device when my child logs in, so that I can approve their access and secure the application. |
-| **Must Have** | As a child, I want to log in using the email and password my parents made for me and wait for their verification, so that I can access my screen safely. |
+| **Must Have** | As a child, I want to log in using my access code my parents made for me and wait for their verification, so that I can access my screen safely. |
 | **Must Have** | As a child, I want to see only my assigned tasks on my screen, so that I know exactly what I need to do. |
 | **Must Have** | As a parent, I want to categorize tasks into Financial, Religious, and Daily lists, so that I can teach my child financial sense and the value of things. |
 | **Must Have** | As a parent, I want to set the task frequency to daily, weekly, or just once a day, so that I can customize the routine for my child. |
@@ -277,11 +277,11 @@ The purpose of this section is to define the internal structure of the Asalah MV
 | Component | Description |
 | :--- | :--- |
 | **WelcomeScreen** | Introduces the application and provides main entry points. |
-| **LoginScreen** | Handles login for both Parent (using parent credentials) and Child (using child email and password via the "I am a Child" option). |
+| **LoginScreen** | Handles login for both Parent (using parent credentials) and Child (using child access code via the "I am a Child" option). |
 | **RegisterScreen** | Handles parent account registration. |
 | **ParentDashboard** | Overview of all children, pending task reviews, and household progress. |
 | **ChildProfilesScreen** | Lists and manages child profiles linked to the parent account. |
-| **CreateChildProfileScreen** | Form for the parent to create a child profile (including setting the child's unique email and password). |
+| **CreateChildProfileScreen** | Form for the parent to create a child profile (including setting the child's unique access code). |
 | **TaskManagementScreen** | Displays active tasks, status, and assignment oversight. |
 | **CreateTaskScreen** | Form to create tasks, set Noor Points, and define approval requirements. |
 | **TaskReviewScreen** | Allows parents to approve/reject tasks by reviewing daily feedback (emoji/comment). |
