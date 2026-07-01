@@ -9,7 +9,6 @@ child_guardians = db.Table(
 )
 
 
-
 class Child(BaseModel):
     __tablename__ = "children"
 

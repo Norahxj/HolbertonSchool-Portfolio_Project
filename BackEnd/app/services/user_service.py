@@ -29,7 +29,11 @@ class UserService:
         user = db.session.get(User, user_id)
         if not user:
             return None
-        user.children.clear()
+        children = list(user.children)
+        for child in children:
+            user.children.remove(child)
+            if len(child.guardians) == 0:
+                db.session.delete(child)
         db.session.delete(user)
         db.session.commit()
         return True

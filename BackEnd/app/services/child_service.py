@@ -6,7 +6,6 @@ from app.models.user_model import User
 
 
 class ChildService:
-
     def generate_access_code(self):
         while True:
             access_code = str(random.randint(100000, 999999))
@@ -65,6 +64,12 @@ class ChildService:
         child = self.get_child_for_parent(child_id, parent_id)
         if not child:
             return None
-        db.session.delete(child)
+        parent = db.session.get(User, parent_id)
+        if not parent:
+            return None
+        if parent in child.guardians:
+            child.guardians.remove(parent)
+        if len(child.guardians) == 0:
+            db.session.delete(child)
         db.session.commit()
         return True

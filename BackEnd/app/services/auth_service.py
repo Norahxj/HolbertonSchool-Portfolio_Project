@@ -28,6 +28,21 @@ class AuthService:
         return create_access_token(
             identity=str(identity), additional_claims={"role": role}
         )
+    
+    def refresh_access_token(self, identity, role):
+        if role == "parent":
+            user = db.session.get(User, identity)
+            if not user:
+                return None, "User not found", 404
+            return self.create_access_token_only(user.id, user.role), None, 200
+
+        if role == "child":
+            child = db.session.get(Child, identity)
+            if not child:
+                return None, "Child not found", 404
+            return self.create_access_token_only(child.id, "child"), None, 200
+
+        return None, "Invalid role", 403
 
     def register(self, user_data):
         full_name = user_data["full_name"].strip()
@@ -50,8 +65,13 @@ class AuthService:
         except IntegrityError:
             db.session.rollback()
             return None, "Email already registered"
-        return user, None
+        access_token, refresh_token = self._create_tokens(user.id, user.role)
 
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": user_response_schema.dump(user)
+        }, None
     def login(self, email, password):
         email = email.strip().lower()
         user = User.query.filter_by(email=email).first()

@@ -23,6 +23,7 @@ register_model, login_model, child_login_model, token_model, user_response_model
 @api.route("/register")
 class RegisterResource(Resource):
     @api.expect(register_model, validate=True)
+    @api.marshal_with(token_model, code=201)
     @api.response(201, "User registered successfully")
     @api.response(400, "Invalid input")
     @api.response(409, "Email already registered")
@@ -31,11 +32,11 @@ class RegisterResource(Resource):
             data = register_schema.load(api.payload)
         except ValidationError as err:
             return {"errors": err.messages}, 400
-        user, error = auth_service.register(data)
+        result, error = auth_service.register(data)
         if error:
             status_code = 409 if error == "Email already registered" else 400
             return {"error": error}, status_code
-        return user_response_schema.dump(user), 201
+        return result, 201
 
 @api.route("/login")
 class LoginResource(Resource):
@@ -71,22 +72,12 @@ class RefreshResource(Resource):
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
     def post(self):
-        claims = get_jwt()
-        role = claims.get("role")
         identity = get_jwt_identity()
-        if role == "parent":
-            user = db.session.get(User, identity)
-            if not user:
-                return {"error": "User not found"}, 404
-            new_access_token = auth_service.create_access_token_only(user.id, user.role)
-            return {"access_token": new_access_token}, 200
-        if role == "child":
-            child = db.session.get(Child, identity)
-            if not child:
-                return {"error": "Child not found"}, 404
-            new_access_token = auth_service.create_access_token_only(child.id, "child")
-            return {"access_token": new_access_token}, 200
-        return {"error": "Invalid role"}, 403
+        role = get_jwt().get("role")
+        token, error, status_code = auth_service.refresh_access_token(identity, role)
+        if error:
+            return {"error": error}, status_code
+        return {"access_token": token}, 200
 
 @api.route("/me")
 class MeResource(Resource):
