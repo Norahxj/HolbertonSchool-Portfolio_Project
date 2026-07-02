@@ -11,23 +11,20 @@ class RecurringTaskService:
 
     def generate_today_assignments(self):
         today = date.today()
-        weekday = today.weekday() 
+        weekday = today.weekday()
         month_day = today.day
 
         tasks = self.task_repository.get_recurring_tasks()
-
         created_count = 0
 
         for task in tasks:
             if not self._should_generate_today(task, weekday, month_day):
                 continue
 
-            for assignment in task.assignments:
-                child = assignment.child
-
+            for task_child in task.task_children:
                 existing = self.assignment_repository.get_assignment_for_date(
                     task.id,
-                    child.id,
+                    task_child.child_id,
                     today
                 )
 
@@ -36,9 +33,9 @@ class RecurringTaskService:
 
                 new_assignment = TaskAssignment(
                     task_id=task.id,
-                    child_id=child.id,
-                    status="PENDING",
-                    assigned_date=today
+                    child_id=task_child.child_id,
+                    assigned_date=today,
+                    status="PENDING"
                 )
 
                 self.assignment_repository.create_assignment(new_assignment)

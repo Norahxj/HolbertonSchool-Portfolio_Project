@@ -3,6 +3,8 @@ from app.models.task_assignment_model import TaskAssignment
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.repositories.child_repository import ChildRepository
+from app.models.task_child_model import TaskChild
+from app.repositories.task_child_repository import TaskChildRepository
 from datetime import date
 
 
@@ -11,6 +13,7 @@ class TaskService:
         self.task_repository = TaskRepository()
         self.task_assignment_repository = TaskAssignmentRepository()
         self.child_repository = ChildRepository()
+        self.task_child_repository = TaskChildRepository()
 
     def _build_task(self, parent_id, task_data):
         return Task(
@@ -60,8 +63,17 @@ class TaskService:
 
         if error:
             return None, "create_failed"
-
         for child in children:
+            task_child = TaskChild(
+                task_id=task.id,
+                child_id=child.id
+            )
+
+            _, error = self.task_child_repository.create_task_child(task_child)
+
+            if error:
+                return None, "task_child_failed"
+
             assignment = TaskAssignment(
                 task_id=task.id,
                 child_id=child.id,
