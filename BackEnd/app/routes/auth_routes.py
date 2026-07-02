@@ -10,7 +10,7 @@ register_schema = RegisterSchema()
 login_schema = LoginSchema()
 child_login_schema = ChildLoginSchema()
 auth_service = AuthService()
-register_model, login_model, child_login_model = get_auth_models(api)
+register_model, login_model, child_login_model, refresh_response_model, message_response_model = get_auth_models(api)
 
 @api.route("/register")
 class RegisterResource(Resource):
@@ -68,6 +68,7 @@ class RefreshResource(Resource):
     @api.response(403, "Invalid role")
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
+    @api.marshal_with(refresh_response_model, code=200)
     def post(self):
         identity = get_jwt_identity()
         role = get_jwt().get("role")
@@ -82,9 +83,12 @@ class Logout(Resource):
     @api.response(401, "Missing or invalid token")
     @api.doc(security="JWT")
     @jwt_required()
+    @api.marshal_with(message_response_model, code=200)
     def post(self):
         jti = get_jwt()["jti"]
-        auth_service.logout(jti)
+        success, error = auth_service.logout(jti)
+        if not success:
+            return {"error": error}, 500
         return {"message": "Logged out successfully"}, 200
     
 @api.route("/logout-refresh")
@@ -93,7 +97,10 @@ class LogoutRefresh(Resource):
     @api.response(401, "Missing or invalid refresh token")
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
+    @api.marshal_with(message_response_model, code=200)
     def post(self):
         jti = get_jwt()["jti"]
-        auth_service.logout(jti)
+        success, error = auth_service.logout(jti)
+        if not success:
+            return {"error": error}, 500
         return {"message": "Refresh token logged out successfully"}, 200

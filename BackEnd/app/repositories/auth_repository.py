@@ -22,3 +22,7 @@ class AuthRepository:
         except IntegrityError:
             db.session.rollback()
             return True
+
+        except Exception:
+            db.session.rollback()
+            return False

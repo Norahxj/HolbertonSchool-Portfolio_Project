@@ -99,5 +99,7 @@ class AuthService:
         }, None
     
     def logout(self, jti):
-        self.auth_repository.revoke_token(jti)
-        return True
+        success = self.auth_repository.revoke_token(jti)
+        if not success:
+            return False, "Logout failed"
+        return True, None

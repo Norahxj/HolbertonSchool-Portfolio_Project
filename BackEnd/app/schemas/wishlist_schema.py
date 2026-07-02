@@ -18,4 +18,8 @@ class WishlistResponseSchema(Schema):
     reviewer_name = fields.Method("get_reviewer_name", dump_only=True)
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
+    def get_reviewer_name(self, obj):
+        if obj.reviewer:
+            return obj.reviewer.full_name
+        return None
     
