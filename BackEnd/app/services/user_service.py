@@ -1,39 +1,47 @@
-from app.extensions import db
-from app.models.user_model import User
-from sqlalchemy.exc import IntegrityError
+from app.repositories.user_repository import UserRepository
+
 
 class UserService:
+    def __init__(self):
+        self.user_repository = UserRepository()
+
     def get_user(self, user_id):
-        return db.session.get(User, user_id) 
-       
+        return self.user_repository.get_user_by_id(user_id)
+
     def update_user(self, user_id, user_data):
-        user = db.session.get(User, user_id)
+        user = self.user_repository.get_user_by_id(user_id)
+
         if not user:
             return None, "not_found"
+
         if "full_name" in user_data:
             user.full_name = user_data["full_name"].strip()
+
         if "email" in user_data:
             email = user_data["email"].strip().lower()
-            existing_user = User.query.filter_by(email=email).first()
+            existing_user = self.user_repository.get_user_by_email(email)
+
             if existing_user and str(existing_user.id) != str(user_id):
                 return None, "email_exists"
+
             user.email = email
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
+
+        success, error = self.user_repository.update_user()
+
+        if not success:
             return None, "email_exists"
+
         return user, None
-    
+
     def delete_user(self, user_id):
-        user = db.session.get(User, user_id)
+        user = self.user_repository.get_user_by_id(user_id)
+
         if not user:
             return None
-        children = list(user.children)
-        for child in children:
-            user.children.remove(child)
-            if len(child.guardians) == 0:
-                db.session.delete(child)
-        db.session.delete(user)
-        db.session.commit()
+
+        success, error = self.user_repository.delete_user(user)
+
+        if not success:
+            return None
+
         return True

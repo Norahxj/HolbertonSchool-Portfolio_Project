@@ -16,6 +16,7 @@ user_response_model, user_update_model = get_user_models(api)
 class CurrentUserResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
+    @api.marshal_with(user_response_model, code=200)
     def get(self):
         claims = get_jwt()
         user_id = get_jwt_identity()

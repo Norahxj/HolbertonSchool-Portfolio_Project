@@ -29,6 +29,10 @@ class UserRepository:
             return False, "integrity_error"
 
     def delete_user(self, user):
-        db.session.delete(user)
-        db.session.commit()
-        return True
+        try:
+            db.session.delete(user)
+            db.session.commit()
+            return True, None
+        except Exception:
+            db.session.rollback()
+            return False, "delete_error"
