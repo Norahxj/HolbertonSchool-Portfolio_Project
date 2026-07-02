@@ -56,7 +56,6 @@ class ChildListResource(Resource):
 class ChildResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
-    @api.marshal_with(child_response_model, code=200)
     def get(self, child_id):
         parent_id = get_jwt_identity()
         error = require_parent()
@@ -70,7 +69,6 @@ class ChildResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
     @api.expect(child_update_model, validate=True)
-    @api.marshal_with(child_response_model, code=200)
     def put(self, child_id):
         parent_id = get_jwt_identity()
         error = require_parent()
