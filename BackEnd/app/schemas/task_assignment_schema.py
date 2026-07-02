@@ -15,10 +15,15 @@ class AssignmentChildSchema(Schema):
     name = fields.String()
     age = fields.Integer()
 
-class TaskAssignmentResponseSchema(Schema):
+class ChildTaskAssignmentResponseSchema(Schema):
     id = fields.String()
-    task_id = fields.String()
-    child_id = fields.String()
+    status = fields.String()
+    completed_at = fields.DateTime(allow_none=True)
+    approved_at = fields.DateTime(allow_none=True)
+    task = fields.Nested(AssignmentTaskSchema)
+
+class ParentTaskAssignmentResponseSchema(Schema):
+    id = fields.String()
     status = fields.String()
     completed_at = fields.DateTime(allow_none=True)
     approved_at = fields.DateTime(allow_none=True)
