@@ -1,0 +1,845 @@
+{
+    "Culture & Tradition": [
+        {
+            "full_text": "Serve Arabic coffee to guests or family members using the right hand. ( قدّم القهوة العربية للضيوف أو أفراد العائلة باستخدام اليد اليمنى .)",
+            "english": "Serve Arabic coffee to guests or family members using the right hand",
+            "arabic": "قدّم القهوة العربية للضيوف أو أفراد العائلة باستخدام اليد اليمنى .)"
+        },
+        {
+            "full_text": "Ask your grandparents to tell you a story from their childhood. ( اطلب من أجدادك أن يرووا لك قصة من طفولتهم .)",
+            "english": "Ask your grandparents to tell you a story from their childhood",
+            "arabic": "اطلب من أجدادك أن يرووا لك قصة من طفولتهم .)"
+        },
+        {
+            "full_text": "Help an elderly family member walk or carry their belongings. ( ساعد أحد كبار السن في العائلة في المشي أو حمل أغراضه .)",
+            "english": "Help an elderly family member walk or carry their belongings",
+            "arabic": "ساعد أحد كبار السن في العائلة في المشي أو حمل أغراضه .)"
+        },
+        {
+            "full_text": "Greet everyone in the room with \"As- salamu alaykum\" when entering. ( ألقِ تحية \" السلام عليكم \" على الجميع عند دخول الغرفة .)",
+            "english": "Greet everyone in the room with \"As- salamu alaykum\" when entering",
+            "arabic": "ألقِ تحية \" السلام عليكم \" على الجميع عند دخول الغرفة .)"
+        },
+        {
+            "full_text": "Stand up when an older person enters the room. ( قف عند دخول شخص أكبر سناً إلى الغرفة .)",
+            "english": "Stand up when an older person enters the room",
+            "arabic": "قف عند دخول شخص أكبر سناً إلى الغرفة .)"
+        },
+        {
+            "full_text": "Listen without interrupting when an elder is speaking. ( استمع دون مقاطعة عندما يتحدث شخص أكبر سناً .)",
+            "english": "Listen without interrupting when an elder is speaking",
+            "arabic": "استمع دون مقاطعة عندما يتحدث شخص أكبر سناً .)"
+        },
+        {
+            "full_text": "Help prepare the Majlis (guest room) before visitors arrive. ( ساعد في تجهيز المجلس قبل وصول الضيوف .)",
+            "english": "Help prepare the Majlis (guest room) before visitors arrive",
+            "arabic": "ساعد في تجهيز المجلس قبل وصول الضيوف .)"
+        },
+        {
+            "full_text": "Welcome guests at the door with a smile and polite words. ( استقبل الضيوف عند الباب بابتسامة وكلمات ترحيبية .)",
+            "english": "Welcome guests at the door with a smile and polite words",
+            "arabic": "استقبل الضيوف عند الباب بابتسامة وكلمات ترحيبية .)"
+        },
+        {
+            "full_text": "Help your mother or father carry groceries into the house. ( ساعد والدتك أو والدك في حمل الأغراض إلى المنزل .)",
+            "english": "Help your mother or father carry groceries into the house",
+            "arabic": "ساعد والدتك أو والدك في حمل الأغراض إلى المنزل .)"
+        },
+        {
+            "full_text": "Help pack leftover food neatly to avoid waste. ( ساعد في تغليف الطعام المتبقي بعناية لتجنب الإسراف .)",
+            "english": "Help pack leftover food neatly to avoid waste",
+            "arabic": "ساعد في تغليف الطعام المتبقي بعناية لتجنب الإسراف .)"
+        },
+        {
+            "full_text": "Wear traditional Saudi clothing (Thobe/Abaya) for a family gathering. ( ارتدِ الملابس السعودية التقليدية - الثوب / العباءة - في تجمع عائلي .)",
+            "english": "Wear traditional Saudi clothing (Thobe/Abaya) for a family gathering",
+            "arabic": "ارتدِ الملابس السعودية التقليدية - الثوب / العباءة - في تجمع عائلي .)"
+        },
+        {
+            "full_text": "Help prepare a traditional Saudi dish with your parents. ( ساعد في إعداد طبق سعودي تقليدي مع والديك .)",
+            "english": "Help prepare a traditional Saudi dish with your parents",
+            "arabic": "ساعد في إعداد طبق سعودي تقليدي مع والديك .)"
+        },
+        {
+            "full_text": "Learn how to properly fold and wear a Ghutra or Shemagh (for boys). ( تعلم كيفية طي ولبس الغترة أو الشماغ بشكل صحيح - للأولاد .)",
+            "english": "Learn how to properly fold and wear a Ghutra or Shemagh (for boys)",
+            "arabic": "تعلم كيفية طي ولبس الغترة أو الشماغ بشكل صحيح - للأولاد .)"
+        },
+        {
+            "full_text": "Ask your parents about the history of your family's tribe or region. ( اسأل والديك عن تاريخ قبيلة أو منطقة عائلتك .)",
+            "english": "Ask your parents about the history of your family's tribe or region",
+            "arabic": "اسأل والديك عن تاريخ قبيلة أو منطقة عائلتك .)"
+        },
+        {
+            "full_text": "Use polite Arabic phrases like \"Law samaht \" (Please) and \" Shukran \" (Thank you) all day. ( استخدم عبارات مهذبة مثل \" لو سمحت \" و\"شكراً \" طوال اليوم .)",
+            "english": "Use polite Arabic phrases like \"Law samaht \" (Please) and \" Shukran \" (Thank you) all day",
+            "arabic": "استخدم عبارات مهذبة مثل \" لو سمحت \" و\"شكراً \" طوال اليوم .)"
+        },
+        {
+            "full_text": "Avoid using foreign slang words when speaking Arabic at home today. ( تجنب استخدام الكلمات العامية الأجنبية عند التحدث بالعربية في المنزل اليوم .)",
+            "english": "Avoid using foreign slang words when speaking Arabic at home today",
+            "arabic": "تجنب استخدام الكلمات العامية الأجنبية عند التحدث بالعربية في المنزل اليوم .)"
+        },
+        {
+            "full_text": "Listen to a traditional Arabic Nasheed or poem. ( استمع إلى نشيد أو قصيدة عربية تقليدية .)",
+            "english": "Listen to a traditional Arabic Nasheed or poem",
+            "arabic": "استمع إلى نشيد أو قصيدة عربية تقليدية .)"
+        },
+        {
+            "full_text": "Smile and greet your neighbor when you see them. ( ابتسم وألقِ التحية على جارك عندما تراه .)",
+            "english": "Smile and greet your neighbor when you see them",
+            "arabic": "ابتسم وألقِ التحية على جارك عندما تراه .)"
+        },
+        {
+            "full_text": "Help deliver a plate of food to a neighbor's house. ( ساعد في توصيل طبق من الطعام إلى منزل الجار .)",
+            "english": "Help deliver a plate of food to a neighbor's house",
+            "arabic": "ساعد في توصيل طبق من الطعام إلى منزل الجار .)"
+        },
+        {
+            "full_text": "Pick up a piece of trash from the street or park and throw it away. ( التقط قطعة قمامة من الشارع أو الحديقة وارمها في سلة المهملات - إماطة الأذى .)",
+            "english": "Pick up a piece of trash from the street or park and throw it away",
+            "arabic": "التقط قطعة قمامة من الشارع أو الحديقة وارمها في سلة المهملات - إماطة الأذى .)"
+        },
+        {
+            "full_text": "Do not raise your voice or make loud noises that might disturb neighbors . ( لا ترفع صوتك أو تصدر ضوضاء قد تزعج الجيران .)",
+            "english": "Do not raise your voice or make loud noises that might disturb neighbors",
+            "arabic": "لا ترفع صوتك أو تصدر ضوضاء قد تزعج الجيران .)"
+        },
+        {
+            "full_text": "Respect public property and do not write on walls or damage plants. ( احترم الممتلكات العامة ولا تكتب على الجدران أو تتلف النباتات .)",
+            "english": "Respect public property and do not write on walls or damage plants",
+            "arabic": "احترم الممتلكات العامة ولا تكتب على الجدران أو تتلف النباتات .)"
+        },
+        {
+            "full_text": "Speak well of others and avoid gossiping ( Gheebah ). ( تحدث بالخير عن الآخرين وتجنب الغيبة .)",
+            "english": "Speak well of others and avoid gossiping ( Gheebah )",
+            "arabic": "تحدث بالخير عن الآخرين وتجنب الغيبة .)"
+        },
+        {
+            "full_text": "Read a short story about the founding of Saudi Arabia. ( اقرأ قصة قصيرة عن تأسيس المملكة العربية السعودية .)",
+            "english": "Read a short story about the founding of Saudi Arabia",
+            "arabic": "اقرأ قصة قصيرة عن تأسيس المملكة العربية السعودية .)"
+        },
+        {
+            "full_text": "Learn about a famous Saudi historical figure or leader. ( تعرف على شخصية تاريخية أو قائد سعودي مشهور .)",
+            "english": "Learn about a famous Saudi historical figure or leader",
+            "arabic": "تعرف على شخصية تاريخية أو قائد سعودي مشهور .)"
+        },
+        {
+            "full_text": "Identify three local animals native to the Arabian Peninsula (e.g., Arabian Oryx, Camel). ( تعرف على ثلاثة حيوانات محلية تستوطن شبه الجزيرة العربية مثل المها العربي والجمل .)",
+            "english": "Identify three local animals native to the Arabian Peninsula (e.g., Arabian Oryx, Camel)",
+            "arabic": "تعرف على ثلاثة حيوانات محلية تستوطن شبه الجزيرة العربية مثل المها العربي والجمل .)"
+        },
+        {
+            "full_text": "Watch a documentary or video about Saudi Arabia's nature or history. ( شاهد فيلماً وثائقياً أو مقطع فيديو عن طبيعة أو تاريخ السعودية .)",
+            "english": "Watch a documentary or video about Saudi Arabia's nature or history",
+            "arabic": "شاهد فيلماً وثائقياً أو مقطع فيديو عن طبيعة أو تاريخ السعودية .)"
+        },
+        {
+            "full_text": "Do not criticize the food served to you. ( لا تنتقد الطعام المقدم لك .)",
+            "english": "Do not criticize the food served to you",
+            "arabic": "لا تنتقد الطعام المقدم لك .)"
+        },
+        {
+            "full_text": "Cover your mouth when yawning or sneezing and say \"Alhamdulillah\" after sneezing. ( غطِ فمك عند التثاؤب أو العطس وقل \" الحمد لله \" بعد العطس .)",
+            "english": "Cover your mouth when yawning or sneezing and say \"Alhamdulillah\" after sneezing",
+            "arabic": "غطِ فمك عند التثاؤب أو العطس وقل \" الحمد لله \" بعد العطس .)"
+        },
+        {
+            "full_text": "Knock on the door and ask for permission before entering a room. ( اطرق الباب واستأذن قبل دخول أي غرفة .)",
+            "english": "Knock on the door and ask for permission before entering a room",
+            "arabic": "اطرق الباب واستأذن قبل دخول أي غرفة .)"
+        },
+        {
+            "full_text": "Keep your clothes and appearance neat and tidy. ( حافظ على نظافة وترتيب ملابسك ومظهرك .)",
+            "english": "Keep your clothes and appearance neat and tidy",
+            "arabic": "حافظ على نظافة وترتيب ملابسك ومظهرك .)"
+        },
+        {
+            "full_text": "Do not interrupt others while they are speaking. ( لا تقاطع الآخرين أثناء حديثهم .)",
+            "english": "Do not interrupt others while they are speaking",
+            "arabic": "لا تقاطع الآخرين أثناء حديثهم .)"
+        },
+        {
+            "full_text": "Say \"Jazak Allah Khair\" (May Allah reward you) to someone who helps you. ( قل \" جزاك الله خيراً \" لمن يساعدك .)",
+            "english": "Say \"Jazak Allah Khair\" (May Allah reward you) to someone who helps you",
+            "arabic": "قل \" جزاك الله خيراً \" لمن يساعدك .)"
+        },
+        {
+            "full_text": "Learn about the traditional \" Ardah \" dance and watch a video of it. ( تعرف على رقصة \" العرضة \" التقليدية وشاهد مقطع فيديو لها .)",
+            "english": "Learn about the traditional \" Ardah \" dance and watch a video of it",
+            "arabic": "تعرف على رقصة \" العرضة \" التقليدية وشاهد مقطع فيديو لها .)"
+        },
+        {
+            "full_text": "Learn the names of traditional Saudi musical instruments (e.g., Oud, Tar, Rababa). ( تعلم أسماء الآلات الموسيقية السعودية التقليدية مثل العود ، الطار ، الربابة .)",
+            "english": "Learn the names of traditional Saudi musical instruments (e.g., Oud, Tar, Rababa)",
+            "arabic": "تعلم أسماء الآلات الموسيقية السعودية التقليدية مثل العود ، الطار ، الربابة .)"
+        },
+        {
+            "full_text": "Plant a seed or care for a plant at home. ( ازرع بذرة أو اعتنِ بنبتة في المنزل .)",
+            "english": "Plant a seed or care for a plant at home",
+            "arabic": "ازرع بذرة أو اعتنِ بنبتة في المنزل .)"
+        },
+        {
+            "full_text": "Turn off the lights when leaving a room to save energy. ( أطفئ الأنوار عند مغادرة الغرفة لتوفير الطاقة .)",
+            "english": "Turn off the lights when leaving a room to save energy",
+            "arabic": "أطفئ الأنوار عند مغادرة الغرفة لتوفير الطاقة .)"
+        },
+        {
+            "full_text": "Feed a stray cat or bird (with parental supervision). ( أطعم قطة ضالة أو طائراً - بإشراف الوالدين .)",
+            "english": "Feed a stray cat or bird (with parental supervision)",
+            "arabic": "أطعم قطة ضالة أو طائراً - بإشراف الوالدين .)"
+        },
+        {
+            "full_text": "Help clean up the picnic area after a family outing. ( ساعد في تنظيف منطقة النزهة بعد نزهة عائلية .)",
+            "english": "Help clean up the picnic area after a family outing",
+            "arabic": "ساعد في تنظيف منطقة النزهة بعد نزهة عائلية .)"
+        },
+        {
+            "full_text": "Tell the truth, even if it is difficult. ( قل الصدق ، حتى لو كان ذلك صعباً .)",
+            "english": "Tell the truth, even if it is difficult",
+            "arabic": "قل الصدق ، حتى لو كان ذلك صعباً .)"
+        },
+        {
+            "full_text": "Be patient when waiting for your turn. ( كن صبوراً عند انتظار دورك .)",
+            "english": "Be patient when waiting for your turn",
+            "arabic": "كن صبوراً عند انتظار دورك .)"
+        },
+        {
+            "full_text": "Show gratitude by thanking your parents for something specific today. ( أظهر امتنانك بشكر والديك على شيء محدد اليوم .)",
+            "english": "Show gratitude by thanking your parents for something specific today",
+            "arabic": "أظهر امتنانك بشكر والديك على شيء محدد اليوم .)"
+        },
+        {
+            "full_text": "Take responsibility for your own belongings and keep them organized. ( تحمل مسؤولية أغراضك الشخصية وحافظ عليها مرتبة .)",
+            "english": "Take responsibility for your own belongings and keep them organized",
+            "arabic": "تحمل مسؤولية أغراضك الشخصية وحافظ عليها مرتبة .)"
+        },
+        {
+            "full_text": "Do not complain about the weather or minor inconveniences. ( لا تتذمر من الطقس أو المضايقات البسيطة .)",
+            "english": "Do not complain about the weather or minor inconveniences",
+            "arabic": "لا تتذمر من الطقس أو المضايقات البسيطة .)"
+        },
+        {
+            "full_text": "Help a sibling with their homework or a difficult task. ( ساعد أخاك أو أختك في واجباتهم المدرسية أو في مهمة صعبة .)",
+            "english": "Help a sibling with their homework or a difficult task",
+            "arabic": "ساعد أخاك أو أختك في واجباتهم المدرسية أو في مهمة صعبة .)"
+        }
+    ],
+    "Religion": [
+        {
+            "full_text": "Pray all five daily prayers on time for one day. ( صلِ الصلوات الخمس في أوقاتها ليوم واحد .)",
+            "english": "Pray all five daily prayers on time for one day",
+            "arabic": "صلِ الصلوات الخمس في أوقاتها ليوم واحد .)"
+        },
+        {
+            "full_text": "Learn and recite a new short Surah from the Quran. ( تعلم وتلُ سورة قصيرة جديدة من القرآن .)",
+            "english": "Learn and recite a new short Surah from the Quran",
+            "arabic": "تعلم وتلُ سورة قصيرة جديدة من القرآن .)"
+        },
+        {
+            "full_text": "Observe silence and respect during the Adhan (call to prayer). ( التزم الصمت والاحترام أثناء الأذان .)",
+            "english": "Observe silence and respect during the Adhan (call to prayer)",
+            "arabic": "التزم الصمت والاحترام أثناء الأذان .)"
+        },
+        {
+            "full_text": "Read one page from the Quran daily. ( اقرأ صفحة واحدة من القرآن يومياً .)",
+            "english": "Read one page from the Quran daily",
+            "arabic": "اقرأ صفحة واحدة من القرآن يومياً .)"
+        },
+        {
+            "full_text": "Memorize one new Ayah (verse) from the Quran. ( احفظ آية جديدة من القرآن .)",
+            "english": "Memorize one new Ayah (verse) from the Quran",
+            "arabic": "احفظ آية جديدة من القرآن .)"
+        },
+        {
+            "full_text": "Learn the story behind a short Surah (e.g., Surah Al-Fil). ( تعلم قصة سورة قصيرة - مثل سورة الفيل .)",
+            "english": "Learn the story behind a short Surah (e.g., Surah Al-Fil)",
+            "arabic": "تعلم قصة سورة قصيرة - مثل سورة الفيل .)"
+        },
+        {
+            "full_text": "Learn the names of three Prophets mentioned in the Quran. ( تعلم أسماء ثلاثة أنبياء مذكورين في القرآن .)",
+            "english": "Learn the names of three Prophets mentioned in the Quran",
+            "arabic": "تعلم أسماء ثلاثة أنبياء مذكورين في القرآن .)"
+        },
+        {
+            "full_text": "Use polite words and avoid shouting or yelling. ( استخدم كلمات مهذبة وتجنب الصراخ .)",
+            "english": "Use polite words and avoid shouting or yelling",
+            "arabic": "استخدم كلمات مهذبة وتجنب الصراخ .)"
+        },
+        {
+            "full_text": "Share your food or toys with others. ( شارك طعامك أو ألعابك مع الآخرين .)",
+            "english": "Share your food or toys with others",
+            "arabic": "شارك طعامك أو ألعابك مع الآخرين .)"
+        },
+        {
+            "full_text": "Help someone in need (e.g., carry their bags, open a door). ( ساعد شخصاً محتاجاً - مثل حمل حقائبه ، فتح باب .)",
+            "english": "Help someone in need (e.g., carry their bags, open a door)",
+            "arabic": "ساعد شخصاً محتاجاً - مثل حمل حقائبه ، فتح باب .)"
+        },
+        {
+            "full_text": "Be kind to animals and do not harm them. ( كن لطيفاً مع الحيوانات ولا تؤذها .)",
+            "english": "Be kind to animals and do not harm them",
+            "arabic": "كن لطيفاً مع الحيوانات ولا تؤذها .)"
+        },
+        {
+            "full_text": "Visit a sick person or call to check on them. ( زر مريضاً أو اتصل للاطمئنان عليه .)",
+            "english": "Visit a sick person or call to check on them",
+            "arabic": "زر مريضاً أو اتصل للاطمئنان عليه .)"
+        },
+        {
+            "full_text": "Avoid lying and always speak the truth. ( تجنب الكذب وقل الصدق دائماً .)",
+            "english": "Avoid lying and always speak the truth",
+            "arabic": "تجنب الكذب وقل الصدق دائماً .)"
+        },
+        {
+            "full_text": "Ask your parents an Islamic question and listen to the answer. ( اسأل والديك سؤالاً إسلامياً واستمع إلى الإجابة .)",
+            "english": "Ask your parents an Islamic question and listen to the answer",
+            "arabic": "اسأل والديك سؤالاً إسلامياً واستمع إلى الإجابة .)"
+        },
+        {
+            "full_text": "Fast for half a day (for younger children) or a full day (for older children) during Ramadan. ( صم نصف يوم - للأطفال الأصغر - أو يوماً كاملاً - للأطفال الأكبر - خلال رمضان .)",
+            "english": "Fast for half a day (for younger children) or a full day (for older children) during Ramadan",
+            "arabic": "صم نصف يوم - للأطفال الأصغر - أو يوماً كاملاً - للأطفال الأكبر - خلال رمضان .)"
+        },
+        {
+            "full_text": "Give a small amount of money to charity (Sadaqah). ( تصدق بمبلغ صغير من المال - صدقة .)",
+            "english": "Give a small amount of money to charity (Sadaqah)",
+            "arabic": "تصدق بمبلغ صغير من المال - صدقة .)"
+        },
+        {
+            "full_text": "Donate old toys or clothes to those less fortunate. ( تبرع بألعاب أو ملابس قديمة للمحتاجين .)",
+            "english": "Donate old toys or clothes to those less fortunate",
+            "arabic": "تبرع بألعاب أو ملابس قديمة للمحتاجين .)"
+        },
+        {
+            "full_text": "Be kind to your siblings and share with them. ( كن لطيفاً مع إخوتك وشاركهم .)",
+            "english": "Be kind to your siblings and share with them",
+            "arabic": "كن لطيفاً مع إخوتك وشاركهم .)"
+        },
+        {
+            "full_text": "Visit your relatives (Silat Al-Rahim). ( زر أقاربك - صلة الرحم .)",
+            "english": "Visit your relatives (Silat Al-Rahim)",
+            "arabic": "زر أقاربك - صلة الرحم .)"
+        },
+        {
+            "full_text": "Help your mother or father with household chores without being asked. ( ساعد والدتك أو والدك في الأعمال المنزلية دون أن يطلبا منك .)",
+            "english": "Help your mother or father with household chores without being asked",
+            "arabic": "ساعد والدتك أو والدك في الأعمال المنزلية دون أن يطلبا منك .)"
+        },
+        {
+            "full_text": "Listen to your elders and seek their advice. ( استمع إلى كبار السن واطلب نصيحتهم .)",
+            "english": "Listen to your elders and seek their advice",
+            "arabic": "استمع إلى كبار السن واطلب نصيحتهم .)"
+        },
+        {
+            "full_text": "Help prepare for Eid celebrations. ( ساعد في التحضير لاحتفالات العيد .)",
+            "english": "Help prepare for Eid celebrations",
+            "arabic": "ساعد في التحضير لاحتفالات العيد .)"
+        },
+        {
+            "full_text": "Control your anger and practice patience. ( تحكم في غضبك وتدرب على الصبر .)",
+            "english": "Control your anger and practice patience",
+            "arabic": "تحكم في غضبك وتدرب على الصبر .)"
+        },
+        {
+            "full_text": "Be grateful for what you have. ( كن شاكراً لما لديك .)",
+            "english": "Be grateful for what you have",
+            "arabic": "كن شاكراً لما لديك .)"
+        },
+        {
+            "full_text": "Practice self-discipline by waking up early for Fajr prayer. ( تدرب على الانضباط الذاتي بالاستيقاظ مبكراً لصلاة الفجر .)",
+            "english": "Practice self-discipline by waking up early for Fajr prayer",
+            "arabic": "تدرب على الانضباط الذاتي بالاستيقاظ مبكراً لصلاة الفجر .)"
+        },
+        {
+            "full_text": "Learn the Du’a for entering and leaving the house. ( تعلم دعاء دخول المنزل والخروج منه .)",
+            "english": "Learn the Du’a for entering and leaving the house",
+            "arabic": "تعلم دعاء دخول المنزل والخروج منه .)"
+        },
+        {
+            "full_text": "Water plants or trees, remembering that it is a Sadaqah. ( اسقِ النباتات أو الأشجار ، متذكراً أنها صدقة .)",
+            "english": "Water plants or trees, remembering that it is a Sadaqah",
+            "arabic": "اسقِ النباتات أو الأشجار ، متذكراً أنها صدقة .)"
+        },
+        {
+            "full_text": "Do not litter and always dispose of trash properly. ( لا ترمِ القمامة وتخلص منها بشكل صحيح دائماً .)",
+            "english": "Do not litter and always dispose of trash properly",
+            "arabic": "لا ترمِ القمامة وتخلص منها بشكل صحيح دائماً .)"
+        }
+    ],
+    "Daily Chores": [
+        {
+            "full_text": "Make your bed neatly every morning. ( رتّب سريرك بعناية كل صباح .)",
+            "english": "Make your bed neatly every morning",
+            "arabic": "رتّب سريرك بعناية كل صباح .)"
+        },
+        {
+            "full_text": "Brush your teeth twice a day (morning and night). ( اغسل أسنانك مرتين يومياً - صباحاً ومساءً .)",
+            "english": "Brush your teeth twice a day (morning and night)",
+            "arabic": "اغسل أسنانك مرتين يومياً - صباحاً ومساءً .)"
+        },
+        {
+            "full_text": "Choose your clothes for the next day before going to bed. ( اختر ملابسك لليوم التالي قبل النوم .)",
+            "english": "Choose your clothes for the next day before going to bed",
+            "arabic": "اختر ملابسك لليوم التالي قبل النوم .)"
+        },
+        {
+            "full_text": "Put away your pajamas after waking up. ( ضع ملابسك النوم في مكانها بعد الاستيقاظ .)",
+            "english": "Put away your pajamas after waking up",
+            "arabic": "ضع ملابسك النوم في مكانها بعد الاستيقاظ .)"
+        },
+        {
+            "full_text": "Pack your school bag with all necessary books and supplies. ( جهز حقيبتك المدرسية بجميع الكتب واللوازم الضرورية .)",
+            "english": "Pack your school bag with all necessary books and supplies",
+            "arabic": "جهز حقيبتك المدرسية بجميع الكتب واللوازم الضرورية .)"
+        },
+        {
+            "full_text": "Take a shower or bath daily. ( استحم يومياً .)",
+            "english": "Take a shower or bath daily",
+            "arabic": "استحم يومياً .)"
+        },
+        {
+            "full_text": "Comb your hair and ensure it's tidy. ( مشّط شعرك وتأكد من ترتيبه .)",
+            "english": "Comb your hair and ensure it's tidy",
+            "arabic": "مشّط شعرك وتأكد من ترتيبه .)"
+        },
+        {
+            "full_text": "Keep your personal hygiene items (toothbrush, soap) organized. ( حافظ على أدوات نظافتك الشخصية - فرشاة الأسنان ، الصابون - مرتبة .)",
+            "english": "Keep your personal hygiene items (toothbrush, soap) organized",
+            "arabic": "حافظ على أدوات نظافتك الشخصية - فرشاة الأسنان ، الصابون - مرتبة .)"
+        },
+        {
+            "full_text": "Ensure your shoes are clean and put away. ( تأكد من نظافة حذائك ووضعه في مكانه .)",
+            "english": "Ensure your shoes are clean and put away",
+            "arabic": "تأكد من نظافة حذائك ووضعه في مكانه .)"
+        },
+        {
+            "full_text": "Tidy up your toys and games after playing. ( رتّب ألعابك بعد الانتهاء من اللعب .)",
+            "english": "Tidy up your toys and games after playing",
+            "arabic": "رتّب ألعابك بعد الانتهاء من اللعب .)"
+        },
+        {
+            "full_text": "Put your dirty clothes in the laundry basket. ( ضع ملابسك المتسخة في سلة الغسيل .)",
+            "english": "Put your dirty clothes in the laundry basket",
+            "arabic": "ضع ملابسك المتسخة في سلة الغسيل .)"
+        },
+        {
+            "full_text": "Hang up your clothes or fold them neatly in your closet. ( علّق ملابسك أو اطوها بعناية في خزانتك .)",
+            "english": "Hang up your clothes or fold them neatly in your closet",
+            "arabic": "علّق ملابسك أو اطوها بعناية في خزانتك .)"
+        },
+        {
+            "full_text": "Keep your bedroom floor clear of clutter. ( حافظ على أرضية غرفتك خالية من الفوضى .)",
+            "english": "Keep your bedroom floor clear of clutter",
+            "arabic": "حافظ على أرضية غرفتك خالية من الفوضى .)"
+        },
+        {
+            "full_text": "Arrange your shoes neatly by the door or in the shoe rack. ( رتّب أحذيتك بعناية عند الباب أو في رف الأحذية .)",
+            "english": "Arrange your shoes neatly by the door or in the shoe rack",
+            "arabic": "رتّب أحذيتك بعناية عند الباب أو في رف الأحذية .)"
+        },
+        {
+            "full_text": "Help change your bedsheets once a week. ( ساعد في تغيير ملاءات سريرك مرة واحدة في الأسبوع .)",
+            "english": "Help change your bedsheets once a week",
+            "arabic": "ساعد في تغيير ملاءات سريرك مرة واحدة في الأسبوع .)"
+        },
+        {
+            "full_text": "Set the table for family meals. ( جهز الطاولة لوجبات العائلة .)",
+            "english": "Set the table for family meals",
+            "arabic": "جهز الطاولة لوجبات العائلة .)"
+        },
+        {
+            "full_text": "Clear your plate and utensils from the table after eating. ( أزل طبقك وأدواتك من الطاولة بعد الأكل .)",
+            "english": "Clear your plate and utensils from the table after eating",
+            "arabic": "أزل طبقك وأدواتك من الطاولة بعد الأكل .)"
+        },
+        {
+            "full_text": "Help load the dishwasher or wash dishes by hand. ( ساعد في تحميل غسالة الصحون أو غسل الأطباق يدوياً .)",
+            "english": "Help load the dishwasher or wash dishes by hand",
+            "arabic": "ساعد في تحميل غسالة الصحون أو غسل الأطباق يدوياً .)"
+        },
+        {
+            "full_text": "Put away groceries after a shopping trip. ( ضع مشتريات البقالة في مكانها بعد التسوق .)",
+            "english": "Put away groceries after a shopping trip",
+            "arabic": "ضع مشتريات البقالة في مكانها بعد التسوق .)"
+        },
+        {
+            "full_text": "Help prepare a simple snack or drink for yourself or a sibling. ( ساعد في تحضير وجبة خفيفة بسيطة أو مشروب لنفسك أو لأخيك .)",
+            "english": "Help prepare a simple snack or drink for yourself or a sibling",
+            "arabic": "ساعد في تحضير وجبة خفيفة بسيطة أو مشروب لنفسك أو لأخيك .)"
+        },
+        {
+            "full_text": "Help take out the kitchen trash when it's full. ( ساعد في إخراج سلة المهملات من المطبخ عندما تمتلئ . )",
+            "english": "Help take out the kitchen trash when it's full",
+            "arabic": "ساعد في إخراج سلة المهملات من المطبخ عندما تمتلئ . )"
+        },
+        {
+            "full_text": "Tidy up the living room by putting away blankets and pillows. ( رتّب غرفة المعيشة بوضع البطانيات والوسائد في مكانها .)",
+            "english": "Tidy up the living room by putting away blankets and pillows",
+            "arabic": "رتّب غرفة المعيشة بوضع البطانيات والوسائد في مكانها .)"
+        },
+        {
+            "full_text": "Help dust surfaces in the living room or common areas. ( ساعد في مسح الغبار عن الأسطح في غرفة المعيشة أو المناطق المشتركة .)",
+            "english": "Help dust surfaces in the living room or common areas",
+            "arabic": "ساعد في مسح الغبار عن الأسطح في غرفة المعيشة أو المناطق المشتركة .)"
+        },
+        {
+            "full_text": "Water indoor plants. ( اسقِ النباتات الداخلية .)",
+            "english": "Water indoor plants",
+            "arabic": "اسقِ النباتات الداخلية .)"
+        },
+        {
+            "full_text": "Help vacuum or sweep the living room floor. ( ساعد في كنس أو مسح أرضية غرفة المعيشة .)",
+            "english": "Help vacuum or sweep the living room floor",
+            "arabic": "ساعد في كنس أو مسح أرضية غرفة المعيشة .)"
+        },
+        {
+            "full_text": "Help organize toys or games in common play areas. ( ساعد في تنظيم الألعاب في مناطق اللعب المشتركة .)",
+            "english": "Help organize toys or games in common play areas",
+            "arabic": "ساعد في تنظيم الألعاب في مناطق اللعب المشتركة .)"
+        },
+        {
+            "full_text": "Turn off lights and electronics when leaving a room. ( أطفئ الأنوار والأجهزة الإلكترونية عند مغادرة الغرفة .)",
+            "english": "Turn off lights and electronics when leaving a room",
+            "arabic": "أطفئ الأنوار والأجهزة الإلكترونية عند مغادرة الغرفة .)"
+        },
+        {
+            "full_text": "Close doors and drawers properly. ( أغلق الأبواب والأدراج بشكل صحيح .)",
+            "english": "Close doors and drawers properly",
+            "arabic": "أغلق الأبواب والأدراج بشكل صحيح .)"
+        },
+        {
+            "full_text": "Help water outdoor plants or the garden. ( ساعد في سقي النباتات الخارجية أو الحديقة .)",
+            "english": "Help water outdoor plants or the garden",
+            "arabic": "ساعد في سقي النباتات الخارجية أو الحديقة .)"
+        },
+        {
+            "full_text": "Feed pets and ensure their water bowl is full. ( أطعم الحيوانات الأليفة وتأكد من أن وعاء الماء الخاص بها ممتلئ .)",
+            "english": "Feed pets and ensure their water bowl is full",
+            "arabic": "أطعم الحيوانات الأليفة وتأكد من أن وعاء الماء الخاص بها ممتلئ .)"
+        },
+        {
+            "full_text": "Sweep the front porch or patio. ( اكنس الشرفة الأمامية أو الفناء .)",
+            "english": "Sweep the front porch or patio",
+            "arabic": "اكنس الشرفة الأمامية أو الفناء .)"
+        },
+        {
+            "full_text": "Help wash the family car (with supervision). ( ساعد في غسل سيارة العائلة - بإشراف .)",
+            "english": "Help wash the family car (with supervision)",
+            "arabic": "ساعد في غسل سيارة العائلة - بإشراف .)"
+        },
+        {
+            "full_text": "Help bring in laundry from the clothesline. ( ساعد في إحضار الغسيل من حبل الغسيل .)",
+            "english": "Help bring in laundry from the clothesline",
+            "arabic": "ساعد في إحضار الغسيل من حبل الغسيل .)"
+        },
+        {
+            "full_text": "Help a younger sibling get dressed. ( ساعد أخاً أو أختاً أصغر سناً في ارتداء ملابسه .)",
+            "english": "Help a younger sibling get dressed",
+            "arabic": "ساعد أخاً أو أختاً أصغر سناً في ارتداء ملابسه .)"
+        },
+        {
+            "full_text": "Read a story to a younger sibling. ( اقرأ قصة لأخ أو أخت أصغر سناً .)",
+            "english": "Read a story to a younger sibling",
+            "arabic": "اقرأ قصة لأخ أو أخت أصغر سناً .)"
+        },
+        {
+            "full_text": "Help your parents carry shopping bags. ( ساعد والديك في حمل أكياس التسوق .)",
+            "english": "Help your parents carry shopping bags",
+            "arabic": "ساعد والديك في حمل أكياس التسوق .)"
+        },
+        {
+            "full_text": "Offer to help a family member with a task they are doing. ( اعرض المساعدة على فرد من العائلة في مهمة يقوم بها .)",
+            "english": "Offer to help a family member with a task they are doing",
+            "arabic": "اعرض المساعدة على فرد من العائلة في مهمة يقوم بها .)"
+        },
+        {
+            "full_text": "Help set up for a family gathering or event. ( ساعد في التجهيز لتجمع عائلي أو مناسبة .)",
+            "english": "Help set up for a family gathering or event",
+            "arabic": "ساعد في التجهيز لتجمع عائلي أو مناسبة .)"
+        },
+        {
+            "full_text": "Help your mother or father with cooking preparations (e.g., washing vegetables). ( ساعد والدتك أو والدك في تحضيرات الطهي - مثل غسل الخضروات .)",
+            "english": "Help your mother or father with cooking preparations (e.g., washing vegetables)",
+            "arabic": "ساعد والدتك أو والدك في تحضيرات الطهي - مثل غسل الخضروات .)"
+        },
+        {
+            "full_text": "Assist an elderly family member with technology (e.g., setting up a phone). ( ساعد أحد كبار السن في العائلة في استخدام التكنولوجيا - مثل إعداد هاتف .)",
+            "english": "Assist an elderly family member with technology (e.g., setting up a phone)",
+            "arabic": "ساعد أحد كبار السن في العائلة في استخدام التكنولوجيا - مثل إعداد هاتف .)"
+        },
+        {
+            "full_text": "Go for a 30-minute walk or play outdoors. ( اذهب للمشي لمدة 30 دقيقة أو العب في الخارج .)",
+            "english": "Go for a 30-minute walk or play outdoors",
+            "arabic": "اذهب للمشي لمدة 30 دقيقة أو العب في الخارج .)"
+        },
+        {
+            "full_text": "Eat a healthy breakfast every morning. ( تناول فطوراً صحياً كل صباح .)",
+            "english": "Eat a healthy breakfast every morning",
+            "arabic": "تناول فطوراً صحياً كل صباح .)"
+        },
+        {
+            "full_text": "Choose a fruit or vegetable as a snack instead of sweets. ( اختر فاكهة أو خضروات كوجبة خفيفة بدلاً من الحلويات .)",
+            "english": "Choose a fruit or vegetable as a snack instead of sweets",
+            "arabic": "اختر فاكهة أو خضروات كوجبة خفيفة بدلاً من الحلويات .)"
+        },
+        {
+            "full_text": "Limit screen time to the agreed-upon duration. ( التزم بوقت الشاشة المتفق عليه .)",
+            "english": "Limit screen time to the agreed-upon duration",
+            "arabic": "التزم بوقت الشاشة المتفق عليه .)"
+        },
+        {
+            "full_text": "Get at least 8 hours of sleep. ( احصل على 8 ساعات نوم على الأقل .)",
+            "english": "Get at least 8 hours of sleep",
+            "arabic": "احصل على 8 ساعات نوم على الأقل .)"
+        },
+        {
+            "full_text": "Help pack a healthy lunch for school. ( ساعد في تجهيز وجبة غداء صحية للمدرسة .)",
+            "english": "Help pack a healthy lunch for school",
+            "arabic": "ساعد في تجهيز وجبة غداء صحية للمدرسة .)"
+        },
+        {
+            "full_text": "Read for 20 minutes outside of school assignments. ( اقرأ لمدة 20 دقيقة خارج الواجبات المدرسية .)",
+            "english": "Read for 20 minutes outside of school assignments",
+            "arabic": "اقرأ لمدة 20 دقيقة خارج الواجبات المدرسية .)"
+        },
+        {
+            "full_text": "Complete your homework without being reminded. ( أكمل واجباتك المدرسية دون تذكير .)",
+            "english": "Complete your homework without being reminded",
+            "arabic": "أكمل واجباتك المدرسية دون تذكير .)"
+        },
+        {
+            "full_text": "Help a younger sibling with their homework. ( ساعد أخاً أو أختاً أصغر سناً في واجباتهم المدرسية .)",
+            "english": "Help a younger sibling with their homework",
+            "arabic": "ساعد أخاً أو أختاً أصغر سناً في واجباتهم المدرسية .)"
+        },
+        {
+            "full_text": "Organize your school supplies. ( نظّم لوازمك المدرسية .)",
+            "english": "Organize your school supplies",
+            "arabic": "نظّم لوازمك المدرسية .)"
+        },
+        {
+            "full_text": "Practice writing neatly. ( تدرب على الكتابة بخط مرتب .)",
+            "english": "Practice writing neatly",
+            "arabic": "تدرب على الكتابة بخط مرتب .)"
+        },
+        {
+            "full_text": "Teach a family member something new you learned today. ( علّم فرداً من العائلة شيئاً جديداً تعلمته اليوم .)",
+            "english": "Teach a family member something new you learned today",
+            "arabic": "علّم فرداً من العائلة شيئاً جديداً تعلمته اليوم .)"
+        },
+        {
+            "full_text": "Help fold clean laundry. ( ساعد في طي الغسيل النظيف .)",
+            "english": "Help fold clean laundry",
+            "arabic": "ساعد في طي الغسيل النظيف .)"
+        },
+        {
+            "full_text": "Help put away clean clothes. ( ساعد في وضع الملابس النظيفة في مكانها .)",
+            "english": "Help put away clean clothes",
+            "arabic": "ساعد في وضع الملابس النظيفة في مكانها .)"
+        },
+        {
+            "full_text": "Assist with grocery shopping (e.g., pushing the cart, finding items). ( ساعد في التسوق من البقالة - مثل دفع العربة ، العثور على الأصناف .)",
+            "english": "Assist with grocery shopping (e.g., pushing the cart, finding items)",
+            "arabic": "ساعد في التسوق من البقالة - مثل دفع العربة ، العثور على الأصناف .)"
+        },
+        {
+            "full_text": "Help prepare for family gatherings. ( ساعد في التحضير للتجمعات العائلية .)",
+            "english": "Help prepare for family gatherings",
+            "arabic": "ساعد في التحضير للتجمعات العائلية .)"
+        },
+        {
+            "full_text": "Help organize the pantry or kitchen cabinets. ( ساعد في تنظيم خزانة المؤن أو خزائن المطبخ .)",
+            "english": "Help organize the pantry or kitchen cabinets",
+            "arabic": "ساعد في تنظيم خزانة المؤن أو خزائن المطبخ .)"
+        },
+        {
+            "full_text": "Offer to help a parent with a task without being asked. ( اعرض المساعدة على أحد الوالدين في مهمة دون أن يطلب منك .)",
+            "english": "Offer to help a parent with a task without being asked",
+            "arabic": "اعرض المساعدة على أحد الوالدين في مهمة دون أن يطلب منك .)"
+        }
+    ],
+    "Financial Values": [
+        {
+            "full_text": "Set a savings goal for a toy or book you want to buy. ( حدد هدفاً ادخارياً للعبة أو كتاب تريد شراءه .)",
+            "english": "Set a savings goal for a toy or book you want to buy",
+            "arabic": "حدد هدفاً ادخارياً للعبة أو كتاب تريد شراءه .)"
+        },
+        {
+            "full_text": "Help your parents compare prices for a household item before buying. ( ساعد والديك في مقارنة أسعار سلعة منزلية قبل شرائها .)",
+            "english": "Help your parents compare prices for a household item before buying",
+            "arabic": "ساعد والديك في مقارنة أسعار سلعة منزلية قبل شرائها .)"
+        },
+        {
+            "full_text": "Understand the difference between needs and wants. ( افهم الفرق بين الحاجات والرغبات .)",
+            "english": "Understand the difference between needs and wants",
+            "arabic": "افهم الفرق بين الحاجات والرغبات .)"
+        },
+        {
+            "full_text": "Create a simple budget for your allowance. ( أنشئ ميزانية بسيطة لمصروفك .)",
+            "english": "Create a simple budget for your allowance",
+            "arabic": "أنشئ ميزانية بسيطة لمصروفك .)"
+        },
+        {
+            "full_text": "Avoid impulse buying for one day. ( تجنب الشراء الاندفاعي ليوم واحد .)",
+            "english": "Avoid impulse buying for one day",
+            "arabic": "تجنب الشراء الاندفاعي ليوم واحد .)"
+        },
+        {
+            "full_text": "Help your parents make a grocery list to stick to a budget. ( ساعد والديك في إعداد قائمة مشتريات البقالة للالتزام بالميزانية .)",
+            "english": "Help your parents make a grocery list to stick to a budget",
+            "arabic": "ساعد والديك في إعداد قائمة مشتريات البقالة للالتزام بالميزانية .)"
+        },
+        {
+            "full_text": "Count your savings and update your savings goal. ( احسب مدخراتك وحدث هدفك الادخاري .)",
+            "english": "Count your savings and update your savings goal",
+            "arabic": "احسب مدخراتك وحدث هدفك الادخاري .)"
+        },
+        {
+            "full_text": "Complete an extra chore to earn additional allowance. ( أكمل مهمة إضافية لكسب مصروف إضافي .)",
+            "english": "Complete an extra chore to earn additional allowance",
+            "arabic": "أكمل مهمة إضافية لكسب مصروف إضافي .)"
+        },
+        {
+            "full_text": "Learn about a job or profession that interests you. ( تعرف على وظيفة أو مهنة تثير اهتمامك .)",
+            "english": "Learn about a job or profession that interests you",
+            "arabic": "تعرف على وظيفة أو مهنة تثير اهتمامك .)"
+        },
+        {
+            "full_text": "Help organize a small family garage sale or clear-out. ( ساعد في تنظيم بيع بسيط لأغراض العائلة أو التخلص من الفائض .)",
+            "english": "Help organize a small family garage sale or clear-out",
+            "arabic": "ساعد في تنظيم بيع بسيط لأغراض العائلة أو التخلص من الفائض .)"
+        },
+        {
+            "full_text": "Learn about the concept of entrepreneurship by discussing a small business idea. ( تعرف على مفهوم ريادة الأعمال بمناقشة فكرة مشروع صغير مع والديك .)",
+            "english": "Learn about the concept of entrepreneurship by discussing a small business idea",
+            "arabic": "تعرف على مفهوم ريادة الأعمال بمناقشة فكرة مشروع صغير مع والديك .)"
+        },
+        {
+            "full_text": "Donate a portion of your allowance to charity (Sadaqah). ( تبرع بجزء من مصروفك للصدقة .)",
+            "english": "Donate a portion of your allowance to charity (Sadaqah)",
+            "arabic": "تبرع بجزء من مصروفك للصدقة .)"
+        },
+        {
+            "full_text": "Help your parents prepare a food basket for a needy family. ( ساعد والديك في إعداد سلة طعام لعائلة محتاجة .)",
+            "english": "Help your parents prepare a food basket for a needy family",
+            "arabic": "ساعد والديك في إعداد سلة طعام لعائلة محتاجة .)"
+        },
+        {
+            "full_text": "Donate old toys or clothes to those less fortunate. ( تبرع بألعاب أو ملابس قديمة للمحتاجين .)",
+            "english": "Donate old toys or clothes to those less fortunate",
+            "arabic": "تبرع بألعاب أو ملابس قديمة للمحتاجين .)"
+        },
+        {
+            "full_text": "Learn about the concept of Waqf (endowment) in Islamic history. ( تعرف على مفهوم الوقف في التاريخ الإسلامي .)",
+            "english": "Learn about the concept of Waqf (endowment) in Islamic history",
+            "arabic": "تعرف على مفهوم الوقف في التاريخ الإسلامي .)"
+        },
+        {
+            "full_text": "Help your parents recycle items to save resources. ( ساعد والديك في إعادة تدوير الأشياء لتوفير الموارد .)",
+            "english": "Help your parents recycle items to save resources",
+            "arabic": "ساعد والديك في إعادة تدوير الأشياء لتوفير الموارد .)"
+        },
+        {
+            "full_text": "Repair a broken toy or item instead of buying a new one. ( أصلح لعبة أو غرضاً مكسوراً بدلاً من شراء جديد .)",
+            "english": "Repair a broken toy or item instead of buying a new one",
+            "arabic": "أصلح لعبة أو غرضاً مكسوراً بدلاً من شراء جديد .)"
+        },
+        {
+            "full_text": "Borrow a book from the library instead of buying it. ( استعر كتاباً من المكتبة بدلاً من شرائه .)",
+            "english": "Borrow a book from the library instead of buying it",
+            "arabic": "استعر كتاباً من المكتبة بدلاً من شرائه .)"
+        },
+        {
+            "full_text": "Help plan a family outing that is fun but also budget-friendly . ( ساعد في التخطيط لنزهة عائلية ممتعة ومناسبة للميزانية .)",
+            "english": "Help plan a family outing that is fun but also budget-friendly",
+            "arabic": "ساعد في التخطيط لنزهة عائلية ممتعة ومناسبة للميزانية .)"
+        },
+        {
+            "full_text": "Learn to count money (coins and banknotes). ( تعلم عد النقود - العملات المعدنية والورقية .)",
+            "english": "Learn to count money (coins and banknotes)",
+            "arabic": "تعلم عد النقود - العملات المعدنية والورقية .)"
+        },
+        {
+            "full_text": "Understand what an ATM is and how it works (with parental explanation). ( افهم ما هو جهاز الصراف الآلي وكيف يعمل - بشرح الوالدين .)",
+            "english": "Understand what an ATM is and how it works (with parental explanation)",
+            "arabic": "افهم ما هو جهاز الصراف الآلي وكيف يعمل - بشرح الوالدين .)"
+        },
+        {
+            "full_text": "Learn about different payment methods (cash, card, digital). ( تعرف على طرق الدفع المختلفة - نقداً ، بطاقة ، رقمي .)",
+            "english": "Learn about different payment methods (cash, card, digital)",
+            "arabic": "تعرف على طرق الدفع المختلفة - نقداً ، بطاقة ، رقمي .)"
+        },
+        {
+            "full_text": "Help your parents sort receipts or bills. ( ساعد والديك في فرز الإيصالات أو الفواتير .)",
+            "english": "Help your parents sort receipts or bills",
+            "arabic": "ساعد والديك في فرز الإيصالات أو الفواتير .)"
+        },
+        {
+            "full_text": "Create a simple product or service to offer to family members. ( ابتكر منتجاً أو خدمة بسيطة لتقديمها لأفراد العائلة .)",
+            "english": "Create a simple product or service to offer to family members",
+            "arabic": "ابتكر منتجاً أو خدمة بسيطة لتقديمها لأفراد العائلة .)"
+        },
+        {
+            "full_text": "Create a simple \"dream board\" for your future goals (including financial ones). ( أنشئ \" لوحة أحلام \" بسيطة لأهدافك المستقبلية - بما في ذلك الأهداف المالية .)",
+            "english": "Create a simple \"dream board\" for your future goals (including financial ones)",
+            "arabic": "أنشئ \" لوحة أحلام \" بسيطة لأهدافك المستقبلية - بما في ذلك الأهداف المالية .)"
+        },
+        {
+            "full_text": "Discuss with your parents about the cost of living in Saudi Arabia. ( ناقش مع والديك تكلفة المعيشة في المملكة العربية السعودية .)",
+            "english": "Discuss with your parents about the cost of living in Saudi Arabia",
+            "arabic": "ناقش مع والديك تكلفة المعيشة في المملكة العربية السعودية .)"
+        },
+        {
+            "full_text": "Read product labels to understand ingredients or origin. ( اقرأ ملصقات المنتجات لفهم المكونات أو المنشأ .)",
+            "english": "Read product labels to understand ingredients or origin",
+            "arabic": "اقرأ ملصقات المنتجات لفهم المكونات أو المنشأ .)"
+        },
+        {
+            "full_text": "Understand the difference between advertising and factual information . ( افهم الفرق بين الإعلان والمعلومات الواقعية .)",
+            "english": "Understand the difference between advertising and factual information",
+            "arabic": "افهم الفرق بين الإعلان والمعلومات الواقعية .)"
+        },
+        {
+            "full_text": "Be aware of marketing tricks designed to make you buy more. ( كن واعياً لحيل التسويق المصممة لجعلك تشتري المزيد .)",
+            "english": "Be aware of marketing tricks designed to make you buy more",
+            "arabic": "كن واعياً لحيل التسويق المصممة لجعلك تشتري المزيد .)"
+        },
+        {
+            "full_text": "Help your parents check the expiry dates of food items. ( ساعد والديك في التحقق من تواريخ انتهاء صلاحية المواد الغذائية .)",
+            "english": "Help your parents check the expiry dates of food items",
+            "arabic": "ساعد والديك في التحقق من تواريخ انتهاء صلاحية المواد الغذائية .)"
+        },
+        {
+            "full_text": "Avoid buying things just because your friends have them. ( تجنب شراء الأشياء لمجرد أن أصدقائك يمتلكونها .)",
+            "english": "Avoid buying things just because your friends have them",
+            "arabic": "تجنب شراء الأشياء لمجرد أن أصدقائك يمتلكونها .)"
+        },
+        {
+            "full_text": "Discuss with your parents about online shopping safety. ( ناقش مع والديك حول سلامة التسوق عبر الإنترنت .)",
+            "english": "Discuss with your parents about online shopping safety",
+            "arabic": "ناقش مع والديك حول سلامة التسوق عبر الإنترنت .)"
+        },
+        {
+            "full_text": "Turn off lights and electronics when not in use to save electricity. ( أطفئ الأنوار والأجهزة الإلكترونية عند عدم الاستخدام لتوفير الكهرباء .)",
+            "english": "Turn off lights and electronics when not in use to save electricity",
+            "arabic": "أطفئ الأنوار والأجهزة الإلكترونية عند عدم الاستخدام لتوفير الكهرباء .)"
+        },
+        {
+            "full_text": "Conserve water while showering or washing hands. ( اقتصد في استخدام الماء أثناء الاستحمام أو غسل اليدين .)",
+            "english": "Conserve water while showering or washing hands",
+            "arabic": "اقتصد في استخدام الماء أثناء الاستحمام أو غسل اليدين .)"
+        },
+        {
+            "full_text": "Don't leave the refrigerator door open for too long. ( لا تترك باب الثلاجة مفتوحاً لفترة طويلة .)",
+            "english": "Don't leave the refrigerator door open for too long",
+            "arabic": "لا تترك باب الثلاجة مفتوحاً لفترة طويلة .)"
+        },
+        {
+            "full_text": "Help maintain household items to extend their lifespan. ( ساعد في صيانة الأدوات المنزلية لإطالة عمرها الافتراضي .)",
+            "english": "Help maintain household items to extend their lifespan",
+            "arabic": "ساعد في صيانة الأدوات المنزلية لإطالة عمرها الافتراضي .)"
+        }
+    ]
+}
