@@ -39,3 +39,8 @@ class TaskRepository:
         except Exception:
             db.session.rollback()
             return False, "delete_error"
+        
+    def get_recurring_tasks(self):
+        return Task.query.filter(
+            Task.task_frequency.in_(["DAILY", "WEEKLY", "MONTHLY"])
+        ).all()

@@ -21,6 +21,7 @@ class ChildTaskAssignmentResponseSchema(Schema):
     completed_at = fields.DateTime(allow_none=True)
     approved_at = fields.DateTime(allow_none=True)
     task = fields.Nested(AssignmentTaskSchema)
+    assigned_date = fields.Date()
 
 class ParentTaskAssignmentResponseSchema(Schema):
     id = fields.String()
@@ -29,3 +30,4 @@ class ParentTaskAssignmentResponseSchema(Schema):
     approved_at = fields.DateTime(allow_none=True)
     task = fields.Nested(AssignmentTaskSchema)
     child = fields.Nested(AssignmentChildSchema)
+    assigned_date = fields.Date()

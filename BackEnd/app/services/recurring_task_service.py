@@ -1,0 +1,59 @@
+from datetime import date
+from app.models.task_assignment_model import TaskAssignment
+from app.repositories.task_repository import TaskRepository
+from app.repositories.task_assignment_repository import TaskAssignmentRepository
+
+
+class RecurringTaskService:
+    def __init__(self):
+        self.task_repository = TaskRepository()
+        self.assignment_repository = TaskAssignmentRepository()
+
+    def generate_today_assignments(self):
+        today = date.today()
+        weekday = today.weekday() 
+        month_day = today.day
+
+        tasks = self.task_repository.get_recurring_tasks()
+
+        created_count = 0
+
+        for task in tasks:
+            if not self._should_generate_today(task, weekday, month_day):
+                continue
+
+            for assignment in task.assignments:
+                child = assignment.child
+
+                existing = self.assignment_repository.get_assignment_for_date(
+                    task.id,
+                    child.id,
+                    today
+                )
+
+                if existing:
+                    continue
+
+                new_assignment = TaskAssignment(
+                    task_id=task.id,
+                    child_id=child.id,
+                    status="PENDING",
+                    assigned_date=today
+                )
+
+                self.assignment_repository.create_assignment(new_assignment)
+                created_count += 1
+
+        return created_count
+
+    def _should_generate_today(self, task, weekday, month_day):
+        if task.task_frequency == "DAILY":
+            return True
+
+        if task.task_frequency == "WEEKLY":
+            return task.recurrence_day == weekday
+
+        if task.task_frequency == "MONTHLY":
+            return task.recurrence_day == month_day
+
+        return False

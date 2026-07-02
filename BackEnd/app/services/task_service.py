@@ -3,6 +3,7 @@ from app.models.task_assignment_model import TaskAssignment
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.repositories.child_repository import ChildRepository
+from datetime import date
 
 
 class TaskService:
@@ -64,6 +65,7 @@ class TaskService:
             assignment = TaskAssignment(
                 task_id=task.id,
                 child_id=child.id,
+                assigned_date=date.today(),
                 status="PENDING"
             )
 

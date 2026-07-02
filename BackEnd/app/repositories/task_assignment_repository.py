@@ -63,3 +63,10 @@ class TaskAssignmentRepository:
             )
             .first()
         )
+    
+    def get_assignment_for_date(self, task_id, child_id, assigned_date):
+        return TaskAssignment.query.filter_by(
+            task_id=task_id,
+            child_id=child_id,
+            assigned_date=assigned_date
+        ).first()
