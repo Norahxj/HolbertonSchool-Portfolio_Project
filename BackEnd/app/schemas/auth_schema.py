@@ -23,13 +23,14 @@ class RegisterSchema(Schema):
         required=True,
         validate=validate_password
     )
+    guardian_type = fields.String(
+    required=True,
+    validate=validate.OneOf(["father", "mother"])
+    )
 
 class LoginSchema(Schema):
     email = fields.Email(required=True)
-
-    password = fields.String(
-        required=True
-    )
+    password = fields.String(required=True)
 
 class ChildLoginSchema(Schema):
     access_code = fields.String(required=True, validate=[

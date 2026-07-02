@@ -10,7 +10,7 @@ register_schema = RegisterSchema()
 login_schema = LoginSchema()
 child_login_schema = ChildLoginSchema()
 auth_service = AuthService()
-register_model, login_model, child_login_model, token_model, user_response_model, child_token_model = get_auth_models(api)
+register_model, login_model, child_login_model = get_auth_models(api)
 
 @api.route("/register")
 class RegisterResource(Resource):
@@ -32,6 +32,8 @@ class RegisterResource(Resource):
 @api.route("/login")
 class LoginResource(Resource):
     @api.expect(login_model, validate=True)
+    @api.response(200, "User logged in successfully")
+    @api.response(400, "Invalid input")
     @api.response(401, "Invalid email or password")
     def post(self):
         try:
@@ -46,6 +48,9 @@ class LoginResource(Resource):
 @api.route("/child-login")
 class ChildLoginResource(Resource):
     @api.expect(child_login_model, validate=True)
+    @api.response(200, "Child logged in successfully")
+    @api.response(400, "Invalid input")
+    @api.response(401, "Invalid access code")
     def post(self):
         try:
             data = child_login_schema.load(api.payload)
@@ -58,6 +63,9 @@ class ChildLoginResource(Resource):
     
 @api.route("/refresh")
 class RefreshResource(Resource):
+    @api.response(200, "Access token refreshed successfully")
+    @api.response(401, "Invalid or expired refresh token")
+    @api.response(403, "Invalid role")
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
     def post(self):
@@ -68,23 +76,10 @@ class RefreshResource(Resource):
             return {"error": error}, status_code
         return {"access_token": token}, 200
 
-@api.route("/me")
-class MeResource(Resource):
-    @jwt_required()
-    @api.doc(security="JWT")
-    @api.response(200, "Current user retrieved successfully")
-    @api.response(401, "Missing or invalid token")
-    @api.response(404, "User not found")
-    def get(self):
-        identity = get_jwt_identity()
-        role = get_jwt().get("role")
-        result, error, status_code = auth_service.get_current_account(identity, role)
-        if error:
-            return {"error": error}, status_code
-        return result, 200
-
 @api.route("/logout")
 class Logout(Resource):
+    @api.response(200, "Logged out successfully")
+    @api.response(401, "Missing or invalid token")
     @api.doc(security="JWT")
     @jwt_required()
     def post(self):
@@ -94,6 +89,8 @@ class Logout(Resource):
     
 @api.route("/logout-refresh")
 class LogoutRefresh(Resource):
+    @api.response(200, "Refresh token logged out successfully")
+    @api.response(401, "Missing or invalid refresh token")
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
     def post(self):

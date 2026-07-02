@@ -6,6 +6,7 @@ class UserResponseSchema(Schema):
     full_name = fields.String()
     email = fields.Email()
     role = fields.String()
+    guardian_type = fields.String()
 
 
 class UserUpdateSchema(Schema):

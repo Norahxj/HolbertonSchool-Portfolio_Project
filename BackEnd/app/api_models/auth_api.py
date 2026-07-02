@@ -4,7 +4,8 @@ def get_auth_models(api):
     register_model = api.model("Register", {
         "full_name": fields.String(required=True, description="Full name"),
         "email": fields.String(required=True, description="Email"),
-        "password": fields.String(required=True, description="Password")
+        "password": fields.String(required=True, description="Password"),
+        "guardian_type": fields.String(required=True)
     })
 
     login_model = api.model("Login", {
@@ -20,7 +21,8 @@ def get_auth_models(api):
         "id": fields.String(description="User ID"),
         "full_name": fields.String(description="Full name"),
         "email": fields.String(description="Email"),
-        "role": fields.String(description="User role")
+        "role": fields.String(description="User role"),
+        "guardian_type": fields.String(required=True)
     })
 
     token_model = api.model("TokenResponse", {
