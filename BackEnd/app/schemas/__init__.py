@@ -3,3 +3,5 @@ from app.schemas.user_schema import UserResponseSchema, UserUpdateSchema
 from app.schemas.child_schema import ChildResponseSchema, ChildCreateSchema, ChildUpdateSchema, ChildWithAccessCodeSchema
 from app.schemas.task_schema import TaskResponseSchema, TaskCreateSchema, TaskUpdateSchema
 from app.schemas.task_assignment_schema import (ChildTaskAssignmentResponseSchema, ParentTaskAssignmentResponseSchema)
+from app.schemas.point_schema import PointsResponseSchema
+from app.schemas.points_history_schema import PointsHistoryResponseSchema

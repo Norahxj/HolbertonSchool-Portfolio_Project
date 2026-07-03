@@ -1,71 +1,68 @@
-from app.extensions import db
-from app.models.points_model import ChildPoints
-from app.models.points_history_model import PointsHistory
+from app.models.point_model import ChildPoints
+from app.repositories.point_repository import PointRepository
+from app.repositories.child_repository import ChildRepository
+from app.services.points_history_service import PointsHistoryService
 
 
 class PointsService:
+    def __init__(self):
+        self.point_repository = PointRepository()
+        self.child_repository = ChildRepository()
+        self.points_history_service = PointsHistoryService()
 
-    @staticmethod
-    def get_child_points(child_id):
-        points = ChildPoints.query.filter_by(child_id=child_id).first()
-        if not points:
-            return {"child_id": child_id, "total_points": 0}, 200
+    def get_child_points(self, child_id):
+        child = self.child_repository.get_child_by_id(child_id)
 
-        return {
-            "child_id": child_id,
-            "total_points": points.total_points
-        }, 200
+        if not child:
+            return None, "child_not_found"
 
-    @staticmethod
-    def get_points_history(child_id):
-        history = PointsHistory.query.filter_by(child_id=child_id).order_by(
-            PointsHistory.created_at.desc()
-        ).all()
-
-        return [h.to_dict() for h in history], 200
-
-    @staticmethod
-    def add_points(child_id, amount, source_id=None, note=None):
-        points = ChildPoints.query.filter_by(child_id=child_id).first()
+        points = self.point_repository.get_points_by_child_id(child_id)
 
         if not points:
             points = ChildPoints(child_id=child_id, total_points=0)
-            db.session.add(points)
-            db.session.commit()
+            points, error = self.point_repository.create_points_record(points)
+
+            if error:
+                return None, "create_failed"
+
+        return points, None
+
+    def add_points(self, child_id, amount, source_id=None):
+        points, error = self.get_child_points(child_id)
+
+        if error:
+            return None, error
 
         points.total_points += amount
-        db.session.commit()
 
-        history = PointsHistory(
+        success, error = self.point_repository.update_points()
+
+        if not success:
+            return None, "update_failed"
+        
+        self.points_history_service.create_history(
             child_id=child_id,
             points=amount,
             action="TASK_APPROVED",
-            source_id=source_id,
-            note=note
+            source_id=source_id
         )
-        db.session.add(history)
-        db.session.commit()
 
-        return points.total_points
+        return points, None
 
-    @staticmethod
-    def deduct_points(child_id, amount, source_id=None, note=None):
-        points = ChildPoints.query.filter_by(child_id=child_id).first()
+    def deduct_points(self, child_id, amount):
+        points, error = self.get_child_points(child_id)
 
-        if not points:
-            return None
+        if error:
+            return None, error
 
-        points.total_points = max(0, points.total_points - amount)
-        db.session.commit()
+        if points.total_points < amount:
+            return None, "insufficient_points"
 
-        history = PointsHistory(
-            child_id=child_id,
-            points=-amount,
-            action="WISH_REDEEMED",
-            source_id=source_id,
-            note=note
-        )
-        db.session.add(history)
-        db.session.commit()
+        points.total_points -= amount
 
-        return points.total_points
+        success, error = self.point_repository.update_points()
+
+        if not success:
+            return None, "update_failed"
+
+        return points, None

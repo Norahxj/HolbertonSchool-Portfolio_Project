@@ -1,12 +1,14 @@
 from datetime import datetime
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
+from app.services.points_service import PointsService
 
 
 class TaskAssignmentService:
     def __init__(self):
         self.task_repository = TaskRepository()
         self.task_assignment_repository = TaskAssignmentRepository()
+        self.points_service = PointsService()
 
     def get_assignment(self, assignment_id):
         return self.task_assignment_repository.get_assignment_by_id(assignment_id)
@@ -38,6 +40,7 @@ class TaskAssignmentService:
             assignment.status = "APPROVED"
             assignment.completed_at = datetime.now()
             assignment.approved_at = datetime.now()
+            
         else:
             assignment.status = "PENDING_REVIEW"
             assignment.completed_at = datetime.now()
@@ -47,6 +50,12 @@ class TaskAssignmentService:
 
         if not success:
             return None, "update_failed"
+        if assignment.status == "APPROVED":
+            self.points_service.add_points(
+                assignment.child_id,
+                assignment.task.points,
+                assignment.task.id
+            )
 
         return assignment, None
 
@@ -64,11 +73,18 @@ class TaskAssignmentService:
 
         assignment.status = "APPROVED"
         assignment.approved_at = datetime.now()
+        
 
         success, error = self.task_assignment_repository.update_assignment()
 
         if not success:
             return None, "update_failed"
+        
+        self.points_service.add_points(
+            assignment.child_id,
+            assignment.task.points,
+            assignment.task.id
+        )
 
         return assignment, None
 
