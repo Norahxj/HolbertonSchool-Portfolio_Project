@@ -17,6 +17,7 @@ from app.routes.daily_feedback_routes import api as daily_feedback_ns
 from app.routes.task_assignment_routes import api as task_assignment_ns
 from app.routes.points_routes import api as point_ns
 from app.routes.points_history_routes import api as points_history_ns
+from app.routes.reward_routes import api as reward_ns
 
 
 authorizations = {
@@ -84,4 +85,5 @@ def create_app():
     api.add_namespace(task_assignment_ns, path="/task-assignments")
     api.add_namespace(point_ns, path="/api/points")
     api.add_namespace(points_history_ns, path="/api/points-history")
+    api.add_namespace(reward_ns, path="/api/rewards")
     return app

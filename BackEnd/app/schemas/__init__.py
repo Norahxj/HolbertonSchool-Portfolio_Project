@@ -5,3 +5,4 @@ from app.schemas.task_schema import TaskResponseSchema, TaskCreateSchema, TaskUp
 from app.schemas.task_assignment_schema import (ChildTaskAssignmentResponseSchema, ParentTaskAssignmentResponseSchema)
 from app.schemas.point_schema import PointsResponseSchema
 from app.schemas.points_history_schema import PointsHistoryResponseSchema
+from app.schemas.reward_schema import RewardResponseSchema, RewardCreateSchema, RewardUpdateSchema
