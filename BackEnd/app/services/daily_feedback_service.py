@@ -1,39 +1,67 @@
-from app.extensions import db
 from app.models.daily_feedback_model import DailyFeedback
-from app.models.task_model import Task
-from app.models.child_model import Child
+from app.repositories.daily_feedback_repository import DailyFeedbackRepository
+from app.repositories.child_repository import ChildRepository
 
 
 class DailyFeedbackService:
+    def __init__(self):
+        self.daily_feedback_repository = DailyFeedbackRepository()
+        self.child_repository = ChildRepository()
 
     def create_feedback(self, parent_id, feedback_data):
-        task = (
-            Task.query
-            .join(Child, Task.child_id == Child.id)
-            .filter(
-                Task.id == feedback_data["task_id"],
-                Child.parent_id == parent_id
-            )
-            .first()
+        child = self.child_repository.get_child_for_guardian(
+            feedback_data["child_id"],
+            parent_id
         )
 
-        if not task:
-            return None, "task_not_found"
-
-        if task.status != "APPROVED":
-            return None, "task_not_approved"
-
-        feedback = DailyFeedback.query.filter_by(task_id=task.id).first()
-
-        if feedback:
-            return None, "feedback_already_exists"
+        if not child:
+            return None, "child_not_found"
 
         feedback = DailyFeedback(
-            task_id=task.id,
-            emoji=feedback_data["emoji"]
+            child_id=child.id,
+            created_by=parent_id,
+            mood=feedback_data["mood"]
         )
 
-        db.session.add(feedback)
-        db.session.commit()
+        feedback, error = self.daily_feedback_repository.create_feedback(feedback)
+
+        if error:
+            return None, "create_failed"
 
         return feedback, None
+
+    def get_feedback_for_child_as_parent(self, child_id, parent_id):
+        child = self.child_repository.get_child_for_guardian(child_id, parent_id)
+
+        if not child:
+            return None, "child_not_found"
+
+        feedback = self.daily_feedback_repository.get_feedback_by_child_id(child_id)
+
+        return feedback, None
+
+    def get_my_feedback(self, child_id):
+        feedback = self.daily_feedback_repository.get_feedback_by_child_id(child_id)
+
+        return feedback, None
+
+    def delete_feedback(self, feedback_id, parent_id):
+        feedback = self.daily_feedback_repository.get_feedback_by_id(feedback_id)
+
+        if not feedback:
+            return None
+
+        child = self.child_repository.get_child_for_guardian(
+            feedback.child_id,
+            parent_id
+        )
+
+        if not child:
+            return None
+
+        success, error = self.daily_feedback_repository.delete_feedback(feedback)
+
+        if not success:
+            return None
+
+        return True

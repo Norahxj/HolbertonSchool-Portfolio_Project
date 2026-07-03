@@ -1,0 +1,35 @@
+from sqlalchemy.exc import IntegrityError
+from app.extensions import db
+from app.models.daily_feedback_model import DailyFeedback
+
+
+class DailyFeedbackRepository:
+
+    def create_feedback(self, feedback):
+        try:
+            db.session.add(feedback)
+            db.session.commit()
+            return feedback, None
+        except IntegrityError:
+            db.session.rollback()
+            return None, "integrity_error"
+
+    def get_feedback_by_child_id(self, child_id):
+        return (
+            DailyFeedback.query
+            .filter_by(child_id=child_id)
+            .order_by(DailyFeedback.created_at.desc())
+            .all()
+        )
+
+    def get_feedback_by_id(self, feedback_id):
+        return db.session.get(DailyFeedback, feedback_id)
+
+    def delete_feedback(self, feedback):
+        try:
+            db.session.delete(feedback)
+            db.session.commit()
+            return True, None
+        except Exception:
+            db.session.rollback()
+            return False, "delete_error"
