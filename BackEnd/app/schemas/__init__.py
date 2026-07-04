@@ -8,3 +8,4 @@ from app.schemas.points_history_schema import PointsHistoryResponseSchema
 from app.schemas.reward_schema import RewardResponseSchema, RewardCreateSchema, RewardUpdateSchema
 from app.schemas.daily_feedback_schema import DailyFeedbackResponseSchema, DailyFeedbackCreateSchema
 from app.schemas.wishlist_schema import WishlistApproveSchema, WishlistCreateSchema, WishlistResponseSchema
+from app.schemas.task_bank_schema import SuggestedTaskResponseSchema
