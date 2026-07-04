@@ -1,106 +1,148 @@
-from app.extensions import db
+from datetime import datetime
+
 from app.models.wishlist_model import Wishlist
-from app.models.child_model import Child
-from app.models.point_model import ChildPoints
+from app.repositories.wishlist_repository import WishlistRepository
+from app.repositories.child_repository import ChildRepository
+from app.repositories.point_repository import PointRepository
 
 
 class WishlistService:
-    
-    def add_wish(self, child_id, name):
-        child = Child.query.filter_by(id=child_id).first()
-    
-        if not child:
-            return None, "child_not_found"
-        
-        wishes_count = Wishlist.query.filter_by(child_id=child_id).count()
-        if wishes_count >= 5:
+    def __init__(self):
+        self.wishlist_repository = WishlistRepository()
+        self.child_repository = ChildRepository()
+        self.points_repository = PointRepository()
+
+    def create_wish(self, child_id, wish_data):
+        if self.wishlist_repository.get_pending_count_by_child_id(child_id) >= 5:
             return None, "wishlist_limit_reached"
 
-        name = name.strip()
-        if not name:
-            return None, "invalid_name"
+        wish = Wishlist(
+            child_id=child_id,
+            name=wish_data["name"].strip(),
+            status="PENDING"
+        )
 
-        existing_wish = Wishlist.query.filter_by(child_id=child_id,name=name).first()
-        if existing_wish:
-            return None, "wish_already_exists"
+        wish, error = self.wishlist_repository.create_wish(wish)
 
-        wish = Wishlist(child_id=child_id,name=name,status="PENDING")
-        db.session.add(wish)
-        db.session.commit()
+        if error:
+            return None, "create_failed"
+
         return wish, None
 
-
-    def get_child_wishlist(self, child_id):
-        wishes = Wishlist.query.filter_by(child_id=child_id).all()
+    def get_my_wishes(self, child_id):
+        wishes = self.wishlist_repository.get_wishes_by_child_id(child_id)
         return wishes, None
 
-    def approve_wish(self, parent_id, wish_id, target_points):
-        wish = (
-            Wishlist.query
-            .join(Child, Wishlist.child_id == Child.id)
-            .filter(
-                Wishlist.id == wish_id,
-                Child.parent_id == parent_id
-            )
-            .first()
+    def get_child_wishes(self, child_id, parent_id):
+        child = self.child_repository.get_child_for_guardian(
+            child_id,
+            parent_id
         )
+
+        if not child:
+            return None, "child_not_found"
+
+        wishes = self.wishlist_repository.get_wishes_by_child_id(child_id)
+
+        return wishes, None
+
+    def approve_wish(self, wish_id, parent_id, target_points):
+        wish = self.wishlist_repository.get_wish_by_id(wish_id)
 
         if not wish:
             return None, "wish_not_found"
 
-        if target_points <= 0:
-            return None, "invalid_target_points"
+        child = self.child_repository.get_child_for_guardian(
+            wish.child_id,
+            parent_id
+        )
 
+        if not child:
+            return None, "child_not_found"
+
+        if self.wishlist_repository.get_approved_count_by_child_id(wish.child_id) >= 3:
+            return None, "approved_limit_reached"
         if wish.status != "PENDING":
-            return None, "wish_already_processed"
+            return None, "wish_already_reviewed"
 
         wish.status = "APPROVED"
         wish.target_points = target_points
         wish.reviewed_by = parent_id
+        wish.approved_at = datetime.now()
 
-        db.session.commit()
+        success, error = self.wishlist_repository.update_wish()
+
+        if not success:
+            return None, "update_failed"
+
         return wish, None
 
-    def reject_wish(self, parent_id, wish_id):
-        wish = (
-        Wishlist.query
-        .join(Child, Wishlist.child_id == Child.id)
-        .filter(
-            Wishlist.id == wish_id,
-            Child.parent_id == parent_id
-        )
-        .first()
-    )
+    def reject_wish(self, wish_id, parent_id):
+        wish = self.wishlist_repository.get_wish_by_id(wish_id)
 
         if not wish:
             return None, "wish_not_found"
 
+        child = self.child_repository.get_child_for_guardian(
+            wish.child_id,
+            parent_id
+        )
+
+        if not child:
+            return None, "child_not_found"
         if wish.status != "PENDING":
-            return None, "wish_already_processed"
+            return None, "wish_already_reviewed"
 
         wish.status = "REJECTED"
         wish.reviewed_by = parent_id
-        
-        db.session.commit()
+
+        success, error = self.wishlist_repository.update_wish()
+
+        if not success:
+            return None, "update_failed"
+
         return wish, None
 
-    def get_wishlist_status(self, child_id):
-        child_points = ChildPoints.query.filter_by(child_id=child_id).first()
-        total_points = child_points.total_points if child_points else 0
+    def achieve_wish(self, wish_id, child_id):
+        wish = self.wishlist_repository.get_wish_for_child(
+            wish_id,
+            child_id
+        )
 
-        wishes = Wishlist.query.filter_by(child_id=child_id,status="APPROVED").all()
-        
-        result = []
-        for wish in wishes:
-            target = wish.target_points or 0
-            current_points = min(total_points, target) if target > 0 else 0
-            result.append({
-                 "wish_id": wish.id,
-                 "name": wish.name,
-                 "target_points": target,
-                 "current_points": current_points,
-                 "remaining": max(target - current_points, 0),
-                "is_completed": current_points >= target
-            })
+        if not wish:
+            return None, "wish_not_found"
 
-        return {"child_id": child_id,"wishes": result}, None
+        if wish.status != "APPROVED":
+            return None, "wish_not_approved"
+
+        points = self.points_repository.get_points_by_child_id(child_id)
+
+        total_points = 0 if points is None else points.total_points
+
+        if total_points < wish.target_points:
+            return None, "not_enough_points"
+
+        wish.status = "ACHIEVED"
+
+        success, error = self.wishlist_repository.update_wish()
+
+        if not success:
+            return None, "update_failed"
+
+        return wish, None
+
+    def delete_wish(self, wish_id, child_id):
+        wish = self.wishlist_repository.get_wish_for_child(
+            wish_id,
+            child_id
+        )
+
+        if not wish:
+            return None
+
+        success, error = self.wishlist_repository.delete_wish(wish)
+
+        if not success:
+            return None
+
+        return True

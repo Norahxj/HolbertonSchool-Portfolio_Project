@@ -1,12 +1,5 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, validates, ValidationError
 
-
-class WishlistCreateSchema(Schema):
-    name = fields.String(required=True, validate=validate.Length(min=2, max=255))
-
-
-class WishlistApproveSchema(Schema):
-    target_points = fields.Integer(required=True, validate=validate.Range(min=1))
 
 class WishlistResponseSchema(Schema):
     id = fields.String()
@@ -14,12 +7,25 @@ class WishlistResponseSchema(Schema):
     name = fields.String()
     target_points = fields.Integer(allow_none=True)
     status = fields.String()
-    reviewed_by = fields.String(dump_only=True)
-    reviewer_name = fields.Method("get_reviewer_name", dump_only=True)
+    reviewed_by = fields.String(allow_none=True)
+    approved_at = fields.DateTime(allow_none=True)
     created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    def get_reviewer_name(self, obj):
-        if obj.reviewer:
-            return obj.reviewer.full_name
-        return None
-    
+
+
+class WishlistCreateSchema(Schema):
+    name = fields.String(
+        required=True,
+        validate=validate.Length(min=2, max=255)
+    )
+
+    @validates("name")
+    def validate_name(self, value, **kwargs):
+        if not value.strip():
+            raise ValidationError("Wish name cannot be empty.")
+
+
+class WishlistApproveSchema(Schema):
+    target_points = fields.Integer(
+        required=True,
+        validate=validate.Range(min=1, max=10000)
+    )
