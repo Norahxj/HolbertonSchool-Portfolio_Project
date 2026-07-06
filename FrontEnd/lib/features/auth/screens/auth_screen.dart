@@ -12,6 +12,7 @@ import '../widgets/parent_gender_toggle.dart';
 import '../widgets/phone_input_field.dart';
 import '../widgets/social_login_button.dart';
 import '../../../services/auth_api_service.dart';
+import '../../parent/screens/parent_dashboard_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
@@ -36,8 +37,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController familyNameController = TextEditingController();
-  final TextEditingController registerEmailController =
-      TextEditingController();
+  final TextEditingController registerEmailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController registerPasswordController =
       TextEditingController();
@@ -59,68 +59,62 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _handleMainButton() async {
-  if (isSignInSelected) {
-    try {
-      final response = await _authApiService.login(
-        email: emailController.text.trim(),
-        password: passwordController.text,
-      );
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Login Success"),
-          ),
+    if (isSignInSelected) {
+      try {
+        final response = await _authApiService.login(
+          email: emailController.text.trim(),
+          password: passwordController.text,
         );
 
-        print(response.data);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.data.toString()),
-          ),
-        );
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Login Success")));
+
+          print(response.data);
+
+          // TODO: This navigation is temporary until real auth/routing is finalized.
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const ParentDashboardScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(response.data.toString())));
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  } else {
-    try {
-      final response = await _authApiService.register(
-        firstName: firstNameController.text,
-        lastName: familyNameController.text,
-        phone: phoneController.text,
-        email: registerEmailController.text,
-        password: registerPasswordController.text,
-        guardianType: isMotherSelected ? "mother" : "father",
-      );
+    } else {
+      try {
+        final response = await _authApiService.register(
+          firstName: firstNameController.text,
+          lastName: familyNameController.text,
+          phone: phoneController.text,
+          email: registerEmailController.text,
+          password: registerPasswordController.text,
+          guardianType: isMotherSelected ? "mother" : "father",
+        );
 
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Register Success"),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.data.toString()),
-          ),
-        );
+        if (response.statusCode == 201 || response.statusCode == 200) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Register Success")));
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(response.data.toString())));
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
     }
   }
-}
 
   void _handleBack() {
     if (isSignInSelected) {
@@ -160,9 +154,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   isSignInSelected
                       ? (isArabic ? 'مرحبًا بعودتك!' : 'Welcome back!')
-                      : (isArabic
-                          ? 'إنشاء حساب جديد'
-                          : 'Create a new account'),
+                      : (isArabic ? 'إنشاء حساب جديد' : 'Create a new account'),
                   style: AppTextStyles.arabicTitle,
                   textAlign: TextAlign.center,
                 ),
@@ -172,11 +164,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   isSignInSelected
                       ? (isArabic
-                          ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
-                          : 'Sign in or create a new account')
+                            ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
+                            : 'Sign in or create a new account')
                       : (isArabic
-                          ? 'يرجى تعبئة البيانات لإنشاء حسابك'
-                          : 'Please fill in your details to create your account'),
+                            ? 'يرجى تعبئة البيانات لإنشاء حسابك'
+                            : 'Please fill in your details to create your account'),
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
@@ -257,8 +249,7 @@ class _AuthScreenState extends State<AuthScreen> {
         const SizedBox(height: AppSpacing.sm),
 
         Align(
-          alignment:
-              isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: TextButton(
             onPressed: () {
               // Later: forgot password screen
@@ -289,9 +280,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         Text(
           isArabic ? 'أو' : 'Or',
-          style: const TextStyle(
-            color: AppColors.textSecondary,
-          ),
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -393,10 +382,7 @@ class _RoundIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _RoundIconButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _RoundIconButton({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
