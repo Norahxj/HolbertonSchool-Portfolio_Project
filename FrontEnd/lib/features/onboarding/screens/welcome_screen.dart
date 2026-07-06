@@ -29,8 +29,9 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 Align(
-                  alignment:
-                      isArabic ? Alignment.centerLeft : Alignment.centerRight,
+                  alignment: isArabic
+                      ? Alignment.centerLeft
+                      : Alignment.centerRight,
                   child: LanguageToggle(
                     isArabic: isArabic,
                     onTap: onLanguageToggle,
@@ -39,20 +40,62 @@ class WelcomeScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                Text(
-                  'Asalah',
-                  style: AppTextStyles.logo,
-                  textAlign: TextAlign.center,
-                ),
-
-                const Text(
-                  'أصالة',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
-                  ),
-                  textAlign: TextAlign.center,
+                Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned(
+                      top: 0,
+                      left: 4,
+                      child: _SoftPill(width: 74, height: 22),
+                    ),
+                    Positioned(
+                      top: 50,
+                      right: 0,
+                      child: _SoftPill(width: 58, height: 20),
+                    ),
+                    Positioned(
+                      top: -8,
+                      right: 56,
+                      child: Icon(
+                        Icons.auto_awesome,
+                        size: 26,
+                        color: AppColors.gold,
+                      ),
+                    ),
+                    Positioned(
+                      top: 34,
+                      left: 40,
+                      child: Icon(
+                        Icons.auto_awesome,
+                        size: 14,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 6,
+                      right: 30,
+                      child: Icon(
+                        Icons.auto_awesome,
+                        size: 16,
+                        color: AppColors.gold,
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'أصالة',
+                          style: AppTextStyles.logoArabic,
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          'Asalah',
+                          style: AppTextStyles.logo,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
@@ -66,12 +109,27 @@ class WelcomeScreen extends StatelessWidget {
                 const SizedBox(height: AppSpacing.sm),
 
                 Text(
+                  isArabic
+                      ? 'من هنا يتعلّم الأبناء\nومن هنا تُطيعون الآباء'
+                      : 'Here children learn,\nand here they honor their parents.',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryDark,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                const Spacer(),
+
+                Text(
                   AppStrings.welcomeSubtitle(isArabic),
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
 
-                const Spacer(),
+                const SizedBox(height: AppSpacing.lg),
 
                 Row(
                   children: [
@@ -108,6 +166,25 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SoftPill extends StatelessWidget {
+  final double width;
+  final double height;
+
+  const _SoftPill({required this.width, required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(height / 2),
       ),
     );
   }

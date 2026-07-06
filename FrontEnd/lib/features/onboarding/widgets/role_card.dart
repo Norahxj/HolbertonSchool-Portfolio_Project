@@ -20,28 +20,22 @@ class RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         onTap: onTap,
         child: Container(
-          height: 210,
-          padding: const EdgeInsets.all(16),
+          height: 220,
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.primaryLight,
-                AppColors.primary,
-              ],
+              colors: [AppColors.primaryLight, AppColors.primary],
             ),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: AppColors.primaryDark.withOpacity(0.2),
-            ),
+            borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
                 color: AppColors.primary.withOpacity(0.18),
-                blurRadius: 16,
+                blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
@@ -50,42 +44,14 @@ class RoleCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CircleAvatar(
-                radius: 42,
+                radius: 38,
                 backgroundColor: Colors.white,
-                child: Icon(
-                  icon,
-                  size: 44,
-                  color: AppColors.primaryDark,
-                ),
+                child: Icon(icon, size: 34, color: AppColors.primaryDark),
               ),
-              Column(
-                children: [
-                  Text(
-                    arabicTitle,
-                    style: AppTextStyles.cardTitle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    englishTitle,
-                    style: AppTextStyles.cardSubtitle,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.25),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withOpacity(0.5)),
-                ),
-                child: const Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                  size: 20,
-                ),
+              Text(
+                arabicTitle,
+                style: AppTextStyles.cardTitle,
+                textAlign: TextAlign.center,
               ),
             ],
           ),
