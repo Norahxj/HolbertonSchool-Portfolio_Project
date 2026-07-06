@@ -14,6 +14,5 @@ class TaskChild(BaseModel):
 
     task_id = db.Column(db.String(36), db.ForeignKey("tasks.id"), nullable=False)
     child_id = db.Column(db.String(36), db.ForeignKey("children.id"), nullable=False)
-
     task = db.relationship("Task", backref=db.backref("task_children", lazy=True, cascade="all, delete-orphan"))
     child = db.relationship("Child", backref=db.backref("task_children", lazy=True, cascade="all, delete-orphan"))
