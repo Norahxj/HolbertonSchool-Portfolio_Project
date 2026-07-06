@@ -110,8 +110,8 @@ class WelcomeScreen extends StatelessWidget {
 
                 Text(
                   isArabic
-                     ? 'حيثُ تُبنى القيم وتُكافئ الإنجازات'
-                     : 'Where values are built and achievements are rewarded.',
+                      ? 'حيثُ تُبنى القيم وتُكافئ الإنجازات'
+                      : 'Where values are built and achievements are rewarded.',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -153,7 +153,7 @@ class WelcomeScreen extends StatelessWidget {
                     RoleCard(
                       arabicTitle: 'طفل',
                       englishTitle: 'Child',
-                      icon: Icons.child_care,
+                      icon: Icons.person,
                       onTap: () {
                         // Later: navigate to child auth screen
                       },
