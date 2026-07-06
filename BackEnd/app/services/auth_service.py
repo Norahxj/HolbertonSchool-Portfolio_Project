@@ -46,7 +46,9 @@ class AuthService:
         return None, "Invalid role", 403
 
     def register(self, user_data):
-        full_name = user_data["full_name"].strip()
+        first_name = user_data["first_name"].strip()
+        last_name = user_data["last_name"].strip()
+        phone = user_data["phone"]
         email = user_data["email"].strip().lower()
         password = user_data["password"]
         guardian_type = user_data["guardian_type"]
@@ -54,7 +56,9 @@ class AuthService:
         if existing_user:
             return None, "Email already registered"
         user = User(
-            full_name=full_name,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
             email=email,
             password_hash=bcrypt.generate_password_hash(password).decode("utf-8"),
             role="parent",

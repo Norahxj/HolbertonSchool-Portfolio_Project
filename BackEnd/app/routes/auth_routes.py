@@ -18,6 +18,7 @@ class RegisterResource(Resource):
     @api.response(201, "User registered successfully")
     @api.response(400, "Invalid input")
     @api.response(409, "Email already registered")
+    @api.response(409, "Phone number already used")
     def post(self):
         try:
             data = register_schema.load(api.payload)

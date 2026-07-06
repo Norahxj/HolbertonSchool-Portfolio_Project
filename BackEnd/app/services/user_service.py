@@ -14,8 +14,11 @@ class UserService:
         if not user:
             return None, "not_found"
 
-        if "full_name" in user_data:
-            user.full_name = user_data["full_name"].strip()
+        if "first_name" in user_data:
+            user.first_name = user_data["first_name"].strip()
+        
+        if "last_name" in user_data:
+            user.last_name = user_data["last_name"].strip()
 
         if "email" in user_data:
             email = user_data["email"].strip().lower()
@@ -25,6 +28,9 @@ class UserService:
                 return None, "email_exists"
 
             user.email = email
+            
+        if "phone" in user_data:
+            user.phone = user_data["phone"]
 
         success, error = self.user_repository.update_user()
 
