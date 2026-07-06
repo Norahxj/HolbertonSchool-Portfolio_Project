@@ -49,6 +49,8 @@ class CurrentUserResource(Resource):
             return {"error": "Phone number already used"}, 409
         if error == "not_found":
             return {"error": "User not found"}, 404
+        if error == "integrity_error":
+            return {"error": "Email or phone already exists"}, 409
         return user_response_schema.dump(user), 200
 
 
