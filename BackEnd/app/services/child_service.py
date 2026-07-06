@@ -26,7 +26,8 @@ class ChildService:
         child = Child(
             name=child_data["name"].strip(),
             age=child_data["age"],
-            access_code=self.generate_access_code()
+            access_code=self.generate_access_code(),
+            family_id=parent.family_id
         )
 
         child.guardians.append(parent)

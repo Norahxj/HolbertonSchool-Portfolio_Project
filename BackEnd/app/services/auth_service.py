@@ -6,6 +6,7 @@ from app.schemas.child_schema import ChildResponseSchema
 from app.repositories.auth_repository import AuthRepository
 from app.repositories.user_repository import UserRepository
 from app.repositories.child_repository import ChildRepository
+from app.models.Family_model import Family
 
 child_response_schema = ChildResponseSchema()
 user_response_schema = UserResponseSchema()
@@ -58,6 +59,7 @@ class AuthService:
         existing_phone = self.user_repository.get_user_by_phone(phone)
         if existing_phone:
             return None, "Phone number already used"
+        family = Family(name=f"{last_name}'s Family")
         user = User(
             first_name=first_name,
             last_name=last_name,
@@ -65,7 +67,8 @@ class AuthService:
             email=email,
             password_hash=bcrypt.generate_password_hash(password).decode("utf-8"),
             role="parent",
-            guardian_type=guardian_type
+            guardian_type=guardian_type,
+            family=family
         )
         user, error = self.user_repository.create_user(user)
         if error == "integrity_error":
