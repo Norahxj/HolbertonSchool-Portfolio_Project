@@ -6,7 +6,7 @@ def get_user_models(api):
         "id": fields.String(description="User ID"),
         "first_name": fields.String(description="First name"),
         "last_name": fields.String(description="Last name"),
-        "phone": fields.Integer(description="Phone number"),
+        "phone": fields.String(description="Phone number"),
         "email": fields.String(description="Email"),
         "role": fields.String(description="User role"),
         "guardian_type": fields.String(description="Guardian type")
@@ -15,7 +15,7 @@ def get_user_models(api):
     user_update_model = api.model("UserUpdate", {
         "first_name": fields.String(description="First name"),
         "last_name": fields.String(description="Last name"),
-        "phone": fields.Integer(description="Phone number"),
+        "phone": fields.String(description="Phone number"),
         "email": fields.String(description="Email")
     })
 

@@ -8,6 +8,9 @@ class UserRepository:
     
     def get_user_by_email(self, email):
         return User.query.filter_by(email=email).first()
+    
+    def get_user_by_phone(self, phone):
+        return User.query.filter_by(phone=phone).first()
 
     def create_user(self, user):
         try:

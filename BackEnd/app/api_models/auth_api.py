@@ -4,7 +4,7 @@ def get_auth_models(api):
     register_model = api.model("Register", {
         "first_name": fields.String(required=True, description="First name"),
         "last_name": fields.String(required=True, description="Last name"),
-        "phone": fields.Integer(required=True, description="Phone number"),
+        "phone": fields.String(required=True, description="Phone number"),
         "email": fields.String(required=True, description="Email"),
         "password": fields.String(required=True, description="Password"),
         "guardian_type": fields.String(required=True, description="father or mother")

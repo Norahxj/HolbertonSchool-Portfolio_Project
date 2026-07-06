@@ -14,7 +14,7 @@ class UserResponseSchema(Schema):
 class UserUpdateSchema(Schema):
     first_name = fields.String(required=False, validate=validate.Length(min=2, max=50))
     last_name = fields.String(required=False, validate=validate.Length(min=2, max=50))
-    phone = fields.Integer(required=False, validate=validate.Length(min=10, max=10))
+    phone = fields.String(required=False, validate=[validate.Length(equal=10), validate.Regexp(r"^05\d{8}$")])
     email = fields.Email(required=False)
 
     @validates("first_name")
@@ -25,4 +25,4 @@ class UserUpdateSchema(Schema):
     @validates("last_name")
     def validate_last_name(self, value, **kwargs):
         if not value.strip():
-            raise ValidationError("Last namr cannot be empty.")
+            raise ValidationError("Last name cannot be empty.")
