@@ -19,10 +19,7 @@ class RegisterSchema(Schema):
     phone = fields.String(required=True, validate=[validate.Length(equal=10), validate.Regexp(r"^05\d{8}$")])
     email = fields.Email(required=True)
     password = fields.String(required=True, validate=validate_password)
-    guardian_type = fields.String(
-    required=True,
-    validate=validate.OneOf(["father", "mother"])
-    )
+    guardian_type = fields.String(required=True, validate=validate.OneOf(["father", "mother"]))
 
 class LoginSchema(Schema):
     email = fields.Email(required=True)
