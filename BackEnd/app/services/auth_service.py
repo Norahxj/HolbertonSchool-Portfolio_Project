@@ -69,7 +69,7 @@ class AuthService:
         )
         user, error = self.user_repository.create_user(user)
         if error == "integrity_error":
-            return None, "Email already registered"
+            return None, "Email or Phone already registered"
         access_token, refresh_token = self._create_tokens(user.id, user.role)
         return {
             "access_token": access_token,
