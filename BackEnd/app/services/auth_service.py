@@ -46,15 +46,22 @@ class AuthService:
         return None, "Invalid role", 403
 
     def register(self, user_data):
-        full_name = user_data["full_name"].strip()
+        first_name = user_data["first_name"].strip()
+        last_name = user_data["last_name"].strip()
+        phone = user_data["phone"]
         email = user_data["email"].strip().lower()
         password = user_data["password"]
         guardian_type = user_data["guardian_type"]
         existing_user = self.user_repository.get_user_by_email(email)
         if existing_user:
             return None, "Email already registered"
+        existing_phone = self.user_repository.get_user_by_phone(phone)
+        if existing_phone:
+            return None, "Phone number already used"
         user = User(
-            full_name=full_name,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
             email=email,
             password_hash=bcrypt.generate_password_hash(password).decode("utf-8"),
             role="parent",
@@ -62,7 +69,7 @@ class AuthService:
         )
         user, error = self.user_repository.create_user(user)
         if error == "integrity_error":
-            return None, "Email already registered"
+            return None, "Email or Phone already registered"
         access_token, refresh_token = self._create_tokens(user.id, user.role)
         return {
             "access_token": access_token,

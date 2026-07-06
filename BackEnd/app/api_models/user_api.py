@@ -4,14 +4,18 @@ from flask_restx import fields
 def get_user_models(api):
     user_response_model = api.model("UserResponse", {
         "id": fields.String(description="User ID"),
-        "full_name": fields.String(description="Full name"),
+        "first_name": fields.String(description="First name"),
+        "last_name": fields.String(description="Last name"),
+        "phone": fields.String(description="Phone number"),
         "email": fields.String(description="Email"),
         "role": fields.String(description="User role"),
         "guardian_type": fields.String(description="Guardian type")
     })
 
     user_update_model = api.model("UserUpdate", {
-        "full_name": fields.String(description="Full name"),
+        "first_name": fields.String(description="First name"),
+        "last_name": fields.String(description="Last name"),
+        "phone": fields.String(description="Phone number"),
         "email": fields.String(description="Email")
     })
 

@@ -18,6 +18,7 @@ class RegisterResource(Resource):
     @api.response(201, "User registered successfully")
     @api.response(400, "Invalid input")
     @api.response(409, "Email already registered")
+    @api.response(409, "Phone number already used")
     def post(self):
         try:
             data = register_schema.load(api.payload)
@@ -25,7 +26,8 @@ class RegisterResource(Resource):
             return {"errors": err.messages}, 400
         result, error = auth_service.register(data)
         if error:
-            status_code = 409 if error == "Email already registered" else 400
+            status_code = 409 if error in ["Email already registered", "Phone number already used",
+            "Email or Phone already registered"]  else 400
             return {"error": error}, status_code
         return result, 201
 

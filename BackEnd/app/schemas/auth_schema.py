@@ -14,15 +14,11 @@ def validate_password(password):
         raise ValidationError("Password must contain at least one special character.")
 
 class RegisterSchema(Schema):
-    full_name = fields.String(
-        required=True,
-        validate=validate.Length(min=2, max=100)
-    )
+    first_name = fields.String(required=True, validate=validate.Length(min=2, max=50))
+    last_name = fields.String(required=True, validate=validate.Length(min=2, max=50))
+    phone = fields.String(required=True, validate=[validate.Length(equal=10), validate.Regexp(r"^05\d{8}$")])
     email = fields.Email(required=True)
-    password = fields.String(
-        required=True,
-        validate=validate_password
-    )
+    password = fields.String(required=True, validate=validate_password)
     guardian_type = fields.String(
     required=True,
     validate=validate.OneOf(["father", "mother"])
