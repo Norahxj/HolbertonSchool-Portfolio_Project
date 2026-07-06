@@ -7,10 +7,8 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../widgets/auth_tab_switcher.dart';
 import '../widgets/parent_gender_toggle.dart';
 import '../widgets/phone_input_field.dart';
-import '../widgets/social_login_button.dart';
 import '../../../services/auth_api_service.dart';
 import '../../parent/screens/parent_dashboard_screen.dart';
 
@@ -193,13 +191,46 @@ class _AuthScreenState extends State<AuthScreen> {
                       : _buildRegisterForm(isArabic),
                 ),
 
-                const SizedBox(height: AppSpacing.xl),
+                if (isSignInSelected) ...[
+                  const SizedBox(height: AppSpacing.xxl),
 
-                Icon(
-                  Icons.home_rounded,
-                  size: 90,
-                  color: AppColors.primary.withOpacity(0.45),
-                ),
+                  Text(
+                    isArabic ? 'ليس لديك حساب؟' : "Don't have an account?",
+                    style: const TextStyle(color: AppColors.textSecondary),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: AppSpacing.sm),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          isSignInSelected = false;
+                        });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                          color: AppColors.primary,
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      child: Text(
+                        isArabic ? 'إنشاء حساب' : 'Create account',
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -211,23 +242,6 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildSignInForm(bool isArabic) {
     return Column(
       children: [
-        AuthTabSwitcher(
-          isSignInSelected: isSignInSelected,
-          isArabic: isArabic,
-          onSignInTap: () {
-            setState(() {
-              isSignInSelected = true;
-            });
-          },
-          onRegisterTap: () {
-            setState(() {
-              isSignInSelected = false;
-            });
-          },
-        ),
-
-        const SizedBox(height: AppSpacing.lg),
-
         AppTextField(
           label: isArabic ? 'البريد الإلكتروني' : 'Email',
           hint: isArabic ? 'أدخل بريدك الإلكتروني' : 'Enter your email',
@@ -246,25 +260,7 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: passwordController,
         ),
 
-        const SizedBox(height: AppSpacing.sm),
-
-        Align(
-          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-          child: TextButton(
-            onPressed: () {
-              // Later: forgot password screen
-            },
-            child: Text(
-              isArabic ? 'هل نسيت كلمة المرور؟' : 'Forgot password?',
-              style: const TextStyle(
-                color: AppColors.primaryDark,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.md),
 
         AppButton(
           text: isArabic ? 'تسجيل الدخول' : 'Sign In',
@@ -274,24 +270,6 @@ class _AuthScreenState extends State<AuthScreen> {
             end: Alignment.bottomRight,
             colors: AppColors.primaryGradient,
           ),
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        Text(
-          isArabic ? 'أو' : 'Or',
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        SocialLoginButton(
-          text: isArabic
-              ? 'تسجيل الدخول باستخدام Google'
-              : 'Sign in with Google',
-          onTap: () {
-            // Later: Google login
-          },
         ),
       ],
     );
