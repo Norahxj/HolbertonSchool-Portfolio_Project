@@ -110,8 +110,8 @@ class WelcomeScreen extends StatelessWidget {
 
                 Text(
                   isArabic
-                      ? 'من هنا يتعلّم الأبناء\nومن هنا تُطيعون الآباء'
-                      : 'Here children learn,\nand here they honor their parents.',
+                     ? 'حيثُ تُبنى القيم وتُكافئ الإنجازات'
+                     : 'Where values are built and achievements are rewarded.',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
