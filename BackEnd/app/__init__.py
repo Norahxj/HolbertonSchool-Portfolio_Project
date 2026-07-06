@@ -82,7 +82,7 @@ def create_app():
     api.add_namespace(child_ns, path="/api/children")
     api.add_namespace(task_ns, path="/api/tasks")
     api.add_namespace(wishlist_ns, path="/api/wishlists")
-    api.add_namespace(task_assignment_ns, path="/task-assignments")
+    api.add_namespace(task_assignment_ns, path="/api/task-assignments")
     api.add_namespace(point_ns, path="/api/points")
     api.add_namespace(points_history_ns, path="/api/points-history")
     api.add_namespace(reward_ns, path="/api/rewards")
