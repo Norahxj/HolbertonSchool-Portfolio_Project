@@ -3,17 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
 class ParentGenderToggle extends StatelessWidget {
-  final bool isMotherSelected;
+  final String selectedType;
   final bool isArabic;
-  final VoidCallback onFatherTap;
-  final VoidCallback onMotherTap;
+  final ValueChanged<String> onTypeSelected;
 
   const ParentGenderToggle({
     super.key,
-    required this.isMotherSelected,
+    required this.selectedType,
     required this.isArabic,
-    required this.onFatherTap,
-    required this.onMotherTap,
+    required this.onTypeSelected,
   });
 
   @override
@@ -30,14 +28,20 @@ class ParentGenderToggle extends StatelessWidget {
           _GenderOption(
             label: isArabic ? 'أب' : 'Father',
             icon: Icons.man,
-            isSelected: !isMotherSelected,
-            onTap: onFatherTap,
+            isSelected: selectedType == 'father',
+            onTap: () => onTypeSelected('father'),
           ),
           _GenderOption(
             label: isArabic ? 'أم' : 'Mother',
             icon: Icons.woman,
-            isSelected: isMotherSelected,
-            onTap: onMotherTap,
+            isSelected: selectedType == 'mother',
+            onTap: () => onTypeSelected('mother'),
+          ),
+          _GenderOption(
+            label: isArabic ? 'وصيّ' : 'Guardian',
+            icon: Icons.supervisor_account,
+            isSelected: selectedType == 'guardian',
+            onTap: () => onTypeSelected('guardian'),
           ),
         ],
       ),
@@ -75,13 +79,14 @@ class _GenderOption extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 18,
+                size: 16,
                 color: isSelected ? Colors.white : AppColors.textSecondary,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 4),
               Text(
                 label,
                 style: TextStyle(
+                  fontSize: 13,
                   color: isSelected ? Colors.white : AppColors.textSecondary,
                   fontWeight: FontWeight.bold,
                 ),

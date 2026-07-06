@@ -28,7 +28,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool isSignInSelected = true;
-  bool isMotherSelected = true;
+  String guardianType = 'mother';
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -94,7 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
           phone: phoneController.text,
           email: registerEmailController.text,
           password: registerPasswordController.text,
-          guardianType: isMotherSelected ? "mother" : "father",
+          guardianType: guardianType,
         );
 
         if (response.statusCode == 201 || response.statusCode == 200) {
@@ -279,10 +279,9 @@ class _AuthScreenState extends State<AuthScreen> {
     return Column(
       children: [
         ParentGenderToggle(
-          isMotherSelected: isMotherSelected,
+          selectedType: guardianType,
           isArabic: isArabic,
-          onFatherTap: () => setState(() => isMotherSelected = false),
-          onMotherTap: () => setState(() => isMotherSelected = true),
+          onTypeSelected: (type) => setState(() => guardianType = type),
         ),
 
         const SizedBox(height: AppSpacing.lg),
