@@ -19,4 +19,6 @@ class AppColors {
 
   static const Color error = Color(0xFFE45C5C);
   static const Color success = Color(0xFF4CAF50);
+
+  static const List<Color> primaryGradient = [primary, primaryDark];
 }

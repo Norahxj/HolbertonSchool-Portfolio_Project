@@ -39,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                const Text(
+                Text(
                   'Asalah',
                   style: AppTextStyles.logo,
                   textAlign: TextAlign.center,

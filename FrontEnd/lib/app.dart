@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'core/constants/app_colors.dart';
 import 'features/onboarding/screens/welcome_screen.dart';
 
@@ -30,7 +31,7 @@ class _AsalahAppState extends State<AsalahApp> {
       locale: _locale,
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Arial',
+        textTheme: GoogleFonts.cairoTextTheme(),
         scaffoldBackgroundColor: AppColors.background,
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
