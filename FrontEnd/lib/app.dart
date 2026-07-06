@@ -38,6 +38,32 @@ class _AsalahAppState extends State<AsalahApp> {
           primary: AppColors.primary,
         ),
       ),
+      builder: (context, child) {
+        if (child == null) {
+          return const SizedBox.shrink();
+        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isWideScreen = constraints.maxWidth > 500;
+            if (!isWideScreen) {
+              return child;
+            }
+            return ColoredBox(
+              color: const Color(0xFFDCD3EE),
+              child: Center(
+                child: SizedBox(
+                  width: 390,
+                  height: 844,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: child,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
       home: Directionality(
         textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
         child: WelcomeScreen(
