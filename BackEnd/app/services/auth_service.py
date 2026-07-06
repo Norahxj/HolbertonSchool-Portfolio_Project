@@ -57,7 +57,7 @@ class AuthService:
             return None, "Email already registered"
         existing_phone = self.user_repository.get_user_by_phone(phone)
         if existing_phone:
-            return None, "phone number already used"
+            return None, "Phone number already used"
         user = User(
             first_name=first_name,
             last_name=last_name,

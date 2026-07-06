@@ -26,7 +26,7 @@ class RegisterResource(Resource):
             return {"errors": err.messages}, 400
         result, error = auth_service.register(data)
         if error:
-            status_code = 409 if error == "Email already registered" else 400
+            status_code = 409 if error in ["Email already registered", "Phone number already used"]  else 400
             return {"error": error}, status_code
         return result, 201
 

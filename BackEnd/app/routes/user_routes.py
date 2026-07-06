@@ -45,6 +45,8 @@ class CurrentUserResource(Resource):
         user, error = user_service.update_user(user_id, user_data)
         if error == "email_exists":
             return {"error": "Email already registered"}, 409
+        if error == "Phone number already used":
+            return {"error": "Phone number already used"}, 409
         if error == "not_found":
             return {"error": "User not found"}, 404
         return user_response_schema.dump(user), 200

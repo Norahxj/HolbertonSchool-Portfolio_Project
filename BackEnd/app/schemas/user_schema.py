@@ -5,7 +5,7 @@ class UserResponseSchema(Schema):
     id = fields.String()
     first_name = fields.String()
     last_name = fields.String()
-    phone = fields.Integer()
+    phone = fields.String()
     email = fields.Email()
     role = fields.String()
     guardian_type = fields.String()

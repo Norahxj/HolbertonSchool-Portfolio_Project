@@ -30,9 +30,10 @@ class UserService:
             user.email = email
             
         if "phone" in user_data:
+            phone = user_data["phone"]
             existing_phone = self.user_repository.get_user_by_phone(phone)
             if existing_phone:
-                return None, "phone number already used"
+                return None, "Phone number already used"
             user.phone = user_data["phone"]
 
         success, error = self.user_repository.update_user()
