@@ -10,6 +10,8 @@ import '../../../core/widgets/screen_background.dart';
 import '../widgets/auth_tab_switcher.dart';
 import '../widgets/parent_gender_toggle.dart';
 import '../widgets/phone_input_field.dart';
+import '../widgets/social_login_button.dart';
+import '../../../services/auth_api_service.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
@@ -34,12 +36,14 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController familyNameController = TextEditingController();
-  final TextEditingController registerEmailController = TextEditingController();
+  final TextEditingController registerEmailController =
+      TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController registerPasswordController =
       TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final AuthApiService _authApiService = AuthApiService();
 
   @override
   void dispose() {
@@ -54,13 +58,69 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-  void _handleMainButton() {
-    if (isSignInSelected) {
-      // Later: connect to Flask login API
-    } else {
-      // Later: connect to Flask register API
+  void _handleMainButton() async {
+  if (isSignInSelected) {
+    try {
+      final response = await _authApiService.login(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Login Success"),
+          ),
+        );
+
+        print(response.data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data.toString()),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  } else {
+    try {
+      final response = await _authApiService.register(
+        firstName: firstNameController.text,
+        lastName: familyNameController.text,
+        phone: phoneController.text,
+        email: registerEmailController.text,
+        password: registerPasswordController.text,
+        guardianType: isMotherSelected ? "mother" : "father",
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Register Success"),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data.toString()),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
     }
   }
+}
 
   void _handleBack() {
     if (isSignInSelected) {
@@ -84,9 +144,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Row(
                   children: [
                     _RoundIconButton(
-                      icon: isArabic
-                          ? Icons.arrow_forward_rounded
-                          : Icons.arrow_back_rounded,
+                      icon: isArabic ? Icons.arrow_forward : Icons.arrow_back,
                       onTap: _handleBack,
                     ),
                     const Spacer(),
@@ -102,7 +160,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   isSignInSelected
                       ? (isArabic ? 'مرحبًا بعودتك!' : 'Welcome back!')
-                      : (isArabic ? 'إنشاء حساب جديد' : 'Create a new account'),
+                      : (isArabic
+                          ? 'إنشاء حساب جديد'
+                          : 'Create a new account'),
                   style: AppTextStyles.arabicTitle,
                   textAlign: TextAlign.center,
                 ),
@@ -112,11 +172,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   isSignInSelected
                       ? (isArabic
-                            ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
-                            : 'Sign in or create a new account')
+                          ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
+                          : 'Sign in or create a new account')
                       : (isArabic
-                            ? 'يرجى تعبئة البيانات لإنشاء حسابك'
-                            : 'Please fill in your details to create your account'),
+                          ? 'يرجى تعبئة البيانات لإنشاء حسابك'
+                          : 'Please fill in your details to create your account'),
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
@@ -141,10 +201,13 @@ class _AuthScreenState extends State<AuthScreen> {
                       : _buildRegisterForm(isArabic),
                 ),
 
-                if (isSignInSelected) ...[
-                  const SizedBox(height: AppSpacing.xl),
-                  const _HouseIllustration(),
-                ],
+                const SizedBox(height: AppSpacing.xl),
+
+                Icon(
+                  Icons.home_rounded,
+                  size: 90,
+                  color: AppColors.primary.withOpacity(0.45),
+                ),
               ],
             ),
           ),
@@ -191,7 +254,26 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: passwordController,
         ),
 
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.sm),
+
+        Align(
+          alignment:
+              isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          child: TextButton(
+            onPressed: () {
+              // Later: forgot password screen
+            },
+            child: Text(
+              isArabic ? 'هل نسيت كلمة المرور؟' : 'Forgot password?',
+              style: const TextStyle(
+                color: AppColors.primaryDark,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: AppSpacing.sm),
 
         AppButton(
           text: isArabic ? 'تسجيل الدخول' : 'Sign In',
@@ -201,6 +283,26 @@ class _AuthScreenState extends State<AuthScreen> {
             end: Alignment.bottomRight,
             colors: AppColors.primaryGradient,
           ),
+        ),
+
+        const SizedBox(height: AppSpacing.md),
+
+        Text(
+          isArabic ? 'أو' : 'Or',
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+          ),
+        ),
+
+        const SizedBox(height: AppSpacing.md),
+
+        SocialLoginButton(
+          text: isArabic
+              ? 'تسجيل الدخول باستخدام Google'
+              : 'Sign in with Google',
+          onTap: () {
+            // Later: Google login
+          },
         ),
       ],
     );
@@ -291,7 +393,10 @@ class _RoundIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _RoundIconButton({required this.icon, required this.onTap});
+  const _RoundIconButton({
+    required this.icon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -307,45 +412,6 @@ class _RoundIconButton extends StatelessWidget {
           child: Icon(icon, size: 18, color: AppColors.primaryDark),
         ),
       ),
-    );
-  }
-}
-
-class _HouseIllustration extends StatelessWidget {
-  const _HouseIllustration();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Container(
-          width: 16,
-          height: 16,
-          margin: const EdgeInsets.only(bottom: 10),
-          decoration: const BoxDecoration(
-            color: AppColors.primaryLight,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Icon(
-          Icons.home_rounded,
-          size: 76,
-          color: AppColors.primary.withOpacity(0.85),
-        ),
-        const SizedBox(width: 12),
-        Container(
-          width: 16,
-          height: 16,
-          margin: const EdgeInsets.only(bottom: 10),
-          decoration: const BoxDecoration(
-            color: AppColors.primaryLight,
-            shape: BoxShape.circle,
-          ),
-        ),
-      ],
     );
   }
 }
