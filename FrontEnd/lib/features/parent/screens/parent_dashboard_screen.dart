@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
+import 'add_child_screen.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
@@ -306,38 +307,46 @@ class _AddChildButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _DashedBorderPainter(
-        color: AppColors.primary.withOpacity(0.4),
-        radius: 20,
-      ),
-      child: Container(
-        height: 60,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-        child: Row(
-          children: [
-            Expanded(
-              child: Center(
-                child: Text(
-                  'إضافة طفل',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddChildScreen()),
+        );
+      },
+      child: CustomPaint(
+        painter: _DashedBorderPainter(
+          color: AppColors.primary.withOpacity(0.4),
+          radius: 20,
+        ),
+        child: Container(
+          height: 60,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Row(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'إضافة طفل',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryDark,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Container(
-              width: 44,
-              height: 44,
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
+              Container(
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.add, color: Colors.white, size: 22),
               ),
-              child: const Icon(Icons.add, color: Colors.white, size: 22),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
