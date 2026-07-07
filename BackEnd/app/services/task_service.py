@@ -89,7 +89,7 @@ class TaskService:
         return task, None
 
     def get_tasks_for_parent(self, parent_id):
-        return self.task_repository.get_tasks_by_creator(parent_id)
+         return self.task_repository.get_tasks_for_guardian_children(parent_id)
 
     def get_task_for_parent(self, task_id, parent_id):
         return self.task_repository.get_task_for_creator(task_id, parent_id)

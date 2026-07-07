@@ -1,6 +1,9 @@
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.task_model import Task
+from app.models.child_model import Child
+from app.models.user_model import User
+from app.models.task_assignment_model import TaskAssignment
 
 
 class TaskRepository:
@@ -44,3 +47,14 @@ class TaskRepository:
         return Task.query.filter(
             Task.task_frequency.in_(["DAILY", "WEEKLY", "MONTHLY"])
         ).all()
+    
+    def get_tasks_for_guardian_children(self, parent_id):
+        return (
+            Task.query
+            .join(TaskAssignment)
+            .join(TaskAssignment.child)
+            .join(Child.guardians)
+            .filter(User.id == parent_id)
+            .distinct()
+            .all()
+        )

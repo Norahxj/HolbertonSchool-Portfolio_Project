@@ -167,24 +167,3 @@ class ClaimRewardResource(Resource):
             return {"error": "Failed to claim reward"}, 500
 
         return reward_response_schema.dump(reward), 200
-
-
-# Temporary endpoint for testing reward unlocking.
-# Delete it after testing.
-@api.route("/unlock-today")
-class UnlockTodayRewardsResource(Resource):
-
-    @api.doc(security="JWT")
-    @jwt_required()
-    def post(self):
-        claims = get_jwt()
-
-        if claims.get("role") != "parent":
-            return {"error": "Parent access required"}, 403
-
-        unlocked_count, error = reward_service.unlock_today_rewards()
-
-        if error == "update_failed":
-            return {"error": "Failed to unlock rewards"}, 500
-
-        return {"unlocked_rewards": unlocked_count}, 200
