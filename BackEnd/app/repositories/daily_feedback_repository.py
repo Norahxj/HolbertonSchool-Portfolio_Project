@@ -1,6 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.daily_feedback_model import DailyFeedback
+from datetime import date
 
 
 class DailyFeedbackRepository:
@@ -33,3 +34,17 @@ class DailyFeedbackRepository:
         except Exception:
             db.session.rollback()
             return False, "delete_error"
+        
+
+    def get_feedback_for_child_today_by_parent(self, child_id, parent_id):
+        today = date.today()
+
+        return (
+            DailyFeedback.query
+            .filter(
+                DailyFeedback.child_id == child_id,
+                DailyFeedback.created_by == parent_id,
+                db.func.date(DailyFeedback.created_at) == today
+            )
+            .first()
+        )
