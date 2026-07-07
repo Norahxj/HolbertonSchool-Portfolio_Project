@@ -1,9 +1,10 @@
 from app.repositories.user_repository import UserRepository
-
+from app.repositories.child_repository import ChildRepository
 
 class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
+        self.child_repository = ChildRepository()
 
     def get_user(self, user_id):
         return self.user_repository.get_user_by_id(user_id)
@@ -48,6 +49,18 @@ class UserService:
 
         if not user:
             return None
+
+        children = list(user.children)
+
+        for child in children:
+            if user in child.guardians:
+                child.guardians.remove(user)
+
+            if len(child.guardians) == 0:
+                success, error = self.child_repository.delete_child(child)
+
+                if not success:
+                    return None
 
         success, error = self.user_repository.delete_user(user)
 
