@@ -77,14 +77,14 @@ class FamilyService:
         if not user:
             return None, "user_not_found"
         
+        if not invitation or invitation.invited_email != user.email:
+            return None, "invitation_not_found"
+        
         if user.family_id == invitation.family_id:
             return None, "already_in_same_family"
 
         if user.family_id is not None and user.family.children:
             return None, "already_in_family"
-
-        if not invitation or invitation.invited_email != user.email:
-            return None, "invitation_not_found"
 
         if invitation.status != "PENDING":
             return None, "invitation_not_pending"

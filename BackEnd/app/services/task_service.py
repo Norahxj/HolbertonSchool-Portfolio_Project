@@ -92,8 +92,8 @@ class TaskService:
          return self.task_repository.get_tasks_for_guardian_children(parent_id)
 
     def get_task_for_parent(self, task_id, parent_id):
-        return self.task_repository.get_task_for_creator(task_id, parent_id)
-
+        return self.task_repository.get_task_for_guardian_children(task_id, parent_id)
+    
     def get_tasks_by_child_for_parent(self, child_id, parent_id):
         child = self.child_repository.get_child_for_guardian(child_id, parent_id)
 

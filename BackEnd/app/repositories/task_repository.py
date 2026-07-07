@@ -58,3 +58,13 @@ class TaskRepository:
             .distinct()
             .all()
         )
+    
+    def get_task_for_guardian_children(self, task_id, parent_id):
+        return (
+            Task.query
+            .join(TaskAssignment)
+            .join(TaskAssignment.child)
+            .join(Child.guardians)
+            .filter(Task.id == task_id, User.id == parent_id)
+            .first()
+        )
