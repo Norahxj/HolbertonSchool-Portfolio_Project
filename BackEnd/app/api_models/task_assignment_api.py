@@ -1,5 +1,6 @@
 from flask_restx import fields
 
+
 def get_task_assignment_models(api):
     task_model = api.model("TaskAssignmentTask", {
         "id": fields.String(description="Task ID"),
@@ -20,11 +21,10 @@ def get_task_assignment_models(api):
 
     assignment_response_model = api.model("TaskAssignmentResponse", {
         "id": fields.String(description="Assignment ID"),
-        "task_id": fields.String(description="Task ID"),
-        "child_id": fields.String(description="Child ID"),
         "status": fields.String(description="PENDING, PENDING_REVIEW, APPROVED, or REJECTED"),
         "completed_at": fields.DateTime(description="Completed date"),
         "approved_at": fields.DateTime(description="Approved date"),
+        "assigned_date": fields.Date(description="Assigned date"),
         "task": fields.Nested(task_model),
         "child": fields.Nested(child_model)
     })
