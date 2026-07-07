@@ -97,6 +97,7 @@ class AcceptFamilyInvitationResource(Resource):
             "invitation_not_pending": ("Invitation is not pending", 400),
             "guardian_type_already_exists": ("This family already has this guardian type", 400),
             "update_failed": ("Failed to accept invitation", 500),
+            "already_in_family": ("User already belongs to a family", 400),
         }
 
         if error:

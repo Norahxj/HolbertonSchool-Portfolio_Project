@@ -85,7 +85,7 @@ class RewardService:
         return True
 
     def unlock_today_rewards(self):
-        today_weekday = 3
+        today_weekday =  date.today().weekday()
 
         rewards = self.reward_repository.get_locked_rewards_by_unlock_day(
         	today_weekday
