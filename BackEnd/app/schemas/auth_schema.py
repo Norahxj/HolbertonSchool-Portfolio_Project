@@ -19,11 +19,22 @@ def validate_email_domin(email):
         validate_email(email,check_deliverability=True)
     except EmailNotValidError as error:
         raise ValidationError(str(error))
+    
+phone_validator = [
+    validate.Length(
+        equal=10,
+        error="Phone number must be exactly 10 digits."
+    ),
+    validate.Regexp(
+        r"^05\d{8}$",
+        error="Phone number must start with 05 and contain only digits."
+    )
+]
 
 class RegisterSchema(Schema):
     first_name = fields.String(required=True, validate=validate.Length(min=2, max=50))
     last_name = fields.String(required=True, validate=validate.Length(min=2, max=50))
-    phone = fields.String(required=True, validate=[validate.Length(equal=10), validate.Regexp(r"^05\d{8}$")])
+    phone = fields.String(required=True, validate=phone_validator)
     email = fields.Email(required=True, validate=[validate.Length(max=120), validate_email_domin])
     password = fields.String(required=True, validate=validate_password)
     guardian_type = fields.String(required=True, validate=validate.OneOf(["father", "mother"]))
