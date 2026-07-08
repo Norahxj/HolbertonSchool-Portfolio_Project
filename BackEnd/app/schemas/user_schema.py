@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError
-
+from app.schemas.auth_schema import validate_email_domin
 
 class UserResponseSchema(Schema):
     id = fields.String()
@@ -15,7 +15,7 @@ class UserUpdateSchema(Schema):
     first_name = fields.String(required=False, validate=validate.Length(min=2, max=50))
     last_name = fields.String(required=False, validate=validate.Length(min=2, max=50))
     phone = fields.String(required=False, validate=[validate.Length(equal=10), validate.Regexp(r"^05\d{8}$")])
-    email = fields.Email(required=False)
+    email = fields.Email(required=False, validate=[validate.Length(max=120), validate_email_domin])
 
     @validates("first_name")
     def validate_first_name(self, value, **kwargs):
