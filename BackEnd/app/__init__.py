@@ -20,6 +20,7 @@ from app.routes.reward_routes import api as reward_ns
 from app.routes.daily_feedback_routes import api as daily_feedback_ns
 from app.routes.task_bank_routes import api as task_bank_ns
 from app.routes.family_routes import api as family_ns
+from app.routes.cron_routes import api as cron_ns
 
 
 authorizations = {
@@ -96,4 +97,5 @@ def create_app():
     api.add_namespace(daily_feedback_ns, path="/api/daily-feedback")
     api.add_namespace(task_bank_ns, path="/api/task-bank")
     api.add_namespace(family_ns, path="/api/family")
+    api.add_namespace(cron_ns, path="/api/cron")
     return app

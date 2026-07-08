@@ -1,8 +1,9 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
+from app.schemas.auth_schema import validate_email_domin
 
 
 class FamilyInviteSchema(Schema):
-    email = fields.Email(required=True)
+    email = fields.Email(required=True, validate=[validate.Length(max=120), validate_email_domin])
 
 
 class FamilyInvitationResponseSchema(Schema):

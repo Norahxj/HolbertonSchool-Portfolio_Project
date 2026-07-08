@@ -41,6 +41,9 @@ class DailyFeedbackListResource(Resource):
 
         if error == "child_not_found":
             return {"error": "Child not found"}, 404
+        
+        if error == "feedback_already_exists_today":
+            return {"error": "You already created feedback for this child today"}, 400
 
         if error == "create_failed":
             return {"error": "Failed to create feedback"}, 500

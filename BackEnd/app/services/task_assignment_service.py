@@ -14,7 +14,7 @@ class TaskAssignmentService:
         return self.task_assignment_repository.get_assignment_by_id(assignment_id)
 
     def get_assignments_for_task(self, task_id, parent_id):
-        task = self.task_repository.get_task_for_creator(task_id, parent_id)
+        task = self.task_repository.get_task_for_guardian_children(task_id, parent_id)
 
         if not task:
             return None

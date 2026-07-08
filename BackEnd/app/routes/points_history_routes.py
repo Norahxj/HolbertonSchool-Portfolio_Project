@@ -17,7 +17,6 @@ class MyPointsHistoryResource(Resource):
 
     @api.doc(security="JWT")
     @jwt_required()
-    @api.marshal_list_with(history_response_model, code=200)
     def get(self):
         claims = get_jwt()
 

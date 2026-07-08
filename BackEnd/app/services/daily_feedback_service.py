@@ -17,6 +17,11 @@ class DailyFeedbackService:
         if not child:
             return None, "child_not_found"
 
+        existing_feedback = self.daily_feedback_repository.get_feedback_for_child_today_by_parent(child.id, parent_id)
+
+        if existing_feedback:
+            return None, "feedback_already_exists_today"
+        
         feedback = DailyFeedback(
             child_id=child.id,
             created_by=parent_id,

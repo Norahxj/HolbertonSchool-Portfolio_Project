@@ -15,7 +15,6 @@ class RecurringTaskService:
         month_day = today.day
 
         tasks = self.task_repository.get_recurring_tasks()
-        created_count = 0
 
         for task in tasks:
             if not self._should_generate_today(task, weekday, month_day):
@@ -39,10 +38,7 @@ class RecurringTaskService:
                 )
 
                 self.assignment_repository.create_assignment(new_assignment)
-                created_count += 1
-
-        return created_count
-
+                
     def _should_generate_today(self, task, weekday, month_day):
         if task.task_frequency == "DAILY":
             return True
