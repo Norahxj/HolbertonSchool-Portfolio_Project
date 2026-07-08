@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -11,6 +10,7 @@ import '../widgets/parent_gender_toggle.dart';
 import '../widgets/phone_input_field.dart';
 import '../../../services/auth_api_service.dart';
 import '../../parent/screens/parent_dashboard_screen.dart';
+import 'package:dio/dio.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
@@ -32,7 +32,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController familyNameController = TextEditingController();
   final TextEditingController registerEmailController = TextEditingController();
@@ -41,7 +40,18 @@ class _AuthScreenState extends State<AuthScreen> {
       TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  
+  String? emailErrorText;
+  String? passwordErrorText;
+  String? firstNameErrorText;
+  String? familyNameErrorText;
+  String? registerEmailErrorText;
+  String? phoneErrorText;
+  
+  
   final AuthApiService _authApiService = AuthApiService();
+
+
 
   @override
   void dispose() {
@@ -56,61 +66,79 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-  void _handleMainButton() async {
-    if (isSignInSelected) {
-      try {
+  Future<void> _handleMainButton() async {
+    try {
+      if (isSignInSelected) {
         final response = await _authApiService.login(
           email: emailController.text.trim(),
           password: passwordController.text,
         );
-
+      
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Login Success")));
-
-          print(response.data);
-
-          // TODO: This navigation is temporary until real auth/routing is finalized.
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Login Success")),
+          );
+          print("GOING TO DASHBOARD");
+          
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const ParentDashboardScreen()),
+            MaterialPageRoute(
+              builder: (_) => const ParentDashboardScreen(),
+            ),
           );
-        } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(response.data.toString())));
         }
-      } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
-      }
-    } else {
-      try {
+      } else {
+        if (registerPasswordController.text != confirmPasswordController.text) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Passwords do not match"),
+            ),
+          );
+          return;
+        }
+
         final response = await _authApiService.register(
-          firstName: firstNameController.text,
-          lastName: familyNameController.text,
-          phone: phoneController.text,
-          email: registerEmailController.text,
+          firstName: firstNameController.text.trim(),
+          lastName: familyNameController.text.trim(),
+          phone: phoneController.text.trim(),
+          email: registerEmailController.text.trim(),
           password: registerPasswordController.text,
           guardianType: guardianType,
         );
 
-        if (response.statusCode == 201 || response.statusCode == 200) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Register Success")));
-        } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(response.data.toString())));
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Register Success"),
+            ),
+          );
+
+          setState(() {
+            isSignInSelected = true;
+          });
         }
-      } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        final errors = e.response?.data["errors"] as Map<String, dynamic>?;
+
+
+        if (errors != null) {
+          setState(() {
+            emailErrorText = errors['email']?.join(', ');
+            passwordErrorText = errors['password']?.join(', ');
+            firstNameErrorText = errors['first_name']?.join(', ');
+            familyNameErrorText = errors['last_name']?.join(', ');
+            registerEmailErrorText = errors['email']?.join(', ');
+            phoneErrorText = errors['phone']?.join(', ');
+          });
+          return;
+        }
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Server Error")),
+      );
     }
   }
 
@@ -162,11 +190,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   isSignInSelected
                       ? (isArabic
-                            ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
-                            : 'Sign in or create a new account')
+                          ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
+                          : 'Sign in or create a new account')
                       : (isArabic
-                            ? 'يرجى تعبئة البيانات لإنشاء حسابك'
-                            : 'Please fill in your details to create your account'),
+                          ? 'يرجى تعبئة البيانات لإنشاء حسابك'
+                          : 'Please fill in your details to create your account'),
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
@@ -248,6 +276,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.email_outlined,
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
+          errorText: emailErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -258,6 +287,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.lock_outline,
           isPassword: true,
           controller: passwordController,
+          errorText: passwordErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -291,6 +321,7 @@ class _AuthScreenState extends State<AuthScreen> {
           hint: isArabic ? 'الاسم الأول' : 'Enter your first name',
           icon: Icons.person_outline,
           controller: firstNameController,
+          errorText: firstNameErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -300,6 +331,7 @@ class _AuthScreenState extends State<AuthScreen> {
           hint: isArabic ? 'اسم العائلة' : 'Enter your family name',
           icon: Icons.person_outline,
           controller: familyNameController,
+          errorText: familyNameErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -310,6 +342,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.email_outlined,
           controller: registerEmailController,
           keyboardType: TextInputType.emailAddress,
+          errorText: registerEmailErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -317,6 +350,7 @@ class _AuthScreenState extends State<AuthScreen> {
         PhoneInputField(
           hint: isArabic ? 'رقم الجوال' : 'Phone number',
           controller: phoneController,
+          errorText: phoneErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -327,6 +361,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.lock_outline,
           isPassword: true,
           controller: registerPasswordController,
+          errorText: passwordErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -337,6 +372,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.lock_outline,
           isPassword: true,
           controller: confirmPasswordController,
+          errorText: passwordErrorText,
         ),
 
         const SizedBox(height: AppSpacing.lg),

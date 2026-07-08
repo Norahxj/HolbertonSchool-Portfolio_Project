@@ -11,7 +11,7 @@ class PhoneInputField extends StatelessWidget {
     super.key,
     required this.hint,
     this.countryCode = '+966',
-    this.controller,
+    this.controller, String? errorText,
   });
 
   @override

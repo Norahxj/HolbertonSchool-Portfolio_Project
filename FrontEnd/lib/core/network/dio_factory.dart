@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:frontend/core/network/api_constants.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DioFactory {
@@ -10,9 +11,14 @@ class DioFactory {
     Duration timeout = const Duration(minutes: 1);
 
     if (dio == null) {
-      dio = Dio();
-      dio!.options.connectTimeout = timeout;
-      dio!.options.receiveTimeout = timeout;
+      dio = Dio(
+        BaseOptions(
+          baseUrl: ApiConstants.baseUrl,
+          connectTimeout: timeout,
+          receiveTimeout: timeout,
+        ),
+      );
+
 
       addDioHeaders();
       addDioInterceptor();

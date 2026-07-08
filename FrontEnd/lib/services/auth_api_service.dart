@@ -1,21 +1,19 @@
 import 'package:dio/dio.dart';
+import '../core/network/dio_factory.dart';
 
-// TODO(backend): This is a temporary stub so the app can compile and run
-// while the real backend endpoints are not ready yet.
-// Replace the fake Response objects below with real Dio calls once the
-// login/register API is available (see lib/core/network/ for the Dio
-// setup your teammate already added).
 class AuthApiService {
+  final Dio _dio = DioFactory.getDio();
+
   Future<Response> login({
     required String email,
     required String password,
   }) async {
-    // TODO(backend): Replace with a real request, e.g.
-    // return dio.post('/auth/login', data: {'email': email, 'password': password});
-    return Response(
-      requestOptions: RequestOptions(path: '/auth/login'),
-      statusCode: 200,
-      data: {'message': 'Stub login response - no backend connected yet'},
+    return await _dio.post(
+      '/auth/login',
+      data: {
+        'email': email,
+        'password': password,
+      },
     );
   }
 
@@ -27,12 +25,16 @@ class AuthApiService {
     required String password,
     required String guardianType,
   }) async {
-    // TODO(backend): Replace with a real request, e.g.
-    // return dio.post('/auth/register', data: {...});
-    return Response(
-      requestOptions: RequestOptions(path: '/auth/register'),
-      statusCode: 201,
-      data: {'message': 'Stub register response - no backend connected yet'},
+    return await _dio.post(
+      '/auth/register',
+      data: {
+        'first_name': firstName,
+        'last_name': lastName,
+        'phone': phone,
+        'email': email,
+        'password': password,
+        'guardian_type': guardianType,
+      },
     );
   }
 }

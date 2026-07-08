@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:frontend/core/network/api_constants.dart';
 import 'package:retrofit/retrofit.dart';
 part 'api_service.g.dart';
 
 // Remove passing a non-constant value to the annotation. The baseUrl can
-// be supplied at runtime via the generated client or left empty here.
+// be supplied at runtime via th
+//e generated client or left empty here.
 @RestApi()
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
