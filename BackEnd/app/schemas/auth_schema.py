@@ -16,7 +16,7 @@ def validate_password(password):
     
 def validate_email_domin(email):
     try:
-        validate_email(email,check_deliverability=False)
+        validate_email(email,check_deliverability=True)
     except EmailNotValidError as error:
         raise ValidationError(str(error))
 
