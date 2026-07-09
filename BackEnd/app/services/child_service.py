@@ -25,7 +25,8 @@ class ChildService:
 
         child = Child(
             name=child_data["name"].strip(),
-            age=child_data["age"],
+            birth_date=child_data["birth_date"],
+            phone=child_data.get("phone"),
             access_code=self.generate_access_code(),
             family_id=parent.family_id
         )
@@ -59,8 +60,11 @@ class ChildService:
         if "name" in child_data:
             child.name = child_data["name"].strip()
 
-        if "age" in child_data:
-            child.age = child_data["age"]
+        if "birth_date" in child_data:
+            child.birth_date = child_data["birth_date"]
+
+        if "phone" in child_data:
+            child.phone = child_data["phone"]
 
         success, error = self.child_repository.update_child()
 

@@ -1,9 +1,28 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError
+from datetime import date
+
+phone_validator = [
+    validate.Length(equal=10, error="Phone number must be exactly 10 digits."),
+    validate.Regexp(r"^05\d{8}$", error="Phone number must start with 05 and contain 10 digits.")
+]
+
+def birth_date_validator(value):
+    if value > date.today():
+        raise ValidationError("Birth date cannot be in the future.")
+
+    age = date.today().year - value.year - (
+        (date.today().month, date.today().day) < (value.month, value.day)
+    )
+
+    if age < 1 or age > 18:
+        raise ValidationError("Child age must be between 1 and 18.")
 
 class ChildResponseSchema(Schema):
     id = fields.String()
     name = fields.String()
-    age = fields.Integer()
+    birth_date = fields.Date()
+    phone = fields.String(allow_none=True)
+    age = fields.Integer(dump_only=True)
     role = fields.Method("get_role")
     def get_role(self, obj):
         return "child"
@@ -11,7 +30,9 @@ class ChildResponseSchema(Schema):
 class ChildWithAccessCodeSchema(Schema):
     id = fields.String()
     name = fields.String()
-    age = fields.Integer()
+    birth_date = fields.Date()
+    phone = fields.String(allow_none=True)
+    age = fields.Integer(dump_only=True)
     access_code = fields.String()
     role = fields.Method("get_role")
 
@@ -20,7 +41,8 @@ class ChildWithAccessCodeSchema(Schema):
 
 class ChildCreateSchema(Schema):
     name = fields.String(required=True, validate=validate.Length(min=2, max=100))
-    age = fields.Integer(required=True, validate=validate.Range(min=1, max=18))
+    birth_date = fields.Date(required=True, validate=birth_date_validator)
+    phone = fields.String(required=False, allow_none=True, validate=phone_validator)
     @validates("name")
     def validate_name(self, value, **kwargs):
         if not value.strip():
@@ -29,7 +51,8 @@ class ChildCreateSchema(Schema):
 
 class ChildUpdateSchema(Schema):
     name = fields.String(required=False, validate=validate.Length(min=2, max=100))
-    age = fields.Integer(required=False, validate=validate.Range(min=1, max=18))
+    birth_date = fields.Date(required=False, validate=birth_date_validator)
+    phone = fields.String(required=False, allow_none=True, validate=phone_validator)
     @validates("name")
     def validate_name(self, value, **kwargs):
         if not value.strip():
