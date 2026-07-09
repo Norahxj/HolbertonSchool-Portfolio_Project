@@ -37,7 +37,7 @@ class RegisterSchema(Schema):
     phone = fields.String(required=True, validate=phone_validator)
     email = fields.Email(required=True, validate=[validate.Length(max=120), validate_email_domin])
     password = fields.String(required=True, validate=validate_password)
-    guardian_type = fields.String(required=True, validate=validate.OneOf(["father", "mother"]))
+    guardian_type = fields.String(required=True, validate=validate.OneOf(["father", "mother", "guardian"]))
 
 class LoginSchema(Schema):
     email = fields.Email(required=True, validate=validate_email_domin)

@@ -422,7 +422,6 @@ Represents weekly rewards assigned by parents.
 | child_id | UUID | Reference to the child. |
 | reward_name | String | Reward title. |
 | description | String | Reward description. |
-| reward_type | String | Reward category or type. |
 | status | String | Current reward status. |
 | assigned_by | UUID | Parent who assigned the reward. |
 
@@ -537,7 +536,6 @@ erDiagram
         UUID child_id FK
         string reward_name
         string description
-        string reward_type
         string status
         UUID assigned_by FK
         datetime created_at
@@ -938,7 +936,6 @@ Future versions may integrate:
 {
   "reward_name": "Choose Friday Movie",
   "description": "Child chooses the family movie.",
-  "reward_type": "Weekly",
   "status": "PENDING"
 }
 ```

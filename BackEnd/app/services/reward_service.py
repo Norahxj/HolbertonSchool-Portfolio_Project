@@ -22,7 +22,6 @@ class RewardService:
             child_id=child.id,
             reward_name=reward_data["reward_name"].strip(),
             description=reward_data.get("description"),
-            reward_type=reward_data["reward_type"],
             status="LOCKED",
             unlock_day=reward_data.get("unlock_day", 3),
             assigned_by=parent_id
@@ -57,9 +56,6 @@ class RewardService:
 
         if "description" in reward_data:
             reward.description = reward_data["description"]
-
-        if "reward_type" in reward_data:
-            reward.reward_type = reward_data["reward_type"]
 
         if "unlock_day" in reward_data:
             reward.unlock_day = reward_data["unlock_day"]
