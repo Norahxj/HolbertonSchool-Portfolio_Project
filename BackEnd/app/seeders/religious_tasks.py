@@ -7,7 +7,7 @@ RELIGIOUS_TASKS = [
         "default_points": 30,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Learn and recite a new short Surah",
@@ -27,7 +27,7 @@ RELIGIOUS_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Read one page from the Quran",
@@ -37,7 +37,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Memorize a new Quran verse",
@@ -77,7 +77,7 @@ RELIGIOUS_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Share with others",
@@ -127,7 +127,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Ask an Islamic question",
@@ -237,7 +237,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Wake up early for Fajr prayer",
@@ -247,7 +247,7 @@ RELIGIOUS_TASKS = [
         "default_points": 25,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Learn the Dua for entering and leaving home",
@@ -277,6 +277,6 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     }
 ]

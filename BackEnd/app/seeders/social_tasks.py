@@ -37,7 +37,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 4,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Show respect to older people",
@@ -47,7 +47,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Listen without interrupting",
@@ -57,7 +57,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Prepare the Majlis before guests arrive",
@@ -88,26 +88,6 @@ SOCIAL_TASKS = [
         "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
-    },
-    {
-        "title_en": "Save leftover food properly",
-        "title_ar": "احفظ الطعام المتبقي بطريقة صحيحة",
-        "description_en": "Help store leftover food neatly to reduce waste.",
-        "description_ar": "ساعد في حفظ الطعام المتبقي بطريقة مرتبة لتقليل الهدر.",
-        "default_points": 15,
-        "age_min": 8,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
-    },
-    {
-        "title_en": "Wear traditional clothing on special occasions",
-        "title_ar": "ارتدِ الزي التقليدي في المناسبات",
-        "description_en": "Wear traditional Saudi clothing during a family or national occasion.",
-        "description_ar": "ارتدِ الزي السعودي التقليدي في مناسبة عائلية أو وطنية.",
-        "default_points": 10,
-        "age_min": 5,
-        "age_max": 18,
-        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Help prepare a traditional Saudi meal",
@@ -147,17 +127,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 4,
         "age_max": 18,
-        "suggested_frequency": "daily"
-    },
-    {
-        "title_en": "Speak respectful Arabic",
-        "title_ar": "تحدث بالعربية بأسلوب مهذب",
-        "description_en": "Speak clear and respectful Arabic throughout the day and avoid inappropriate slang.",
-        "description_ar": "تحدث بالعربية بأسلوب واضح ومهذب طوال اليوم، وتجنب الألفاظ غير اللائقة.",
-        "default_points": 10,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Share a traditional poem or nasheed",
@@ -190,16 +160,6 @@ SOCIAL_TASKS = [
         "suggested_frequency": "MONTHLY"
     },
     {
-        "title_en": "Remove litter from a public place",
-        "title_ar": "أزل الأذى عن الطريق",
-        "description_en": "Pick up litter safely and throw it in the proper trash bin.",
-        "description_ar": "التقط قطعة قمامة بشكل آمن وضعها في سلة المهملات.",
-        "default_points": 20,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
-    },
-    {
         "title_en": "Respect your neighbors' comfort",
         "title_ar": "احترم راحة جيرانك",
         "description_en": "Avoid making loud noises that may disturb your neighbors.",
@@ -207,17 +167,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
-    },
-    {
-        "title_en": "Protect public property",
-        "title_ar": "حافظ على الممتلكات العامة",
-        "description_en": "Respect public facilities, parks, and streets by keeping them clean and undamaged.",
-        "description_ar": "حافظ على الممتلكات العامة والحدائق والمرافق بعدم إتلافها أو تلويثها.",
-        "default_points": 20,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Speak kindly about others",
@@ -250,46 +200,6 @@ SOCIAL_TASKS = [
         "suggested_frequency": "MONTHLY"
     },
     {
-        "title_en": "Learn about Saudi wildlife",
-        "title_ar": "تعرّف على الحياة الفطرية في السعودية",
-        "description_en": "Learn about three animals native to Saudi Arabia or the Arabian Peninsula.",
-        "description_ar": "تعرّف على ثلاثة حيوانات تعيش في المملكة العربية السعودية أو شبه الجزيرة العربية.",
-        "default_points": 15,
-        "age_min": 7,
-        "age_max": 18,
-        "suggested_frequency": "MONTHLY"
-    },
-    {
-        "title_en": "Watch an educational video about Saudi Arabia",
-        "title_ar": "شاهد فيديو تعليمي عن السعودية",
-        "description_en": "Watch a short educational video about Saudi Arabia's history, culture, or nature and share one thing you learned.",
-        "description_ar": "شاهد فيديو قصيرًا عن تاريخ السعودية أو ثقافتها أو طبيعتها، ثم شارك معلومة تعلمتها.",
-        "default_points": 15,
-        "age_min": 7,
-        "age_max": 18,
-        "suggested_frequency": "MONTHLY"
-    },
-    {
-        "title_en": "Respect the food you are served",
-        "title_ar": "احترم الطعام المقدم لك",
-        "description_en": "Show appreciation for the food served to you and avoid criticizing it.",
-        "description_ar": "احترم الطعام الذي يُقدَّم لك، وتجنب انتقاده أو التقليل من شأنه.",
-        "default_points": 10,
-        "age_min": 5,
-        "age_max": 18,
-        "suggested_frequency": "daily"
-    },
-    {
-        "title_en": "Practice good manners when sneezing or yawning",
-        "title_ar": "التزم بآداب العطاس والتثاؤب",
-        "description_en": "Cover your mouth when yawning or sneezing, and say 'Alhamdulillah' after sneezing.",
-        "description_ar": "غطِّ فمك عند التثاؤب أو العطاس، وقل «الحمد لله» بعد العطاس.",
-        "default_points": 10,
-        "age_min": 5,
-        "age_max": 18,
-        "suggested_frequency": "daily"
-    },
-    {
         "title_en": "Knock before entering",
         "title_ar": "استأذن قبل الدخول",
         "description_en": "Knock on the door and ask for permission before entering a room.",
@@ -297,7 +207,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Keep yourself neat and tidy",
@@ -307,7 +217,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Wait until others finish speaking",
@@ -317,7 +227,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Say 'Jazak Allah Khair' to someone who helps you",
@@ -340,36 +250,6 @@ SOCIAL_TASKS = [
         "suggested_frequency": "MONTHLY"
     },
     {
-        "title_en": "Plant a seed or care for a plant",
-        "title_ar": "ازرع بذرة أو اعتنِ بنبتة",
-        "description_en": "Plant a seed or water and care for a plant at home.",
-        "description_ar": "ازرع بذرة أو اعتنِ بنبتة في المنزل وساعدها على النمو.",
-        "default_points": 15,
-        "age_min": 5,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
-    },
-    {
-        "title_en": "Save energy by turning off lights",
-        "title_ar": "وفّر الطاقة بإطفاء الأنوار",
-        "description_en": "Turn off the lights when leaving a room to help save energy.",
-        "description_ar": "أطفئ الأنوار عند مغادرة الغرفة للمساهمة في ترشيد استهلاك الطاقة.",
-        "default_points": 10,
-        "age_min": 5,
-        "age_max": 18,
-        "suggested_frequency": "daily"
-    },
-    {
-        "title_en": "Care for birds or animals responsibly",
-        "title_ar": "اعتنِ بالحيوانات أو الطيور بمسؤولية",
-        "description_en": "Place water or food for birds or animals with your family's permission and supervision.",
-        "description_ar": "قدّم الماء أو الطعام للطيور أو الحيوانات بإذن وإشراف عائلتك.",
-        "default_points": 15,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
-    },
-    {
         "title_en": "Clean up after a family outing",
         "title_ar": "ساعد في تنظيف مكان النزهة",
         "description_en": "Help your family clean the picnic area before leaving.",
@@ -387,7 +267,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Practice patience",
@@ -397,7 +277,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "daily"
+        "suggested_frequency": "DAILY"
     },
     {
         "title_en": "Thank your parents",
@@ -408,26 +288,6 @@ SOCIAL_TASKS = [
         "age_min": 5,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
-    },
-    {
-        "title_en": "Organize your belongings",
-        "title_ar": "رتب أغراضك الشخصية",
-        "description_en": "Take responsibility for your belongings by keeping them organized.",
-        "description_ar": "تحمل مسؤولية أغراضك الشخصية وحافظ على ترتيبها.",
-        "default_points": 15,
-        "age_min": 5,
-        "age_max": 18,
-        "suggested_frequency": "daily"
-    },
-    {
-        "title_en": "Stay positive",
-        "title_ar": "كن إيجابيًا",
-        "description_en": "Avoid complaining about small inconveniences and try to stay positive throughout the day.",
-        "description_ar": "تجنب التذمر من الأمور البسيطة وحافظ على نظرة إيجابية طوال اليوم.",
-        "default_points": 10,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "daily"
     },
     {
         "title_en": "Help your sibling",

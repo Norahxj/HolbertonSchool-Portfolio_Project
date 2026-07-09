@@ -140,16 +140,6 @@ FINANCIAL_TASKS = [
         "suggested_frequency": "MONTHLY"
     },
     {
-        "title_en": "Help recycle household items",
-        "title_ar": "ساعد في إعادة التدوير",
-        "description_en": "Help your family recycle items to reduce waste and save resources.",
-        "description_ar": "ساعد عائلتك في إعادة تدوير بعض الأشياء للمحافظة على الموارد.",
-        "default_points": 15,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
-    },
-    {
         "title_en": "Repair instead of replacing",
         "title_ar": "أصلح قبل أن تشتري",
         "description_en": "Try repairing a broken toy or item before buying a replacement.",
@@ -308,35 +298,5 @@ FINANCIAL_TASKS = [
         "age_min": 9,
         "age_max": 18,
         "suggested_frequency": "MONTHLY"
-    },
-    {
-        "title_en": "Save electricity at home",
-        "title_ar": "وفّر استهلاك الكهرباء",
-        "description_en": "Find simple ways to reduce electricity use at home throughout the day.",
-        "description_ar": "ابحث عن طرق بسيطة لتقليل استهلاك الكهرباء في المنزل خلال اليوم.",
-        "default_points": 15,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
-    },
-    {
-        "title_en": "Save water",
-        "title_ar": "وفّر استهلاك الماء",
-        "description_en": "Use water responsibly while washing your hands or taking a shower.",
-        "description_ar": "استخدم الماء بمسؤولية أثناء غسل اليدين أو الاستحمام.",
-        "default_points": 15,
-        "age_min": 6,
-        "age_max": 18,
-        "suggested_frequency": "WEEKLY"
-    },
-    {
-        "title_en": "Keep the refrigerator closed",
-        "title_ar": "لا تترك باب الثلاجة مفتوحًا",
-        "description_en": "Close the refrigerator door quickly to avoid wasting electricity.",
-        "description_ar": "احرص على إغلاق باب الثلاجة بسرعة لتوفير الطاقة.",
-        "default_points": 10,
-        "age_min": 5,
-        "age_max": 18,
-        "suggested_frequency": "daily"
     }
 ]

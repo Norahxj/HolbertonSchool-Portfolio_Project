@@ -22,7 +22,6 @@ class TaskBankService:
     def get_categories(self):
         return list(TASK_BANK.keys())
 
-
     def _default_recurrence_day(self, task_frequency):
         today = date.today()
 
@@ -35,12 +34,6 @@ class TaskBankService:
         return None
 
     def get_random_suggestions(self, parent_id, child_ids, category, lang="en", count=5):
-        if not child_ids:
-            return None, "missing_child_ids"
-
-        if len(child_ids) != len(set(child_ids)):
-            return None, "duplicate_child_ids"
-
         category = category.upper()
 
         if category not in TASK_BANK:
@@ -64,16 +57,10 @@ class TaskBankService:
             if task["age_min"] <= youngest_age and task["age_max"] >= oldest_age:
                 suitable_tasks.append(task)
 
-        suggestions = random.sample(
-            suitable_tasks,
-            min(count, len(suitable_tasks))
-        )
-
+        suggestions = random.sample(suitable_tasks, min(count, len(suitable_tasks)))
         result = []
-
         for task in suggestions:
-            task_frequency = self._normalize_frequency(task["suggested_frequency"])
-
+            task_frequency = task.get("suggested_frequency", "ONCE")
             result.append({
                 "title": task["title_ar"] if lang == "ar" else task["title_en"],
                 "description": task["description_ar"] if lang == "ar" else task["description_en"],
@@ -83,5 +70,4 @@ class TaskBankService:
                 "recurrence_day": self._default_recurrence_day(task_frequency),
                 "is_auto_verified": False
             })
-
         return result, None
