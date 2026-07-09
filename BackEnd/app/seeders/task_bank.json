@@ -1,845 +1,1600 @@
 {
-    "Culture & Tradition": [
+    "SOCIAL": [
         {
-            "full_text": "Serve Arabic coffee to guests or family members using the right hand. ( قدّم القهوة العربية للضيوف أو أفراد العائلة باستخدام اليد اليمنى .)",
-            "english": "Serve Arabic coffee to guests or family members using the right hand",
-            "arabic": "قدّم القهوة العربية للضيوف أو أفراد العائلة باستخدام اليد اليمنى ."
+            "title_en": "Serve Arabic coffee to guests respectfully",
+            "title_ar": "قدّم القهوة العربية للضيوف باحترام",
+            "description_en": "Serve Arabic coffee to guests or family members politely, following local customs.",
+            "description_ar": "قدّم القهوة العربية للضيوف أو أفراد العائلة بطريقة مهذبة واحترامًا للعادات.",
+            "default_points": 15,
+            "age_min": 10,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Ask your grandparents to tell you a story from their childhood. ( اطلب من أجدادك أن يرووا لك قصة من طفولتهم .)",
-            "english": "Ask your grandparents to tell you a story from their childhood",
-            "arabic": "اطلب من أجدادك أن يرووا لك قصة من طفولتهم ."
+            "title_en": "Listen to a grandparent's childhood story",
+            "title_ar": "استمع لقصة من طفولة أحد أجدادك",
+            "description_en": "Ask one of your grandparents to share a story from their childhood and listen carefully.",
+            "description_ar": "اطلب من أحد أجدادك أن يروي لك قصة من طفولته واستمع إليها باهتمام.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help an elderly family member walk or carry their belongings. ( ساعد أحد كبار السن في العائلة في المشي أو حمل أغراضه .)",
-            "english": "Help an elderly family member walk or carry their belongings",
-            "arabic": "ساعد أحد كبار السن في العائلة في المشي أو حمل أغراضه ."
+            "title_en": "Help an elderly family member",
+            "title_ar": "ساعد أحد كبار السن في العائلة",
+            "description_en": "Help an elderly family member by carrying something or assisting them when needed.",
+            "description_ar": "ساعد أحد كبار السن في العائلة بحمل أغراضه أو تقديم المساعدة له عند الحاجة.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Greet everyone in the room with \"As- salamu alaykum\" when entering. ( ألقِ تحية \" السلام عليكم \" على الجميع عند دخول الغرفة .)",
-            "english": "Greet everyone in the room with \"As- salamu alaykum\" when entering",
-            "arabic": "ألقِ تحية \" السلام عليكم \" على الجميع عند دخول الغرفة ."
+            "title_en": "Greet everyone with Salam",
+            "title_ar": "ابدأ بالسلام عند دخول المكان",
+            "description_en": "Say 'As-salamu Alaykum' to everyone when entering a room.",
+            "description_ar": "ابدأ بإلقاء السلام على الجميع عند دخول الغرفة أو المنزل.",
+            "default_points": 10,
+            "age_min": 4,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Stand up when an older person enters the room. ( قف عند دخول شخص أكبر سناً إلى الغرفة .)",
-            "english": "Stand up when an older person enters the room",
-            "arabic": "قف عند دخول شخص أكبر سناً إلى الغرفة ."
+            "title_en": "Show respect to older people",
+            "title_ar": "أظهر احترامك لكبار السن",
+            "description_en": "Show respect through polite behavior and good manners when interacting with older people.",
+            "description_ar": "أظهر احترامك لكبار السن من خلال الأدب وحسن التعامل معهم.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Listen without interrupting when an elder is speaking. ( استمع دون مقاطعة عندما يتحدث شخص أكبر سناً .)",
-            "english": "Listen without interrupting when an elder is speaking",
-            "arabic": "استمع دون مقاطعة عندما يتحدث شخص أكبر سناً ."
+            "title_en": "Listen without interrupting",
+            "title_ar": "استمع دون مقاطعة",
+            "description_en": "Listen carefully when an older person or anyone else is speaking without interrupting.",
+            "description_ar": "استمع باهتمام ولا تقاطع الآخرين أثناء حديثهم.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Help prepare the Majlis (guest room) before visitors arrive. ( ساعد في تجهيز المجلس قبل وصول الضيوف .)",
-            "english": "Help prepare the Majlis (guest room) before visitors arrive",
-            "arabic": "ساعد في تجهيز المجلس قبل وصول الضيوف ."
+            "title_en": "Prepare the Majlis before guests arrive",
+            "title_ar": "ساعد في تجهيز المجلس قبل وصول الضيوف",
+            "description_en": "Help prepare the guest room before visitors arrive.",
+            "description_ar": "شارك في تجهيز المجلس أو مكان استقبال الضيوف قبل وصولهم.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Welcome guests at the door with a smile and polite words. ( استقبل الضيوف عند الباب بابتسامة وكلمات ترحيبية .)",
-            "english": "Welcome guests at the door with a smile and polite words",
-            "arabic": "استقبل الضيوف عند الباب بابتسامة وكلمات ترحيبية ."
+            "title_en": "Welcome guests warmly",
+            "title_ar": "استقبل الضيوف بحفاوة",
+            "description_en": "Welcome guests with a smile and kind words.",
+            "description_ar": "استقبل الضيوف بابتسامة وكلمات ترحيبية لطيفة.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help your mother or father carry groceries into the house. ( ساعد والدتك أو والدك في حمل الأغراض إلى المنزل .)",
-            "english": "Help your mother or father carry groceries into the house",
-            "arabic": "ساعد والدتك أو والدك في حمل الأغراض إلى المنزل ."
+            "title_en": "Help carry groceries",
+            "title_ar": "ساعد في حمل أغراض المنزل",
+            "description_en": "Help your parents carry groceries into the house.",
+            "description_ar": "ساعد والديك في حمل المشتريات إلى المنزل.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help pack leftover food neatly to avoid waste. ( ساعد في تغليف الطعام المتبقي بعناية لتجنب الإسراف .)",
-            "english": "Help pack leftover food neatly to avoid waste",
-            "arabic": "ساعد في تغليف الطعام المتبقي بعناية لتجنب الإسراف ."
+            "title_en": "Save leftover food properly",
+            "title_ar": "احفظ الطعام المتبقي بطريقة صحيحة",
+            "description_en": "Help store leftover food neatly to reduce waste.",
+            "description_ar": "ساعد في حفظ الطعام المتبقي بطريقة مرتبة لتقليل الهدر.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Wear traditional Saudi clothing (Thobe/Abaya) for a family gathering. ( ارتدِ الملابس السعودية التقليدية - الثوب / العباءة - في تجمع عائلي .)",
-            "english": "Wear traditional Saudi clothing (Thobe/Abaya) for a family gathering",
-            "arabic": "ارتدِ الملابس السعودية التقليدية - الثوب / العباءة - في تجمع عائلي ."
+            "title_en": "Wear traditional clothing on special occasions",
+            "title_ar": "ارتدِ الزي التقليدي في المناسبات",
+            "description_en": "Wear traditional Saudi clothing during a family or national occasion.",
+            "description_ar": "ارتدِ الزي السعودي التقليدي في مناسبة عائلية أو وطنية.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "yearly"
         },
         {
-            "full_text": "Help prepare a traditional Saudi dish with your parents. ( ساعد في إعداد طبق سعودي تقليدي مع والديك .)",
-            "english": "Help prepare a traditional Saudi dish with your parents",
-            "arabic": "ساعد في إعداد طبق سعودي تقليدي مع والديك ."
+            "title_en": "Help prepare a traditional Saudi meal",
+            "title_ar": "ساعد في إعداد وجبة سعودية تقليدية",
+            "description_en": "Help your parents prepare a traditional Saudi meal and learn about its cultural significance.",
+            "description_ar": "شارك والديك في إعداد وجبة سعودية تقليدية وتعرّف على أهميتها في الثقافة السعودية.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Learn how to properly fold and wear a Ghutra or Shemagh (for boys). ( تعلم كيفية طي ولبس الغترة أو الشماغ بشكل صحيح - للأولاد .)",
-            "english": "Learn how to properly fold and wear a Ghutra or Shemagh (for boys)",
-            "arabic": "تعلم كيفية طي ولبس الغترة أو الشماغ بشكل صحيح - للأولاد ."
+            "title_en": "Learn about traditional Saudi clothing",
+            "title_ar": "تعرّف على الزي السعودي التقليدي",
+            "description_en": "Learn about the traditional Saudi clothing worn in your region and when it is used.",
+            "description_ar": "تعرّف على الزي السعودي التقليدي في منطقتك والمناسبات التي يُرتدى فيها.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "yearly"
         },
         {
-            "full_text": "Ask your parents about the history of your family's tribe or region. ( اسأل والديك عن تاريخ قبيلة أو منطقة عائلتك .)",
-            "english": "Ask your parents about the history of your family's tribe or region",
-            "arabic": "اسأل والديك عن تاريخ قبيلة أو منطقة عائلتك ."
+            "title_en": "Learn about your family's history",
+            "title_ar": "تعرّف على تاريخ عائلتك",
+            "description_en": "Ask your parents or grandparents to tell you about your family's history or where they grew up.",
+            "description_ar": "اسأل والديك أو أجدادك عن تاريخ العائلة أو المنطقة التي نشؤوا فيها.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Use polite Arabic phrases like \"Law samaht \" (Please) and \" Shukran \" (Thank you) all day. ( استخدم عبارات مهذبة مثل \" لو سمحت \" و\"شكراً \" طوال اليوم .)",
-            "english": "Use polite Arabic phrases like \"Law samaht \" (Please) and \" Shukran \" (Thank you) all day",
-            "arabic": "استخدم عبارات مهذبة مثل \" لو سمحت \" و\"شكراً \" طوال اليوم .)"
+            "title_en": "Use polite words throughout the day",
+            "title_ar": "استخدم العبارات المهذبة طوال اليوم",
+            "description_en": "Use polite expressions such as 'Please', 'Thank you', and 'Excuse me' whenever appropriate.",
+            "description_ar": "استخدم عبارات مثل «لو سمحت»، «شكرًا»، و«عفوًا» في تعاملاتك طوال اليوم.",
+            "default_points": 10,
+            "age_min": 4,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Avoid using foreign slang words when speaking Arabic at home today. ( تجنب استخدام الكلمات العامية الأجنبية عند التحدث بالعربية في المنزل اليوم .)",
-            "english": "Avoid using foreign slang words when speaking Arabic at home today",
-            "arabic": "تجنب استخدام الكلمات العامية الأجنبية عند التحدث بالعربية في المنزل اليوم ."
+            "title_en": "Speak respectful Arabic",
+            "title_ar": "تحدث بالعربية بأسلوب مهذب",
+            "description_en": "Speak clear and respectful Arabic throughout the day and avoid inappropriate slang.",
+            "description_ar": "تحدث بالعربية بأسلوب واضح ومهذب طوال اليوم، وتجنب الألفاظ غير اللائقة.",
+            "default_points": 10,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Listen to a traditional Arabic Nasheed or poem. ( استمع إلى نشيد أو قصيدة عربية تقليدية .)",
-            "english": "Listen to a traditional Arabic Nasheed or poem",
-            "arabic": "استمع إلى نشيد أو قصيدة عربية تقليدية ."
+            "title_en": "Share a traditional poem or nasheed",
+            "title_ar": "تعلّم وشارك نشيدًا أو قصيدة عربية",
+            "description_en": "Learn a traditional Arabic poem or nasheed and share it with your family.",
+            "description_ar": "تعلّم نشيدًا أو قصيدة عربية وشاركها مع أفراد عائلتك.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Smile and greet your neighbor when you see them. ( ابتسم وألقِ التحية على جارك عندما تراه .)",
-            "english": "Smile and greet your neighbor when you see them",
-            "arabic": "ابتسم وألقِ التحية على جارك عندما تراه ."
+            "title_en": "Greet your neighbor politely",
+            "title_ar": "حيِّ جارك بأدب",
+            "description_en": "Smile and greet your neighbor politely when you meet them.",
+            "description_ar": "ابتسم وألقِ التحية على جارك عند لقائه.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help deliver a plate of food to a neighbor's house. ( ساعد في توصيل طبق من الطعام إلى منزل الجار .)",
-            "english": "Help deliver a plate of food to a neighbor's house",
-            "arabic": "ساعد في توصيل طبق من الطعام إلى منزل الجار ."
+            "title_en": "Share food with a neighbor",
+            "title_ar": "شارك جارك طبقًا من الطعام",
+            "description_en": "Help deliver a meal or snack to a neighbor with your family's permission.",
+            "description_ar": "شارك في توصيل طبق من الطعام إلى أحد الجيران بموافقة عائلتك.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Pick up a piece of trash from the street or park and throw it away. ( التقط قطعة قمامة من الشارع أو الحديقة وارمها في سلة المهملات - إماطة الأذى .)",
-            "english": "Pick up a piece of trash from the street or park and throw it away",
-            "arabic": "التقط قطعة قمامة من الشارع أو الحديقة وارمها في سلة المهملات - إماطة الأذى ."
+            "title_en": "Remove litter from a public place",
+            "title_ar": "أزل الأذى عن الطريق",
+            "description_en": "Pick up litter safely and throw it in the proper trash bin.",
+            "description_ar": "التقط قطعة قمامة بشكل آمن وضعها في سلة المهملات.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Do not raise your voice or make loud noises that might disturb neighbors . ( لا ترفع صوتك أو تصدر ضوضاء قد تزعج الجيران .)",
-            "english": "Do not raise your voice or make loud noises that might disturb neighbors",
-            "arabic": "لا ترفع صوتك أو تصدر ضوضاء قد تزعج الجيران ."
+            "title_en": "Respect your neighbors' comfort",
+            "title_ar": "احترم راحة جيرانك",
+            "description_en": "Avoid making loud noises that may disturb your neighbors.",
+            "description_ar": "تجنب رفع صوتك أو إحداث ضوضاء قد تزعج جيرانك.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Respect public property and do not write on walls or damage plants. ( احترم الممتلكات العامة ولا تكتب على الجدران أو تتلف النباتات .)",
-            "english": "Respect public property and do not write on walls or damage plants",
-            "arabic": "احترم الممتلكات العامة ولا تكتب على الجدران أو تتلف النباتات ."
+            "title_en": "Protect public property",
+            "title_ar": "حافظ على الممتلكات العامة",
+            "description_en": "Respect public facilities, parks, and streets by keeping them clean and undamaged.",
+            "description_ar": "حافظ على الممتلكات العامة والحدائق والمرافق بعدم إتلافها أو تلويثها.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Speak well of others and avoid gossiping ( Gheebah ). ( تحدث بالخير عن الآخرين وتجنب الغيبة .)",
-            "english": "Speak well of others and avoid gossiping ( Gheebah )",
-            "arabic": "تحدث بالخير عن الآخرين وتجنب الغيبة ."
+            "title_en": "Speak kindly about others",
+            "title_ar": "تحدث بالخير عن الآخرين",
+            "description_en": "Choose kind words when speaking about others and avoid gossip.",
+            "description_ar": "احرص على ذكر الآخرين بالخير وتجنب الغيبة والكلام السيئ.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Read a short story about the founding of Saudi Arabia. ( اقرأ قصة قصيرة عن تأسيس المملكة العربية السعودية .)",
-            "english": "Read a short story about the founding of Saudi Arabia",
-            "arabic": "اقرأ قصة قصيرة عن تأسيس المملكة العربية السعودية ."
+            "title_en": "Read about the founding of Saudi Arabia",
+            "title_ar": "اقرأ عن تأسيس المملكة العربية السعودية",
+            "description_en": "Read a short story or article about the founding of Saudi Arabia and share one thing you learned.",
+            "description_ar": "اقرأ قصة أو مقالًا قصيرًا عن تأسيس المملكة، ثم أخبر عائلتك بمعلومة تعلمتها.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Learn about a famous Saudi historical figure or leader. ( تعرف على شخصية تاريخية أو قائد سعودي مشهور .)",
-            "english": "Learn about a famous Saudi historical figure or leader",
-            "arabic": "تعرف على شخصية تاريخية أو قائد سعودي مشهور ."
+            "title_en": "Learn about a Saudi historical figure",
+            "title_ar": "تعرّف على شخصية سعودية تاريخية",
+            "description_en": "Learn about a famous Saudi historical figure and share one interesting fact.",
+            "description_ar": "تعرّف على إحدى الشخصيات السعودية التاريخية وشارك معلومة عنها مع عائلتك.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Identify three local animals native to the Arabian Peninsula (e.g., Arabian Oryx, Camel). ( تعرف على ثلاثة حيوانات محلية تستوطن شبه الجزيرة العربية مثل المها العربي والجمل .)",
-            "english": "Identify three local animals native to the Arabian Peninsula (e.g., Arabian Oryx, Camel)",
-            "arabic": "تعرف على ثلاثة حيوانات محلية تستوطن شبه الجزيرة العربية مثل المها العربي والجمل .)"
+            "title_en": "Learn about Saudi wildlife",
+            "title_ar": "تعرّف على الحياة الفطرية في السعودية",
+            "description_en": "Learn about three animals native to Saudi Arabia or the Arabian Peninsula.",
+            "description_ar": "تعرّف على ثلاثة حيوانات تعيش في المملكة العربية السعودية أو شبه الجزيرة العربية.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Watch a documentary or video about Saudi Arabia's nature or history. ( شاهد فيلماً وثائقياً أو مقطع فيديو عن طبيعة أو تاريخ السعودية .)",
-            "english": "Watch a documentary or video about Saudi Arabia's nature or history",
-            "arabic": "شاهد فيلماً وثائقياً أو مقطع فيديو عن طبيعة أو تاريخ السعودية .)"
+            "title_en": "Watch an educational video about Saudi Arabia",
+            "title_ar": "شاهد فيديو تعليمي عن السعودية",
+            "description_en": "Watch a short educational video about Saudi Arabia's history, culture, or nature and share one thing you learned.",
+            "description_ar": "شاهد فيديو قصيرًا عن تاريخ السعودية أو ثقافتها أو طبيعتها، ثم شارك معلومة تعلمتها.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Do not criticize the food served to you. ( لا تنتقد الطعام المقدم لك .)",
-            "english": "Do not criticize the food served to you",
-            "arabic": "لا تنتقد الطعام المقدم لك .)"
+            "title_en": "Respect the food you are served",
+            "title_ar": "احترم الطعام المقدم لك",
+            "description_en": "Show appreciation for the food served to you and avoid criticizing it.",
+            "description_ar": "احترم الطعام الذي يُقدَّم لك، وتجنب انتقاده أو التقليل من شأنه.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Cover your mouth when yawning or sneezing and say \"Alhamdulillah\" after sneezing. ( غطِ فمك عند التثاؤب أو العطس وقل \" الحمد لله \" بعد العطس .)",
-            "english": "Cover your mouth when yawning or sneezing and say \"Alhamdulillah\" after sneezing",
-            "arabic": "غطِ فمك عند التثاؤب أو العطس وقل \" الحمد لله \" بعد العطس .)"
+            "title_en": "Practice good manners when sneezing or yawning",
+            "title_ar": "التزم بآداب العطاس والتثاؤب",
+            "description_en": "Cover your mouth when yawning or sneezing, and say 'Alhamdulillah' after sneezing.",
+            "description_ar": "غطِّ فمك عند التثاؤب أو العطاس، وقل «الحمد لله» بعد العطاس.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Knock on the door and ask for permission before entering a room. ( اطرق الباب واستأذن قبل دخول أي غرفة .)",
-            "english": "Knock on the door and ask for permission before entering a room",
-            "arabic": "اطرق الباب واستأذن قبل دخول أي غرفة .)"
+            "title_en": "Knock before entering",
+            "title_ar": "استأذن قبل الدخول",
+            "description_en": "Knock on the door and ask for permission before entering a room.",
+            "description_ar": "اطرق الباب واستأذن قبل دخول أي غرفة.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Keep your clothes and appearance neat and tidy. ( حافظ على نظافة وترتيب ملابسك ومظهرك .)",
-            "english": "Keep your clothes and appearance neat and tidy",
-            "arabic": "حافظ على نظافة وترتيب ملابسك ومظهرك .)"
+            "title_en": "Keep yourself neat and tidy",
+            "title_ar": "حافظ على مظهرك المرتب",
+            "description_en": "Keep your clothes clean and your appearance neat throughout the day.",
+            "description_ar": "حافظ على نظافة ملابسك وترتيب مظهرك طوال اليوم.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Do not interrupt others while they are speaking. ( لا تقاطع الآخرين أثناء حديثهم .)",
-            "english": "Do not interrupt others while they are speaking",
-            "arabic": "لا تقاطع الآخرين أثناء حديثهم .)"
+            "title_en": "Wait until others finish speaking",
+            "title_ar": "لا تقاطع الآخرين أثناء الحديث",
+            "description_en": "Listen patiently and wait until others finish speaking before responding.",
+            "description_ar": "استمع باهتمام وانتظر حتى ينتهي الآخرون من الحديث قبل أن تتكلم.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Say \"Jazak Allah Khair\" (May Allah reward you) to someone who helps you. ( قل \" جزاك الله خيراً \" لمن يساعدك .)",
-            "english": "Say \"Jazak Allah Khair\" (May Allah reward you) to someone who helps you",
-            "arabic": "قل \" جزاك الله خيراً \" لمن يساعدك .)"
+            "title_en": "Say 'Jazak Allah Khair' to someone who helps you",
+            "title_ar": "اشكر من يساعدك بقول «جزاك الله خيرًا»",
+            "description_en": "Express gratitude by saying 'Jazak Allah Khair' to someone who helped you today.",
+            "description_ar": "عبّر عن امتنانك لمن ساعدك اليوم بقول «جزاك الله خيرًا».",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Learn about the traditional \" Ardah \" dance and watch a video of it. ( تعرف على رقصة \" العرضة \" التقليدية وشاهد مقطع فيديو لها .)",
-            "english": "Learn about the traditional \" Ardah \" dance and watch a video of it",
-            "arabic": "تعرف على رقصة \" العرضة \" التقليدية وشاهد مقطع فيديو لها .)"
+            "title_en": "Learn about a Saudi cultural tradition",
+            "title_ar": "تعرّف على أحد الموروثات السعودية",
+            "description_en": "Learn about a traditional Saudi cultural practice, such as the Ardah, and share one thing you learned.",
+            "description_ar": "تعرّف على أحد الموروثات الثقافية السعودية، مثل العرضة، وشارك معلومة تعلمتها.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Learn the names of traditional Saudi musical instruments (e.g., Oud, Tar, Rababa). ( تعلم أسماء الآلات الموسيقية السعودية التقليدية مثل العود ، الطار ، الربابة .)",
-            "english": "Learn the names of traditional Saudi musical instruments (e.g., Oud, Tar, Rababa)",
-            "arabic": "تعلم أسماء الآلات الموسيقية السعودية التقليدية مثل العود ، الطار ، الربابة .)"
+            "title_en": "Plant a seed or care for a plant",
+            "title_ar": "ازرع بذرة أو اعتنِ بنبتة",
+            "description_en": "Plant a seed or water and care for a plant at home.",
+            "description_ar": "ازرع بذرة أو اعتنِ بنبتة في المنزل وساعدها على النمو.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Plant a seed or care for a plant at home. ( ازرع بذرة أو اعتنِ بنبتة في المنزل .)",
-            "english": "Plant a seed or care for a plant at home",
-            "arabic": "ازرع بذرة أو اعتنِ بنبتة في المنزل .)"
+            "title_en": "Save energy by turning off lights",
+            "title_ar": "وفّر الطاقة بإطفاء الأنوار",
+            "description_en": "Turn off the lights when leaving a room to help save energy.",
+            "description_ar": "أطفئ الأنوار عند مغادرة الغرفة للمساهمة في ترشيد استهلاك الطاقة.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Turn off the lights when leaving a room to save energy. ( أطفئ الأنوار عند مغادرة الغرفة لتوفير الطاقة .)",
-            "english": "Turn off the lights when leaving a room to save energy",
-            "arabic": "أطفئ الأنوار عند مغادرة الغرفة لتوفير الطاقة .)"
+            "title_en": "Care for birds or animals responsibly",
+            "title_ar": "اعتنِ بالحيوانات أو الطيور بمسؤولية",
+            "description_en": "Place water or food for birds or animals with your family's permission and supervision.",
+            "description_ar": "قدّم الماء أو الطعام للطيور أو الحيوانات بإذن وإشراف عائلتك.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Feed a stray cat or bird (with parental supervision). ( أطعم قطة ضالة أو طائراً - بإشراف الوالدين .)",
-            "english": "Feed a stray cat or bird (with parental supervision)",
-            "arabic": "أطعم قطة ضالة أو طائراً - بإشراف الوالدين .)"
+            "title_en": "Clean up after a family outing",
+            "title_ar": "ساعد في تنظيف مكان النزهة",
+            "description_en": "Help your family clean the picnic area before leaving.",
+            "description_ar": "شارك عائلتك في تنظيف مكان النزهة قبل المغادرة.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help clean up the picnic area after a family outing. ( ساعد في تنظيف منطقة النزهة بعد نزهة عائلية .)",
-            "english": "Help clean up the picnic area after a family outing",
-            "arabic": "ساعد في تنظيف منطقة النزهة بعد نزهة عائلية .)"
+            "title_en": "Tell the truth",
+            "title_ar": "التزم بالصدق",
+            "description_en": "Choose honesty in every situation today, even if it feels difficult.",
+            "description_ar": "احرص على قول الصدق في جميع مواقف اليوم حتى لو كان ذلك صعبًا.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Tell the truth, even if it is difficult. ( قل الصدق ، حتى لو كان ذلك صعباً .)",
-            "english": "Tell the truth, even if it is difficult",
-            "arabic": "قل الصدق ، حتى لو كان ذلك صعباً .)"
+            "title_en": "Practice patience",
+            "title_ar": "تحلَّ بالصبر",
+            "description_en": "Wait patiently for your turn without complaining or rushing others.",
+            "description_ar": "انتظر دورك بصبر دون تذمر أو استعجال الآخرين.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Be patient when waiting for your turn. ( كن صبوراً عند انتظار دورك .)",
-            "english": "Be patient when waiting for your turn",
-            "arabic": "كن صبوراً عند انتظار دورك .)"
+            "title_en": "Thank your parents",
+            "title_ar": "اشكر والديك",
+            "description_en": "Thank your parents today for something they did for you.",
+            "description_ar": "اشكر والديك اليوم على شيء قدماه لك.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Show gratitude by thanking your parents for something specific today. ( أظهر امتنانك بشكر والديك على شيء محدد اليوم .)",
-            "english": "Show gratitude by thanking your parents for something specific today",
-            "arabic": "أظهر امتنانك بشكر والديك على شيء محدد اليوم .)"
+            "title_en": "Organize your belongings",
+            "title_ar": "رتب أغراضك الشخصية",
+            "description_en": "Take responsibility for your belongings by keeping them organized.",
+            "description_ar": "تحمل مسؤولية أغراضك الشخصية وحافظ على ترتيبها.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Take responsibility for your own belongings and keep them organized. ( تحمل مسؤولية أغراضك الشخصية وحافظ عليها مرتبة .)",
-            "english": "Take responsibility for your own belongings and keep them organized",
-            "arabic": "تحمل مسؤولية أغراضك الشخصية وحافظ عليها مرتبة .)"
+            "title_en": "Stay positive",
+            "title_ar": "كن إيجابيًا",
+            "description_en": "Avoid complaining about small inconveniences and try to stay positive throughout the day.",
+            "description_ar": "تجنب التذمر من الأمور البسيطة وحافظ على نظرة إيجابية طوال اليوم.",
+            "default_points": 10,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Do not complain about the weather or minor inconveniences. ( لا تتذمر من الطقس أو المضايقات البسيطة .)",
-            "english": "Do not complain about the weather or minor inconveniences",
-            "arabic": "لا تتذمر من الطقس أو المضايقات البسيطة .)"
-        },
-        {
-            "full_text": "Help a sibling with their homework or a difficult task. ( ساعد أخاك أو أختك في واجباتهم المدرسية أو في مهمة صعبة .)",
-            "english": "Help a sibling with their homework or a difficult task",
-            "arabic": "ساعد أخاك أو أختك في واجباتهم المدرسية أو في مهمة صعبة .)"
+            "title_en": "Help your sibling",
+            "title_ar": "ساعد أخاك أو أختك",
+            "description_en": "Help your sibling with homework or another task when they need support.",
+            "description_ar": "ساعد أخاك أو أختك في واجباتهم أو في أي مهمة يحتاجون فيها إلى المساعدة.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         }
     ],
-    "Religion": [
+    "RELIGIOUS": [
         {
-            "full_text": "Pray all five daily prayers on time for one day. ( صلِ الصلوات الخمس في أوقاتها ليوم واحد .)",
-            "english": "Pray all five daily prayers on time for one day",
-            "arabic": "صلِ الصلوات الخمس في أوقاتها ليوم واحد .)"
+            "title_en": "Pray the five daily prayers on time",
+            "title_ar": "حافظ على الصلوات الخمس في وقتها",
+            "description_en": "Perform all five daily prayers on time for one day.",
+            "description_ar": "حافظ على أداء الصلوات الخمس في أوقاتها لمدة يوم كامل.",
+            "default_points": 30,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Learn and recite a new short Surah from the Quran. ( تعلم وتلُ سورة قصيرة جديدة من القرآن .)",
-            "english": "Learn and recite a new short Surah from the Quran",
-            "arabic": "تعلم وتلُ سورة قصيرة جديدة من القرآن .)"
+            "title_en": "Learn and recite a new short Surah",
+            "title_ar": "تعلّم سورة قصيرة جديدة",
+            "description_en": "Learn and recite a new short Surah from the Holy Quran.",
+            "description_ar": "تعلّم سورة قصيرة جديدة من القرآن الكريم وتلُها.",
+            "default_points": 20,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Observe silence and respect during the Adhan (call to prayer). ( التزم الصمت والاحترام أثناء الأذان .)",
-            "english": "Observe silence and respect during the Adhan (call to prayer)",
-            "arabic": "التزم الصمت والاحترام أثناء الأذان .)"
+            "title_en": "Respect the Adhan",
+            "title_ar": "احترم الأذان",
+            "description_en": "Observe silence and show respect while the Adhan is being called.",
+            "description_ar": "التزم بالهدوء وأظهر الاحترام أثناء رفع الأذان.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Read one page from the Quran daily. ( اقرأ صفحة واحدة من القرآن يومياً .)",
-            "english": "Read one page from the Quran daily",
-            "arabic": "اقرأ صفحة واحدة من القرآن يومياً .)"
+            "title_en": "Read one page from the Quran",
+            "title_ar": "اقرأ صفحة من القرآن",
+            "description_en": "Read one page from the Holy Quran today.",
+            "description_ar": "اقرأ صفحة واحدة من القرآن الكريم اليوم.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Memorize one new Ayah (verse) from the Quran. ( احفظ آية جديدة من القرآن .)",
-            "english": "Memorize one new Ayah (verse) from the Quran",
-            "arabic": "احفظ آية جديدة من القرآن .)"
+            "title_en": "Memorize a new Quran verse",
+            "title_ar": "احفظ آية جديدة من القرآن",
+            "description_en": "Memorize one new verse from the Holy Quran.",
+            "description_ar": "احفظ آية جديدة من القرآن الكريم.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Learn the story behind a short Surah (e.g., Surah Al-Fil). ( تعلم قصة سورة قصيرة - مثل سورة الفيل .)",
-            "english": "Learn the story behind a short Surah (e.g., Surah Al-Fil)",
-            "arabic": "تعلم قصة سورة قصيرة - مثل سورة الفيل .)"
+            "title_en": "Learn the story of a Quran Surah",
+            "title_ar": "تعرّف على قصة سورة من القرآن",
+            "description_en": "Learn the story or background of a short Surah from the Quran.",
+            "description_ar": "تعرّف على قصة أو سبب نزول سورة قصيرة من القرآن الكريم.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Learn the names of three Prophets mentioned in the Quran. ( تعلم أسماء ثلاثة أنبياء مذكورين في القرآن .)",
-            "english": "Learn the names of three Prophets mentioned in the Quran",
-            "arabic": "تعلم أسماء ثلاثة أنبياء مذكورين في القرآن .)"
+            "title_en": "Learn about three Prophets",
+            "title_ar": "تعرّف على ثلاثة من الأنبياء",
+            "description_en": "Learn the names of three Prophets mentioned in the Quran.",
+            "description_ar": "تعلّم أسماء ثلاثة من الأنبياء المذكورين في القرآن الكريم.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Use polite words and avoid shouting or yelling. ( استخدم كلمات مهذبة وتجنب الصراخ .)",
-            "english": "Use polite words and avoid shouting or yelling",
-            "arabic": "استخدم كلمات مهذبة وتجنب الصراخ .)"
+            "title_en": "Use kind words",
+            "title_ar": "استخدم كلمات طيبة",
+            "description_en": "Speak politely and avoid shouting throughout the day.",
+            "description_ar": "استخدم كلمات مهذبة وتجنب الصراخ طوال اليوم.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Share your food or toys with others. ( شارك طعامك أو ألعابك مع الآخرين .)",
-            "english": "Share your food or toys with others",
-            "arabic": "شارك طعامك أو ألعابك مع الآخرين .)"
+            "title_en": "Share with others",
+            "title_ar": "شارك الآخرين",
+            "description_en": "Share your food or toys with someone today.",
+            "description_ar": "شارك طعامك أو ألعابك مع الآخرين اليوم.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help someone in need (e.g., carry their bags, open a door). ( ساعد شخصاً محتاجاً - مثل حمل حقائبه ، فتح باب .)",
-            "english": "Help someone in need (e.g., carry their bags, open a door)",
-            "arabic": "ساعد شخصاً محتاجاً - مثل حمل حقائبه ، فتح باب .)"
+            "title_en": "Help someone in need",
+            "title_ar": "ساعد شخصًا محتاجًا",
+            "description_en": "Offer help to someone in need, such as carrying bags or opening a door.",
+            "description_ar": "قدّم المساعدة لشخص يحتاجها، مثل حمل الأغراض أو فتح الباب.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Be kind to animals and do not harm them. ( كن لطيفاً مع الحيوانات ولا تؤذها .)",
-            "english": "Be kind to animals and do not harm them",
-            "arabic": "كن لطيفاً مع الحيوانات ولا تؤذها .)"
+            "title_en": "Be kind to animals",
+            "title_ar": "كن رحيمًا بالحيوانات",
+            "description_en": "Treat animals kindly and never harm them.",
+            "description_ar": "عامل الحيوانات برفق وتجنب إيذاءها.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Visit a sick person or call to check on them. ( زر مريضاً أو اتصل للاطمئنان عليه .)",
-            "english": "Visit a sick person or call to check on them",
-            "arabic": "زر مريضاً أو اتصل للاطمئنان عليه .)"
+            "title_en": "Visit or check on a sick person",
+            "title_ar": "زر مريضًا أو اطمئن عليه",
+            "description_en": "Visit a sick person or call to check on them.",
+            "description_ar": "زر مريضًا أو اتصل به للاطمئنان على صحته.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Avoid lying and always speak the truth. ( تجنب الكذب وقل الصدق دائماً .)",
-            "english": "Avoid lying and always speak the truth",
-            "arabic": "تجنب الكذب وقل الصدق دائماً .)"
+          "title_en": "Always tell the truth",
+            "title_ar": "التزم بالصدق",
+            "description_en": "Choose honesty in everything you say today.",
+            "description_ar": "احرص على قول الصدق في جميع مواقف اليوم.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Ask your parents an Islamic question and listen to the answer. ( اسأل والديك سؤالاً إسلامياً واستمع إلى الإجابة .)",
-            "english": "Ask your parents an Islamic question and listen to the answer",
-            "arabic": "اسأل والديك سؤالاً إسلامياً واستمع إلى الإجابة .)"
+            "title_en": "Ask an Islamic question",
+            "title_ar": "اسأل سؤالًا عن الإسلام",
+            "description_en": "Ask your parents an Islamic question and listen carefully to the answer.",
+            "description_ar": "اسأل والديك سؤالًا عن الإسلام واستمع إلى الإجابة باهتمام.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Fast for half a day (for younger children) or a full day (for older children) during Ramadan. ( صم نصف يوم - للأطفال الأصغر - أو يوماً كاملاً - للأطفال الأكبر - خلال رمضان .)",
-            "english": "Fast for half a day (for younger children) or a full day (for older children) during Ramadan",
-            "arabic": "صم نصف يوم - للأطفال الأصغر - أو يوماً كاملاً - للأطفال الأكبر - خلال رمضان .)"
+            "title_en": "Practice fasting during Ramadan",
+            "title_ar": "تدرّب على الصيام في رمضان",
+            "description_en": "Fast according to your age and ability with your parents' guidance during Ramadan.",
+            "description_ar": "تدرّب على الصيام في شهر رمضان بما يناسب عمرك وتحت إشراف والديك.",
+            "default_points": 30,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "yearly"
         },
         {
-            "full_text": "Give a small amount of money to charity (Sadaqah). ( تصدق بمبلغ صغير من المال - صدقة .)",
-            "english": "Give a small amount of money to charity (Sadaqah)",
-            "arabic": "تصدق بمبلغ صغير من المال - صدقة .)"
+            "title_en": "Give a small charity",
+            "title_ar": "تصدّق بصدقة",
+            "description_en": "Give a small amount of money or something useful as charity.",
+            "description_ar": "قدّم صدقة ولو كانت بسيطة لمحتاج.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Donate old toys or clothes to those less fortunate. ( تبرع بألعاب أو ملابس قديمة للمحتاجين .)",
-            "english": "Donate old toys or clothes to those less fortunate",
-            "arabic": "تبرع بألعاب أو ملابس قديمة للمحتاجين .)"
+            "title_en": "Donate toys or clothes",
+            "title_ar": "تبرع بألعاب أو ملابس",
+            "description_en": "Donate old toys or clothes to people in need.",
+            "description_ar": "تبرع بألعاب أو ملابس بحالة جيدة لمن يحتاجها.",
+            "default_points": 25,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Be kind to your siblings and share with them. ( كن لطيفاً مع إخوتك وشاركهم .)",
-            "english": "Be kind to your siblings and share with them",
-            "arabic": "كن لطيفاً مع إخوتك وشاركهم .)"
+            "title_en": "Be kind to your siblings",
+            "title_ar": "أحسن التعامل مع إخوتك",
+            "description_en": "Treat your siblings kindly and share with them throughout the day.",
+            "description_ar": "عامل إخوتك بلطف وشاركهم ما تستطيع طوال اليوم.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Visit your relatives (Silat Al-Rahim). ( زر أقاربك - صلة الرحم .)",
-            "english": "Visit your relatives (Silat Al-Rahim)",
-            "arabic": "زر أقاربك - صلة الرحم .)"
+            "title_en": "Visit your relatives",
+            "title_ar": "زر أقاربك",
+            "description_en": "Visit your relatives and strengthen family ties.",
+            "description_ar": "زر أقاربك وشارك في صلة الرحم وتعزيز العلاقات العائلية.",
+            "default_points": 25,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help your mother or father with household chores without being asked. ( ساعد والدتك أو والدك في الأعمال المنزلية دون أن يطلبا منك .)",
-            "english": "Help your mother or father with household chores without being asked",
-            "arabic": "ساعد والدتك أو والدك في الأعمال المنزلية دون أن يطلبا منك .)"
+            "title_en": "Help your parents without being asked",
+            "title_ar": "ساعد والديك دون أن يُطلب منك",
+            "description_en": "Help your parents with household chores before they ask you.",
+            "description_ar": "بادر بمساعدة والديك في الأعمال المنزلية دون انتظار طلبهما.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Listen to your elders and seek their advice. ( استمع إلى كبار السن واطلب نصيحتهم .)",
-            "english": "Listen to your elders and seek their advice",
-            "arabic": "استمع إلى كبار السن واطلب نصيحتهم .)"
+            "title_en": "Listen to your elders",
+            "title_ar": "استمع إلى كبار السن",
+            "description_en": "Listen respectfully to your elders and benefit from their advice.",
+            "description_ar": "استمع باحترام إلى كبار السن واستفد من نصائحهم.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help prepare for Eid celebrations. ( ساعد في التحضير لاحتفالات العيد .)",
-            "english": "Help prepare for Eid celebrations",
-            "arabic": "ساعد في التحضير لاحتفالات العيد .)"
+            "title_en": "Help prepare for Eid",
+            "title_ar": "شارك في الاستعداد للعيد",
+            "description_en": "Help your family prepare for Eid celebrations.",
+            "description_ar": "شارك عائلتك في الاستعداد لاستقبال عيد الفطر أو عيد الأضحى.",
+            "default_points": 20,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "yearly"
         },
         {
-            "full_text": "Control your anger and practice patience. ( تحكم في غضبك وتدرب على الصبر .)",
-            "english": "Control your anger and practice patience",
-            "arabic": "تحكم في غضبك وتدرب على الصبر .)"
+            "title_en": "Control your anger",
+            "title_ar": "تحكم في غضبك",
+            "description_en": "Practice self-control and respond calmly when you feel angry.",
+            "description_ar": "تدرّب على التحكم في غضبك والتصرف بهدوء عند المواقف المزعجة.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Be grateful for what you have. ( كن شاكراً لما لديك .)",
-            "english": "Be grateful for what you have",
-            "arabic": "كن شاكراً لما لديك .)"
+            "title_en": "Show gratitude",
+            "title_ar": "أظهر الشكر والامتنان",
+            "description_en": "Take a moment to thank Allah for the blessings you have today.",
+            "description_ar": "تذكر نعم الله عليك اليوم، وأظهر الشكر والامتنان عليها.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Practice self-discipline by waking up early for Fajr prayer. ( تدرب على الانضباط الذاتي بالاستيقاظ مبكراً لصلاة الفجر .)",
-            "english": "Practice self-discipline by waking up early for Fajr prayer",
-            "arabic": "تدرب على الانضباط الذاتي بالاستيقاظ مبكراً لصلاة الفجر .)"
+            "title_en": "Wake up early for Fajr prayer",
+            "title_ar": "استيقظ مبكرًا لصلاة الفجر",
+            "description_en": "Practice self-discipline by waking up early for Fajr prayer.",
+            "description_ar": "تدرّب على الانضباط بالاستيقاظ مبكرًا لأداء صلاة الفجر.",
+            "default_points": 25,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Learn the Du’a for entering and leaving the house. ( تعلم دعاء دخول المنزل والخروج منه .)",
-            "english": "Learn the Du’a for entering and leaving the house",
-            "arabic": "تعلم دعاء دخول المنزل والخروج منه .)"
+            "title_en": "Learn the Dua for entering and leaving home",
+            "title_ar": "تعلّم دعاء دخول المنزل والخروج منه",
+            "description_en": "Memorize and recite the Dua for entering and leaving your home.",
+            "description_ar": "تعلّم دعاء دخول المنزل والخروج منه وطبّقه في يومك.",
+            "default_points": 20,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Water plants or trees, remembering that it is a Sadaqah. ( اسقِ النباتات أو الأشجار ، متذكراً أنها صدقة .)",
-            "english": "Water plants or trees, remembering that it is a Sadaqah",
-            "arabic": "اسقِ النباتات أو الأشجار ، متذكراً أنها صدقة .)"
+            "title_en": "Water plants as an act of kindness",
+            "title_ar": "اسقِ النباتات بنية الأجر",
+            "description_en": "Water plants or trees while remembering that caring for living things is rewarded.",
+            "description_ar": "اسقِ النباتات أو الأشجار بنية الإحسان والعناية بمخلوقات الله.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Do not litter and always dispose of trash properly. ( لا ترمِ القمامة وتخلص منها بشكل صحيح دائماً .)",
-            "english": "Do not litter and always dispose of trash properly",
-            "arabic": "لا ترمِ القمامة وتخلص منها بشكل صحيح دائماً .)"
+            "title_en": "Keep your surroundings clean",
+            "title_ar": "حافظ على نظافة المكان",
+            "description_en": "Dispose of trash properly and help keep your surroundings clean.",
+            "description_ar": "تخلّص من النفايات في مكانها الصحيح وساهم في الحفاظ على نظافة المكان.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         }
     ],
     "Daily Chores": [
         {
-            "full_text": "Make your bed neatly every morning. ( رتّب سريرك بعناية كل صباح .)",
-            "english": "Make your bed neatly every morning",
-            "arabic": "رتّب سريرك بعناية كل صباح .)"
+            "title_en": "Make your bed",
+            "title_ar": "رتّب سريرك",
+            "description_en": "Make your bed neatly after waking up.",
+            "description_ar": "رتّب سريرك بعناية بعد الاستيقاظ.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Brush your teeth twice a day (morning and night). ( اغسل أسنانك مرتين يومياً - صباحاً ومساءً .)",
-            "english": "Brush your teeth twice a day (morning and night)",
-            "arabic": "اغسل أسنانك مرتين يومياً - صباحاً ومساءً .)"
+            "title_en": "Brush your teeth twice",
+            "title_ar": "اغسل أسنانك مرتين",
+            "description_en": "Brush your teeth in the morning and before going to bed.",
+            "description_ar": "اغسل أسنانك صباحًا وقبل النوم.",
+            "default_points": 10,
+            "age_min": 4,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Choose your clothes for the next day before going to bed. ( اختر ملابسك لليوم التالي قبل النوم .)",
-            "english": "Choose your clothes for the next day before going to bed",
-            "arabic": "اختر ملابسك لليوم التالي قبل النوم .)"
+            "title_en": "Prepare tomorrow's clothes",
+            "title_ar": "جهّز ملابس الغد",
+            "description_en": "Choose and prepare your clothes for the next day before bedtime.",
+            "description_ar": "اختر وجهّز ملابسك لليوم التالي قبل النوم.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Put away your pajamas after waking up. ( ضع ملابسك النوم في مكانها بعد الاستيقاظ .)",
-            "english": "Put away your pajamas after waking up",
-            "arabic": "ضع ملابسك النوم في مكانها بعد الاستيقاظ .)"
+            "title_en": "Put away your pajamas",
+            "title_ar": "ضع ملابس النوم في مكانها",
+            "description_en": "Put your pajamas away after waking up.",
+            "description_ar": "ضع ملابس نومك في مكانها بعد الاستيقاظ.",
+            "default_points": 10,
+            "age_min": 4,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Pack your school bag with all necessary books and supplies. ( جهز حقيبتك المدرسية بجميع الكتب واللوازم الضرورية .)",
-            "english": "Pack your school bag with all necessary books and supplies",
-            "arabic": "جهز حقيبتك المدرسية بجميع الكتب واللوازم الضرورية .)"
+            "title_en": "Pack your school bag",
+            "title_ar": "جهّز حقيبتك المدرسية",
+            "description_en": "Pack your school bag with everything you need for tomorrow.",
+            "description_ar": "جهّز حقيبتك المدرسية بجميع احتياجاتك لليوم التالي.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Take a shower or bath daily. ( استحم يومياً .)",
-            "english": "Take a shower or bath daily",
-            "arabic": "استحم يومياً .)"
+            "title_en": "Take a shower",
+            "title_ar": "استحم",
+            "description_en": "Take a shower and keep yourself clean.",
+            "description_ar": "استحم وحافظ على نظافتك الشخصية.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Comb your hair and ensure it's tidy. ( مشّط شعرك وتأكد من ترتيبه .)",
-            "english": "Comb your hair and ensure it's tidy",
-            "arabic": "مشّط شعرك وتأكد من ترتيبه .)"
+            "title_en": "Comb your hair",
+            "title_ar": "مشّط شعرك",
+            "description_en": "Comb your hair and keep it tidy.",
+            "description_ar": "مشّط شعرك واهتم بترتيبه.",
+            "default_points": 10,
+            "age_min": 4,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Keep your personal hygiene items (toothbrush, soap) organized. ( حافظ على أدوات نظافتك الشخصية - فرشاة الأسنان ، الصابون - مرتبة .)",
-            "english": "Keep your personal hygiene items (toothbrush, soap) organized",
-            "arabic": "حافظ على أدوات نظافتك الشخصية - فرشاة الأسنان ، الصابون - مرتبة .)"
+            "title_en": "Organize your hygiene items",
+            "title_ar": "رتّب أدواتك الشخصية",
+            "description_en": "Keep your toothbrush, soap, and other hygiene items organized.",
+            "description_ar": "حافظ على ترتيب أدوات نظافتك الشخصية.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Ensure your shoes are clean and put away. ( تأكد من نظافة حذائك ووضعه في مكانه .)",
-            "english": "Ensure your shoes are clean and put away",
-            "arabic": "تأكد من نظافة حذائك ووضعه في مكانه .)"
+            "title_en": "Clean and organize your shoes",
+            "title_ar": "رتّب حذاءك",
+            "description_en": "Make sure your shoes are clean and stored in their proper place.",
+            "description_ar": "تأكد من نظافة حذائك وضعه في مكانه المخصص.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Tidy up your toys and games after playing. ( رتّب ألعابك بعد الانتهاء من اللعب .)",
-            "english": "Tidy up your toys and games after playing",
-            "arabic": "رتّب ألعابك بعد الانتهاء من اللعب .)"
+            "title_en": "Put away your toys",
+            "title_ar": "رتّب ألعابك",
+            "description_en": "Put your toys and games back after you finish playing.",
+            "description_ar": "أعد ألعابك إلى مكانها بعد الانتهاء من اللعب.",
+            "default_points": 10,
+            "age_min": 4,
+            "age_max": 12,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Put your dirty clothes in the laundry basket. ( ضع ملابسك المتسخة في سلة الغسيل .)",
-            "english": "Put your dirty clothes in the laundry basket",
-            "arabic": "ضع ملابسك المتسخة في سلة الغسيل .)"
+            "title_en": "Put dirty clothes in the laundry basket",
+            "title_ar": "ضع ملابسك المتسخة في سلة الغسيل",
+            "description_en": "Place your dirty clothes in the laundry basket after changing.",
+            "description_ar": "ضع ملابسك المتسخة في سلة الغسيل بعد تغييرها.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Hang up your clothes or fold them neatly in your closet. ( علّق ملابسك أو اطوها بعناية في خزانتك .)",
-            "english": "Hang up your clothes or fold them neatly in your closet",
-            "arabic": "علّق ملابسك أو اطوها بعناية في خزانتك .)"
+            "title_en": "Organize your clothes",
+            "title_ar": "رتّب ملابسك",
+            "description_en": "Fold or hang your clothes neatly in your closet.",
+            "description_ar": "علّق ملابسك أو اطوها بعناية داخل خزانتك.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Keep your bedroom floor clear of clutter. ( حافظ على أرضية غرفتك خالية من الفوضى .)",
-            "english": "Keep your bedroom floor clear of clutter",
-            "arabic": "حافظ على أرضية غرفتك خالية من الفوضى .)"
+            "title_en": "Keep your room tidy",
+            "title_ar": "حافظ على ترتيب غرفتك",
+            "description_en": "Keep your bedroom floor clean and free of clutter.",
+            "description_ar": "حافظ على أرضية غرفتك مرتبة وخالية من الفوضى.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Arrange your shoes neatly by the door or in the shoe rack. ( رتّب أحذيتك بعناية عند الباب أو في رف الأحذية .)",
-            "english": "Arrange your shoes neatly by the door or in the shoe rack",
-            "arabic": "رتّب أحذيتك بعناية عند الباب أو في رف الأحذية .)"
+            "title_en": "Arrange your shoes",
+            "title_ar": "رتّب أحذيتك",
+            "description_en": "Arrange your shoes neatly in the shoe rack or their designated place.",
+            "description_ar": "رتّب أحذيتك في الرف أو المكان المخصص لها.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Help change your bedsheets once a week. ( ساعد في تغيير ملاءات سريرك مرة واحدة في الأسبوع .)",
-            "english": "Help change your bedsheets once a week",
-            "arabic": "ساعد في تغيير ملاءات سريرك مرة واحدة في الأسبوع .)"
+            "title_en": "Help change your bedsheets",
+            "title_ar": "ساعد في تغيير ملاءات السرير",
+            "description_en": "Help your family change your bedsheets once a week.",
+            "description_ar": "شارك في تغيير ملاءات سريرك مرة كل أسبوع.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Set the table for family meals. ( جهز الطاولة لوجبات العائلة .)",
-            "english": "Set the table for family meals",
-            "arabic": "جهز الطاولة لوجبات العائلة .)"
+            "title_en": "Set the dining table",
+            "title_ar": "جهّز سفرة الطعام",
+            "description_en": "Help prepare the dining table before meals.",
+            "description_ar": "ساعد في تجهيز سفرة الطعام قبل الوجبات.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Clear your plate and utensils from the table after eating. ( أزل طبقك وأدواتك من الطاولة بعد الأكل .)",
-            "english": "Clear your plate and utensils from the table after eating",
-            "arabic": "أزل طبقك وأدواتك من الطاولة بعد الأكل .)"
+            "title_en": "Clear your plate after eating",
+            "title_ar": "أزل طبقك بعد الانتهاء من الطعام",
+            "description_en": "Take your plate and utensils to the kitchen after eating.",
+            "description_ar": "انقل طبقك وأدواتك إلى المطبخ بعد الانتهاء من الطعام.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Help load the dishwasher or wash dishes by hand. ( ساعد في تحميل غسالة الصحون أو غسل الأطباق يدوياً .)",
-            "english": "Help load the dishwasher or wash dishes by hand",
-            "arabic": "ساعد في تحميل غسالة الصحون أو غسل الأطباق يدوياً .)"
+            "title_en": "Help wash the dishes",
+            "title_ar": "ساعد في غسل الأطباق",
+            "description_en": "Help wash dishes or load the dishwasher after meals.",
+            "description_ar": "ساعد في غسل الأطباق أو ترتيبها في غسالة الصحون.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Put away groceries after a shopping trip. ( ضع مشتريات البقالة في مكانها بعد التسوق .)",
-            "english": "Put away groceries after a shopping trip",
-            "arabic": "ضع مشتريات البقالة في مكانها بعد التسوق .)"
+            "title_en": "Put away groceries",
+            "title_ar": "رتّب المشتريات",
+            "description_en": "Help put groceries in their proper place after shopping.",
+            "description_ar": "ساعد في ترتيب المشتريات في أماكنها بعد العودة من التسوق.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help prepare a simple snack or drink for yourself or a sibling. ( ساعد في تحضير وجبة خفيفة بسيطة أو مشروب لنفسك أو لأخيك .)",
-            "english": "Help prepare a simple snack or drink for yourself or a sibling",
-            "arabic": "ساعد في تحضير وجبة خفيفة بسيطة أو مشروب لنفسك أو لأخيك .)"
+            "title_en": "Prepare a simple snack or drink",
+            "title_ar": "حضّر وجبة خفيفة أو مشروبًا بسيطًا",
+            "description_en": "Prepare a simple snack or drink for yourself or one of your siblings.",
+            "description_ar": "حضّر وجبة خفيفة أو مشروبًا بسيطًا لنفسك أو لأحد إخوتك.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help take out the kitchen trash when it's full. ( ساعد في إخراج سلة المهملات من المطبخ عندما تمتلئ . )",
-            "english": "Help take out the kitchen trash when it's full",
-            "arabic": "ساعد في إخراج سلة المهملات من المطبخ عندما تمتلئ . )"
+            "title_en": "Take out the kitchen trash",
+            "title_ar": "أخرج سلة مهملات المطبخ",
+            "description_en": "Help take out the kitchen trash when it becomes full.",
+            "description_ar": "ساعد في إخراج سلة مهملات المطبخ عندما تمتلئ.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Tidy up the living room by putting away blankets and pillows. ( رتّب غرفة المعيشة بوضع البطانيات والوسائد في مكانها .)",
-            "english": "Tidy up the living room by putting away blankets and pillows",
-            "arabic": "رتّب غرفة المعيشة بوضع البطانيات والوسائد في مكانها .)"
+            "title_en": "Tidy up the living room",
+            "title_ar": "رتّب غرفة المعيشة",
+            "description_en": "Help organize the living room by putting blankets and pillows back in place.",
+            "description_ar": "ساعد في ترتيب غرفة المعيشة بإعادة البطانيات والوسائد إلى أماكنها.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help dust surfaces in the living room or common areas. ( ساعد في مسح الغبار عن الأسطح في غرفة المعيشة أو المناطق المشتركة .)",
-            "english": "Help dust surfaces in the living room or common areas",
-            "arabic": "ساعد في مسح الغبار عن الأسطح في غرفة المعيشة أو المناطق المشتركة .)"
+            "title_en": "Dust common areas",
+            "title_ar": "امسح الغبار عن الأماكن المشتركة",
+            "description_en": "Help dust furniture and surfaces in the living room or other shared areas.",
+            "description_ar": "ساعد في إزالة الغبار عن الأثاث والأسطح في غرفة المعيشة أو الأماكن المشتركة.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Water indoor plants. ( اسقِ النباتات الداخلية .)",
-            "english": "Water indoor plants",
-            "arabic": "اسقِ النباتات الداخلية .)"
+            "title_en": "Water indoor plants",
+            "title_ar": "اسقِ النباتات الداخلية",
+            "description_en": "Water the indoor plants and help take care of them.",
+            "description_ar": "اسقِ النباتات الداخلية واعتنِ بها.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help vacuum or sweep the living room floor. ( ساعد في كنس أو مسح أرضية غرفة المعيشة .)",
-            "english": "Help vacuum or sweep the living room floor",
-            "arabic": "ساعد في كنس أو مسح أرضية غرفة المعيشة .)"
+            "title_en": "Help clean the living room floor",
+            "title_ar": "ساعد في تنظيف أرضية غرفة المعيشة",
+            "description_en": "Help sweep or vacuum the living room floor.",
+            "description_ar": "ساعد في كنس أو تنظيف أرضية غرفة المعيشة بالمكنسة الكهربائية.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help organize toys or games in common play areas. ( ساعد في تنظيم الألعاب في مناطق اللعب المشتركة .)",
-            "english": "Help organize toys or games in common play areas",
-            "arabic": "ساعد في تنظيم الألعاب في مناطق اللعب المشتركة .)"
+            "title_en": "Organize shared toys",
+            "title_ar": "رتّب الألعاب المشتركة",
+            "description_en": "Help organize toys and games in shared play areas.",
+            "description_ar": "ساعد في ترتيب الألعاب في أماكن اللعب المشتركة.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 12,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Turn off lights and electronics when leaving a room. ( أطفئ الأنوار والأجهزة الإلكترونية عند مغادرة الغرفة .)",
-            "english": "Turn off lights and electronics when leaving a room",
-            "arabic": "أطفئ الأنوار والأجهزة الإلكترونية عند مغادرة الغرفة .)"
+            "title_en": "Turn off lights and electronics",
+            "title_ar": "أطفئ الأنوار والأجهزة",
+            "description_en": "Turn off lights and electronic devices when leaving a room.",
+            "description_ar": "أطفئ الأنوار والأجهزة الإلكترونية عند مغادرة الغرفة.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Close doors and drawers properly. ( أغلق الأبواب والأدراج بشكل صحيح .)",
-            "english": "Close doors and drawers properly",
-            "arabic": "أغلق الأبواب والأدراج بشكل صحيح .)"
+            "title_en": "Close doors and drawers",
+            "title_ar": "أغلق الأبواب والأدراج",
+            "description_en": "Close doors and drawers properly after using them.",
+            "description_ar": "احرص على إغلاق الأبواب والأدراج بشكل صحيح بعد استخدامها.",
+            "default_points": 10,
+            "age_min": 4,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Help water outdoor plants or the garden. ( ساعد في سقي النباتات الخارجية أو الحديقة .)",
-            "english": "Help water outdoor plants or the garden",
-            "arabic": "ساعد في سقي النباتات الخارجية أو الحديقة .)"
+            "title_en": "Water outdoor plants",
+            "title_ar": "اسقِ النباتات الخارجية",
+            "description_en": "Help water outdoor plants or the family garden.",
+            "description_ar": "ساعد في سقي النباتات الخارجية أو حديقة المنزل.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Feed pets and ensure their water bowl is full. ( أطعم الحيوانات الأليفة وتأكد من أن وعاء الماء الخاص بها ممتلئ .)",
-            "english": "Feed pets and ensure their water bowl is full",
-            "arabic": "أطعم الحيوانات الأليفة وتأكد من أن وعاء الماء الخاص بها ممتلئ .)"
+            "title_en": "Take care of your pet",
+            "title_ar": "اعتنِ بالحيوان الأليف",
+            "description_en": "Feed your pet and make sure it has clean drinking water.",
+            "description_ar": "أطعم الحيوان الأليف وتأكد من توفر ماء نظيف له.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Sweep the front porch or patio. ( اكنس الشرفة الأمامية أو الفناء .)",
-            "english": "Sweep the front porch or patio",
-            "arabic": "اكنس الشرفة الأمامية أو الفناء .)"
+            "title_en": "Sweep the patio",
+            "title_ar": "اكنس الفناء أو الشرفة",
+            "description_en": "Help sweep the patio, porch, or another outdoor area around your home.",
+            "description_ar": "ساعد في كنس الفناء أو الشرفة أو أحد الأماكن الخارجية في المنزل.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help wash the family car (with supervision). ( ساعد في غسل سيارة العائلة - بإشراف .)",
-            "english": "Help wash the family car (with supervision)",
-            "arabic": "ساعد في غسل سيارة العائلة - بإشراف .)"
+            "title_en": "Help wash the family car",
+            "title_ar": "ساعد في غسل سيارة العائلة",
+            "description_en": "Help wash the family car with adult supervision.",
+            "description_ar": "ساعد في غسل سيارة العائلة بإشراف أحد الوالدين.",
+            "default_points": 25,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help bring in laundry from the clothesline. ( ساعد في إحضار الغسيل من حبل الغسيل .)",
-            "english": "Help bring in laundry from the clothesline",
-            "arabic": "ساعد في إحضار الغسيل من حبل الغسيل .)"
+            "title_en": "Bring in the laundry",
+            "title_ar": "ساعد في جمع الغسيل",
+            "description_en": "Help bring clean laundry inside and prepare it for folding.",
+            "description_ar": "ساعد في إدخال الغسيل النظيف وتجهيزه للطي.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help a younger sibling get dressed. ( ساعد أخاً أو أختاً أصغر سناً في ارتداء ملابسه .)",
-            "english": "Help a younger sibling get dressed",
-            "arabic": "ساعد أخاً أو أختاً أصغر سناً في ارتداء ملابسه .)"
+            "title_en": "Help your younger sibling get dressed",
+            "title_ar": "ساعد أخاك أو أختك الصغرى في ارتداء الملابس",
+            "description_en": "Help your younger sibling get dressed when they need assistance.",
+            "description_ar": "ساعد أخاك أو أختك الأصغر في ارتداء ملابسهم عند الحاجة.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Read a story to a younger sibling. ( اقرأ قصة لأخ أو أخت أصغر سناً .)",
-            "english": "Read a story to a younger sibling",
-            "arabic": "اقرأ قصة لأخ أو أخت أصغر سناً .)"
+            "title_en": "Read a story to your younger sibling",
+            "title_ar": "اقرأ قصة لأخيك أو أختك الصغرى",
+            "description_en": "Read a story to your younger sibling and spend quality time together.",
+            "description_ar": "اقرأ قصة لأخيك أو أختك الصغرى واقضِ وقتًا ممتعًا معهم.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help your parents carry shopping bags. ( ساعد والديك في حمل أكياس التسوق .)",
-            "english": "Help your parents carry shopping bags",
-            "arabic": "ساعد والديك في حمل أكياس التسوق .)"
+            "title_en": "Help with cooking preparations",
+            "title_ar": "ساعد في تحضيرات الطبخ",
+            "description_en": "Help prepare ingredients such as washing vegetables or arranging cooking supplies.",
+            "description_ar": "ساعد في تحضير مكونات الطبخ مثل غسل الخضروات أو تجهيز الأدوات.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Offer to help a family member with a task they are doing. ( اعرض المساعدة على فرد من العائلة في مهمة يقوم بها .)",
-            "english": "Offer to help a family member with a task they are doing",
-            "arabic": "اعرض المساعدة على فرد من العائلة في مهمة يقوم بها .)"
+            "title_en": "Help an elderly family member with technology",
+            "title_ar": "ساعد أحد كبار السن في استخدام التقنية",
+            "description_en": "Help an elderly family member use a phone, tablet, or another device.",
+            "description_ar": "ساعد أحد كبار السن في استخدام الهاتف أو الجهاز اللوحي أو أي جهاز آخر.",
+            "default_points": 25,
+            "age_min": 9,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help set up for a family gathering or event. ( ساعد في التجهيز لتجمع عائلي أو مناسبة .)",
-            "english": "Help set up for a family gathering or event",
-            "arabic": "ساعد في التجهيز لتجمع عائلي أو مناسبة .)"
+            "title_en": "Walk or play outdoors",
+            "title_ar": "امشِ أو العب في الخارج",
+            "description_en": "Spend at least 30 minutes walking or playing outdoors.",
+            "description_ar": "اقضِ 30 دقيقة على الأقل في المشي أو اللعب في الخارج.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Help your mother or father with cooking preparations (e.g., washing vegetables). ( ساعد والدتك أو والدك في تحضيرات الطهي - مثل غسل الخضروات .)",
-            "english": "Help your mother or father with cooking preparations (e.g., washing vegetables)",
-            "arabic": "ساعد والدتك أو والدك في تحضيرات الطهي - مثل غسل الخضروات .)"
+            "title_en": "Eat a healthy breakfast",
+            "title_ar": "تناول فطورًا صحيًا",
+            "description_en": "Start your day with a healthy and balanced breakfast.",
+            "description_ar": "ابدأ يومك بتناول وجبة فطور صحية ومتوازنة.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Assist an elderly family member with technology (e.g., setting up a phone). ( ساعد أحد كبار السن في العائلة في استخدام التكنولوجيا - مثل إعداد هاتف .)",
-            "english": "Assist an elderly family member with technology (e.g., setting up a phone)",
-            "arabic": "ساعد أحد كبار السن في العائلة في استخدام التكنولوجيا - مثل إعداد هاتف .)"
+            "title_en": "Choose a healthy snack",
+            "title_ar": "اختر وجبة خفيفة صحية",
+            "description_en": "Choose a fruit or vegetables instead of sweets for your snack.",
+            "description_ar": "اختر فاكهة أو خضروات كوجبة خفيفة بدلًا من الحلويات.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Go for a 30-minute walk or play outdoors. ( اذهب للمشي لمدة 30 دقيقة أو العب في الخارج .)",
-            "english": "Go for a 30-minute walk or play outdoors",
-            "arabic": "اذهب للمشي لمدة 30 دقيقة أو العب في الخارج .)"
+            "title_en": "Follow your screen time limit",
+            "title_ar": "التزم بوقت الشاشة",
+            "description_en": "Stay within the screen time limit agreed upon with your family.",
+            "description_ar": "التزم بمدة استخدام الشاشات المتفق عليها مع عائلتك.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Eat a healthy breakfast every morning. ( تناول فطوراً صحياً كل صباح .)",
-            "english": "Eat a healthy breakfast every morning",
-            "arabic": "تناول فطوراً صحياً كل صباح .)"
+            "title_en": "Get enough sleep",
+            "title_ar": "احصل على نوم كافٍ",
+            "description_en": "Sleep for at least eight hours to stay healthy and active.",
+            "description_ar": "احصل على ثماني ساعات نوم على الأقل للمحافظة على صحتك ونشاطك.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Choose a fruit or vegetable as a snack instead of sweets. ( اختر فاكهة أو خضروات كوجبة خفيفة بدلاً من الحلويات .)",
-            "english": "Choose a fruit or vegetable as a snack instead of sweets",
-            "arabic": "اختر فاكهة أو خضروات كوجبة خفيفة بدلاً من الحلويات .)"
+            "title_en": "Prepare a healthy school lunch",
+            "title_ar": "ساعد في تجهيز وجبة مدرسية صحية",
+            "description_en": "Help prepare a healthy lunch to take to school.",
+            "description_ar": "ساعد في تجهيز وجبة غداء صحية لأخذها إلى المدرسة.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Limit screen time to the agreed-upon duration. ( التزم بوقت الشاشة المتفق عليه .)",
-            "english": "Limit screen time to the agreed-upon duration",
-            "arabic": "التزم بوقت الشاشة المتفق عليه .)"
+            "title_en": "Read for 20 minutes",
+            "title_ar": "اقرأ لمدة 20 دقيقة",
+            "description_en": "Read a book or story for at least 20 minutes outside of schoolwork.",
+            "description_ar": "اقرأ كتابًا أو قصة لمدة 20 دقيقة خارج الواجبات المدرسية.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Get at least 8 hours of sleep. ( احصل على 8 ساعات نوم على الأقل .)",
-            "english": "Get at least 8 hours of sleep",
-            "arabic": "احصل على 8 ساعات نوم على الأقل .)"
+            "title_en": "Complete your homework independently",
+            "title_ar": "أنهِ واجباتك دون تذكير",
+            "description_en": "Finish your homework without needing reminders.",
+            "description_ar": "أنهِ واجباتك المدرسية دون الحاجة إلى تذكير.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Help pack a healthy lunch for school. ( ساعد في تجهيز وجبة غداء صحية للمدرسة .)",
-            "english": "Help pack a healthy lunch for school",
-            "arabic": "ساعد في تجهيز وجبة غداء صحية للمدرسة .)"
+            "title_en": "Help your younger sibling with homework",
+            "title_ar": "ساعد أخاك أو أختك في الواجبات",
+            "description_en": "Help your younger sibling understand or complete their homework.",
+            "description_ar": "ساعد أخاك أو أختك الأصغر في فهم أو إنجاز واجباتهم المدرسية.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Read for 20 minutes outside of school assignments. ( اقرأ لمدة 20 دقيقة خارج الواجبات المدرسية .)",
-            "english": "Read for 20 minutes outside of school assignments",
-            "arabic": "اقرأ لمدة 20 دقيقة خارج الواجبات المدرسية .)"
+            "title_en": "Organize your school supplies",
+            "title_ar": "رتّب أدواتك المدرسية",
+            "description_en": "Keep your school supplies clean and organized.",
+            "description_ar": "حافظ على ترتيب ونظافة أدواتك المدرسية.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Complete your homework without being reminded. ( أكمل واجباتك المدرسية دون تذكير .)",
-            "english": "Complete your homework without being reminded",
-            "arabic": "أكمل واجباتك المدرسية دون تذكير .)"
+            "title_en": "Practice neat handwriting",
+            "title_ar": "تدرّب على تحسين خطك",
+            "description_en": "Spend some time practicing clear and neat handwriting.",
+            "description_ar": "اقضِ بعض الوقت في التدرب على الكتابة بخط واضح ومرتب.",
+            "default_points": 10,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help a younger sibling with their homework. ( ساعد أخاً أو أختاً أصغر سناً في واجباتهم المدرسية .)",
-            "english": "Help a younger sibling with their homework",
-            "arabic": "ساعد أخاً أو أختاً أصغر سناً في واجباتهم المدرسية .)"
+            "title_en": "Share something you learned today",
+            "title_ar": "شارك ما تعلمته اليوم",
+            "description_en": "Teach a family member something new you learned today.",
+            "description_ar": "شارك أحد أفراد عائلتك شيئًا جديدًا تعلمته اليوم.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         },
         {
-            "full_text": "Organize your school supplies. ( نظّم لوازمك المدرسية .)",
-            "english": "Organize your school supplies",
-            "arabic": "نظّم لوازمك المدرسية .)"
+            "title_en": "Fold clean laundry",
+            "title_ar": "ساعد في طي الغسيل",
+            "description_en": "Help fold clean laundry neatly.",
+            "description_ar": "ساعد في طي الغسيل النظيف بطريقة مرتبة.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Practice writing neatly. ( تدرب على الكتابة بخط مرتب .)",
-            "english": "Practice writing neatly",
-            "arabic": "تدرب على الكتابة بخط مرتب .)"
+            "title_en": "Put away clean clothes",
+            "title_ar": "رتّب الملابس النظيفة",
+            "description_en": "Help put clean clothes back in their proper place.",
+            "description_ar": "ساعد في إعادة الملابس النظيفة إلى أماكنها المخصصة.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Teach a family member something new you learned today. ( علّم فرداً من العائلة شيئاً جديداً تعلمته اليوم .)",
-            "english": "Teach a family member something new you learned today",
-            "arabic": "علّم فرداً من العائلة شيئاً جديداً تعلمته اليوم .)"
+            "title_en": "Help with grocery shopping",
+            "title_ar": "ساعد في التسوق",
+            "description_en": "Help during grocery shopping by pushing the cart or finding items.",
+            "description_ar": "ساعد أثناء التسوق بدفع العربة أو العثور على المنتجات.",
+            "default_points": 20,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help fold clean laundry. ( ساعد في طي الغسيل النظيف .)",
-            "english": "Help fold clean laundry",
-            "arabic": "ساعد في طي الغسيل النظيف .)"
-        },
-        {
-            "full_text": "Help put away clean clothes. ( ساعد في وضع الملابس النظيفة في مكانها .)",
-            "english": "Help put away clean clothes",
-            "arabic": "ساعد في وضع الملابس النظيفة في مكانها .)"
-        },
-        {
-            "full_text": "Assist with grocery shopping (e.g., pushing the cart, finding items). ( ساعد في التسوق من البقالة - مثل دفع العربة ، العثور على الأصناف .)",
-            "english": "Assist with grocery shopping (e.g., pushing the cart, finding items)",
-            "arabic": "ساعد في التسوق من البقالة - مثل دفع العربة ، العثور على الأصناف .)"
-        },
-        {
-            "full_text": "Help prepare for family gatherings. ( ساعد في التحضير للتجمعات العائلية .)",
-            "english": "Help prepare for family gatherings",
-            "arabic": "ساعد في التحضير للتجمعات العائلية .)"
-        },
-        {
-            "full_text": "Help organize the pantry or kitchen cabinets. ( ساعد في تنظيم خزانة المؤن أو خزائن المطبخ .)",
-            "english": "Help organize the pantry or kitchen cabinets",
-            "arabic": "ساعد في تنظيم خزانة المؤن أو خزائن المطبخ .)"
-        },
-        {
-            "full_text": "Offer to help a parent with a task without being asked. ( اعرض المساعدة على أحد الوالدين في مهمة دون أن يطلب منك .)",
-            "english": "Offer to help a parent with a task without being asked",
-            "arabic": "اعرض المساعدة على أحد الوالدين في مهمة دون أن يطلب منك .)"
+            "title_en": "Organize the pantry",
+            "title_ar": "رتّب خزانة المؤن",
+            "description_en": "Help organize the pantry or kitchen cabinets.",
+            "description_ar": "ساعد في ترتيب خزانة المؤن أو خزائن المطبخ.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         }
     ],
-    "Financial Values": [
+    "FINANCIAL": [
         {
-            "full_text": "Set a savings goal for a toy or book you want to buy. ( حدد هدفاً ادخارياً للعبة أو كتاب تريد شراءه .)",
-            "english": "Set a savings goal for a toy or book you want to buy",
-            "arabic": "حدد هدفاً ادخارياً للعبة أو كتاب تريد شراءه .)"
+            "title_en": "Set a savings goal",
+            "title_ar": "حدد هدفًا للادخار",
+            "description_en": "Choose something you want to buy and set a savings goal to reach it.",
+            "description_ar": "حدد هدفًا ادخاريًا لشراء شيء تريده، مثل لعبة أو كتاب.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help your parents compare prices for a household item before buying. ( ساعد والديك في مقارنة أسعار سلعة منزلية قبل شرائها .)",
-            "english": "Help your parents compare prices for a household item before buying",
-            "arabic": "ساعد والديك في مقارنة أسعار سلعة منزلية قبل شرائها .)"
+            "title_en": "Compare prices before buying",
+            "title_ar": "قارن الأسعار قبل الشراء",
+            "description_en": "Help your parents compare prices before buying a household item.",
+            "description_ar": "ساعد والديك في مقارنة أسعار سلعة قبل شرائها.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Understand the difference between needs and wants. ( افهم الفرق بين الحاجات والرغبات .)",
-            "english": "Understand the difference between needs and wants",
-            "arabic": "افهم الفرق بين الحاجات والرغبات .)"
+            "title_en": "Learn the difference between needs and wants",
+            "title_ar": "تعرّف على الفرق بين الحاجات والرغبات",
+            "description_en": "Discuss the difference between needs and wants with your family.",
+            "description_ar": "تعرّف مع عائلتك على الفرق بين الحاجات والرغبات.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Create a simple budget for your allowance. ( أنشئ ميزانية بسيطة لمصروفك .)",
-            "english": "Create a simple budget for your allowance",
-            "arabic": "أنشئ ميزانية بسيطة لمصروفك .)"
+            "title_en": "Create a simple budget",
+            "title_ar": "أنشئ ميزانية بسيطة",
+            "description_en": "Create a simple budget for your allowance or savings.",
+            "description_ar": "أنشئ ميزانية بسيطة لإدارة مصروفك أو مدخراتك.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Avoid impulse buying for one day. ( تجنب الشراء الاندفاعي ليوم واحد .)",
-            "english": "Avoid impulse buying for one day",
-            "arabic": "تجنب الشراء الاندفاعي ليوم واحد .)"
+            "title_en": "Avoid impulse buying",
+            "title_ar": "تجنب الشراء الاندفاعي",
+            "description_en": "Think carefully before buying something and avoid impulse purchases for one day.",
+            "description_ar": "فكر جيدًا قبل الشراء وتجنب الشراء الاندفاعي لمدة يوم.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help your parents make a grocery list to stick to a budget. ( ساعد والديك في إعداد قائمة مشتريات البقالة للالتزام بالميزانية .)",
-            "english": "Help your parents make a grocery list to stick to a budget",
-            "arabic": "ساعد والديك في إعداد قائمة مشتريات البقالة للالتزام بالميزانية .)"
+            "title_en": "Help prepare a grocery list",
+            "title_ar": "ساعد في إعداد قائمة المشتريات",
+            "description_en": "Help your family prepare a shopping list before going to the store.",
+            "description_ar": "ساعد عائلتك في إعداد قائمة المشتريات قبل التسوق.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Count your savings and update your savings goal. ( احسب مدخراتك وحدث هدفك الادخاري .)",
-            "english": "Count your savings and update your savings goal",
-            "arabic": "احسب مدخراتك وحدث هدفك الادخاري .)"
+            "title_en": "Review your savings",
+            "title_ar": "راجع مدخراتك",
+            "description_en": "Count your savings and see how close you are to your savings goal.",
+            "description_ar": "احسب مدخراتك وتابع مدى تقدمك نحو هدفك الادخاري.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Complete an extra chore to earn additional allowance. ( أكمل مهمة إضافية لكسب مصروف إضافي .)",
-            "english": "Complete an extra chore to earn additional allowance",
-            "arabic": "أكمل مهمة إضافية لكسب مصروف إضافي .)"
+            "title_en": "Earn extra allowance",
+            "title_ar": "اكسب مصروفًا إضافيًا",
+            "description_en": "Complete an extra household task to earn additional allowance.",
+            "description_ar": "أنجز مهمة إضافية في المنزل لكسب مصروف إضافي.",
+            "default_points": 25,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Learn about a job or profession that interests you. ( تعرف على وظيفة أو مهنة تثير اهتمامك .)",
-            "english": "Learn about a job or profession that interests you",
-            "arabic": "تعرف على وظيفة أو مهنة تثير اهتمامك .)"
+            "title_en": "Learn about a career",
+            "title_ar": "تعرّف على مهنة",
+            "description_en": "Learn about a career or profession that interests you.",
+            "description_ar": "تعرّف على مهنة أو وظيفة تثير اهتمامك.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help organize a small family garage sale or clear-out. ( ساعد في تنظيم بيع بسيط لأغراض العائلة أو التخلص من الفائض .)",
-            "english": "Help organize a small family garage sale or clear-out",
-            "arabic": "ساعد في تنظيم بيع بسيط لأغراض العائلة أو التخلص من الفائض .)"
+            "title_en": "Help organize a family sale",
+            "title_ar": "ساعد في تنظيم بيع أغراض العائلة",
+            "description_en": "Help organize a small sale or donate unused family items.",
+            "description_ar": "ساعد في تنظيم بيع بسيط أو فرز الأغراض التي لم تعد العائلة تحتاجها.",
+            "default_points": 25,
+            "age_min": 9,
+            "age_max": 18,
+            "suggested_frequency": "yearly"
         },
         {
-            "full_text": "Learn about the concept of entrepreneurship by discussing a small business idea. ( تعرف على مفهوم ريادة الأعمال بمناقشة فكرة مشروع صغير مع والديك .)",
-            "english": "Learn about the concept of entrepreneurship by discussing a small business idea",
-            "arabic": "تعرف على مفهوم ريادة الأعمال بمناقشة فكرة مشروع صغير مع والديك .)"
+            "title_en": "Explore a business idea",
+            "title_ar": "ناقش فكرة مشروع صغير",
+            "description_en": "Discuss a simple business idea with your parents and learn about entrepreneurship.",
+            "description_ar": "ناقش مع والديك فكرة مشروع صغير وتعرّف على أساسيات ريادة الأعمال.",
+            "default_points": 20,
+            "age_min": 9,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Donate a portion of your allowance to charity (Sadaqah). ( تبرع بجزء من مصروفك للصدقة .)",
-            "english": "Donate a portion of your allowance to charity (Sadaqah)",
-            "arabic": "تبرع بجزء من مصروفك للصدقة .)"
+            "title_en": "Donate part of your allowance",
+            "title_ar": "تصدق بجزء من مصروفك",
+            "description_en": "Donate part of your allowance to someone in need or to a charitable cause.",
+            "description_ar": "تصدق بجزء من مصروفك على محتاج أو جهة خيرية.",
+            "default_points": 20,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help your parents prepare a food basket for a needy family. ( ساعد والديك في إعداد سلة طعام لعائلة محتاجة .)",
-            "english": "Help your parents prepare a food basket for a needy family",
-            "arabic": "ساعد والديك في إعداد سلة طعام لعائلة محتاجة .)"
+            "title_en": "Prepare a food basket for a family in need",
+            "title_ar": "ساعد في إعداد سلة غذائية",
+            "description_en": "Help your parents prepare a food basket for a family in need.",
+            "description_ar": "ساعد والديك في إعداد سلة غذائية لعائلة محتاجة.",
+            "default_points": 25,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Donate old toys or clothes to those less fortunate. ( تبرع بألعاب أو ملابس قديمة للمحتاجين .)",
-            "english": "Donate old toys or clothes to those less fortunate",
-            "arabic": "تبرع بألعاب أو ملابس قديمة للمحتاجين .)"
+            "title_en": "Learn about Waqf",
+            "title_ar": "تعرّف على مفهوم الوقف",
+            "description_en": "Learn what Waqf is and how it benefits the community.",
+            "description_ar": "تعرّف على مفهوم الوقف ودوره في خدمة المجتمع.",
+            "default_points": 20,
+            "age_min": 9,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Learn about the concept of Waqf (endowment) in Islamic history. ( تعرف على مفهوم الوقف في التاريخ الإسلامي .)",
-            "english": "Learn about the concept of Waqf (endowment) in Islamic history",
-            "arabic": "تعرف على مفهوم الوقف في التاريخ الإسلامي .)"
+            "title_en": "Help recycle household items",
+            "title_ar": "ساعد في إعادة التدوير",
+            "description_en": "Help your family recycle items to reduce waste and save resources.",
+            "description_ar": "ساعد عائلتك في إعادة تدوير بعض الأشياء للمحافظة على الموارد.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help your parents recycle items to save resources. ( ساعد والديك في إعادة تدوير الأشياء لتوفير الموارد .)",
-            "english": "Help your parents recycle items to save resources",
-            "arabic": "ساعد والديك في إعادة تدوير الأشياء لتوفير الموارد .)"
+            "title_en": "Repair instead of replacing",
+            "title_ar": "أصلح قبل أن تشتري",
+            "description_en": "Try repairing a broken toy or item before buying a replacement.",
+            "description_ar": "حاول إصلاح لعبة أو غرض مكسور قبل شراء بديل جديد.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Repair a broken toy or item instead of buying a new one. ( أصلح لعبة أو غرضاً مكسوراً بدلاً من شراء جديد .)",
-            "english": "Repair a broken toy or item instead of buying a new one",
-            "arabic": "أصلح لعبة أو غرضاً مكسوراً بدلاً من شراء جديد .)"
+            "title_en": "Borrow a book from the library",
+            "title_ar": "استعر كتابًا من المكتبة",
+            "description_en": "Borrow a book from the library instead of buying one.",
+            "description_ar": "استعر كتابًا من المكتبة بدلًا من شرائه.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Borrow a book from the library instead of buying it. ( استعر كتاباً من المكتبة بدلاً من شرائه .)",
-            "english": "Borrow a book from the library instead of buying it",
-            "arabic": "استعر كتاباً من المكتبة بدلاً من شرائه .)"
+            "title_en": "Plan a budget-friendly family outing",
+            "title_ar": "خطط لنزهة بميزانية مناسبة",
+            "description_en": "Help plan a family outing that is enjoyable and affordable.",
+            "description_ar": "ساعد في التخطيط لنزهة عائلية ممتعة ومناسبة للميزانية.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help plan a family outing that is fun but also budget-friendly . ( ساعد في التخطيط لنزهة عائلية ممتعة ومناسبة للميزانية .)",
-            "english": "Help plan a family outing that is fun but also budget-friendly",
-            "arabic": "ساعد في التخطيط لنزهة عائلية ممتعة ومناسبة للميزانية .)"
+            "title_en": "Learn to count money",
+            "title_ar": "تعلّم عدّ النقود",
+            "description_en": "Practice counting coins and banknotes correctly.",
+            "description_ar": "تدرّب على عد العملات المعدنية والأوراق النقدية بشكل صحيح.",
+            "default_points": 15,
+            "age_min": 5,
+            "age_max": 12,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Learn to count money (coins and banknotes). ( تعلم عد النقود - العملات المعدنية والورقية .)",
-            "english": "Learn to count money (coins and banknotes)",
-            "arabic": "تعلم عد النقود - العملات المعدنية والورقية .)"
+            "title_en": "Learn how an ATM works",
+            "title_ar": "تعرّف على عمل جهاز الصراف الآلي",
+            "description_en": "Learn what an ATM is and how it works with your parents' guidance.",
+            "description_ar": "تعرّف على جهاز الصراف الآلي وكيفية عمله بمساعدة والديك.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Understand what an ATM is and how it works (with parental explanation). ( افهم ما هو جهاز الصراف الآلي وكيف يعمل - بشرح الوالدين .)",
-            "english": "Understand what an ATM is and how it works (with parental explanation)",
-            "arabic": "افهم ما هو جهاز الصراف الآلي وكيف يعمل - بشرح الوالدين .)"
+            "title_en": "Learn about payment methods",
+            "title_ar": "تعرّف على وسائل الدفع",
+            "description_en": "Learn about cash, bank cards, and digital payment methods.",
+            "description_ar": "تعرّف على طرق الدفع المختلفة مثل النقد والبطاقات والدفع الرقمي.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Learn about different payment methods (cash, card, digital). ( تعرف على طرق الدفع المختلفة - نقداً ، بطاقة ، رقمي .)",
-            "english": "Learn about different payment methods (cash, card, digital)",
-            "arabic": "تعرف على طرق الدفع المختلفة - نقداً ، بطاقة ، رقمي .)"
+            "title_en": "Help organize receipts",
+            "title_ar": "ساعد في ترتيب الإيصالات",
+            "description_en": "Help your parents organize receipts or household bills.",
+            "description_ar": "ساعد والديك في ترتيب الإيصالات أو الفواتير المنزلية.",
+            "default_points": 15,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Help your parents sort receipts or bills. ( ساعد والديك في فرز الإيصالات أو الفواتير .)",
-            "english": "Help your parents sort receipts or bills",
-            "arabic": "ساعد والديك في فرز الإيصالات أو الفواتير .)"
+            "title_en": "Create a simple product or service",
+            "title_ar": "ابتكر منتجًا أو خدمة بسيطة",
+            "description_en": "Create a simple product or service that you can offer to your family.",
+            "description_ar": "ابتكر منتجًا أو خدمة بسيطة يمكنك تقديمها لأفراد عائلتك.",
+            "default_points": 30,
+            "age_min": 9,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Create a simple product or service to offer to family members. ( ابتكر منتجاً أو خدمة بسيطة لتقديمها لأفراد العائلة .)",
-            "english": "Create a simple product or service to offer to family members",
-            "arabic": "ابتكر منتجاً أو خدمة بسيطة لتقديمها لأفراد العائلة .)"
+            "title_en": "Create a dream board",
+            "title_ar": "أنشئ لوحة لأهدافك",
+            "description_en": "Create a dream board that includes your future personal and financial goals.",
+            "description_ar": "أنشئ لوحة لأهدافك المستقبلية، بما فيها أهدافك المالية.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "yearly"
         },
         {
-            "full_text": "Create a simple \"dream board\" for your future goals (including financial ones). ( أنشئ \" لوحة أحلام \" بسيطة لأهدافك المستقبلية - بما في ذلك الأهداف المالية .)",
-            "english": "Create a simple \"dream board\" for your future goals (including financial ones)",
-            "arabic": "أنشئ \" لوحة أحلام \" بسيطة لأهدافك المستقبلية - بما في ذلك الأهداف المالية .)"
+            "title_en": "Learn about the cost of living",
+            "title_ar": "تعرّف على تكلفة المعيشة",
+            "description_en": "Talk with your parents about the cost of living and everyday expenses.",
+            "description_ar": "ناقش مع والديك تكلفة المعيشة والمصاريف اليومية.",
+            "default_points": 20,
+            "age_min": 10,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Discuss with your parents about the cost of living in Saudi Arabia. ( ناقش مع والديك تكلفة المعيشة في المملكة العربية السعودية .)",
-            "english": "Discuss with your parents about the cost of living in Saudi Arabia",
-            "arabic": "ناقش مع والديك تكلفة المعيشة في المملكة العربية السعودية .)"
+            "title_en": "Read product labels",
+            "title_ar": "اقرأ ملصقات المنتجات",
+            "description_en": "Read product labels to learn about ingredients, origin, or important information.",
+            "description_ar": "اقرأ ملصقات المنتجات للتعرف على المكونات أو بلد المنشأ أو المعلومات المهمة.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Read product labels to understand ingredients or origin. ( اقرأ ملصقات المنتجات لفهم المكونات أو المنشأ .)",
-            "english": "Read product labels to understand ingredients or origin",
-            "arabic": "اقرأ ملصقات المنتجات لفهم المكونات أو المنشأ .)"
+            "title_en": "Understand advertising",
+            "title_ar": "افهم الفرق بين الإعلان والواقع",
+            "description_en": "Learn the difference between advertising messages and factual information.",
+            "description_ar": "تعرّف على الفرق بين الرسائل الإعلانية والمعلومات الحقيقية.",
+            "default_points": 20,
+            "age_min": 9,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Understand the difference between advertising and factual information . ( افهم الفرق بين الإعلان والمعلومات الواقعية .)",
-            "english": "Understand the difference between advertising and factual information",
-            "arabic": "افهم الفرق بين الإعلان والمعلومات الواقعية .)"
+            "title_en": "Recognize marketing tricks",
+            "title_ar": "تعرّف على أساليب التسويق",
+            "description_en": "Learn how marketing techniques encourage people to buy more.",
+            "description_ar": "تعرّف على بعض أساليب التسويق التي تشجع الناس على شراء المزيد.",
+            "default_points": 20,
+            "age_min": 10,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Be aware of marketing tricks designed to make you buy more. ( كن واعياً لحيل التسويق المصممة لجعلك تشتري المزيد .)",
-            "english": "Be aware of marketing tricks designed to make you buy more",
-            "arabic": "كن واعياً لحيل التسويق المصممة لجعلك تشتري المزيد .)"
+            "title_en": "Check food expiry dates",
+            "title_ar": "تحقق من تاريخ انتهاء المنتجات",
+            "description_en": "Help your parents check the expiry dates of food before using or buying it.",
+            "description_ar": "ساعد والديك في التحقق من تواريخ انتهاء صلاحية المنتجات الغذائية.",
+            "default_points": 15,
+            "age_min": 7,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Help your parents check the expiry dates of food items. ( ساعد والديك في التحقق من تواريخ انتهاء صلاحية المواد الغذائية .)",
-            "english": "Help your parents check the expiry dates of food items",
-            "arabic": "ساعد والديك في التحقق من تواريخ انتهاء صلاحية المواد الغذائية .)"
+            "title_en": "Avoid buying because of peer pressure",
+            "title_ar": "لا تشترِ لمجرد أن الآخرين اشتروا",
+            "description_en": "Think before buying something just because your friends have it.",
+            "description_ar": "فكر قبل شراء شيء لمجرد أن أصدقاءك يمتلكونه.",
+            "default_points": 20,
+            "age_min": 8,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Avoid buying things just because your friends have them. ( تجنب شراء الأشياء لمجرد أن أصدقائك يمتلكونها .)",
-            "english": "Avoid buying things just because your friends have them",
-            "arabic": "تجنب شراء الأشياء لمجرد أن أصدقائك يمتلكونها .)"
+            "title_en": "Learn about online shopping safety",
+            "title_ar": "تعرّف على أمان التسوق الإلكتروني",
+            "description_en": "Talk with your parents about safe online shopping practices.",
+            "description_ar": "ناقش مع والديك أساسيات التسوق الإلكتروني الآمن.",
+            "default_points": 20,
+            "age_min": 9,
+            "age_max": 18,
+            "suggested_frequency": "monthly"
         },
         {
-            "full_text": "Discuss with your parents about online shopping safety. ( ناقش مع والديك حول سلامة التسوق عبر الإنترنت .)",
-            "english": "Discuss with your parents about online shopping safety",
-            "arabic": "ناقش مع والديك حول سلامة التسوق عبر الإنترنت .)"
+            "title_en": "Save electricity at home",
+            "title_ar": "وفّر استهلاك الكهرباء",
+            "description_en": "Find simple ways to reduce electricity use at home throughout the day.",
+            "description_ar": "ابحث عن طرق بسيطة لتقليل استهلاك الكهرباء في المنزل خلال اليوم.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Turn off lights and electronics when not in use to save electricity. ( أطفئ الأنوار والأجهزة الإلكترونية عند عدم الاستخدام لتوفير الكهرباء .)",
-            "english": "Turn off lights and electronics when not in use to save electricity",
-            "arabic": "أطفئ الأنوار والأجهزة الإلكترونية عند عدم الاستخدام لتوفير الكهرباء .)"
+            "title_en": "Save water",
+            "title_ar": "وفّر استهلاك الماء",
+            "description_en": "Use water responsibly while washing your hands or taking a shower.",
+            "description_ar": "استخدم الماء بمسؤولية أثناء غسل اليدين أو الاستحمام.",
+            "default_points": 15,
+            "age_min": 6,
+            "age_max": 18,
+            "suggested_frequency": "weekly"
         },
         {
-            "full_text": "Conserve water while showering or washing hands. ( اقتصد في استخدام الماء أثناء الاستحمام أو غسل اليدين .)",
-            "english": "Conserve water while showering or washing hands",
-            "arabic": "اقتصد في استخدام الماء أثناء الاستحمام أو غسل اليدين .)"
-        },
-        {
-            "full_text": "Don't leave the refrigerator door open for too long. ( لا تترك باب الثلاجة مفتوحاً لفترة طويلة .)",
-            "english": "Don't leave the refrigerator door open for too long",
-            "arabic": "لا تترك باب الثلاجة مفتوحاً لفترة طويلة .)"
-        },
-        {
-            "full_text": "Help maintain household items to extend their lifespan. ( ساعد في صيانة الأدوات المنزلية لإطالة عمرها الافتراضي .)",
-            "english": "Help maintain household items to extend their lifespan",
-            "arabic": "ساعد في صيانة الأدوات المنزلية لإطالة عمرها الافتراضي .)"
+            "title_en": "Keep the refrigerator closed",
+            "title_ar": "لا تترك باب الثلاجة مفتوحًا",
+            "description_en": "Close the refrigerator door quickly to avoid wasting electricity.",
+            "description_ar": "احرص على إغلاق باب الثلاجة بسرعة لتوفير الطاقة.",
+            "default_points": 10,
+            "age_min": 5,
+            "age_max": 18,
+            "suggested_frequency": "daily"
         }
     ]
 }
