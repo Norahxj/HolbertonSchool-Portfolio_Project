@@ -24,7 +24,6 @@ class ChildListResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
     @api.expect(child_model, validate=True)
-    @api.marshal_with(child_with_access_code_model, code=201)
     def post(self):
         parent_id = get_jwt_identity()
         error = require_parent()

@@ -9,7 +9,7 @@ def get_child_models(api):
 
     child_update_model = api.model("ChildUpdate", {
         "name": fields.String(required=False, description="Child name"),
-        "birth_date": fields.String(required=True, description="Child birth date in YYYY-MM-DD format"),
+        "birth_date": fields.String(required=False, description="Child birth date in YYYY-MM-DD format"),
         "phone": fields.String(required=False, description="Optional child phone number")
     })
 
