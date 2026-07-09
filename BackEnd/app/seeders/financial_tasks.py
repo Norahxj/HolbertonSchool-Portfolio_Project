@@ -7,7 +7,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Compare prices before buying",
@@ -17,7 +17,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn the difference between needs and wants",
@@ -27,7 +27,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Create a simple budget",
@@ -37,7 +37,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Avoid impulse buying",
@@ -47,7 +47,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help prepare a grocery list",
@@ -57,7 +57,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-            "suggested_frequency": "weekly"
+            "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Review your savings",
@@ -67,7 +67,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Earn extra allowance",
@@ -77,7 +77,7 @@ FINANCIAL_TASKS = [
         "default_points": 25,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Learn about a career",
@@ -87,7 +87,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Help organize a family sale",
@@ -97,7 +97,7 @@ FINANCIAL_TASKS = [
         "default_points": 25,
         "age_min": 9,
         "age_max": 18,
-        "suggested_frequency": "yearly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Explore a business idea",
@@ -107,7 +107,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 9,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Donate part of your allowance",
@@ -117,7 +117,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Prepare a food basket for a family in need",
@@ -127,7 +127,7 @@ FINANCIAL_TASKS = [
         "default_points": 25,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about Waqf",
@@ -137,7 +137,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 9,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Help recycle household items",
@@ -147,7 +147,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Repair instead of replacing",
@@ -157,7 +157,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Borrow a book from the library",
@@ -167,7 +167,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Plan a budget-friendly family outing",
@@ -177,7 +177,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn to count money",
@@ -187,7 +187,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 12,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn how an ATM works",
@@ -197,7 +197,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about payment methods",
@@ -207,7 +207,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Help organize receipts",
@@ -217,7 +217,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Create a simple product or service",
@@ -227,7 +227,7 @@ FINANCIAL_TASKS = [
         "default_points": 30,
         "age_min": 9,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Create a dream board",
@@ -237,7 +237,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "yearly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about the cost of living",
@@ -247,7 +247,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 10,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Read product labels",
@@ -257,7 +257,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Understand advertising",
@@ -267,7 +267,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 9,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Recognize marketing tricks",
@@ -277,7 +277,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 10,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Check food expiry dates",
@@ -287,7 +287,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Avoid buying because of peer pressure",
@@ -297,7 +297,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about online shopping safety",
@@ -307,7 +307,7 @@ FINANCIAL_TASKS = [
         "default_points": 20,
         "age_min": 9,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Save electricity at home",
@@ -317,7 +317,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Save water",
@@ -327,7 +327,7 @@ FINANCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Keep the refrigerator closed",

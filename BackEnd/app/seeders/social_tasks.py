@@ -7,7 +7,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 10,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Listen to a grandparent's childhood story",
@@ -17,7 +17,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Help an elderly family member",
@@ -27,7 +27,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Greet everyone with Salam",
@@ -67,7 +67,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Welcome guests warmly",
@@ -77,7 +77,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help carry groceries",
@@ -87,7 +87,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Save leftover food properly",
@@ -97,7 +97,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Wear traditional clothing on special occasions",
@@ -107,7 +107,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "yearly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Help prepare a traditional Saudi meal",
@@ -117,7 +117,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about traditional Saudi clothing",
@@ -127,7 +127,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "yearly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about your family's history",
@@ -137,7 +137,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Use polite words throughout the day",
@@ -157,7 +157,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Share a traditional poem or nasheed",
@@ -167,7 +167,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Greet your neighbor politely",
@@ -177,7 +177,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Share food with a neighbor",
@@ -187,7 +187,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Remove litter from a public place",
@@ -197,7 +197,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Respect your neighbors' comfort",
@@ -217,7 +217,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Speak kindly about others",
@@ -227,7 +227,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Read about the founding of Saudi Arabia",
@@ -237,7 +237,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about a Saudi historical figure",
@@ -247,7 +247,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about Saudi wildlife",
@@ -257,7 +257,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Watch an educational video about Saudi Arabia",
@@ -267,7 +267,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Respect the food you are served",
@@ -327,7 +327,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Learn about a Saudi cultural tradition",
@@ -337,7 +337,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Plant a seed or care for a plant",
@@ -347,7 +347,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Save energy by turning off lights",
@@ -367,7 +367,7 @@ SOCIAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Clean up after a family outing",
@@ -377,7 +377,7 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Tell the truth",
@@ -407,7 +407,7 @@ SOCIAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Organize your belongings",
@@ -437,6 +437,6 @@ SOCIAL_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     }
 ]

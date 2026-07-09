@@ -77,7 +77,7 @@ MORAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Clean and organize your shoes",
@@ -87,7 +87,7 @@ MORAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Put away your toys",
@@ -117,7 +117,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Keep your room tidy",
@@ -137,7 +137,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Set the dining table",
@@ -167,7 +167,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Put away groceries",
@@ -177,7 +177,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Prepare a simple snack or drink",
@@ -187,7 +187,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Take out the kitchen trash",
@@ -197,7 +197,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Tidy up the living room",
@@ -207,7 +207,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Dust common areas",
@@ -217,7 +217,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Care for indoor plants",
@@ -227,7 +227,7 @@ MORAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Sweep or vacuum the living room",
@@ -237,7 +237,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Organize shared toys",
@@ -277,7 +277,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Take care of your pet",
@@ -297,7 +297,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help wash the family car",
@@ -307,7 +307,7 @@ MORAL_TASKS = [
         "default_points": 25,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Bring in the laundry",
@@ -317,7 +317,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help your younger sibling get dressed",
@@ -327,7 +327,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Read a story to your younger sibling",
@@ -337,7 +337,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help with cooking preparations",
@@ -347,7 +347,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help an elderly family member with technology",
@@ -357,7 +357,7 @@ MORAL_TASKS = [
         "default_points": 25,
         "age_min": 9,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Walk or play outdoors",
@@ -417,7 +417,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Read for at least 15–20 minutes outside of schoolwork",
@@ -447,7 +447,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Organize your school supplies",
@@ -457,7 +457,7 @@ MORAL_TASKS = [
         "default_points": 10,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Practice neat handwriting",
@@ -467,7 +467,7 @@ MORAL_TASKS = [
         "default_points": 10,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Share one thing you learned today",
@@ -487,7 +487,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Put away clean clothes",
@@ -497,7 +497,7 @@ MORAL_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help with grocery shopping",
@@ -507,7 +507,7 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Organize the pantry",
@@ -517,6 +517,6 @@ MORAL_TASKS = [
         "default_points": 20,
         "age_min": 8,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     }
 ]

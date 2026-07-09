@@ -17,7 +17,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Respect the Adhan",
@@ -47,7 +47,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Learn the story of a Quran Surah",
@@ -57,7 +57,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Learn about three Prophets",
@@ -67,7 +67,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Use kind words",
@@ -87,7 +87,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help someone in need",
@@ -97,7 +97,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Be kind to animals",
@@ -107,7 +107,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Visit or check on a sick person",
@@ -117,7 +117,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Always tell the truth",
@@ -137,7 +137,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Practice fasting during Ramadan",
@@ -147,7 +147,7 @@ RELIGIOUS_TASKS = [
         "default_points": 30,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "yearly"
+        "suggested_frequency": "ONCE"
     },
     {
         "title_en": "Give a small charity",
@@ -157,7 +157,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Donate toys or clothes",
@@ -167,7 +167,7 @@ RELIGIOUS_TASKS = [
         "default_points": 25,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Be kind to your siblings",
@@ -177,7 +177,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Visit your relatives",
@@ -187,7 +187,7 @@ RELIGIOUS_TASKS = [
         "default_points": 25,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "monthly"
+        "suggested_frequency": "MONTHLY"
     },
     {
         "title_en": "Help your parents without being asked",
@@ -197,7 +197,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Listen to your elders",
@@ -207,7 +207,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 6,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Help prepare for Eid",
@@ -217,7 +217,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "yearly"
+        "suggested_frequency": "ONCE"
     },
     {
         "title_en": "Control your anger",
@@ -227,7 +227,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 7,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Thank Allah for His blessings",
@@ -257,7 +257,7 @@ RELIGIOUS_TASKS = [
         "default_points": 20,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Water plants as an act of kindness",
@@ -267,7 +267,7 @@ RELIGIOUS_TASKS = [
         "default_points": 15,
         "age_min": 5,
         "age_max": 18,
-        "suggested_frequency": "weekly"
+        "suggested_frequency": "WEEKLY"
     },
     {
         "title_en": "Keep your surroundings clean",
