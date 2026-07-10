@@ -6,6 +6,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../child/screens/child_profile_screen.dart';
 import 'add_child_screen.dart';
+import 'more_settings_screen.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
@@ -434,15 +435,34 @@ class _BottomNavBar extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: const [
-                    _NavItem(icon: Icons.more_horiz, label: 'المزيد'),
-                    _NavItem(icon: Icons.favorite_border, label: 'الأمنيات'),
-                    SizedBox(width: 56),
-                    _NavItem(
+                  children: [
+                    GestureDetector(
+                      // TODO: This navigation is temporary until the real
+                      // bottom navigation system (with tab switching) is
+                      // finalized.
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MoreSettingsScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.more_horiz,
+                        label: 'المزيد',
+                      ),
+                    ),
+                    const _NavItem(
+                      icon: Icons.favorite_border,
+                      label: 'الأمنيات',
+                    ),
+                    const SizedBox(width: 56),
+                    const _NavItem(
                       icon: Icons.card_giftcard_outlined,
                       label: 'المكافآت',
                     ),
-                    _NavItem(
+                    const _NavItem(
                       icon: Icons.list_alt,
                       label: 'المهام',
                       badgeCount: 2,
