@@ -36,19 +36,13 @@ authorizations = {
 
 def create_app():
     app = Flask(__name__)
-
-    @api.errorhandler(NoAuthorizationError)
-    def handle_missing_authorization(error):
-        return {"error": "Authorization token is required"}, 401
     
     CORS(
-    app,
-    resources={r"/api/*": {"origins": "*"}},
-    supports_credentials=True,
-)
-
+        app,
+        resources={r"/api/*": {"origins": "*"}},
+        supports_credentials=True,
+    )
     app.config.from_object(Config)
-
     app.config["JWT_HEADER_TYPE"] = ""
 
     db.init_app(app)
@@ -89,7 +83,10 @@ def create_app():
         doc="/swagger",
         authorizations=authorizations
     )
-    
+    @api.errorhandler(NoAuthorizationError)
+    def handle_missing_authorization(error):
+        return {"error": "Authorization token is required"}, 401
+
 
     api.add_namespace(auth_ns, path="/api/auth")
     api.add_namespace(user_ns, path="/api/users")
