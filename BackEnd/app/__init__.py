@@ -7,7 +7,7 @@ from flask_cors import CORS
 from flask_restx import Api
 from app.extensions import db, jwt, bcrypt
 from app.config import Config
-
+from flask_jwt_extended.exceptions import NoAuthorizationError
 from app.routes.auth_routes import api as auth_ns
 from app.routes.user_routes import api as user_ns
 from app.routes.child_routes import api as child_ns
@@ -85,6 +85,9 @@ def create_app():
         doc="/swagger",
         authorizations=authorizations
     )
+    @api.errorhandler(NoAuthorizationError)
+    def handle_missing_authorization(error):
+        return {"error": "Authorization token is required"}, 401
 
     api.add_namespace(auth_ns, path="/api/auth")
     api.add_namespace(user_ns, path="/api/users")
