@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
+import 'add_reward_screen.dart';
 
 // Reward Management screen (Screen 15).
 //
@@ -292,8 +293,10 @@ class _AddRewardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to the Add New Reward screen (Screen 16) once it
-        // is built.
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddRewardScreen()),
+        );
       },
       child: Container(
         height: 56,
