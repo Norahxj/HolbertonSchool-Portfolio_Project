@@ -7,6 +7,7 @@ import '../../../core/widgets/screen_background.dart';
 import '../../child/screens/child_profile_screen.dart';
 import 'add_child_screen.dart';
 import 'more_settings_screen.dart';
+import 'reward_management_screen.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
@@ -458,9 +459,22 @@ class _BottomNavBar extends StatelessWidget {
                       label: 'الأمنيات',
                     ),
                     const SizedBox(width: 56),
-                    const _NavItem(
-                      icon: Icons.card_giftcard_outlined,
-                      label: 'المكافآت',
+                    GestureDetector(
+                      // TODO: This navigation is temporary until the real
+                      // bottom navigation system (with tab switching) is
+                      // finalized.
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RewardManagementScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.card_giftcard_outlined,
+                        label: 'المكافآت',
+                      ),
                     ),
                     const _NavItem(
                       icon: Icons.list_alt,
