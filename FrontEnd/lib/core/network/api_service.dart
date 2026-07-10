@@ -18,4 +18,16 @@ abstract class ApiService {
   Future<HttpResponse<dynamic>> register(
     @Body() Map<String, dynamic> body,
   );
+
+
+  @POST('/auth/refresh')
+  Future<HttpResponse<dynamic>> refreshToken(
+    @Body() Map<String, dynamic> body,
+  );
+
+
+  @POST('/auth/logout')
+  Future<HttpResponse<dynamic>> logout(
+    @Body() Map<String, dynamic> body,
+  );
 }

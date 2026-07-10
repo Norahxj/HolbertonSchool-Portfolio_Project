@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
+  final bool isLoading = false;
   final VoidCallback onLanguageToggle;
 
   const AuthScreen({
@@ -27,6 +28,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool isSignInSelected = true;
+  bool isLoading = false;
   String guardianType = 'mother';
 
   final TextEditingController emailController = TextEditingController();
@@ -89,6 +91,10 @@ String? confirmPasswordErrorText;
   }
 
   Future<void> _login() async {
+    setState(() {
+     isLoading = true;
+    });
+  
   try {
     final response = await _authApiService.login(
       email: emailController.text.trim(),
@@ -96,6 +102,11 @@ String? confirmPasswordErrorText;
     );
 
     if (response.statusCode == 200) {
+      await _authApiService.saveTokens(
+        accessToken: response.data['access_token'],
+        refreshToken: response.data['refresh_token'],
+      );
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Login Success")),
       );
@@ -129,13 +140,19 @@ String? confirmPasswordErrorText;
         loginPasswordErrorText = message;
       });
       return;
-    }
+    } 
+    } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
-  }
+}
 
 
   Future<void> _register() async {
-  
+    setState(() {
+      isLoading = true;
+    });
   try {
     final response = await _authApiService.register(
       firstName: firstNameController.text.trim(),
@@ -147,6 +164,11 @@ String? confirmPasswordErrorText;
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      await _authApiService.saveTokens(
+          accessToken: response.data['access_token'],
+          refreshToken: response.data['refresh_token'],
+      );
+      
       if (registerPasswordController.text != confirmPasswordController.text) {
         setState(() {
           confirmPasswordErrorText = "Passwords do not match";
@@ -185,7 +207,8 @@ String? confirmPasswordErrorText;
       
     if (e.response?.statusCode == 409) {
         final message = e.response?.data["error"]?.toString();
-
+      
+      debugPrint(message);
         setState(() {
       if (message == "Email already registered") {
         registerEmailErrorText = message;
@@ -203,8 +226,13 @@ String? confirmPasswordErrorText;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Server Error")),
     );
+    } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
-}
+  }
+
     void _handleBack() {
   if (isSignInSelected) {
     Navigator.pop(context);
@@ -359,6 +387,7 @@ String? confirmPasswordErrorText;
         AppButton(
           text: isArabic ? 'تسجيل الدخول' : 'Sign In',
           onPressed: _handleMainButton,
+          isLoading: isLoading,
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -447,6 +476,7 @@ String? confirmPasswordErrorText;
         AppButton(
           text: isArabic ? 'التالي' : 'Next',
           onPressed: _handleMainButton,
+          isLoading: isLoading,
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

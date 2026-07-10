@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/auth_api_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/constants/app_colors.dart';
 import 'features/onboarding/screens/welcome_screen.dart';
+import 'features/parent/screens/parent_dashboard_screen.dart';
 
 class AsalahApp extends StatefulWidget {
   const AsalahApp({super.key});
@@ -11,7 +13,25 @@ class AsalahApp extends StatefulWidget {
 }
 
 class _AsalahAppState extends State<AsalahApp> {
+  bool _isLoading = true;
+  bool _isLoggedIn = false;
+
   Locale _locale = const Locale('ar');
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLogin();
+  }
+
+  Future<void> _checkLogin() async {
+    final isLoggedIn = await AuthApiService().isLoggedIn();
+
+    setState(() {
+      _isLoggedIn = isLoggedIn;
+      _isLoading = false;
+    });
+  }
 
   void _toggleLanguage() {
     setState(() {
@@ -64,13 +84,22 @@ class _AsalahAppState extends State<AsalahApp> {
           },
         );
       },
-      home: Directionality(
-        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-        child: WelcomeScreen(
-          isArabic: isArabic,
-          onLanguageToggle: _toggleLanguage,
+      home: _isLoading
+    ? const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
         ),
-      ),
+      )
+    : Directionality(
+        textDirection:
+            isArabic ? TextDirection.rtl : TextDirection.ltr,
+        child: _isLoggedIn
+            ? const ParentDashboardScreen()
+            : WelcomeScreen(
+                isArabic: isArabic,
+                onLanguageToggle: _toggleLanguage,
+            ),
+    ),
     );
   }
 }
