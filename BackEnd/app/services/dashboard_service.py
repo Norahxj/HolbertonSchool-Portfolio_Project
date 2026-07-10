@@ -1,7 +1,10 @@
 from datetime import date, timedelta
+
 from app.repositories.user_repository import UserRepository
 from app.repositories.child_repository import ChildRepository
-from app.repositories.task_assignment_repository import TaskAssignmentRepository
+from app.repositories.task_assignment_repository import (
+    TaskAssignmentRepository
+)
 
 
 class DashboardService:
@@ -12,13 +15,14 @@ class DashboardService:
         self.user_repository = UserRepository()
 
     def get_parent_dashboard(self, parent_id):
-        guardian = self.user_repository.get_by_id(parent_id)
-        if not guardian:
-            return None
-        children = self.child_repository.get_children_by_guardian(guardian)
+        parent = self.user_repository.get_user_by_id(parent_id)
+
+        if not parent:
+            return None, "parent_not_found"
+
+        children = self.child_repository.get_children_by_guardian(parent)
 
         today = date.today()
-
         days_since_sunday = (today.weekday() + 1) % 7
 
         week_start = today - timedelta(days=days_since_sunday)
@@ -27,44 +31,67 @@ class DashboardService:
         dashboard = []
 
         for child in children:
-
-            assignments = self.assignment_repository.get_child_assignments_between_dates(
-                child.id,
-                week_start,
-                week_end
+            assignments = (
+                self.assignment_repository
+                .get_child_assignments_between_dates(
+                    child.id,
+                    week_start,
+                    week_end
+                )
             )
 
-            total = len(assignments)
+            total_tasks = len(assignments)
 
-            approved = sum(
+            approved_tasks = sum(
                 1
                 for assignment in assignments
                 if assignment.status == "APPROVED"
             )
 
-            pending_review = sum(
+            pending_review_tasks = sum(
                 1
                 for assignment in assignments
                 if assignment.status == "PENDING_REVIEW"
             )
 
-            remaining = total - approved - pending_review
+            pending_tasks = sum(
+                1
+                for assignment in assignments
+                if assignment.status == "PENDING"
+            )
 
-            progress = 0
+            rejected_tasks = sum(
+                1
+                for assignment in assignments
+                if assignment.status == "REJECTED"
+            )
 
-            if total > 0:
-                progress = round((approved / total) * 100, 1)
+            completed_tasks = approved_tasks
+
+            remaining_tasks = total_tasks - approved_tasks
+
+            if total_tasks == 0:
+                progress_percentage = 0
+            else:
+                progress_percentage = round(
+                    (approved_tasks / total_tasks) * 100,
+                    1
+                )
 
             dashboard.append({
                 "child_id": str(child.id),
                 "child_name": child.name,
-                "week_start": week_start.isoformat(),
-                "week_end": week_end.isoformat(),
-                "progress_percentage": progress,
-                "completed_tasks": approved,
-                "pending_review_tasks": pending_review,
-                "remaining_tasks": remaining,
-                "total_tasks": total
+                "child_age": child.age,
+                "week_start": week_start,
+                "week_end": week_end,
+                "progress_percentage": progress_percentage,
+                "completed_tasks": completed_tasks,
+                "approved_tasks": approved_tasks,
+                "pending_review_tasks": pending_review_tasks,
+                "pending_tasks": pending_tasks,
+                "rejected_tasks": rejected_tasks,
+                "remaining_tasks": remaining_tasks,
+                "total_tasks": total_tasks
             })
 
-        return dashboard
+        return dashboard, None
