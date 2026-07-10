@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../core/network/api_constants.dart';
 import '../core/network/dio_factory.dart';
 
 class AuthApiService {
@@ -9,11 +10,8 @@ class AuthApiService {
     required String password,
   }) async {
     return await _dio.post(
-      '/auth/login',
-      data: {
-        'email': email,
-        'password': password,
-      },
+      ApiConstants.login,
+      data: {'email': email, 'password': password},
     );
   }
 
@@ -26,7 +24,7 @@ class AuthApiService {
     required String guardianType,
   }) async {
     return await _dio.post(
-      '/auth/register',
+      ApiConstants.register,
       data: {
         'first_name': firstName,
         'last_name': lastName,
