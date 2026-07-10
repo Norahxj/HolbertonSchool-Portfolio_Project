@@ -6,8 +6,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../widgets/parent_gender_toggle.dart';
-import '../widgets/phone_input_field.dart';
+import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
 import '../../../services/auth_api_service.dart';
 import '../../parent/screens/parent_dashboard_screen.dart';
 import 'package:dio/dio.dart';
@@ -40,17 +39,21 @@ class _AuthScreenState extends State<AuthScreen> {
       TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  
-  String? emailErrorText;
-  String? passwordErrorText;
-  String? firstNameErrorText;
-  String? familyNameErrorText;
-  String? registerEmailErrorText;
-  String? phoneErrorText;
+ 
+// Login errors
+String? loginEmailErrorText;
+String? loginPasswordErrorText;
+
+// Register errors
+String? firstNameErrorText;
+String? familyNameErrorText;
+String? registerEmailErrorText;
+String? phoneErrorText;
+String? registerPasswordErrorText;
+String? confirmPasswordErrorText;
   
   
   final AuthApiService _authApiService = AuthApiService();
-
 
 
   @override
@@ -67,88 +70,147 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _handleMainButton() async {
-    try {
-      if (isSignInSelected) {
-        final response = await _authApiService.login(
-          email: emailController.text.trim(),
-          password: passwordController.text,
-        );
-      
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Login Success")),
-          );
-          print("GOING TO DASHBOARD");
-          
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const ParentDashboardScreen(),
-            ),
-          );
-        }
-      } else {
-        if (registerPasswordController.text != confirmPasswordController.text) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Passwords do not match"),
-            ),
-          );
-          return;
-        }
+    setState(() {
+      firstNameErrorText = null;
+      familyNameErrorText = null;
+      registerEmailErrorText = null;
+      registerPasswordErrorText = null;
+      phoneErrorText = null;
+      loginEmailErrorText = null;
+      loginPasswordErrorText = null;
+      confirmPasswordErrorText = null;
+    });
+    
+    if (isSignInSelected) {
+      await _login();
+    } else {
+      await _register();
+    }
+  }
 
-        final response = await _authApiService.register(
-          firstName: firstNameController.text.trim(),
-          lastName: familyNameController.text.trim(),
-          phone: phoneController.text.trim(),
-          email: registerEmailController.text.trim(),
-          password: registerPasswordController.text,
-          guardianType: guardianType,
-        );
+  Future<void> _login() async {
+  try {
+    final response = await _authApiService.login(
+      email: emailController.text.trim(),
+      password: passwordController.text,
+    );
 
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Register Success"),
-            ),
-          );
-
-          setState(() {
-            isSignInSelected = true;
-          });
-        }
-      }
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 400) {
-        final errors = e.response?.data["errors"] as Map<String, dynamic>?;
-
-
-        if (errors != null) {
-          setState(() {
-            emailErrorText = errors['email']?.join(', ');
-            passwordErrorText = errors['password']?.join(', ');
-            firstNameErrorText = errors['first_name']?.join(', ');
-            familyNameErrorText = errors['last_name']?.join(', ');
-            registerEmailErrorText = errors['email']?.join(', ');
-            phoneErrorText = errors['phone']?.join(', ');
-          });
-          return;
-        }
-      }
-      
+    if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Server Error")),
+        const SnackBar(content: Text("Login Success")),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const ParentDashboardScreen(),
+        ),
       );
     }
-  }
+  } on DioException catch (e) {
+    // Handle login errors
+    if (e.response?.statusCode == 400) {
+      final errors = e.response?.data["errors"] as Map<String, dynamic>?;
 
-  void _handleBack() {
-    if (isSignInSelected) {
-      Navigator.pop(context);
-    } else {
-      setState(() => isSignInSelected = true);
+    if (errors != null) {
+      setState(() {
+        loginEmailErrorText = (errors["email"] as List?)?.join("\n");
+        loginPasswordErrorText = (errors["password"] as List?)?.join("\n");
+      });
+      return;
+    }
+    }
+    
+    if (e.response?.statusCode == 401) {
+      final String? message = e.response?.data["error"]?.toString();
+
+      setState(() {
+        loginEmailErrorText = message;
+        loginPasswordErrorText = message;
+      });
+      return;
     }
   }
+  }
+
+
+  Future<void> _register() async {
+  try {
+    final response = await _authApiService.register(
+      firstName: firstNameController.text.trim(),
+      lastName: familyNameController.text.trim(),
+      phone: phoneController.text.trim(),
+      email: registerEmailController.text.trim(),
+      password: registerPasswordController.text,
+      guardianType: guardianType,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (registerPasswordController.text != confirmPasswordController.text) {
+        setState(() {
+          confirmPasswordErrorText = "Passwords do not match";
+          });
+          return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Register Success")),
+      );
+
+      setState(() {
+        isSignInSelected = true;
+      });
+    }
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 400) {
+      final errors = e.response?.data["errors"] as Map<String, dynamic>?;
+
+      if (errors != null) {
+        setState(() {
+          firstNameErrorText = errors["first_name"]?.first;
+          familyNameErrorText = errors["last_name"]?.first;
+          registerEmailErrorText = (errors["email"] as List?)?.join("\n");
+          phoneErrorText = (errors["phone"] as List?)?.join("\n");
+          registerPasswordErrorText = errors["password"]?.first;
+
+          if (errors["password"] != null && registerPasswordController.text != confirmPasswordController.text) {
+            confirmPasswordErrorText = "Passwords do not match";
+          }
+        });
+
+        return;
+      }
+      if (e.response?.statusCode == 409) {
+        final message = e.response?.data["error"]?.toString();
+
+        setState(() {
+      if (message == "Email already registered") {
+        registerEmailErrorText = message;
+      } else if (message == "Phone number already used") {
+        phoneErrorText = message;
+      } else if (message == "Email or phone number already registered") {
+        registerEmailErrorText = message;
+        phoneErrorText = message;
+      }
+        });
+
+  return;
+}
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Server Error")),
+    );
+  }
+}
+    void _handleBack() {
+  if (isSignInSelected) {
+    Navigator.pop(context);
+  } else {
+    setState(() {
+      isSignInSelected = true;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +220,6 @@ class _AuthScreenState extends State<AuthScreen> {
       body: ScreenBackground(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               children: [
                 Row(
@@ -276,7 +337,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.email_outlined,
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
-          errorText: emailErrorText,
+          errorText: loginEmailErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -287,7 +348,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.lock_outline,
           isPassword: true,
           controller: passwordController,
-          errorText: passwordErrorText,
+          errorText: loginPasswordErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -347,9 +408,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
         const SizedBox(height: AppSpacing.md),
 
-        PhoneInputField(
-          hint: isArabic ? 'رقم الجوال' : 'Phone number',
+        AppTextField(
+          label: isArabic ? 'رقم الجوال' : 'Phone number',
+          hint: isArabic ? 'أدخل رقم الجوال' : 'Enter your phone number',
+          icon: Icons.phone_outlined,
           controller: phoneController,
+          keyboardType: TextInputType.phone,
           errorText: phoneErrorText,
         ),
 
@@ -361,7 +425,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.lock_outline,
           isPassword: true,
           controller: registerPasswordController,
-          errorText: passwordErrorText,
+          errorText: registerPasswordErrorText,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -372,7 +436,7 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.lock_outline,
           isPassword: true,
           controller: confirmPasswordController,
-          errorText: passwordErrorText,
+          errorText: confirmPasswordErrorText,
         ),
 
         const SizedBox(height: AppSpacing.lg),

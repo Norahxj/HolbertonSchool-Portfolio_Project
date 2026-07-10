@@ -5,8 +5,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
-import '../../../core/widgets/screen_background.dart';
-import '../../auth/widgets/phone_input_field.dart';
+import 'package:frontend/core/widgets/screen_background.dart';
 
 // Add Child screen (Screen 5).
 //
@@ -162,9 +161,12 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
                 const SizedBox(height: AppSpacing.md),
 
-                PhoneInputField(
+                AppTextField(
+                  label: 'رقم الجوال',
                   hint: 'رقم الجوال (اختياري)',
+                  icon: Icons.phone_outlined,
                   controller: phoneController,
+                  keyboardType: TextInputType.phone,
                 ),
 
                 const SizedBox(height: AppSpacing.xxl),
