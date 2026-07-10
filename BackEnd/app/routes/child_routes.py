@@ -55,6 +55,7 @@ class ChildListResource(Resource):
 class ChildResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
+    @api.marshal_with(child_with_access_code_model, code=200)
     def get(self, child_id):
         parent_id = get_jwt_identity()
         error = require_parent()
@@ -63,7 +64,7 @@ class ChildResource(Resource):
         child = child_service.get_child_for_parent(child_id, parent_id)
         if not child:
             return {"error": "Child not found"}, 404
-        return child_response_schema.dump(child), 200
+        return child_with_access_code_schema.dump(child), 200
 
     @jwt_required()
     @api.doc(security="JWT")

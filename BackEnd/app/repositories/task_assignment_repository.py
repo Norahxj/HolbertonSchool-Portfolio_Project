@@ -70,3 +70,13 @@ class TaskAssignmentRepository:
             child_id=child_id,
             assigned_date=assigned_date
         ).first()
+    
+    def get_child_assignments_between_dates(self, child_id, start_date, end_date):
+        return (
+            TaskAssignment.query.filter(
+                TaskAssignment.child_id == child_id,
+                TaskAssignment.assigned_date >= start_date,
+                TaskAssignment.assigned_date <= end_date
+            )
+            .all()
+        )
