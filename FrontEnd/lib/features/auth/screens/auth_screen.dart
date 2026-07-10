@@ -135,6 +135,7 @@ String? confirmPasswordErrorText;
 
 
   Future<void> _register() async {
+  
   try {
     final response = await _authApiService.register(
       firstName: firstNameController.text.trim(),
@@ -161,6 +162,7 @@ String? confirmPasswordErrorText;
       });
     }
   } on DioException catch (e) {
+    // Handle register errors
     if (e.response?.statusCode == 400) {
       final errors = e.response?.data["errors"] as Map<String, dynamic>?;
 
@@ -179,7 +181,9 @@ String? confirmPasswordErrorText;
 
         return;
       }
-      if (e.response?.statusCode == 409) {
+    }
+      
+    if (e.response?.statusCode == 409) {
         final message = e.response?.data["error"]?.toString();
 
         setState(() {
@@ -195,7 +199,6 @@ String? confirmPasswordErrorText;
 
   return;
 }
-    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Server Error")),
