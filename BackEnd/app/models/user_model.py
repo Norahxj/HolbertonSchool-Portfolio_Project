@@ -14,5 +14,4 @@ class User(BaseModel):
     guardian_type = db.Column(db.String(10), nullable=False)
     tasks = db.relationship("Task", backref="creator", lazy=True, passive_deletes=True)
     daily_feedbacks = db.relationship("DailyFeedback", backref="creator", lazy=True, passive_deletes=True)
-    family_id = db.Column(db.String(36), db.ForeignKey("families.id"), nullable=True)
-    family = db.relationship("Family", backref=db.backref("guardians", lazy=True))
+    family_id = db.Column(db.String(36), db.ForeignKey("families.id", ondelete="SET NULL"), nullable=True)

@@ -1,6 +1,8 @@
 from app.repositories.user_repository import UserRepository
 from app.repositories.child_repository import ChildRepository
 from app.extensions import db
+from app.models.Family_model import Family
+from app.models.user_model import User
 
 class UserService:
     def __init__(self):
@@ -52,22 +54,30 @@ class UserService:
             return False, "user_not_found"
 
         try:
+            family_id = user.family_id
             children = list(user.children)
 
             for child in children:
                 if user in child.guardians:
                     child.guardians.remove(user)
 
-                remaining_guardians = [
-                    guardian
-                    for guardian in child.guardians
-                    if guardian.id != user.id
-                ]
-
-                if not remaining_guardians:
+                if len(child.guardians) == 0:
                     db.session.delete(child)
 
             db.session.delete(user)
+
+            db.session.flush()
+
+            remaining_guardian = User.query.filter_by(
+                family_id=family_id
+            ).first()
+
+            if family_id and not remaining_guardian:
+                family = db.session.get(Family, family_id)
+
+                if family:
+                    db.session.delete(family)
+
             db.session.commit()
 
             return True, None

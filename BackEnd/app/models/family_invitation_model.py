@@ -5,9 +5,8 @@ from app.models.base_model import BaseModel
 class FamilyInvitation(BaseModel):
     __tablename__ = "family_invitations"
 
-    family_id = db.Column(db.String(36), db.ForeignKey("families.id"), nullable=False)
+    family_id = db.Column(db.String(36), db.ForeignKey("families.id", ondelete="CASCADE"), nullable=False)
     invited_email = db.Column(db.String(120), nullable=False)
     invited_by = db.Column(db.String(36), db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     status = db.Column(db.String(20), default="PENDING", nullable=False)
-    family = db.relationship("Family", backref=db.backref("invitations", lazy=True))
     inviter = db.relationship("User", backref=db.backref("sent_family_invitations", lazy=True, passive_deletes=True))

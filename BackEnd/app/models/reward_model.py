@@ -10,6 +10,6 @@ class Reward(BaseModel):
     description = db.Column(db.String(500), nullable=True)
     status = db.Column(db.String(20), default="LOCKED", nullable=False)
     unlock_day = db.Column(db.Integer, default=3, nullable=False)
-    assigned_by = db.Column(db.String(36), db.ForeignKey("users.id", ondelete="SET NULL"), nullable=False)
+    assigned_by = db.Column(db.String(36), db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     child = db.relationship("Child", backref=db.backref("rewards", lazy=True, passive_deletes=True))
     assigner = db.relationship("User", backref=db.backref("assigned_rewards", lazy=True, passive_deletes=True))
