@@ -40,6 +40,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   // Step 3: how often the task repeats. 0 = daily, 1 = weekly, 2 = monthly.
   int selectedFrequency = 1;
 
+  // Which day of the week is picked when "مرة في الأسبوع" is selected.
+  String selectedWeeklyDay = 'الأحد';
+
+  // Which day of the month is picked when "شهريًا" is selected.
+  int selectedMonthlyDay = 1;
+
+  // The choices shown for the weekly day and monthly date pickers.
+  final List<String> weekDays = const [
+    'الأحد',
+    'الإثنين',
+    'الثلاثاء',
+    'الأربعاء',
+    'الخميس',
+    'الجمعة',
+    'السبت',
+  ];
+  final List<int> monthlyDays = const [1, 5, 10, 15, 20, 25, 30];
+
   @override
   void dispose() {
     taskNameController.dispose();
@@ -224,6 +242,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const _QuickAddCategory(
           icon: Icons.credit_card,
           label: 'المهام المالية',
+        ),
+        const SizedBox(height: AppSpacing.md),
+        const _QuickAddCategory(
+          icon: Icons.menu_book_outlined,
+          label: 'المهام الدينية',
         ),
       ],
     );
@@ -517,34 +540,35 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             });
           },
           extraContent: selectedFrequency == 1
-              ? Row(
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.card,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: const Text(
-                        'اختيار اليوم',
+                    const Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'اختر يوم الأسبوع',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textPrimary,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
-                    const Spacer(),
-                    const Text(
-                      'اليوم: الأحد',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: [
+                        for (final day in weekDays)
+                          _SelectableChip(
+                            label: day,
+                            isSelected: selectedWeeklyDay == day,
+                            onTap: () {
+                              setState(() {
+                                selectedWeeklyDay = day;
+                              });
+                            },
+                          ),
+                      ],
                     ),
                   ],
                 )
@@ -562,6 +586,40 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               selectedFrequency = 2;
             });
           },
+          extraContent: selectedFrequency == 2
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'اختر تاريخ التكرار',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: [
+                        for (final day in monthlyDays)
+                          _SelectableChip(
+                            label: '$day',
+                            isSelected: selectedMonthlyDay == day,
+                            onTap: () {
+                              setState(() {
+                                selectedMonthlyDay = day;
+                              });
+                            },
+                          ),
+                      ],
+                    ),
+                  ],
+                )
+              : null,
         ),
       ],
     );
@@ -919,9 +977,45 @@ class _PointsButton extends StatelessWidget {
   }
 }
 
+// A small rounded chip used to pick one weekly day or one monthly date.
+// Turns purple when selected, light lavender otherwise.
+class _SelectableChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SelectableChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : AppColors.primaryLight,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.white : AppColors.primaryDark,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // One selectable frequency card shown on Step 3 (daily/weekly/monthly).
 // extraContent is an optional row shown below the title when this card
-// is selected, e.g. the weekly day picker placeholder.
+// is selected, e.g. the weekly day picker or the monthly date picker.
 class _FrequencyCard extends StatelessWidget {
   final String title;
   final String subtitle;
