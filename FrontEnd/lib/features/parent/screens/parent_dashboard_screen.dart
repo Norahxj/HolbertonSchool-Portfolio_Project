@@ -9,6 +9,7 @@ import 'add_child_screen.dart';
 import 'add_task_screen.dart';
 import 'more_settings_screen.dart';
 import 'reward_management_screen.dart';
+import 'task_review_screen.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
@@ -64,6 +65,10 @@ class ParentDashboardScreen extends StatelessWidget {
                 const SizedBox(height: AppSpacing.sm),
 
                 const _AddChildButton(),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                const _TaskReviewPreviewCard(),
 
                 const SizedBox(height: AppSpacing.lg),
               ],
@@ -366,6 +371,103 @@ class _AddChildButton extends StatelessWidget {
   }
 }
 
+// Simple preview card that reminds the parent that some tasks are
+// waiting for review. Tapping it opens the full Task Review screen.
+class _TaskReviewPreviewCard extends StatelessWidget {
+  const _TaskReviewPreviewCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TaskReviewScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: const BoxDecoration(
+                color: AppColors.primaryLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.fact_check_outlined,
+                color: AppColors.primaryDark,
+                size: 22,
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'مراجعة المهام',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'لديك ٢ مهمة بانتظار المراجعة',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: 28,
+              height: 28,
+              decoration: const BoxDecoration(
+                color: AppColors.error,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Text(
+                  '٢',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // Draws a simple dashed rounded-rect border around its child, since Flutter
 // has no built-in dashed border. This walks the border path in short
 // segments, drawing a dash then skipping a gap, all the way around.
@@ -492,7 +594,6 @@ class _BottomNavBar extends StatelessWidget {
                       child: const _NavItem(
                         icon: Icons.list_alt,
                         label: 'المهام',
-                        badgeCount: 2,
                       ),
                     ),
                   ],
@@ -550,47 +651,15 @@ class _BottomNavBar extends StatelessWidget {
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
-  final int? badgeCount;
 
-  const _NavItem({required this.icon, required this.label, this.badgeCount});
+  const _NavItem({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Icon(icon, color: AppColors.textSecondary, size: 22),
-            if (badgeCount != null)
-              Positioned(
-                top: -4,
-                right: -6,
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$badgeCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
+        Icon(icon, color: AppColors.textSecondary, size: 22),
         const SizedBox(height: 4),
         Text(
           label,
