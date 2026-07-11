@@ -86,6 +86,10 @@ def create_app():
     @api.errorhandler(NoAuthorizationError)
     def handle_missing_authorization(error):
         return {"error": "Authorization token is required"}, 401
+    
+    @api.errorhandler(DecodeError)
+    def handle_jwt_decode_error(error):
+        return {"error": "Invalid token"}, 401
 
 
     api.add_namespace(auth_ns, path="/api/auth")
