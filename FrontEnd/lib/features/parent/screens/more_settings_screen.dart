@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
+import 'family_settings_screen.dart';
 import 'profile_screen.dart';
 
 // More / Settings screen (Screen 17).
@@ -141,7 +142,10 @@ class _SettingsCard extends StatelessWidget {
             icon: Icons.home_outlined,
             label: 'إعدادات العائلة',
             onTap: () {
-              // TODO: Navigate to the family settings screen (Screen 19).
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FamilySettingsScreen()),
+              );
             },
           ),
           const Divider(height: 1, color: AppColors.border),
