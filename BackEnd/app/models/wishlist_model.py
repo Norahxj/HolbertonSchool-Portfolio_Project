@@ -9,5 +9,5 @@ class Wishlist(BaseModel):
     status = db.Column(db.String(20), default="PENDING", nullable=False)
     reviewed_by = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
-    child = db.relationship("Child", backref=db.backref("wishlists", lazy=True))
+    child = db.relationship("Child", backref=db.backref("wishlists", lazy=True, passive_deletes=True))
     reviewer = db.relationship("User", backref=db.backref("reviewed_wishlists", lazy=True))

@@ -1,13 +1,6 @@
 from app.extensions import db
 from app.models.child_model import Child, child_guardians
 from app.models.user_model import User
-from app.models.task_assignment_model import TaskAssignment
-from app.models.task_child_model import TaskChild
-from app.models.point_model import ChildPoints
-from app.models.points_history_model import PointsHistory
-from app.models.wishlist_model import Wishlist
-from app.models.reward_model import Reward
-from app.models.daily_feedback_model import DailyFeedback
 from sqlalchemy.exc import IntegrityError
 
 class ChildRepository:

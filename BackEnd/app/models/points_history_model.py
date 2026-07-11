@@ -9,4 +9,4 @@ class PointsHistory(BaseModel):
     points = db.Column(db.Integer, nullable=False)
     action = db.Column(db.String(30), nullable=False)
     source_id = db.Column(db.String(36), nullable=True)
-    child = db.relationship("Child", backref=db.backref("points_history", lazy=True))
+    child = db.relationship("Child", backref=db.backref("points_history", lazy=True, passive_deletes=True))

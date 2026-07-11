@@ -7,4 +7,4 @@ class ChildPoints(BaseModel):
 
     child_id = db.Column(db.String(36), db.ForeignKey("children.id", ondelete="CASCADE"), unique=True, nullable=False)
     total_points = db.Column(db.Integer, default=0, nullable=False)
-    child = db.relationship("Child", backref=db.backref("points_record", uselist=False), lazy=True)
+    child = db.relationship("Child", backref=db.backref("points_record", uselist=False, passive_deletes=True), lazy=True)

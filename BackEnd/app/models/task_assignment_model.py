@@ -10,5 +10,5 @@ class TaskAssignment(BaseModel):
     status = db.Column(db.String(20), default="PENDING", nullable=False)
     completed_at = db.Column(db.DateTime, nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
-    child = db.relationship("Child", backref=db.backref("task_assignments", lazy=True))
+    child = db.relationship("Child", backref=db.backref("task_assignments", lazy=True, passive_deletes=True))
     assigned_date = db.Column(db.Date, nullable=False)
