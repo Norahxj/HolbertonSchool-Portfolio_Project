@@ -1,5 +1,6 @@
 from app.repositories.user_repository import UserRepository
 from app.repositories.child_repository import ChildRepository
+from app.extensions import db
 
 class UserService:
     def __init__(self):
@@ -48,23 +49,29 @@ class UserService:
         user = self.user_repository.get_user_by_id(user_id)
 
         if not user:
-            return None
+            return False, "user_not_found"
 
-        children = list(user.children)
+        try:
+            children = list(user.children)
 
-        for child in children:
-            if user in child.guardians:
-                child.guardians.remove(user)
+            for child in children:
+                if user in child.guardians:
+                    child.guardians.remove(user)
 
-            if len(child.guardians) == 0:
-                success, error = self.child_repository.delete_child(child)
+                remaining_guardians = [
+                    guardian
+                    for guardian in child.guardians
+                    if guardian.id != user.id
+                ]
 
-                if not success:
-                    return None
+                if not remaining_guardians:
+                    db.session.delete(child)
 
-        success, error = self.user_repository.delete_user(user)
+            db.session.delete(user)
+            db.session.commit()
 
-        if not success:
-            return None
+            return True, None
 
-        return True
+        except Exception:
+            db.session.rollback()
+            return False, "delete_error"

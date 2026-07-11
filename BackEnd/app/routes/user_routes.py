@@ -59,9 +59,20 @@ class CurrentUserResource(Resource):
     def delete(self):
         claims = get_jwt()
         user_id = get_jwt_identity()
+
         if claims.get("role") != "parent":
             return {"error": "Parent access only"}, 403
-        deleted = user_service.delete_user(user_id)
-        if not deleted:
+
+        deleted, delete_error = user_service.delete_user(user_id)
+
+        if delete_error == "user_not_found":
             return {"error": "User not found"}, 404
-        return {"message": "User deleted successfully"}, 200
+
+        if delete_error == "delete_error":
+            return {
+                "error": "Failed to delete user and related data"
+            }, 500
+
+        return {
+            "message": "User deleted successfully"
+        }, 200
