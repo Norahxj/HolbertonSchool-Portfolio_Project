@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models.child_model import Child, child_guardians
+from app.models.child_model import Child
 from app.models.user_model import User
 from sqlalchemy.exc import IntegrityError
 

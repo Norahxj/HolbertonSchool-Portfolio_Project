@@ -11,5 +11,5 @@ class Task(BaseModel):
 	recurrence_day = db.Column(db.Integer, nullable=True)  
 	category = db.Column(db.String(50), nullable=True)  
 	is_auto_verified = db.Column(db.Boolean, default=False, nullable=False)
-	created_by = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)  
+	created_by = db.Column(db.String(36), db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)  
 	assignments = db.relationship("TaskAssignment", backref="task", lazy=True, cascade="all, delete-orphan")

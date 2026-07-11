@@ -104,7 +104,7 @@ class ChildResource(Resource):
         if delete_error == "child_not_found":
             return {"error": "Child not found"}, 404
 
-        if delete_error == "delete_failed":
+        if delete_error == "delete_error":
             return {
                 "error": "Failed to delete child and related data"
             }, 500

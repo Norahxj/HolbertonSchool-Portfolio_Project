@@ -12,7 +12,7 @@ class User(BaseModel):
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default="parent", nullable=False)
     guardian_type = db.Column(db.String(10), nullable=False)
-    tasks = db.relationship("Task", backref="creator", lazy=True, cascade="all, delete")
+    tasks = db.relationship("Task", backref="creator", lazy=True, passive_deletes=True)
     daily_feedbacks = db.relationship("DailyFeedback", backref="creator", lazy=True, cascade="all, delete-orphan")
     family_id = db.Column(db.String(36), db.ForeignKey("families.id"), nullable=True)
     family = db.relationship("Family", backref=db.backref("guardians", lazy=True))
