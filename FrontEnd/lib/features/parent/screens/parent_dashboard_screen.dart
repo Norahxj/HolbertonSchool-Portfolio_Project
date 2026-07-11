@@ -6,6 +6,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../child/screens/child_profile_screen.dart';
 import 'add_child_screen.dart';
+import 'add_task_screen.dart';
 import 'more_settings_screen.dart';
 import 'reward_management_screen.dart';
 
@@ -476,10 +477,23 @@ class _BottomNavBar extends StatelessWidget {
                         label: 'المكافآت',
                       ),
                     ),
-                    const _NavItem(
-                      icon: Icons.list_alt,
-                      label: 'المهام',
-                      badgeCount: 2,
+                    GestureDetector(
+                      // TODO: This navigation is temporary until the real
+                      // bottom navigation system (with tab switching) is
+                      // finalized.
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddTaskScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.list_alt,
+                        label: 'المهام',
+                        badgeCount: 2,
+                      ),
                     ),
                   ],
                 ),
