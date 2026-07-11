@@ -74,28 +74,22 @@ class ChildService:
         return child, None
 
     def delete_child_for_parent(self, child_id, parent_id):
-        child = self.child_repository.get_child_for_guardian(child_id, parent_id)
-
-        if not child:
-            return None
-
         parent = self.user_repository.get_user_by_id(parent_id)
 
         if not parent:
-            return None
+            return False, "parent_not_found"
 
-        if parent in child.guardians:
-            child.guardians.remove(parent)
+        child = self.child_repository.get_child_for_guardian(
+            child_id,
+            parent_id
+        )
 
-        success, error = self.child_repository.update_child()
+        if not child:
+            return False, "child_not_found"
+
+        success, error = self.child_repository.delete_child(child)
 
         if not success:
-            return None
+            return False, error
 
-        if len(child.guardians) == 0:
-            success, error = self.child_repository.delete_child(child)
-
-            if not success:
-                return None
-
-        return True
+        return True, None

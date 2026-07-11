@@ -1,7 +1,14 @@
 from app.extensions import db
-from app.models.child_model import Child
-from sqlalchemy.exc import IntegrityError
+from app.models.child_model import Child, child_guardians
 from app.models.user_model import User
+from app.models.task_assignment_model import TaskAssignment
+from app.models.task_child_model import TaskChild
+from app.models.point_model import ChildPoints
+from app.models.points_history_model import PointsHistory
+from app.models.wishlist_model import Wishlist
+from app.models.reward_model import Reward
+from app.models.daily_feedback_model import DailyFeedback
+from sqlalchemy.exc import IntegrityError
 
 class ChildRepository:
 
@@ -30,11 +37,21 @@ class ChildRepository:
     
     def delete_child(self, child):
         try:
+            child_id = child.id
+            TaskAssignment.query.filter_by(child_id=child_id).delete(synchronize_session=False)
+            TaskChild.query.filter_by(child_id=child_id).delete(synchronize_session=False)
+            PointsHistory.query.filter_by(child_id=child_id).delete(synchronize_session=False)
+            ChildPoints.query.filter_by(child_id=child_id).delete(synchronize_session=False)
+            Wishlist.query.filter_by(child_id=child_id).delete(synchronize_session=False)
+            Reward.query.filter_by(child_id=child_id).delete(synchronize_session=False)
+            DailyFeedback.query.filter_by(child_id=child_id).delete(synchronize_session=False)
+            db.session.execute(child_guardians.delete().where(child_guardians.c.child_id == child_id))
             db.session.delete(child)
             db.session.commit()
             return True, None
-        except Exception:
+        except Exception as error:
             db.session.rollback()
+            print(f"Failed to delete child: {error}")
             return False, "delete_error"
     
     def get_children_by_guardian(self, guardian):

@@ -96,9 +96,19 @@ class ChildResource(Resource):
         if error:
             return error
 
-        deleted = child_service.delete_child_for_parent(child_id, parent_id)
+        deleted, delete_error  = child_service.delete_child_for_parent(child_id, parent_id)
 
-        if not deleted:
+        if delete_error == "parent_not_found":
+            return {"error": "Parent not found"}, 404
+
+        if delete_error == "child_not_found":
             return {"error": "Child not found"}, 404
 
-        return {"message": "Child deleted successfully"}, 200
+        if delete_error == "delete_failed":
+            return {
+                "error": "Failed to delete child and related data"
+            }, 500
+
+        return {
+            "message": "Child and related data deleted successfully"
+        }, 200
