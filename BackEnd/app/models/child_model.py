@@ -4,8 +4,8 @@ from datetime import date
 
 child_guardians = db.Table(
     "child_guardians",
-    db.Column("user_id", db.String(36), db.ForeignKey("users.id"), primary_key=True),
-    db.Column("child_id", db.String(36), db.ForeignKey("children.id"), primary_key=True),
+    db.Column("user_id", db.String(36), db.ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("child_id", db.String(36), db.ForeignKey("children.id", ondelete="CASCADE"), primary_key=True),
     db.Column("relation_type", db.String(20), nullable=True)
 )
 

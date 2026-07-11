@@ -5,7 +5,7 @@ from app.models.base_model import BaseModel
 class Reward(BaseModel):
     __tablename__ = "rewards"
 
-    child_id = db.Column(db.String(36), db.ForeignKey("children.id"), nullable=False)
+    child_id = db.Column(db.String(36), db.ForeignKey("children.id", ondelete="CASCADE"), nullable=False)
     reward_name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500), nullable=True)
     status = db.Column(db.String(20), default="LOCKED", nullable=False)

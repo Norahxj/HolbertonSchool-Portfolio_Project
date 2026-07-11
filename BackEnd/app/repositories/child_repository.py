@@ -37,21 +37,11 @@ class ChildRepository:
     
     def delete_child(self, child):
         try:
-            child_id = child.id
-            TaskAssignment.query.filter_by(child_id=child_id).delete(synchronize_session=False)
-            TaskChild.query.filter_by(child_id=child_id).delete(synchronize_session=False)
-            PointsHistory.query.filter_by(child_id=child_id).delete(synchronize_session=False)
-            ChildPoints.query.filter_by(child_id=child_id).delete(synchronize_session=False)
-            Wishlist.query.filter_by(child_id=child_id).delete(synchronize_session=False)
-            Reward.query.filter_by(child_id=child_id).delete(synchronize_session=False)
-            DailyFeedback.query.filter_by(child_id=child_id).delete(synchronize_session=False)
-            db.session.execute(child_guardians.delete().where(child_guardians.c.child_id == child_id))
             db.session.delete(child)
             db.session.commit()
             return True, None
-        except Exception as error:
+        except Exception:
             db.session.rollback()
-            print(f"Failed to delete child: {error}")
             return False, "delete_error"
     
     def get_children_by_guardian(self, guardian):
