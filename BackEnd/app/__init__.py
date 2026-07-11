@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from flask_cors import CORS
+from jwt.exceptions import DecodeError
 from flask_restx import Api
 from app.extensions import db, jwt, bcrypt
 from app.config import Config
