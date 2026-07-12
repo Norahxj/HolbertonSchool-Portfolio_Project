@@ -176,13 +176,23 @@ class AchieveWishResource(Resource):
         if error == "wish_not_found":
             return {"error": "Wish not found"}, 404
 
+        if error == "wish_already_achieved":
+            return {
+                "error": "This wish has already been achieved"
+            }, 400
+        
+        if error == "invalid_target_points":
+            return {
+                "error": "Wish target points are invalid"
+            }, 400
+
         if error == "wish_not_approved":
             return {"error": "Wish is not approved"}, 400
 
         if error == "not_enough_points":
             return {"error": "Not enough points to achieve this wish"}, 400
 
-        if error == "update_failed":
+        if error == "achieve_failed":
             return {"error": "Failed to achieve wish"}, 500
 
         return wishlist_response_schema.dump(wish), 200

@@ -1,6 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.wishlist_model import Wishlist
+from app.models.points_history_model import PointsHistory
 
 
 class WishlistRepository:
@@ -59,3 +60,24 @@ class WishlistRepository:
         except Exception:
             db.session.rollback()
             return False, "delete_error"
+        
+    def achieve_wish(self, wish, points_record):
+        try:
+            points_record.total_points -= wish.target_points
+            wish.status = "ACHIEVED"
+
+            history = PointsHistory(
+                child_id=wish.child_id,
+                points=-wish.target_points,
+                action="WISH_ACHIEVED",
+                source_id=wish.id
+            )
+
+            db.session.add(history)
+            db.session.commit()
+
+            return wish, None
+
+        except Exception:
+            db.session.rollback()
+            return None, "achieve_error"

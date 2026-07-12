@@ -104,30 +104,30 @@ class WishlistService:
         return wish, None
 
     def achieve_wish(self, wish_id, child_id):
-        wish = self.wishlist_repository.get_wish_for_child(
-            wish_id,
-            child_id
-        )
-
+        wish = self.wishlist_repository.get_wish_for_child(wish_id, child_id)
         if not wish:
             return None, "wish_not_found"
+
+        if wish.status == "ACHIEVED":
+            return None, "wish_already_achieved"
 
         if wish.status != "APPROVED":
             return None, "wish_not_approved"
 
-        points = self.points_repository.get_points_by_child_id(child_id)
+        if wish.target_points is None or wish.target_points <= 0:
+            return None, "invalid_target_points"
 
-        total_points = 0 if points is None else points.total_points
-
-        if total_points < wish.target_points:
+        points_record = self.points_repository.get_points_by_child_id(child_id)
+        if not points_record:
             return None, "not_enough_points"
 
-        wish.status = "ACHIEVED"
+        if points_record.total_points < wish.target_points:
+            return None, "not_enough_points"
 
-        success, error = self.wishlist_repository.update_wish()
+        wish, error = self.wishlist_repository.achieve_wish(wish, points_record)
 
-        if not success:
-            return None, "update_failed"
+        if error:
+            return None, "achieve_failed"
 
         return wish, None
 
@@ -142,3 +142,5 @@ class WishlistService:
             return False, "delete_error"
 
         return True, None
+    
+    
