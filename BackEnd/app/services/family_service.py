@@ -132,9 +132,19 @@ class FamilyService:
 
             return invitation, None
 
-        except IntegrityError:
+        except IntegrityError as exc:
             db.session.rollback()
-            return None, "guardian_type_already_exists"
+
+            constraint_name = getattr(
+                getattr(exc.orig, "diag", None),
+                "constraint_name",
+                None
+            )
+
+            if constraint_name == "uq_users_family_guardian_type":
+                return None, "guardian_type_already_exists"
+
+            return None, "update_failed"
 
         except Exception:
             db.session.rollback()
@@ -156,8 +166,6 @@ class FamilyService:
         invitation.status = "REJECTED"
 
         success, error = self.family_invitation_repository.update_invitation()
-        if error == "integrity_error":
-            return None, "guardian_type_already_exists"
 
         if not success:
             return None, "update_failed"
