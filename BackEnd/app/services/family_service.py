@@ -1,7 +1,11 @@
 from app.models.family_invitation_model import FamilyInvitation
 from app.repositories.family_invitation_repository import FamilyInvitationRepository
 from app.repositories.user_repository import UserRepository
-
+from sqlalchemy.exc import IntegrityError
+from app.extensions import db
+from app.models.Family_model import Family
+from app.models.user_model import User
+from app.models.child_model import Child
 
 class FamilyService:
     def __init__(self):
@@ -72,14 +76,13 @@ class FamilyService:
 
     def accept_invitation(self, user_id, invitation_id):
         user = self.user_repository.get_user_by_id(user_id)
-        invitation = self.family_invitation_repository.get_invitation_by_id(invitation_id)
-
+        invitation = (self.family_invitation_repository.get_invitation_by_id(invitation_id))
         if not user:
             return None, "user_not_found"
-        
+
         if not invitation or invitation.invited_email != user.email:
             return None, "invitation_not_found"
-        
+
         if user.family_id == invitation.family_id:
             return None, "already_in_same_family"
 
@@ -89,28 +92,53 @@ class FamilyService:
         if invitation.status != "PENDING":
             return None, "invitation_not_pending"
 
-        existing_type = self.family_invitation_repository.get_guardian_by_family_and_type(
-            invitation.family_id,
-            user.guardian_type
+        existing_type = (
+            self.family_invitation_repository
+            .get_guardian_by_family_and_type(invitation.family_id,user.guardian_type)
         )
 
         if existing_type:
             return None, "guardian_type_already_exists"
 
-        user.family_id = invitation.family_id
+        old_family_id = user.family_id
 
-        for child in invitation.family.children:
-            if user not in child.guardians:
-                child.guardians.append(user)
+        try:
+            user.family_id = invitation.family_id
 
-        invitation.status = "ACCEPTED"
+            for child in invitation.family.children:
+                if user not in child.guardians:
+                    child.guardians.append(user)
 
-        success, error = self.family_invitation_repository.update_invitation()
+            invitation.status = "ACCEPTED"
 
-        if not success:
+            db.session.flush()
+
+            if old_family_id:
+                remaining_guardian = User.query.filter_by(
+                    family_id=old_family_id
+                ).first()
+
+                remaining_child = Child.query.filter_by(
+                    family_id=old_family_id
+                ).first()
+
+                if not remaining_guardian and not remaining_child:
+                    old_family = db.session.get(Family, old_family_id)
+
+                    if old_family:
+                        db.session.delete(old_family)
+
+            db.session.commit()
+
+            return invitation, None
+
+        except IntegrityError:
+            db.session.rollback()
+            return None, "guardian_type_already_exists"
+
+        except Exception:
+            db.session.rollback()
             return None, "update_failed"
-
-        return invitation, None
 
     def reject_invitation(self, user_id, invitation_id):
         user = self.user_repository.get_user_by_id(user_id)
@@ -128,6 +156,8 @@ class FamilyService:
         invitation.status = "REJECTED"
 
         success, error = self.family_invitation_repository.update_invitation()
+        if error == "integrity_error":
+            return None, "guardian_type_already_exists"
 
         if not success:
             return None, "update_failed"

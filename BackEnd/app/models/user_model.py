@@ -4,6 +4,13 @@ from app.models.base_model import BaseModel
 
 class User(BaseModel):
     __tablename__ = "users"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "family_id",
+            "guardian_type",
+            name="uq_users_family_guardian_type"
+        ),
+    )
     
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)

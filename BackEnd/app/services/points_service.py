@@ -54,21 +54,3 @@ class PointsService:
                 return None, "commit_failed"
 
         return points, None
-
-    def deduct_points(self, child_id, amount):
-        points, error = self.get_child_points(child_id)
-
-        if error:
-            return None, error
-
-        if points.total_points < amount:
-            return None, "insufficient_points"
-
-        points.total_points -= amount
-
-        success, error = self.point_repository.update_points()
-
-        if not success:
-            return None, "update_failed"
-
-        return points, None
