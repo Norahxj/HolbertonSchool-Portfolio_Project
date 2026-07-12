@@ -121,7 +121,6 @@ class TaskService:
 
     def update_task_for_parent(self, task_id, parent_id, task_data):
         task = self.task_repository.get_task_for_creator(task_id, parent_id)
-
         if not task:
             return None, "not_found"
 
@@ -132,65 +131,77 @@ class TaskService:
         if error:
             return None, error
 
-        if "title" in task_data:
-            task.title = task_data["title"].strip()
+        try:
+            if "title" in task_data:
+                task.title = task_data["title"].strip()
 
-        if "description" in task_data:
-            task.description = task_data["description"].strip()
+            if "description" in task_data:
+                task.description = task_data["description"].strip()
 
-        if "points" in task_data:
-            task.points = task_data["points"]
+            if "points" in task_data:
+                task.points = task_data["points"]
 
-        if "category" in task_data:
-            task.category = task_data["category"]
+            if "category" in task_data:
+                task.category = task_data["category"]
 
-        if "is_auto_verified" in task_data:
-            task.is_auto_verified = task_data["is_auto_verified"]
+            if "is_auto_verified" in task_data:
+                task.is_auto_verified = task_data["is_auto_verified"]
 
-        task.task_frequency = new_frequency
-        task.recurrence_day = new_recurrence_day
+            task.task_frequency = new_frequency
+            task.recurrence_day = new_recurrence_day
 
-        success, error = self.task_repository.update_task()
+            success, error = self.task_repository.update_task(commit=False)
 
-        if not success:
-            return None, "update_failed"
+            if not success:
+                db.session.rollback()
+                return None, "update_failed"
 
-        today = datetime.now(RIYADH_TIMEZONE).date()
+            today = datetime.now(RIYADH_TIMEZONE).date()
 
-        if is_task_due_on_date(
-            task.task_frequency,
-            task.recurrence_day,
-            today
-        ):
-            for task_child in task.task_children:
-                existing_assignment = (
-                    self.assignment_repository
-                    .get_assignment_for_date(
-                        task.id,
-                        task_child.child_id,
-                        today
+            if is_task_due_on_date(
+                task.task_frequency,
+                task.recurrence_day,
+                today
+            ):
+                for task_child in task.task_children:
+                    existing_assignment = (
+                        self.task_assignment_repository
+                        .get_assignment_for_date(
+                            task.id,
+                            task_child.child_id,
+                            today
+                        )
                     )
-                )
 
-                if existing_assignment:
-                    continue
+                    if existing_assignment:
+                        continue
 
-                assignment = TaskAssignment(
-                    task_id=task.id,
-                    child_id=task_child.child_id,
-                    status="PENDING",
-                    assigned_date=today
-                )
+                    assignment = TaskAssignment(
+                        task_id=task.id,
+                        child_id=task_child.child_id,
+                        status="PENDING",
+                        assigned_date=today
+                    )
 
-                _, assignment_error = (
-                    self.assignment_repository
-                    .create_assignment(assignment)
-                )
+                    _, assignment_error = (
+                        self.task_assignment_repository
+                        .create_assignment(
+                            assignment,
+                            commit=False
+                        )
+                    )
 
-                if assignment_error:
-                    return None, "assignment_failed"
+                    if assignment_error:
+                        db.session.rollback()
+                        return None, "assignment_failed"
 
-        return task, None
+            db.session.commit()
+
+            return task, None
+
+        except Exception:
+            db.session.rollback()
+            return None, "update_failed"
 
     def delete_task_for_parent(self, task_id, parent_id):
         task = self.task_repository.get_task_for_creator(task_id, parent_id)

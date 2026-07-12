@@ -31,10 +31,15 @@ class TaskRepository:
             db.session.rollback()
             return None, "integrity_error"
 
-    def update_task(self):
+    def update_task(self, commit=True):
         try:
-            db.session.commit()
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
+
             return True, None
+
         except IntegrityError:
             db.session.rollback()
             return False, "integrity_error"
