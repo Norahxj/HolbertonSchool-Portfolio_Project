@@ -5,8 +5,9 @@ from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.repositories.child_repository import ChildRepository
 from app.models.task_child_model import TaskChild
 from app.repositories.task_child_repository import TaskChildRepository
-from datetime import date
-
+from datetime import datetime
+from zoneinfo import ZoneInfo
+RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
 
 class TaskService:
     def __init__(self):
@@ -74,7 +75,7 @@ class TaskService:
             if error:
                 return None, "task_child_failed"
 
-            today = date.today()
+            today = datetime.now(RIYADH_TIMEZONE).date()
             should_create_assignment = (
                 task.task_frequency == "ONCE"
                 or task.task_frequency == "DAILY"

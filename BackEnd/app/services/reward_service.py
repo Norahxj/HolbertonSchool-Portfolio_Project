@@ -1,7 +1,9 @@
-from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from app.models.reward_model import Reward
 from app.repositories.reward_repository import RewardRepository
 from app.repositories.child_repository import ChildRepository
+RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
 
 
 class RewardService:
@@ -18,12 +20,19 @@ class RewardService:
         if not child:
             return None, "child_not_found"
 
+        unlock_day = reward_data.get("unlock_day", 3)
+        today_weekday = datetime.now(RIYADH_TIMEZONE).weekday()
+
         reward = Reward(
             child_id=child.id,
             reward_name=reward_data["reward_name"].strip(),
             description=reward_data.get("description"),
-            status="LOCKED",
-            unlock_day=reward_data.get("unlock_day", 3),
+            status=(
+                "UNLOCKED"
+                if unlock_day == today_weekday
+                else "LOCKED"
+            ),
+            unlock_day=unlock_day,
             assigned_by=parent_id
         )
 
@@ -81,17 +90,23 @@ class RewardService:
         return True, None
 
     def unlock_today_rewards(self):
-        today_weekday =  date.today().weekday()
+        today_weekday = datetime.now(
+            RIYADH_TIMEZONE
+        ).weekday()
 
-        rewards = self.reward_repository.get_locked_rewards_by_unlock_day(
-        	today_weekday
-    	)
+        rewards = (
+            self.reward_repository
+            .get_locked_rewards_by_unlock_day(today_weekday)
+        )
 
         unlocked_count = 0
 
         for reward in rewards:
             reward.status = "UNLOCKED"
             unlocked_count += 1
+
+        if unlocked_count == 0:
+            return 0, None
 
         success, error = self.reward_repository.update_reward()
 

@@ -1,8 +1,9 @@
-from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from app.models.task_assignment_model import TaskAssignment
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
-
+RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
 
 class RecurringTaskService:
     def __init__(self):
@@ -10,7 +11,7 @@ class RecurringTaskService:
         self.assignment_repository = TaskAssignmentRepository()
 
     def generate_today_assignments(self):
-        today = date.today()
+        today = datetime.now(RIYADH_TIMEZONE).date()
         weekday = today.weekday()
         month_day = today.day
 
