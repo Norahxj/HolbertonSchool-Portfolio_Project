@@ -8,7 +8,7 @@ from jwt.exceptions import DecodeError, ExpiredSignatureError
 from flask_restx import Api
 from app.extensions import db, jwt, bcrypt
 from app.config import Config
-from flask_jwt_extended.exceptions import NoAuthorizationError
+from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError
 from app.routes.auth_routes import api as auth_ns
 from app.routes.user_routes import api as user_ns
 from app.routes.child_routes import api as child_ns
@@ -87,6 +87,9 @@ def create_app():
     @api.errorhandler(NoAuthorizationError)
     def handle_missing_authorization(error):
         return {"error": "Authorization token is required"}, 401
+    @api.errorhandler(InvalidHeaderError)
+    def handle_invalid_authorization_header(error):
+        return {"error": "Invalid Authorization header"}, 401
     
     @api.errorhandler(DecodeError)
     def handle_jwt_decode_error(error):
