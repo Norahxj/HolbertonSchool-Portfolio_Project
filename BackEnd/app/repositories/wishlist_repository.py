@@ -31,6 +31,17 @@ class WishlistRepository:
             id=wish_id,
             child_id=child_id
         ).first()
+    
+    def get_wish_for_child_for_update(self, wish_id, child_id):
+        return (
+            Wishlist.query
+            .filter_by(
+                id=wish_id,
+                child_id=child_id
+            )
+            .with_for_update()
+            .first()
+        )
 
     def get_pending_count_by_child_id(self, child_id):
         return Wishlist.query.filter_by(

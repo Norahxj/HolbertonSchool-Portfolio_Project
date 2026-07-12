@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from app.extensions import db
 from app.models.wishlist_model import Wishlist
 from app.repositories.wishlist_repository import WishlistRepository
 from app.repositories.child_repository import ChildRepository
@@ -104,32 +104,57 @@ class WishlistService:
         return wish, None
 
     def achieve_wish(self, wish_id, child_id):
-        wish = self.wishlist_repository.get_wish_for_child(wish_id, child_id)
-        if not wish:
-            return None, "wish_not_found"
+        try:
+            wish = (
+                self.wishlist_repository
+                .get_wish_for_child_for_update(wish_id, child_id)
+            )
 
-        if wish.status == "ACHIEVED":
-            return None, "wish_already_achieved"
+            if not wish:
+                db.session.rollback()
+                return None, "wish_not_found"
 
-        if wish.status != "APPROVED":
-            return None, "wish_not_approved"
+            if wish.status == "ACHIEVED":
+                db.session.rollback()
+                return None, "wish_already_achieved"
 
-        if wish.target_points is None or wish.target_points <= 0:
-            return None, "invalid_target_points"
+            if wish.status != "APPROVED":
+                db.session.rollback()
+                return None, "wish_not_approved"
 
-        points_record = self.points_repository.get_points_by_child_id(child_id)
-        if not points_record:
-            return None, "not_enough_points"
+            if (
+                wish.target_points is None
+                or wish.target_points <= 0
+            ):
+                db.session.rollback()
+                return None, "invalid_target_points"
 
-        if points_record.total_points < wish.target_points:
-            return None, "not_enough_points"
+            points_record = (
+                self.points_repository
+                .get_points_by_child_id_for_update(child_id)
+            )
 
-        wish, error = self.wishlist_repository.achieve_wish(wish, points_record)
+            if not points_record:
+                db.session.rollback()
+                return None, "not_enough_points"
 
-        if error:
+            if points_record.total_points < wish.target_points:
+                db.session.rollback()
+                return None, "not_enough_points"
+
+            wish, error = (
+                self.wishlist_repository
+                .achieve_wish(wish, points_record)
+            )
+
+            if error:
+                return None, "achieve_failed"
+
+            return wish, None
+
+        except Exception:
+            db.session.rollback()
             return None, "achieve_failed"
-
-        return wish, None
 
     def delete_wish(self, wish_id, child_id):
         wish = self.wishlist_repository.get_wish_for_child(wish_id, child_id)

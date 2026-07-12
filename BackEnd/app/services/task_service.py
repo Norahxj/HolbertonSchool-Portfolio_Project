@@ -157,12 +157,16 @@ class TaskService:
                 return None, "update_failed"
 
             today = datetime.now(RIYADH_TIMEZONE).date()
+            should_create_assignment = (
+                task.task_frequency == "ONCE"
+                or is_task_due_on_date(
+                    task.task_frequency,
+                    task.recurrence_day,
+                    today
+                )
+            )
 
-            if is_task_due_on_date(
-                task.task_frequency,
-                task.recurrence_day,
-                today
-            ):
+            if should_create_assignment:
                 for task_child in task.task_children:
                     existing_assignment = (
                         self.task_assignment_repository
