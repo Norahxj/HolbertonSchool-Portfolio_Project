@@ -125,7 +125,9 @@ class TaskService:
         if not task:
             return None, "not_found"
 
-        new_frequency, new_recurrence_day, error = self._validate_recurrence_for_update(task, task_data)
+        new_frequency, new_recurrence_day, error = (
+            self._validate_recurrence_for_update(task, task_data)
+        )
 
         if error:
             return None, error
@@ -152,6 +154,41 @@ class TaskService:
 
         if not success:
             return None, "update_failed"
+
+        today = datetime.now(RIYADH_TIMEZONE).date()
+
+        if is_task_due_on_date(
+            task.task_frequency,
+            task.recurrence_day,
+            today
+        ):
+            for task_child in task.task_children:
+                existing_assignment = (
+                    self.assignment_repository
+                    .get_assignment_for_date(
+                        task.id,
+                        task_child.child_id,
+                        today
+                    )
+                )
+
+                if existing_assignment:
+                    continue
+
+                assignment = TaskAssignment(
+                    task_id=task.id,
+                    child_id=task_child.child_id,
+                    status="PENDING",
+                    assigned_date=today
+                )
+
+                _, assignment_error = (
+                    self.assignment_repository
+                    .create_assignment(assignment)
+                )
+
+                if assignment_error:
+                    return None, "assignment_failed"
 
         return task, None
 
