@@ -1,10 +1,10 @@
-from datetime import date, timedelta
-
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from app.repositories.user_repository import UserRepository
 from app.repositories.child_repository import ChildRepository
-from app.repositories.task_assignment_repository import (
-    TaskAssignmentRepository
-)
+from app.repositories.task_assignment_repository import TaskAssignmentRepository
+
+RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
 
 
 class DashboardService:
@@ -22,7 +22,7 @@ class DashboardService:
 
         children = self.child_repository.get_children_by_guardian(parent)
 
-        today = date.today()
+        today = datetime.now(RIYADH_TIMEZONE).date()
         days_since_sunday = (today.weekday() + 1) % 7
 
         week_start = today - timedelta(days=days_since_sunday)

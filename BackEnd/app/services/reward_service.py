@@ -69,6 +69,17 @@ class RewardService:
         if "unlock_day" in reward_data:
             reward.unlock_day = reward_data["unlock_day"]
 
+            if reward.status != "CLAIMED":
+                today_weekday = datetime.now(
+                    RIYADH_TIMEZONE
+                ).weekday()
+
+                reward.status = (
+                    "UNLOCKED"
+                    if reward.unlock_day == today_weekday
+                    else "LOCKED"
+                )
+
         success, error = self.reward_repository.update_reward()
 
         if not success:
