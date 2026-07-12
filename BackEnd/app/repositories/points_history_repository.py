@@ -5,12 +5,14 @@ from app.models.points_history_model import PointsHistory
 
 class PointsHistoryRepository:
 
-    def create_history(self, history):
+    def create_history(self, history, commit=True):
         try:
             db.session.add(history)
-            db.session.commit()
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
             return history, None
-
         except IntegrityError:
             db.session.rollback()
             return None, "integrity_error"

@@ -5,10 +5,13 @@ from app.models.task_child_model import TaskChild
 
 class TaskChildRepository:
 
-    def create_task_child(self, task_child):
+    def create_task_child(self, task_child, commit=True):
         try:
             db.session.add(task_child)
-            db.session.commit()
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
             return task_child, None
         except IntegrityError:
             db.session.rollback()

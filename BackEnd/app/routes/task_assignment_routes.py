@@ -52,6 +52,8 @@ class CompleteAssignmentResource(Resource):
             return {"error": "Assignment not found"}, 404
         if error == "assignment_already_completed":
             return {"error": "Assignment already completed or waiting for review"}, 400
+        if error in ["update_failed", "points_failed"]:
+            return {"error": "Failed to complete assignment"}, 500
         return child_assignment_response_schema.dump(assignment), 200
 
 @api.route("/<assignment_id>/approve")
@@ -68,6 +70,8 @@ class ApproveAssignmentResource(Resource):
             return {"error": "Assignment not found"}, 404
         if error == "assignment_not_pending_review":
             return {"error": "Assignment is not waiting for review"}, 400
+        if error in ["update_failed", "points_failed"]:
+            return {"error": "Failed to approve assignment"}, 500
         return parent_assignment_response_schema.dump(assignment), 200
 
 @api.route("/<assignment_id>/reject")

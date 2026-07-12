@@ -2,7 +2,7 @@ from datetime import datetime
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.services.points_service import PointsService
-
+from app.extensions import db
 
 class TaskAssignmentService:
     def __init__(self):
@@ -36,28 +36,48 @@ class TaskAssignmentService:
         if assignment.status in ["PENDING_REVIEW", "APPROVED"]:
             return None, "assignment_already_completed"
 
-        if assignment.task.is_auto_verified:
-            assignment.status = "APPROVED"
-            assignment.completed_at = datetime.now()
-            assignment.approved_at = datetime.now()
-            
-        else:
-            assignment.status = "PENDING_REVIEW"
-            assignment.completed_at = datetime.now()
-            assignment.approved_at = None
+        try:
+            now = datetime.now()
 
-        success, error = self.task_assignment_repository.update_assignment()
+            if assignment.task.is_auto_verified:
+                assignment.status = "APPROVED"
+                assignment.completed_at = now
+                assignment.approved_at = now
 
-        if not success:
-            return None, "update_failed"
-        if assignment.status == "APPROVED":
-            self.points_service.add_points(
-                assignment.child_id,
-                assignment.task.points,
-                assignment.task.id
+            else:
+                assignment.status = "PENDING_REVIEW"
+                assignment.completed_at = now
+                assignment.approved_at = None
+
+            success, error = (
+                self.task_assignment_repository.update_assignment(
+                    commit=False
+                )
             )
 
-        return assignment, None
+            if not success:
+                db.session.rollback()
+                return None, "update_failed"
+
+            if assignment.status == "APPROVED":
+                points, error = self.points_service.add_points(
+                    child_id=assignment.child_id,
+                    amount=assignment.task.points,
+                    source_id=assignment.task.id,
+                    commit=False
+                )
+
+                if error:
+                    db.session.rollback()
+                    return None, "points_failed"
+
+            db.session.commit()
+
+            return assignment, None
+
+        except Exception:
+            db.session.rollback()
+            return None, "update_failed"
 
     def approve_assignment(self, assignment_id, parent_id):
         assignment = self.task_assignment_repository.get_assignment_for_parent(
@@ -71,22 +91,38 @@ class TaskAssignmentService:
         if assignment.status != "PENDING_REVIEW":
             return None, "assignment_not_pending_review"
 
-        assignment.status = "APPROVED"
-        assignment.approved_at = datetime.now()
-        
+        try:
+            assignment.status = "APPROVED"
+            assignment.approved_at = datetime.now()
 
-        success, error = self.task_assignment_repository.update_assignment()
+            success, error = (
+                self.task_assignment_repository.update_assignment(
+                    commit=False
+                )
+            )
 
-        if not success:
+            if not success:
+                db.session.rollback()
+                return None, "update_failed"
+
+            points, error = self.points_service.add_points(
+                child_id=assignment.child_id,
+                amount=assignment.task.points,
+                source_id=assignment.task.id,
+                commit=False
+            )
+
+            if error:
+                db.session.rollback()
+                return None, "points_failed"
+
+            db.session.commit()
+
+            return assignment, None
+
+        except Exception:
+            db.session.rollback()
             return None, "update_failed"
-        
-        self.points_service.add_points(
-            assignment.child_id,
-            assignment.task.points,
-            assignment.task.id
-        )
-
-        return assignment, None
 
     def reject_assignment(self, assignment_id, parent_id):
         assignment = self.task_assignment_repository.get_assignment_for_parent(

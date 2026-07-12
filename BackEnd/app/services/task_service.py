@@ -7,6 +7,7 @@ from app.models.task_child_model import TaskChild
 from app.repositories.task_child_repository import TaskChildRepository
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from app.extensions import db
 RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
 
 class TaskService:
@@ -47,34 +48,20 @@ class TaskService:
 
     def create_task(self, parent_id, task_data):
         child_ids = task_data["child_ids"]
-
         if len(child_ids) != len(set(child_ids)):
             return None, "duplicate_child_ids"
-
         children = [
             self.child_repository.get_child_for_guardian(child_id, parent_id)
             for child_id in child_ids
         ]
-
         if any(child is None for child in children):
             return None, "child_not_found"
-
-        task = self._build_task(parent_id, task_data)
-        task, error = self.task_repository.create_task(task)
-
-        if error:
-            return None, "create_failed"
-        for child in children:
-            task_child = TaskChild(
-                task_id=task.id,
-                child_id=child.id
-            )
-
-            _, error = self.task_child_repository.create_task_child(task_child)
-
+        try:
+            task = self._build_task(parent_id, task_data)
+            task, error = self.task_repository.create_task(task, commit=False)
             if error:
-                return None, "task_child_failed"
-
+                db.session.rollback()
+                return None, "create_failed"
             today = datetime.now(RIYADH_TIMEZONE).date()
             should_create_assignment = (
                 task.task_frequency == "ONCE"
@@ -88,24 +75,39 @@ class TaskService:
                     and task.recurrence_day == today.day
                 )
             )
-
-            if should_create_assignment:
-                assignment = TaskAssignment(
+            for child in children:
+                task_child = TaskChild(
                     task_id=task.id,
-                    child_id=child.id,
-                    assigned_date=today,
-                    status="PENDING"
+                    child_id=child.id
                 )
-
-                _, error = self.task_assignment_repository.create_assignment(
-                    assignment
+                _, error = self.task_child_repository.create_task_child(
+                    task_child,
+                    commit=False
                 )
-
                 if error:
-                    return None, "assignment_failed"
+                    db.session.rollback()
+                    return None, "task_child_failed"
+                if should_create_assignment:
+                    assignment = TaskAssignment(
+                        task_id=task.id,
+                        child_id=child.id,
+                        assigned_date=today,
+                        status="PENDING"
+                    )
+                    _, error = self.task_assignment_repository.create_assignment(
+                        assignment,
+                        commit=False
+                    )
+                    if error:
+                        db.session.rollback()
+                        return None, "assignment_failed"
+            db.session.commit()
+            return task, None
 
-        return task, None
-
+        except Exception:
+            db.session.rollback()
+            return None, "create_failed"
+    
     def get_tasks_for_parent(self, parent_id):
          return self.task_repository.get_tasks_for_guardian_children(parent_id)
 

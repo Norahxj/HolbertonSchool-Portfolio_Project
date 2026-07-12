@@ -15,18 +15,24 @@ class TaskAssignmentRepository:
             child_id=child_id
         ).first()
 
-    def create_assignment(self, assignment):
+    def create_assignment(self, assignment, commit=True):
         try:
             db.session.add(assignment)
-            db.session.commit()
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
             return assignment, None
         except IntegrityError:
             db.session.rollback()
             return None, "integrity_error"
 
-    def update_assignment(self):
+    def update_assignment(self, commit=True):
         try:
-            db.session.commit()
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
             return True, None
         except IntegrityError:
             db.session.rollback()

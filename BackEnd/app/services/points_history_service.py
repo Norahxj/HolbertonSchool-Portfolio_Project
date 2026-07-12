@@ -8,9 +8,8 @@ class PointsHistoryService:
         self.points_history_repository = PointsHistoryRepository()
         self.child_repository = ChildRepository()
 
-    def create_history(self, child_id, points, action, source_id=None):
+    def create_history(self, child_id, points, action, source_id=None, commit=True):
         child = self.child_repository.get_child_by_id(child_id)
-
         if not child:
             return None, "child_not_found"
 
@@ -20,12 +19,9 @@ class PointsHistoryService:
             action=action,
             source_id=source_id
         )
-
-        history, error = self.points_history_repository.create_history(history)
-
+        history, error = self.points_history_repository.create_history(history, commit=commit)
         if error:
             return None, "create_failed"
-
         return history, None
 
     def get_history_for_child(self, child_id):

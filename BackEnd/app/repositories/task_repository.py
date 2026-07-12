@@ -18,11 +18,15 @@ class TaskRepository:
     def get_task_for_creator(self, task_id, parent_id):
         return Task.query.filter_by(id=task_id, created_by=parent_id).first()
 
-    def create_task(self, task):
+    def create_task(self, task, commit=True):
         try:
             db.session.add(task)
-            db.session.commit()
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
             return task, None
+
         except IntegrityError:
             db.session.rollback()
             return None, "integrity_error"
