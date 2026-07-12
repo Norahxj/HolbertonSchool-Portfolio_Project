@@ -31,15 +31,6 @@ class TaskAssignmentRepository:
         except IntegrityError:
             db.session.rollback()
             return False, "integrity_error"
-
-    def delete_assignment(self, assignment):
-        try:
-            db.session.delete(assignment)
-            db.session.commit()
-            return True, None
-        except Exception:
-            db.session.rollback()
-            return False, "delete_error"
         
     def get_assignment_for_child(self, assignment_id, child_id):
         return TaskAssignment.query.filter_by(

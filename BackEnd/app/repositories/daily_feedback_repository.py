@@ -35,6 +35,11 @@ class DailyFeedbackRepository:
             db.session.rollback()
             return False, "delete_error"
         
+    def get_feedback_for_creator(self, feedback_id, creator_id):
+        return DailyFeedback.query.filter_by(
+            id=feedback_id,
+            created_by=creator_id
+        ).first()
 
     def get_feedback_for_child_today_by_parent(self, child_id, parent_id):
         today = date.today()
