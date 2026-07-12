@@ -16,8 +16,18 @@ class ChildRepository:
             db.session.add(child)
             db.session.commit()
             return child, None
-        except IntegrityError:
+        except IntegrityError as exc:
             db.session.rollback()
+
+            constraint_name = getattr(
+                getattr(exc.orig, "diag", None),
+                "constraint_name",
+                None
+            )
+
+            if constraint_name == "children_access_code_key":
+                return None, "access_code_exists"
+
             return None, "integrity_error"
     
     def update_child(self):

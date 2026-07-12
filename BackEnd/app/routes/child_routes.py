@@ -38,6 +38,17 @@ class ChildListResource(Resource):
             return {"error": "Parent not found"}, 404
         if error == "access_code_exists":
             return {"error": "Failed to generate child access code"}, 500
+        if error == "parent_not_found":
+            return {"message": "Parent not found"}, 404
+
+        if error == "access_code_exists":
+            return {"message": "Could not generate a unique access code"}, 500
+
+        if error == "integrity_error":
+            return {"message": "Could not create child due to invalid related data"}, 500
+
+        if error:
+            return {"message": "Could not create child"}, 500
         return child_with_access_code_schema.dump(child), 201
 
     @jwt_required()

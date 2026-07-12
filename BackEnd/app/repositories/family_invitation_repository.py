@@ -25,7 +25,7 @@ class FamilyInvitationRepository:
     def get_invitation_by_id(self, invitation_id):
         return db.session.get(FamilyInvitation, invitation_id)
 
-    def get_pending_invitation_by_email(self, family_id, email):
+    def get_pending_invitation_by_family_and_email(self, family_id, email):
         return FamilyInvitation.query.filter_by(
             family_id=family_id,
             invited_email=email,

@@ -36,7 +36,7 @@ class ChildService:
         child, error = self.child_repository.create_child(child)
 
         if error:
-            return None, "access_code_exists"
+            return None, error
 
         return child, None
 
