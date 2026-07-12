@@ -41,8 +41,12 @@ class FamilyService:
         if existing_type:
             return None, "guardian_type_already_exists"
 
-        existing_invitation = self.family_invitation_repository.get_pending_invitation_by_email(
-            invited_email
+        existing_invitation = (
+            self.family_invitation_repository
+            .get_pending_invitation_by_family_and_email(
+                current_user.family_id,
+                invited_email
+            )
         )
 
         if existing_invitation:
@@ -56,6 +60,9 @@ class FamilyService:
         )
 
         invitation, error = self.family_invitation_repository.create_invitation(invitation)
+
+        if error == "invitation_already_pending":
+            return None, "invitation_already_pending"
 
         if error:
             return None, "create_failed"

@@ -11,15 +11,23 @@ class FamilyInvitationRepository:
             db.session.add(invitation)
             db.session.commit()
             return invitation, None
-        except IntegrityError:
+        except IntegrityError as exc:
             db.session.rollback()
+            constraint_name = getattr(
+                getattr(exc.orig, "diag", None),
+                "constraint_name",
+                None
+            )
+            if constraint_name == "uq_pending_family_invitation":
+                return None, "invitation_already_pending"
             return None, "integrity_error"
 
     def get_invitation_by_id(self, invitation_id):
         return db.session.get(FamilyInvitation, invitation_id)
 
-    def get_pending_invitation_by_email(self, email):
+    def get_pending_invitation_by_email(self, family_id, email):
         return FamilyInvitation.query.filter_by(
+            family_id=family_id,
             invited_email=email,
             status="PENDING"
         ).first()

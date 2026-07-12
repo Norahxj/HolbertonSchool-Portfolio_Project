@@ -1,9 +1,19 @@
 from app.extensions import db
 from app.models.base_model import BaseModel
+from sqlalchemy import text
 
 
 class FamilyInvitation(BaseModel):
     __tablename__ = "family_invitations"
+    __table_args__ = (
+        db.Index(
+            "uq_pending_family_invitation",
+            "family_id",
+            "invited_email",
+            unique=True,
+            postgresql_where=text("status = 'PENDING'")
+        ),
+    )
 
     family_id = db.Column(db.String(36), db.ForeignKey("families.id", ondelete="CASCADE"), nullable=False)
     invited_email = db.Column(db.String(120), nullable=False)
