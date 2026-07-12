@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 from app.models.task_assignment_model import TaskAssignment
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
+from app.utils.recurrence_utils import is_task_due_on_date
 RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
 
 class RecurringTaskService:
@@ -12,18 +13,16 @@ class RecurringTaskService:
 
     def generate_today_assignments(self):
         today = datetime.now(RIYADH_TIMEZONE).date()
-        weekday = today.weekday()
-        month_day = today.day
 
         tasks = self.task_repository.get_recurring_tasks()
 
         created_count = 0
 
         for task in tasks:
-            if not self._should_generate_today(
-                task,
-                weekday,
-                month_day
+            if not is_task_due_on_date(
+                task.task_frequency,
+                task.recurrence_day,
+                today
             ):
                 continue
 
@@ -58,15 +57,3 @@ class RecurringTaskService:
                 created_count += 1
 
         return created_count, None
-                
-    def _should_generate_today(self, task, weekday, month_day):
-        if task.task_frequency == "DAILY":
-            return True
-
-        if task.task_frequency == "WEEKLY":
-            return task.recurrence_day == weekday
-
-        if task.task_frequency == "MONTHLY":
-            return task.recurrence_day == month_day
-
-        return False

@@ -5,6 +5,7 @@ from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.repositories.child_repository import ChildRepository
 from app.models.task_child_model import TaskChild
 from app.repositories.task_child_repository import TaskChildRepository
+from app.utils.recurrence_utils import is_task_due_on_date
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from app.extensions import db
@@ -65,14 +66,10 @@ class TaskService:
             today = datetime.now(RIYADH_TIMEZONE).date()
             should_create_assignment = (
                 task.task_frequency == "ONCE"
-                or task.task_frequency == "DAILY"
-                or (
-                    task.task_frequency == "WEEKLY"
-                    and task.recurrence_day == today.weekday()
-                )
-                or (
-                    task.task_frequency == "MONTHLY"
-                    and task.recurrence_day == today.day
+                or is_task_due_on_date(
+                    task.task_frequency,
+                    task.recurrence_day,
+                    today
                 )
             )
             for child in children:
