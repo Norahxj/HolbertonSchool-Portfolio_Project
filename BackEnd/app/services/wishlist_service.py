@@ -132,17 +132,13 @@ class WishlistService:
         return wish, None
 
     def delete_wish(self, wish_id, child_id):
-        wish = self.wishlist_repository.get_wish_for_child(
-            wish_id,
-            child_id
-        )
-
+        wish = self.wishlist_repository.get_wish_for_child(wish_id, child_id)
         if not wish:
-            return None
+            return False, "wish_not_found"
 
         success, error = self.wishlist_repository.delete_wish(wish)
 
         if not success:
-            return None
+            return False, "delete_error"
 
-        return True
+        return True, None

@@ -201,9 +201,12 @@ class WishlistResource(Resource):
 
         child_id = get_jwt_identity()
 
-        deleted = wishlist_service.delete_wish(wish_id, child_id)
+        deleted, delete_error  = wishlist_service.delete_wish(wish_id, child_id)
 
-        if not deleted:
+        if delete_error == "wish_not_found":
             return {"error": "Wish not found"}, 404
+
+        if delete_error == "delete_error":
+            return {"error": "Failed to delete wish"}, 500
 
         return {"message": "Wish deleted successfully"}, 200

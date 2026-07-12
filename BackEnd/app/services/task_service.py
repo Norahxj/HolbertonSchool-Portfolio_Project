@@ -142,11 +142,11 @@ class TaskService:
         task = self.task_repository.get_task_for_creator(task_id, parent_id)
 
         if not task:
-            return None
+            return False, "task_not_found"
 
         success, error = self.task_repository.delete_task(task)
 
         if not success:
-            return None
+            return False, "delete_error"
 
-        return True
+        return True, None

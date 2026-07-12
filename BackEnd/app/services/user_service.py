@@ -1,5 +1,4 @@
 from app.repositories.user_repository import UserRepository
-from app.repositories.child_repository import ChildRepository
 from app.extensions import db
 from app.models.Family_model import Family
 from app.models.user_model import User
@@ -7,7 +6,6 @@ from app.models.user_model import User
 class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
-        self.child_repository = ChildRepository()
 
     def get_user(self, user_id):
         return self.user_repository.get_user_by_id(user_id)

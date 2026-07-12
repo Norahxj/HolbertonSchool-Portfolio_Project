@@ -71,14 +71,14 @@ class RewardService:
         reward = self.reward_repository.get_reward_for_parent(reward_id, parent_id)
 
         if not reward:
-            return None
+            return False, "reward_not_found"
 
         success, error = self.reward_repository.delete_reward(reward)
 
         if not success:
-            return None
+            return False, "delete_error"
 
-        return True
+        return True, None
 
     def unlock_today_rewards(self):
         today_weekday =  date.today().weekday()

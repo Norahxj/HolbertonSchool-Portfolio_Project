@@ -94,9 +94,11 @@ class TaskResource(Resource):
         error = require_parent()
         if error:
             return error
-        deleted = task_service.delete_task_for_parent(task_id, parent_id)
-        if not deleted:
+        deleted, delete_error  = task_service.delete_task_for_parent(task_id, parent_id)
+        if delete_error == "task_not_found":
             return {"error": "Task not found"}, 404
+        if delete_error == "delete_error":
+            return {"error": "Failed to delete task"}, 500
         return {"message": "Task deleted successfully"}, 200
 
 

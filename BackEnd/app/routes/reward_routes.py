@@ -134,10 +134,13 @@ class RewardResource(Resource):
 
         parent_id = get_jwt_identity()
 
-        deleted = reward_service.delete_reward(reward_id, parent_id)
+        deleted, delete_error = reward_service.delete_reward(reward_id, parent_id)
 
-        if not deleted:
+        if delete_error == "reward_not_found":
             return {"error": "Reward not found"}, 404
+
+        if delete_error == "delete_error":
+            return {"error": "Failed to delete reward"}, 500
 
         return {"message": "Reward deleted successfully"}, 200
 

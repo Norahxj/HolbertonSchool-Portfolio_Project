@@ -39,9 +39,9 @@ class RewardRepository:
             db.session.delete(reward)
             db.session.commit()
             return True, None
-        except IntegrityError:
+        except Exception:
             db.session.rollback()
-            return False, "integrity_error"
+            return False, "delete_error"
         
 
     def get_locked_rewards_by_unlock_day(self, unlock_day):
