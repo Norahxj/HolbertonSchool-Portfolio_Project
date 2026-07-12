@@ -74,17 +74,34 @@ class TaskService:
             if error:
                 return None, "task_child_failed"
 
-            assignment = TaskAssignment(
-                task_id=task.id,
-                child_id=child.id,
-                assigned_date=date.today(),
-                status="PENDING"
+            today = date.today()
+            should_create_assignment = (
+                task.task_frequency == "ONCE"
+                or task.task_frequency == "DAILY"
+                or (
+                    task.task_frequency == "WEEKLY"
+                    and task.recurrence_day == today.weekday()
+                )
+                or (
+                    task.task_frequency == "MONTHLY"
+                    and task.recurrence_day == today.day
+                )
             )
 
-            _, error = self.task_assignment_repository.create_assignment(assignment)
+            if should_create_assignment:
+                assignment = TaskAssignment(
+                    task_id=task.id,
+                    child_id=child.id,
+                    assigned_date=today,
+                    status="PENDING"
+                )
 
-            if error:
-                return None, "assignment_failed"
+                _, error = self.task_assignment_repository.create_assignment(
+                    assignment
+                )
+
+                if error:
+                    return None, "assignment_failed"
 
         return task, None
 
@@ -100,7 +117,7 @@ class TaskService:
         if not child:
             return None
 
-        return [assignment.task for assignment in child.task_assignments]
+        return [task_child.task for task_child in child.task_children]
 
     def update_task_for_parent(self, task_id, parent_id, task_data):
         task = self.task_repository.get_task_for_creator(task_id, parent_id)

@@ -4,6 +4,7 @@ from app.models.task_model import Task
 from app.models.child_model import Child
 from app.models.user_model import User
 from app.models.task_assignment_model import TaskAssignment
+from app.models.task_child_model import TaskChild
 
 
 class TaskRepository:
@@ -51,8 +52,8 @@ class TaskRepository:
     def get_tasks_for_guardian_children(self, parent_id):
         return (
             Task.query
-            .join(TaskAssignment)
-            .join(TaskAssignment.child)
+            .join(TaskChild, TaskChild.task_id == Task.id)
+            .join(Child, Child.id == TaskChild.child_id)
             .join(Child.guardians)
             .filter(User.id == parent_id)
             .distinct()
@@ -62,9 +63,12 @@ class TaskRepository:
     def get_task_for_guardian_children(self, task_id, parent_id):
         return (
             Task.query
-            .join(TaskAssignment)
-            .join(TaskAssignment.child)
+            .join(TaskChild, TaskChild.task_id == Task.id)
+            .join(Child, Child.id == TaskChild.child_id)
             .join(Child.guardians)
-            .filter(Task.id == task_id, User.id == parent_id)
+            .filter(
+                Task.id == task_id,
+                User.id == parent_id
+            )
             .first()
         )
