@@ -17,15 +17,24 @@ class RecurringTaskService:
 
         tasks = self.task_repository.get_recurring_tasks()
 
+        created_count = 0
+
         for task in tasks:
-            if not self._should_generate_today(task, weekday, month_day):
+            if not self._should_generate_today(
+                task,
+                weekday,
+                month_day
+            ):
                 continue
 
             for task_child in task.task_children:
-                existing = self.assignment_repository.get_assignment_for_date(
-                    task.id,
-                    task_child.child_id,
-                    today
+                existing = (
+                    self.assignment_repository
+                    .get_assignment_for_date(
+                        task.id,
+                        task_child.child_id,
+                        today
+                    )
                 )
 
                 if existing:
@@ -38,7 +47,17 @@ class RecurringTaskService:
                     status="PENDING"
                 )
 
-                self.assignment_repository.create_assignment(new_assignment)
+                assignment, error = (
+                    self.assignment_repository
+                    .create_assignment(new_assignment)
+                )
+
+                if error:
+                    return None, "assignment_failed"
+
+                created_count += 1
+
+        return created_count, None
                 
     def _should_generate_today(self, task, weekday, month_day):
         if task.task_frequency == "DAILY":
