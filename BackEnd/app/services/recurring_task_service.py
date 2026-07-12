@@ -4,6 +4,7 @@ from app.models.task_assignment_model import TaskAssignment
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.utils.recurrence_utils import is_task_due_on_date
+from app.extensions import db
 RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
 
 class RecurringTaskService:
@@ -17,6 +18,7 @@ class RecurringTaskService:
         tasks = self.task_repository.get_recurring_tasks()
 
         created_count = 0
+        failed_count = 0
 
         for task in tasks:
             if not is_task_due_on_date(
@@ -46,14 +48,29 @@ class RecurringTaskService:
                     status="PENDING"
                 )
 
-                assignment, error = (
-                    self.assignment_repository
-                    .create_assignment(new_assignment)
-                )
+                try:
+                    assignment, error = (
+                        self.assignment_repository
+                        .create_assignment(new_assignment)
+                    )
 
-                if error:
-                    return None, "assignment_failed"
+                    if error:
+                        failed_count += 1
+                        continue
 
-                created_count += 1
+                    created_count += 1
 
-        return created_count, None
+                except Exception:
+                    db.session.rollback()
+                    failed_count += 1
+                    continue
+
+        result = {
+            "created": created_count,
+            "failed": failed_count
+        }
+
+        if failed_count > 0:
+            return result, "partial_failure"
+
+        return result, None

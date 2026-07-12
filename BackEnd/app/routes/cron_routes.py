@@ -34,18 +34,10 @@ class RunDailyJobs(Resource):
         if not is_valid_cron_request():
             return {"error": "Unauthorized"}, 401
 
-        assignments_count, assignment_error = (
+        assignment_result, assignment_error = (
             recurring_task_service
             .generate_today_assignments()
         )
-
-        if assignment_error == "assignment_failed":
-            return {
-                "error": (
-                    "Failed to generate today's "
-                    "task assignments"
-                )
-            }, 500
 
         unlocked_rewards_count, reward_error = (
             reward_service.unlock_today_rewards()
@@ -58,8 +50,19 @@ class RunDailyJobs(Resource):
                 )
             }, 500
 
+        if assignment_error == "partial_failure":
+            return {
+                "error": (
+                    "Some task assignments could not be created"
+                ),
+                "created_assignments": assignment_result["created"],
+                "failed_assignments": assignment_result["failed"],
+                "unlocked_rewards": unlocked_rewards_count
+            }, 500
+
         return {
             "message": "Daily jobs completed successfully",
-            "created_assignments": assignments_count,
+            "created_assignments": assignment_result["created"],
+            "failed_assignments": assignment_result["failed"],
             "unlocked_rewards": unlocked_rewards_count
         }, 200
