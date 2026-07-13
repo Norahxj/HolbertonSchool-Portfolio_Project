@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/repositories/child_repository.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
+import 'package:frontend/repositories/task_repository.dart';
+import 'package:frontend/core/network/api_result.dart';
+import 'package:frontend/models/create_task_request.dart';
+import 'package:frontend/models/child_model.dart';
 
 // Add Task wizard (Screens 9-12).
 //
@@ -19,13 +24,22 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  // Which step of the wizard is showing right now: 0, 1, 2, or 3.
+  final TaskRepository _taskRepository = TaskRepository();
+  final ChildRepository _childRepository = ChildRepository();
+
+  List<ChildModel> children = [];
+  List<String> selectedChildIds = [];
+  bool isLoadingChildren = true;
+
   int currentStep = 0;
 
-  // Step 0: which children this task is for (more than one is allowed).
-  bool isKhaledSelected = true;
-  bool isNouraSelected = false;
-  bool isSalmanSelected = true;
+  String? titleError;
+  String? descriptionError;
+  String? pointsError;
+  String? categoryError;
+  String? frequencyError;
+  String? recurrenceDayError;
+  String? childError;
 
   // Step 1: which task type/category is picked. Null means none yet.
   int? selectedTaskType;
@@ -57,7 +71,69 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     'السبت',
   ];
   final List<int> monthlyDays = const [1, 5, 10, 15, 20, 25, 30];
+  String get taskFrequency {
+  switch (selectedFrequency) {
+    case 0:
+      return "DAILY";
+    case 1:
+      return "WEEKLY";
+    case 2:
+      return "MONTHLY";
+    default:
+      return "ONCE";
+  }
+}
 
+int? get recurrenceDay {
+  if (selectedFrequency == 1) {
+    return weekDays.indexOf(selectedWeeklyDay);
+  }
+
+  if (selectedFrequency == 2) {
+    return selectedMonthlyDay;
+  }
+
+  return null;
+}
+
+String get category {
+  switch (selectedTaskType) {
+    case 0:
+      return "SOCIAL";
+    case 1:
+      return "MORAL";
+    case 2:
+      return "RELIGIOUS";
+    case 3:
+      return "FINANCIAL";
+    default:
+      return "MORAL";
+  }
+}
+
+  @override
+void initState() {
+  super.initState();
+  _loadChildren();
+}
+Future<void> _loadChildren() async {
+  final result = await _childRepository.getChildren();
+
+  result.when(
+    success: (data) {
+      setState(() {
+        children = data;
+        isLoadingChildren = false;
+      });
+    },
+    failure: (error) {
+      setState(() {
+        isLoadingChildren = false;
+      });
+      print(error);
+    },
+  );
+}
   @override
   void dispose() {
     taskNameController.dispose();
@@ -151,44 +227,41 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _ChildChip(
-              name: 'خالد',
-              avatarColor: const Color(0xFFDFF3E4),
-              iconColor: const Color(0xFF4CAF50),
-              isSelected: isKhaledSelected,
+        if (isLoadingChildren)
+          const Center(
+            child: CircularProgressIndicator(),
+          )
+        else if (children.isEmpty)
+          const Center(
+            child: Text(
+              'لا يوجد أطفال بعد. الرجاء إضافة طفل أولاً.',
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            ),
+          )
+        else
+        Wrap(
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.md,
+          children: children.map((child) {
+            final isSelected = selectedChildIds.contains(child.id);
+            
+            return _ChildChip(
+              name: child.name,
+              avatarColor: AppColors.primaryLight,
+              iconColor: AppColors.primary,
+              isSelected: isSelected,
               onTap: () {
                 setState(() {
-                  isKhaledSelected = !isKhaledSelected;
+                  if (isSelected) {
+                    selectedChildIds.remove(child.id);
+                  } else {
+                    selectedChildIds.add(child.id);
+                  }
                 });
               },
-            ),
-            _ChildChip(
-              name: 'نورة',
-              avatarColor: const Color(0xFFFBE3EA),
-              iconColor: const Color(0xFFD1637F),
-              isSelected: isNouraSelected,
-              onTap: () {
-                setState(() {
-                  isNouraSelected = !isNouraSelected;
-                });
-              },
-            ),
-            _ChildChip(
-              name: 'سلمان',
-              avatarColor: const Color(0xFFDCEBFB),
-              iconColor: const Color(0xFF4A90D9),
-              isSelected: isSalmanSelected,
-              onTap: () {
-                setState(() {
-                  isSalmanSelected = !isSalmanSelected;
-                });
-              },
-            ),
-          ],
-        ),
+            );
+          }).toList(),
+        ), 
 
         const SizedBox(height: AppSpacing.lg),
 
@@ -343,6 +416,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         _TaskTextField(
           controller: taskNameController,
           hint: 'مثال: ترتيب سريرك',
+          errorText: titleError,
         ),
 
         const SizedBox(height: AppSpacing.lg),
@@ -363,6 +437,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           controller: taskDescriptionController,
           hint: 'صف المهمة باختصار...',
           maxLines: 2,
+          errorText: descriptionError,
         ),
 
         const SizedBox(height: AppSpacing.lg),
@@ -650,11 +725,53 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           flex: 2,
           child: AppButton(
             text: isLastStep ? 'حفظ المهمة' : 'التالي',
-            onPressed: () {
+            onPressed: () async {
               if (isLastStep) {
-                // TODO: Save the new task once backend integration is
-                // ready.
-                Navigator.pop(context);
+                setState(() {
+                  titleError = null;
+                  descriptionError = null;
+                  pointsError = null;
+                  categoryError = null;
+                  frequencyError = null;
+                  recurrenceDayError = null;
+                  childError = null;
+                 });
+
+                final request = CreateTaskRequest(
+                  childIds: selectedChildIds,
+                  title: taskNameController.text.trim(),
+                  description: taskDescriptionController.text.trim(),
+                  points: taskPoints,
+                  taskFrequency: taskFrequency,
+                  recurrenceDay: recurrenceDay,
+                  category: category,
+                  isAutoVerified: trustChild,
+                );
+                
+                  final result = await _taskRepository.createTask(request);
+
+                result.when(
+                  success: (_) {
+                    if (!mounted) return;
+                Navigator.pop(context, true);
+                  },
+                  failure: (error) {
+                    if (error is Map<String, dynamic>) {
+                      final errors = error['errors'];
+                      if (errors != null) {
+                      setState(() {
+                        titleError = errors?['title']?.first;
+                        descriptionError = errors?['description']?.first;
+                        pointsError = errors?['points']?.first;
+                        categoryError = errors?['category']?.first;
+                        frequencyError = errors?['taskFrequency']?.first;
+                        recurrenceDayError = errors?['recurrenceDay']?.first;
+                        childError = errors?['childIds']?.first;
+                      });
+                    } 
+                    }
+                  },
+                );                  
               } else {
                 _goToNextStep();
               }
@@ -917,11 +1034,13 @@ class _TaskTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final int maxLines;
+  final String? errorText;
 
   const _TaskTextField({
     required this.controller,
     required this.hint,
     this.maxLines = 1,
+    this.errorText,
   });
 
   @override
@@ -944,6 +1063,7 @@ class _TaskTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
+        errorText: errorText,
       ),
     );
   }

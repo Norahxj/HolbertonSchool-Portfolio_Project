@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/network/api_result.dart';
 import 'package:frontend/models/child_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -6,8 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import 'package:frontend/core/widgets/screen_background.dart';
-import 'package:frontend/services/child_api_service.dart';
-
+import 'package:frontend/repositories/child_repository.dart';
 // Add Child screen (Screen 5).
 //
 // This first pass is static/placeholder only: avatar and date selection
@@ -26,7 +26,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final ChildApiService _childApiService = ChildApiService();
+  final ChildRepository _childRepository = ChildRepository();
 
   String? nameError;
   String? birthDateError;
@@ -198,26 +198,55 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
                 AppButton(
                   text: 'حفظ',
-                    onPressed: () async {
+                   onPressed: () async {
+                     setState(() {
+                         nameError = null;
+                         phoneError = null;
+                         birthDateError = null;
+                       });
+                      
+                      if (nameController.text.trim().isEmpty) {
+                        setState(() {
+                          nameError = 'Name is required';
+                        });
+                        return;
+                      }
+                    
                       if (selectedDate == null) {
                         setState(() {
                           birthDateError = 'Birth date is required';
                         });
                         return;
                       }
-                      final birthDate =
-                    "${selectedDate?.year}-${selectedDate?.month.toString().padLeft(2, '0')}-${selectedDate?.day.toString().padLeft(2, '0')}";
                     
-                    await _childApiService.addChild(
-                      name: nameController.text.trim(),
-                      birthDate: birthDate,
-                      phone: phoneController.text.trim().isEmpty
-                          ? null
-                          : phoneController.text.trim(),
-                    );
-
-                    Navigator.pop(context, true);
-                  },
+                      final birthDate =
+                          "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}";
+                    
+                      final result = await _childRepository.addChild(
+                        name: nameController.text.trim(),
+                        birthDate: birthDate,
+                        phone: phoneController.text.trim().isEmpty
+                            ? null
+                            : phoneController.text.trim(),
+                      );
+                    
+                      result.when(
+                        success: (_) {
+                          if (!mounted) return;
+                          Navigator.pop(context, true);
+                        },
+                        failure: (error) {
+                          final errors = error['errors'];
+                    
+                          setState(() {
+                            nameError = errors?['name']?.first;
+                            phoneError = errors?['phone']?.first;
+                            birthDateError = errors?['birth_date']?.first;
+                          });
+                        },
+                      );
+                    },
+                    
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
