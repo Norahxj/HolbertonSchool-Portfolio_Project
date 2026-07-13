@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import 'child_task_details_screen.dart';
 
 // Child Home Dashboard screen (Screen 21).
 //
@@ -65,15 +66,30 @@ class ChildHomeScreen extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  const _TaskCard(
+                  _TaskCard(
                     title: 'ترتيب السرير',
                     points: 5,
                     statusText: 'بانتظار المراجعة',
-                    statusColor: Color(0xFFC08A3E),
-                    borderColor: Color(0xFFF0DFA8),
+                    statusColor: const Color(0xFFC08A3E),
+                    borderColor: const Color(0xFFF0DFA8),
                     circleColor: AppColors.gold,
                     circleIcon: Icons.access_time,
                     taskIcon: Icons.king_bed_outlined,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ChildTaskDetailsScreen(
+                            title: 'ترتيب السرير',
+                            points: 5,
+                            description:
+                                'رتّب سريرك في الصباح قبل الذهاب للمدرسة.',
+                            frequencyLabel: 'يوميًا',
+                            icon: Icons.king_bed_outlined,
+                          ),
+                        ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: AppSpacing.md),
@@ -225,6 +241,7 @@ class _TaskCard extends StatelessWidget {
   final Color circleColor;
   final IconData circleIcon;
   final IconData taskIcon;
+  final VoidCallback? onTap;
 
   const _TaskCard({
     required this.title,
@@ -235,11 +252,12 @@ class _TaskCard extends StatelessWidget {
     required this.circleColor,
     required this.circleIcon,
     required this.taskIcon,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -297,6 +315,14 @@ class _TaskCard extends StatelessWidget {
         ],
       ),
     );
+
+    // Only wrap the card in a GestureDetector when there is something to
+    // do on tap. Cards with no onTap are shown as plain, non-tappable
+    // cards, same as before.
+    if (onTap == null) {
+      return card;
+    }
+    return GestureDetector(onTap: onTap, child: card);
   }
 }
 
