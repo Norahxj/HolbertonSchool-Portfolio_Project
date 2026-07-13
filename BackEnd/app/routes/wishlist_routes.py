@@ -216,7 +216,16 @@ class WishlistResource(Resource):
         if delete_error == "wish_not_found":
             return {"error": "Wish not found"}, 404
 
+        if delete_error == "wish_cannot_be_deleted":
+            return {"error": (
+                    "Only pending or rejected wishes "
+                    "can be deleted"
+                )
+            }, 400
+
         if delete_error == "delete_error":
             return {"error": "Failed to delete wish"}, 500
 
-        return {"message": "Wish deleted successfully"}, 200
+        return {
+            "message": "Wish deleted successfully"
+        }, 200

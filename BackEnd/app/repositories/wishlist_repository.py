@@ -17,6 +17,14 @@ class WishlistRepository:
 
     def get_wish_by_id(self, wish_id):
         return db.session.get(Wishlist, wish_id)
+    
+    def get_wish_by_id_for_update(self, wish_id):
+        return (
+            Wishlist.query
+            .filter_by(id=wish_id)
+            .with_for_update()
+            .first()
+        )
 
     def get_wishes_by_child_id(self, child_id):
         return (

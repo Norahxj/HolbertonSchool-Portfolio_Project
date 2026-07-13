@@ -8,6 +8,14 @@ class ChildRepository:
     def get_child_by_id(self, child_id):
         return db.session.get(Child, child_id)
     
+    def get_child_by_id_for_update(self, child_id):
+        return (
+            Child.query
+            .filter_by(id=child_id)
+            .with_for_update()
+            .first()
+        )
+    
     def get_child_by_access_code(self, access_code):
         return Child.query.filter_by(access_code=access_code).first()
     

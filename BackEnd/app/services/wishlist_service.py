@@ -13,21 +13,38 @@ class WishlistService:
         self.points_repository = PointRepository()
 
     def create_wish(self, child_id, wish_data):
-        if self.wishlist_repository.get_pending_count_by_child_id(child_id) >= 5:
-            return None, "wishlist_limit_reached"
+        try:
+            child = self.child_repository.get_child_by_id_for_update(child_id)
 
-        wish = Wishlist(
-            child_id=child_id,
-            name=wish_data["name"].strip(),
-            status="PENDING"
-        )
+            if not child:
+                db.session.rollback()
+                return None, "child_not_found"
 
-        wish, error = self.wishlist_repository.create_wish(wish)
+            pending_count = (
+                self.wishlist_repository
+                .get_pending_count_by_child_id(child_id)
+            )
 
-        if error:
+            if pending_count >= 5:
+                db.session.rollback()
+                return None, "wishlist_limit_reached"
+
+            wish = Wishlist(
+                child_id=child_id,
+                name=wish_data["name"].strip(),
+                status="PENDING"
+            )
+
+            wish, error = self.wishlist_repository.create_wish(wish)
+
+            if error:
+                return None, "create_failed"
+
+            return wish, None
+
+        except Exception:
+            db.session.rollback()
             return None, "create_failed"
-
-        return wish, None
 
     def get_my_wishes(self, child_id):
         wishes = self.wishlist_repository.get_wishes_by_child_id(child_id)
@@ -47,35 +64,68 @@ class WishlistService:
         return wishes, None
 
     def approve_wish(self, wish_id, parent_id, target_points):
-        wish = self.wishlist_repository.get_wish_by_id(wish_id)
+        try:
+            wish = self.wishlist_repository.get_wish_by_id(wish_id)
 
-        if not wish:
-            return None, "wish_not_found"
+            if not wish:
+                db.session.rollback()
+                return None, "wish_not_found"
 
-        child = self.child_repository.get_child_for_guardian(
-            wish.child_id,
-            parent_id
-        )
+            child = self.child_repository.get_child_for_guardian(
+                wish.child_id,
+                parent_id
+            )
 
-        if not child:
-            return None, "child_not_found"
+            if not child:
+                db.session.rollback()
+                return None, "child_not_found"
 
-        if self.wishlist_repository.get_approved_count_by_child_id(wish.child_id) >= 3:
-            return None, "approved_limit_reached"
-        if wish.status != "PENDING":
-            return None, "wish_already_reviewed"
+            locked_child = (
+                self.child_repository
+                .get_child_by_id_for_update(wish.child_id)
+            )
 
-        wish.status = "APPROVED"
-        wish.target_points = target_points
-        wish.reviewed_by = parent_id
-        wish.approved_at = datetime.now()
+            if not locked_child:
+                db.session.rollback()
+                return None, "child_not_found"
 
-        success, error = self.wishlist_repository.update_wish()
+            wish = (
+                self.wishlist_repository
+                .get_wish_by_id_for_update(wish_id)
+            )
 
-        if not success:
+            if not wish:
+                db.session.rollback()
+                return None, "wish_not_found"
+
+            if wish.status != "PENDING":
+                db.session.rollback()
+                return None, "wish_already_reviewed"
+
+            approved_count = (
+                self.wishlist_repository
+                .get_approved_count_by_child_id(wish.child_id)
+            )
+
+            if approved_count >= 3:
+                db.session.rollback()
+                return None, "approved_limit_reached"
+
+            wish.status = "APPROVED"
+            wish.target_points = target_points
+            wish.reviewed_by = parent_id
+            wish.approved_at = datetime.now()
+
+            success, error = self.wishlist_repository.update_wish()
+
+            if not success:
+                return None, "update_failed"
+
+            return wish, None
+
+        except Exception:
+            db.session.rollback()
             return None, "update_failed"
-
-        return wish, None
 
     def reject_wish(self, wish_id, parent_id):
         wish = self.wishlist_repository.get_wish_by_id(wish_id)
@@ -157,15 +207,35 @@ class WishlistService:
             return None, "achieve_failed"
 
     def delete_wish(self, wish_id, child_id):
-        wish = self.wishlist_repository.get_wish_for_child(wish_id, child_id)
-        if not wish:
-            return False, "wish_not_found"
+        try:
+            wish = (
+                self.wishlist_repository
+                .get_wish_for_child_for_update(wish_id, child_id)
+            )
 
-        success, error = self.wishlist_repository.delete_wish(wish)
+            if not wish:
+                db.session.rollback()
+                return False, "wish_not_found"
 
-        if not success:
+            allowed_statuses = {
+                "PENDING",
+                "REJECTED"
+            }
+
+            if wish.status not in allowed_statuses:
+                db.session.rollback()
+                return False, "wish_cannot_be_deleted"
+
+            success, error = (
+                self.wishlist_repository.delete_wish(wish)
+            )
+
+            if not success:
+                return False, "delete_error"
+
+            return True, None
+
+        except Exception:
+            db.session.rollback()
             return False, "delete_error"
-
-        return True, None
-    
     

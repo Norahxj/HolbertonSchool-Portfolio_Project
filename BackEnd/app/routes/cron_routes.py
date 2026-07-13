@@ -43,26 +43,42 @@ class RunDailyJobs(Resource):
             reward_service.unlock_today_rewards()
         )
 
-        if reward_error == "update_failed":
-            return {
-                "error": (
-                    "Failed to unlock today's rewards"
-                )
-            }, 500
+        assignments_succeeded = assignment_error is None
+        rewards_succeeded = reward_error is None
 
-        if assignment_error == "partial_failure":
-            return {
-                "error": (
-                    "Some task assignments could not be created"
-                ),
-                "created_assignments": assignment_result["created"],
-                "failed_assignments": assignment_result["failed"],
-                "unlocked_rewards": unlocked_rewards_count
-            }, 500
+        response = {
+            "status": (
+                "success"
+                if assignments_succeeded and rewards_succeeded
+                else "partial_failure"
+            ),
+            "jobs": {
+                "task_assignments": {
+                    "success": assignments_succeeded,
+                    "created": assignment_result["created"],
+                    "failed": assignment_result["failed"],
+                    "error": assignment_error
+                },
+                "rewards": {
+                    "success": rewards_succeeded,
+                    "unlocked": (
+                        unlocked_rewards_count
+                        if rewards_succeeded
+                        else 0
+                    ),
+                    "error": reward_error
+                }
+            }
+        }
 
-        return {
-            "message": "Daily jobs completed successfully",
-            "created_assignments": assignment_result["created"],
-            "failed_assignments": assignment_result["failed"],
-            "unlocked_rewards": unlocked_rewards_count
-        }, 200
+        if not assignments_succeeded or not rewards_succeeded:
+            response["message"] = (
+                "Daily jobs completed with one or more errors"
+            )
+            return response, 500
+
+        response["message"] = (
+            "Daily jobs completed successfully"
+        )
+
+        return response, 200
