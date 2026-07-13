@@ -21,6 +21,7 @@ from app.routes.task_bank_routes import api as task_bank_ns
 from app.routes.family_routes import api as family_ns
 from app.routes.cron_routes import api as cron_ns
 from app.routes.dashboard_routes import api as dashboard_ns
+from app.routes.reward_bank_routes import api as reward_bank_ns
 
 
 authorizations = {
@@ -116,4 +117,5 @@ def create_app():
     api.add_namespace(family_ns, path="/api/family")
     api.add_namespace(cron_ns, path="/api/cron")
     api.add_namespace(dashboard_ns, path="/api/dashboard")
+    api.add_namespace(reward_bank_ns,path="/api/reward-bank")
     return app
