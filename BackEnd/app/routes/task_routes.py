@@ -39,6 +39,8 @@ class TaskListResource(Resource):
 
         if error == "child_not_found":
             return {"error": "Child not found"}, 404
+        if error in ["create_failed", "task_child_failed", "assignment_failed"]:
+            return {"error": "Failed to create task"}, 500
         return task_response_schema.dump(task), 201
 
     @api.doc(security="JWT")
