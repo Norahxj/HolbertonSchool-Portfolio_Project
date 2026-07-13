@@ -5,6 +5,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
+import 'child_home_screen.dart';
 
 // Child PIN Login screen (Screen 20).
 //
@@ -117,7 +118,14 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
                   text: 'دخول',
                   onPressed: () {
                     // TODO: Check the entered pin with the backend once
-                    // that is ready.
+                    // that is ready. For now, just go to the child home
+                    // screen so the flow can be tested.
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ChildHomeScreen(),
+                      ),
+                    );
                   },
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
