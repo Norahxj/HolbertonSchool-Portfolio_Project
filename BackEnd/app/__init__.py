@@ -44,6 +44,7 @@ def create_app():
         supports_credentials=True,
     )
     app.config.from_object(Config)
+    Config.validate()
     app.config["JWT_HEADER_TYPE"] = ""
 
     db.init_app(app)
