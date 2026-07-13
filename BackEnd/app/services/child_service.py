@@ -22,6 +22,8 @@ class ChildService:
 
         if not parent:
             return None, "parent_not_found"
+        if not parent.family:
+            return None, "family_not_found"
 
         child = Child(
             name=child_data["name"].strip(),
@@ -30,9 +32,9 @@ class ChildService:
             access_code=self.generate_access_code(),
             family_id=parent.family_id
         )
-
-        child.guardians.append(parent)
-
+        for guardian in parent.family.guardians:
+            child.guardians.append(guardian)
+            
         child, error = self.child_repository.create_child(child)
 
         if error:

@@ -21,7 +21,7 @@ class DashboardService:
         children = self.child_repository.get_children_by_guardian(parent)
 
         today = riyadh_today()
-        days_since_sunday = (today.weekday() + 1) % 7
+        days_since_sunday = (today.weekday() - 4) % 7
 
         week_start = today - timedelta(days=days_since_sunday)
         week_end = week_start + timedelta(days=6)

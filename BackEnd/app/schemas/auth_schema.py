@@ -40,7 +40,7 @@ class RegisterSchema(Schema):
     guardian_type = fields.String(required=True, validate=validate.OneOf(["father", "mother", "guardian"]))
 
 class LoginSchema(Schema):
-    email = fields.Email(required=True, validate=validate_email_domin)
+    email = fields.Email(required=True)
     password = fields.String(required=True)
 
 class ChildLoginSchema(Schema):
