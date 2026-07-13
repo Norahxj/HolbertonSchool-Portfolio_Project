@@ -21,10 +21,10 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController nameController = TextEditingController(
-    text: 'نورة الجهني',
+    text: 'user name',
   );
   final TextEditingController emailController = TextEditingController(
-    text: 'noura@email.com',
+    text: 'user@email.com',
   );
   final TextEditingController phoneController = TextEditingController(
     text: '5X XXX XXXX',
