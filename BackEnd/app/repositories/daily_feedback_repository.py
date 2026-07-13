@@ -2,6 +2,8 @@ from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.daily_feedback_model import DailyFeedback
 from datetime import date
+from datetime import datetime, time, timedelta
+from app.utils.datetime_utils import (RIYADH_TIMEZONE, UTC, riyadh_today)
 
 
 class DailyFeedbackRepository:
@@ -42,14 +44,22 @@ class DailyFeedbackRepository:
         ).first()
 
     def get_feedback_for_child_today_by_parent(self, child_id, parent_id):
-        today = date.today()
+        today = riyadh_today()
+
+        riyadh_day_start = datetime.combine(today, time.min, tzinfo=RIYADH_TIMEZONE)
+
+        riyadh_day_end = (riyadh_day_start + timedelta(days=1))
+
+        utc_day_start = riyadh_day_start.astimezone(UTC)
+        utc_day_end = riyadh_day_end.astimezone(UTC)
 
         return (
             DailyFeedback.query
             .filter(
                 DailyFeedback.child_id == child_id,
                 DailyFeedback.created_by == parent_id,
-                db.func.date(DailyFeedback.created_at) == today
+                DailyFeedback.created_at >= utc_day_start,
+                DailyFeedback.created_at < utc_day_end
             )
             .first()
         )

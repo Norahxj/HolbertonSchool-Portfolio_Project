@@ -3,6 +3,7 @@ from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.services.points_service import PointsService
 from app.extensions import db
+from app.utils.datetime_utils import utc_now
 
 class TaskAssignmentService:
     def __init__(self):
@@ -37,7 +38,7 @@ class TaskAssignmentService:
             return None, "assignment_already_completed"
 
         try:
-            now = datetime.now()
+            now = utc_now()
 
             if assignment.task.is_auto_verified:
                 assignment.status = "APPROVED"
@@ -93,7 +94,7 @@ class TaskAssignmentService:
 
         try:
             assignment.status = "APPROVED"
-            assignment.approved_at = datetime.now()
+            assignment.approved_at = utc_now()
 
             success, error = (
                 self.task_assignment_repository.update_assignment(

@@ -4,6 +4,7 @@ from app.models.wishlist_model import Wishlist
 from app.repositories.wishlist_repository import WishlistRepository
 from app.repositories.child_repository import ChildRepository
 from app.repositories.point_repository import PointRepository
+from app.utils.datetime_utils import utc_now
 
 
 class WishlistService:
@@ -114,7 +115,7 @@ class WishlistService:
             wish.status = "APPROVED"
             wish.target_points = target_points
             wish.reviewed_by = parent_id
-            wish.approved_at = datetime.now()
+            wish.approved_at = utc_now()
 
             success, error = self.wishlist_repository.update_wish()
 

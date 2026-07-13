@@ -14,7 +14,7 @@ class Child(BaseModel):
     __tablename__ = "children"
 
     name = db.Column(db.String(100), nullable=False)
-    birth_date = db.Column(db.Date, nullable=False)
+    birth_date = db.Column(db.DateTime(timezone=True), nullable=False)
     phone = db.Column(db.String(10), nullable=True)    
     access_code = db.Column(db.String(6), unique=True, nullable=False)
     guardians = db.relationship("User", secondary=child_guardians, backref=db.backref("children", lazy=True), lazy=True, passive_deletes=True)
