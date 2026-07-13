@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import 'child_task_details_screen.dart';
+import 'child_wishlist_screen.dart';
 
 // Child Home Dashboard screen (Screen 21).
 //
@@ -347,13 +348,29 @@ class _BottomNavBar extends StatelessWidget {
             ),
           ],
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _NavItem(icon: Icons.bar_chart_rounded, label: 'تقدّمي'),
-            _NavItem(icon: Icons.card_giftcard_outlined, label: 'المكافآت'),
-            _NavItem(icon: Icons.favorite_border, label: 'أمنياتي'),
-            _NavItem(
+            const _NavItem(icon: Icons.bar_chart_rounded, label: 'تقدّمي'),
+            const _NavItem(
+              icon: Icons.card_giftcard_outlined,
+              label: 'المكافآت',
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ChildWishlistScreen(),
+                  ),
+                );
+              },
+              child: const _NavItem(
+                icon: Icons.favorite_border,
+                label: 'أمنياتي',
+              ),
+            ),
+            const _NavItem(
               icon: Icons.home_rounded,
               label: 'الرئيسية',
               isActive: true,
