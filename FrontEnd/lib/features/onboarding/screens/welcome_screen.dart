@@ -8,6 +8,7 @@ import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../widgets/role_card.dart';
 import '../../auth/screens/auth_screen.dart';
+import '../../child/screens/child_pin_login_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final bool isArabic;
@@ -155,7 +156,12 @@ class WelcomeScreen extends StatelessWidget {
                       englishTitle: 'Child',
                       icon: Icons.person,
                       onTap: () {
-                        // Later: navigate to child auth screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ChildPinLoginScreen(),
+                          ),
+                        );
                       },
                     ),
                   ],
