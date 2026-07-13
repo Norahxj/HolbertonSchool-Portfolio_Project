@@ -28,4 +28,8 @@ class ChildApiService {
     final response = await _apiService.addChild(body);
     return response.data;
   }
+  Future<ChildModel> getChildById(String childId) async {
+  final response = await _apiService.getChild(childId);
+  return response.data;
+}
 }

@@ -54,6 +54,10 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
             child: FutureBuilder<UserModel>(
               future: UserApiService().getCurrentUser(),
               builder: (context, snapshot) {
+                print('state = ${snapshot.connectionState}');
+                print('error = ${snapshot.error}');
+                print('hasData = ${snapshot.hasData}');
+                print('data = ${snapshot.data}');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -97,18 +101,20 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                 FutureBuilder<List<ChildModel>>(
                   future: ChildApiService().getChildren(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (snapshot.hasError || !snapshot.hasData) {
-                      return const Center(child: Text('Error loading children'));
-                    }
-
-                    final List<ChildModel> children = snapshot.data!;
-
-                    return Column(
-                      children: children
+                    if (snapshot.hasError) {
+                      print(snapshot.error);
+                      return Center(
+                        child: Text(snapshot.error.toString()),
+                        );
+                        }
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: Text('No data'),
+                            );
+                        }
+                        final children = snapshot.data!;
+                        return Column(
+                          children: children
                           .map((child) => Padding(
                                 padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                                 child: _ChildProgressCard(child: child),

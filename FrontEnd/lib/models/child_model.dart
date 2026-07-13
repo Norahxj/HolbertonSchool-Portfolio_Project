@@ -26,7 +26,7 @@ class ChildModel {
       birthDate: json['birth_date'],
       phone: json['phone'],
       age: json['age'],
-      accessCode: json['access_code'],
+      accessCode: json['access_code']??'',
       role: json['role'], 
       weeklyProgress: (json['weekly_progress'] as num?)?.toInt() ?? 0,
     );

@@ -38,9 +38,13 @@ abstract class ApiService {
 
   @GET('/children/')
   Future<HttpResponse<List<ChildModel>>> getChildren();
-
+  
   @POST('/children/')
   Future<HttpResponse<ChildModel>> addChild(
   @Body() Map<String, dynamic> body,
+);
+  @GET('/children/{id}')
+Future<HttpResponse<ChildModel>> getChild(
+  @Path('id') String childId,
 );
 }

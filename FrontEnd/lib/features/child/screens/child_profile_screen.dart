@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/services/child_api_service.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -9,7 +10,7 @@ import '../../../models/child_model.dart';
 //
 // This first pass is static/placeholder only: the child's name, age,
 // progress, join code, and tasks are all hardcoded. No backend calls here.
-class ChildProfileScreen extends StatelessWidget {
+class ChildProfileScreen extends StatefulWidget {
   final ChildModel child;
   
   const ChildProfileScreen({
@@ -18,11 +19,42 @@ class ChildProfileScreen extends StatelessWidget {
     });
 
   @override
+  State<ChildProfileScreen> createState() => _ChildProfileScreenState();
+}
+
+class _ChildProfileScreenState extends State<ChildProfileScreen> {
+  late Future<ChildModel> _childFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _childFuture =
+        ChildApiService().getChildById(widget.child.id);
+  }
+  
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Column(
-        children: [
+      body: FutureBuilder<ChildModel>(
+        future: _childFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+            child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError || !snapshot.hasData) {
+            return const Center(
+              child: Text('Error loading child'),
+            );
+          }
+          
+          final child = snapshot.data!;
+          
+          return Column(
+            children: [
           _ProfileHeader(child: child),
           Expanded(
             child: SingleChildScrollView(
@@ -55,11 +87,14 @@ class ChildProfileScreen extends StatelessWidget {
             ),
           ),
         ],
+          );
+        },
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
+    bottomNavigationBar: const _BottomNavBar();
   }
 }
+
 
 class _ProfileHeader extends StatelessWidget {
   final ChildModel child;
@@ -319,7 +354,8 @@ class _JoinCodeCard extends StatelessWidget {
             children: [
               _CopyButton(
                 onTap: () {
-                  Clipboard.setData(const ClipboardData(text: '715482'));
+                  Clipboard.setData(
+                    ClipboardData(text: child.accessCode),);
                   ScaffoldMessenger.of(
                     context,
                   ).showSnackBar(const SnackBar(content: Text('تم نسخ الرمز')));
