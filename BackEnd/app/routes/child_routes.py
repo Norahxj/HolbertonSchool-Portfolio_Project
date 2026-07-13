@@ -36,6 +36,8 @@ class ChildListResource(Resource):
         child, error = child_service.create_child(parent_id, child_data)
         if error == "parent_not_found":
             return {"error": "Parent not found"}, 404
+        if error == "family_not_found":
+            return {"error": "Parent is not assigned to a family"}, 400
         if error == "access_code_exists":
             return {"error": "Failed to generate child access code"}, 500
         if error == "integrity_error":

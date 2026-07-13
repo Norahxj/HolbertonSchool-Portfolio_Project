@@ -88,4 +88,6 @@ class RejectAssignmentResource(Resource):
             return {"error": "Assignment not found"}, 404
         if error == "assignment_not_pending_review":
             return {"error": "Assignment is not waiting for review"}, 400
+        if error == "update_failed":
+            return {"error": "Failed to reject assignment"}, 500
         return parent_assignment_response_schema.dump(assignment), 200
