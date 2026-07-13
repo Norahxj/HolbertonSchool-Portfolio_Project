@@ -1,0 +1,15 @@
+services:
+  backend:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+
+    container_name: asalah-backend
+
+    ports:
+      - "5000:5000"
+
+    env_file:
+      - ./BackEnd/.env
+
+    restart: unless-stopped
