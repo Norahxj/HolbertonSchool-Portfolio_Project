@@ -1,12 +1,10 @@
 from flask import Flask
 from dotenv import load_dotenv
-
 load_dotenv()
-
 from flask_cors import CORS
 from jwt.exceptions import DecodeError, ExpiredSignatureError
 from flask_restx import Api
-from app.extensions import db, jwt, bcrypt
+from app.extensions import db, jwt, bcrypt, migrate
 from app.config import Config
 from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError
 from app.routes.auth_routes import api as auth_ns
@@ -50,6 +48,9 @@ def create_app():
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    migrate.init_app(app, db)
+    from app import models
+
 
     from app.models.revoked_token_model import RevokedToken
 

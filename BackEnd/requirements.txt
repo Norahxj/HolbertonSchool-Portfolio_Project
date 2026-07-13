@@ -11,3 +11,4 @@ gunicorn==22.0.0
 email-validator==2.2.0
 Flask-Cors==5.0.0
 PyJWT==2.13.0
+Flask-Migrate
