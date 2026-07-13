@@ -10,6 +10,14 @@ class User(BaseModel):
             "guardian_type",
             name="uq_users_family_guardian_type"
         ),
+        db.CheckConstraint(
+            "guardian_type IN ('father', 'mother', 'guardian')",
+            name="ck_users_guardian_type"
+        ),
+        db.CheckConstraint(
+            "role = 'parent'",
+            name="ck_users_role"
+        ),
     )
     
     first_name = db.Column(db.String(50), nullable=False)

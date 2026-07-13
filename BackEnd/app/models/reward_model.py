@@ -4,6 +4,16 @@ from app.models.base_model import BaseModel
 
 class Reward(BaseModel):
     __tablename__ = "rewards"
+    __table_args__ = (
+        db.CheckConstraint(
+            "status IN ('LOCKED', 'UNLOCKED', 'CLAIMED')",
+            name="ck_rewards_status"
+        ),
+        db.CheckConstraint(
+            "unlock_day BETWEEN 0 AND 6",
+            name="ck_rewards_unlock_day"
+        ),
+    )
 
     child_id = db.Column(db.String(36), db.ForeignKey("children.id", ondelete="CASCADE"), nullable=False)
     reward_name = db.Column(db.String(100), nullable=False)
