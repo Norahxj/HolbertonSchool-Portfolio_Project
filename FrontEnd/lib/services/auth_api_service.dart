@@ -13,9 +13,6 @@ class AuthApiService {
 
   await SecureStorage.saveAccessToken(accessToken);
   await SecureStorage.saveRefreshToken(refreshToken);
-
-  print("Saved token = ${await SecureStorage.getAccessToken()}");
-  print("Saved refresh token = ${await SecureStorage.getRefreshToken()}");
 }
 
 Future<bool> isLoggedIn() async {
@@ -25,7 +22,7 @@ Future<bool> isLoggedIn() async {
   return token != null;
 }
 
-Future<void> logout() async {
+Future<Response?> logout() async {
   await SecureStorage.clear();
 }
 

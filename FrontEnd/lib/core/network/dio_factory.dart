@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/core/network/api_constants.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:frontend/core/storage/secure_storage.dart';
 
 class DioFactory {
   DioFactory._();
@@ -32,13 +33,31 @@ class DioFactory {
   }
 
   static void addDioInterceptor() {
-    dio?.interceptors.add(
-      PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-      ),
-    );
-  }
+  dio?.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final token = await SecureStorage.getAccessToken();
+
+        if (token != null && 
+            token.isNotEmpty &&
+          !options.path.startsWith('auth/login') && 
+          !options.path.startsWith('auth/register')) {
+          options.headers["Authorization"] = token;
+        }
+
+        handler.next(options);
+      },
+    ),
+  );
+
+
+  dio?.interceptors.add(
+    PrettyDioLogger(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      responseHeader: false,
+    ),
+  );
+}
 }

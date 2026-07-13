@@ -11,13 +11,37 @@ import 'more_settings_screen.dart';
 import 'reward_management_screen.dart';
 import 'task_review_screen.dart';
 import 'wishlist_approval_screen.dart';
+import '../../../models/child_model.dart';
+import '../../../services/child_api_service.dart';
+import '../../../services/user_api_service.dart';
+import '../../../models/user_model.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
 // This first pass uses simple hardcoded placeholder data (parent name,
 // one child, weekly progress). No backend calls are made here yet.
-class ParentDashboardScreen extends StatelessWidget {
+class ParentDashboardScreen extends StatefulWidget {
   const ParentDashboardScreen({super.key});
+
+  @override
+  State<ParentDashboardScreen> createState() => _ParentDashboardScreenState();
+}
+
+class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
+  Future<void> _openAddChildScreen() async {
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const AddChildScreen(),
+    ),
+  );
+  
+  print(result);
+  
+  if (result == true) {
+    setState(() {});
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +51,28 @@ class ParentDashboardScreen extends StatelessWidget {
           bottom: false,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              children: [
-                Row(
+            child: FutureBuilder<UserModel>(
+              future: UserApiService().getCurrentUser(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError || !snapshot.hasData) {
+                  return const Center(child: Text('Error loading user data'));
+                }
+
+                final UserModel user = snapshot.data!;
+
+                return Column(
                   children: [
-                    const _NotificationBell(),
-                    Expanded(
+                    Row(
+                      children: [
+                        const _NotificationBell(),
+                        Expanded(
                       child: Center(
                         child: Text(
-                          'منزل نورة',
+                          'منزل ${user.firstName} ${user.lastName}',
                           style: AppTextStyles.arabicTitle,
                         ),
                       ),
@@ -46,7 +83,7 @@ class ParentDashboardScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.md),
 
-                const _WelcomeBanner(),
+                _WelcomeBanner(user: user),
 
                 const SizedBox(height: AppSpacing.md),
 
@@ -57,22 +94,41 @@ class ParentDashboardScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                const _ChildProgressCard(
-                  name: 'سارة',
-                  age: 7,
-                  weeklyPercent: 72,
-                ),
+                FutureBuilder<List<ChildModel>>(
+                  future: ChildApiService().getChildren(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
+                    if (snapshot.hasError || !snapshot.hasData) {
+                      return const Center(child: Text('Error loading children'));
+                    }
+
+                    final List<ChildModel> children = snapshot.data!;
+
+                    return Column(
+                      children: children
+                          .map((child) => Padding(
+                                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                                child: _ChildProgressCard(child: child),
+                              ))
+                          .toList(),
+                    );
+                  },
+                ),
                 const SizedBox(height: AppSpacing.sm),
 
-                const _AddChildButton(),
+                _AddChildButton(onTap: _openAddChildScreen),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                const _TaskReviewPreviewCard(),
+                _TaskReviewPreviewCard(),
 
                 const SizedBox(height: AppSpacing.lg),
               ],
+            );
+              },
             ),
           ),
         ),
@@ -139,65 +195,64 @@ class _NotificationBell extends StatelessWidget {
 }
 
 class _WelcomeBanner extends StatelessWidget {
-  const _WelcomeBanner();
+  final UserModel user;
+  const _WelcomeBanner({
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE4D9F7),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.home_rounded,
-            size: 56,
-            color: AppColors.primaryDark,
+        return Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'مرحبًا نورة! ♥',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'أنتِ تبنين جيلاً رائعًا',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE4D9F7),
+            borderRadius: BorderRadius.circular(24),
           ),
-        ],
-      ),
-    );
+          child: Row(
+            children: [
+              const Icon(
+                Icons.home_rounded,
+                size: 56,
+                color: AppColors.primaryDark,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'مرحبًا ${user.firstName} ${user.lastName}! ♥',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'أنتِ تبنين جيلاً رائعًا',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
   }
 }
 
 class _ChildProgressCard extends StatelessWidget {
-  final String name;
-  final int age;
-  final int weeklyPercent;
+  final ChildModel child;
 
   const _ChildProgressCard({
-    required this.name,
-    required this.age,
-    required this.weeklyPercent,
+    required this.child,
   });
 
   @override
@@ -207,7 +262,9 @@ class _ChildProgressCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const ChildProfileScreen()),
+          MaterialPageRoute(builder: (_) => ChildProfileScreen(
+            child: child,
+          )),
         );
       },
       child: Container(
@@ -228,7 +285,7 @@ class _ChildProgressCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _WeeklyProgressRing(percent: weeklyPercent),
+            _WeeklyProgressRing(percent: child.weeklyProgress),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -236,7 +293,7 @@ class _ChildProgressCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      name,
+                      child.name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -245,7 +302,7 @@ class _ChildProgressCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$age سنوات',
+                      '${child.age} سنوات',
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
@@ -322,17 +379,16 @@ class _WeeklyProgressRing extends StatelessWidget {
 }
 
 class _AddChildButton extends StatelessWidget {
-  const _AddChildButton();
+  final void Function()? onTap;
+
+  const _AddChildButton({
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AddChildScreen()),
-        );
-      },
+      onTap: onTap,
       child: CustomPaint(
         painter: _DashedBorderPainter(
           color: AppColors.primary.withOpacity(0.4),

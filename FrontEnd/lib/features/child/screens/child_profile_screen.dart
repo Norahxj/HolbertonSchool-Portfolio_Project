@@ -4,13 +4,18 @@ import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-
+import '../../../models/child_model.dart';
 // Child Profile / Tasks screen (Screen 6).
 //
 // This first pass is static/placeholder only: the child's name, age,
 // progress, join code, and tasks are all hardcoded. No backend calls here.
 class ChildProfileScreen extends StatelessWidget {
-  const ChildProfileScreen({super.key});
+  final ChildModel child;
+  
+  const ChildProfileScreen({
+    super.key,
+    required this.child,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,7 @@ class ChildProfileScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          const _ProfileHeader(),
+          _ProfileHeader(child: child),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -26,7 +31,7 @@ class ChildProfileScreen extends StatelessWidget {
                 children: [
                   const _WeeklyProgressCard(),
                   const SizedBox(height: AppSpacing.lg),
-                  const _JoinCodeCard(),
+                  _JoinCodeCard(child: child),
                   const SizedBox(height: AppSpacing.lg),
                   const _TasksHeader(),
                   const SizedBox(height: AppSpacing.md),
@@ -57,7 +62,11 @@ class ChildProfileScreen extends StatelessWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader();
+  final ChildModel child;
+
+  const _ProfileHeader({
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +97,7 @@ class _ProfileHeader extends StatelessWidget {
                   Expanded(
                     child: Center(
                       child: Text(
-                        'سارة',
+                        child.name,
                         style: AppTextStyles.arabicTitle.copyWith(
                           color: Colors.white,
                         ),
@@ -137,8 +146,8 @@ class _ProfileHeader extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.sm),
 
-              const Text(
-                '7 سنوات',
+               Text(
+                '${child.age} سنوات',
                 style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
 
@@ -288,7 +297,9 @@ class _WeeklyRing extends StatelessWidget {
 }
 
 class _JoinCodeCard extends StatelessWidget {
-  const _JoinCodeCard();
+  final ChildModel child;
+  
+  const _JoinCodeCard({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -314,11 +325,11 @@ class _JoinCodeCard extends StatelessWidget {
                   ).showSnackBar(const SnackBar(content: Text('تم نسخ الرمز')));
                 },
               ),
-              const Expanded(
+              Expanded(
                 child: Column(
                   children: [
                     Text(
-                      'رمز انضمام سارة',
+                      'رمز انضمام ${child.name}',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -326,7 +337,7 @@ class _JoinCodeCard extends StatelessWidget {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      '715 482',
+                      '${child.accessCode}',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

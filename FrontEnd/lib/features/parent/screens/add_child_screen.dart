@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
+import 'package:frontend/models/child_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import 'package:frontend/core/widgets/screen_background.dart';
+import 'package:frontend/services/child_api_service.dart';
 
 // Add Child screen (Screen 5).
 //
@@ -13,6 +14,7 @@ import 'package:frontend/core/widgets/screen_background.dart';
 // are kept as simple local state, and Save just pops back for now.
 class AddChildScreen extends StatefulWidget {
   const AddChildScreen({super.key});
+
 
   @override
   State<AddChildScreen> createState() => _AddChildScreenState();
@@ -24,6 +26,12 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final ChildApiService _childApiService = ChildApiService();
+
+  String? nameError;
+  String? birthDateError;
+  String? phoneError;
+
 
   @override
   void dispose() {
@@ -138,6 +146,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
                   hint: 'اسم الطفل',
                   icon: Icons.person_outline,
                   controller: nameController,
+                  errorText: nameError,
                 ),
 
                 const SizedBox(height: AppSpacing.md),
@@ -148,6 +157,21 @@ class _AddChildScreenState extends State<AddChildScreen> {
                   onTap: _pickDate,
                 ),
 
+                if (birthDateError != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        birthDateError!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                        ),
+                    ),
+                  ),
+                  ),
+                  
                 const SizedBox(height: AppSpacing.xs),
 
                 const Text(
@@ -167,15 +191,32 @@ class _AddChildScreenState extends State<AddChildScreen> {
                   icon: Icons.phone_outlined,
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
+                  errorText: phoneError,
                 ),
 
                 const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
                   text: 'حفظ',
-                  onPressed: () {
-                    // TODO: Save the new child once backend integration is ready.
-                    Navigator.pop(context);
+                    onPressed: () async {
+                      if (selectedDate == null) {
+                        setState(() {
+                          birthDateError = 'Birth date is required';
+                        });
+                        return;
+                      }
+                      final birthDate =
+                    "${selectedDate?.year}-${selectedDate?.month.toString().padLeft(2, '0')}-${selectedDate?.day.toString().padLeft(2, '0')}";
+                    
+                    await _childApiService.addChild(
+                      name: nameController.text.trim(),
+                      birthDate: birthDate,
+                      phone: phoneController.text.trim().isEmpty
+                          ? null
+                          : phoneController.text.trim(),
+                    );
+
+                    Navigator.pop(context, true);
                   },
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,

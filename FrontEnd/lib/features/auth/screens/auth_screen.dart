@@ -10,6 +10,7 @@ import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
 import '../../../services/auth_api_service.dart';
 import '../../parent/screens/parent_dashboard_screen.dart';
 import 'package:dio/dio.dart';
+import 'package:frontend/core/network/api_service.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
@@ -100,14 +101,10 @@ String? confirmPasswordErrorText;
       email: emailController.text.trim(),
       password: passwordController.text,
     );
-
+    
     if (response.statusCode == 200) {
-      await _authApiService.saveTokens(
-        accessToken: response.data['access_token'],
-        refreshToken: response.data['refresh_token'],
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
+    
+        ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Login Success")),
       );
 
@@ -164,12 +161,7 @@ String? confirmPasswordErrorText;
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      await _authApiService.saveTokens(
-          accessToken: response.data['access_token'],
-          refreshToken: response.data['refresh_token'],
-      );
-      
-      if (registerPasswordController.text != confirmPasswordController.text) {
+    if (registerPasswordController.text != confirmPasswordController.text) {
         setState(() {
           confirmPasswordErrorText = "Passwords do not match";
           });
@@ -219,10 +211,8 @@ String? confirmPasswordErrorText;
         phoneErrorText = message;
       }
         });
-
-  return;
-}
-
+        return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Server Error")),
     );

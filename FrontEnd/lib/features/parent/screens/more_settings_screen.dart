@@ -6,6 +6,8 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'family_settings_screen.dart';
 import 'profile_screen.dart';
+import '../../../services/auth_api_service.dart';
+import '../../../app.dart';
 
 // More / Settings screen (Screen 17).
 //
@@ -359,9 +361,16 @@ class _LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // TODO: Wire this up to the real logout flow once auth session
-        // handling (e.g. clearing a saved token) is in place.
+      onTap: () async {
+        await AuthApiService().logout();
+        
+        if (!context.mounted) return;
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const AsalahApp()),
+          (route) => false,
+        );
       },
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,

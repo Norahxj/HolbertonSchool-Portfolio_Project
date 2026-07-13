@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import '../../models/child_model.dart';
+
 part 'api_service.g.dart';
 
 // Remove passing a non-constant value to the annotation. The baseUrl can
@@ -30,4 +32,15 @@ abstract class ApiService {
   Future<HttpResponse<dynamic>> logout(
     @Body() Map<String, dynamic> body,
   );
+  
+  @GET('/users/me')
+  Future<HttpResponse<dynamic>> getCurrentUser();
+
+  @GET('/children/')
+  Future<HttpResponse<List<ChildModel>>> getChildren();
+
+  @POST('/children/')
+  Future<HttpResponse<ChildModel>> addChild(
+  @Body() Map<String, dynamic> body,
+);
 }
