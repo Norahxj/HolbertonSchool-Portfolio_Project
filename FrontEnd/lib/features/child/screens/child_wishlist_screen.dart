@@ -4,6 +4,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import 'add_wishlist_screen.dart';
+import 'child_home_screen.dart';
+import 'child_rewards_screen.dart';
 
 // Child Wishlist screen (Screen 23).
 //
@@ -292,17 +294,47 @@ class _BottomNavBar extends StatelessWidget {
             ),
           ],
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _NavItem(icon: Icons.bar_chart_rounded, label: 'تقدّمي'),
-            _NavItem(icon: Icons.card_giftcard_outlined, label: 'المكافآت'),
-            _NavItem(
+            GestureDetector(
+              onTap: () {
+                // TODO: Build the Progress screen (Screen 26) first.
+              },
+              child: const _NavItem(
+                icon: Icons.bar_chart_rounded,
+                label: 'تقدّمي',
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
+                );
+              },
+              child: const _NavItem(
+                icon: Icons.card_giftcard_outlined,
+                label: 'المكافآت',
+              ),
+            ),
+            const _NavItem(
               icon: Icons.favorite_border,
               label: 'أمنياتي',
               isActive: true,
             ),
-            _NavItem(icon: Icons.home_rounded, label: 'الرئيسية'),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
+                );
+              },
+              child: const _NavItem(
+                icon: Icons.home_rounded,
+                label: 'الرئيسية',
+              ),
+            ),
           ],
         ),
       ),

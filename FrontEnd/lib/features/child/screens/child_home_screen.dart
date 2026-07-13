@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import 'child_rewards_screen.dart';
 import 'child_task_details_screen.dart';
 import 'child_wishlist_screen.dart';
 
@@ -351,14 +352,30 @@ class _BottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const _NavItem(icon: Icons.bar_chart_rounded, label: 'تقدّمي'),
-            const _NavItem(
-              icon: Icons.card_giftcard_outlined,
-              label: 'المكافآت',
+            GestureDetector(
+              onTap: () {
+                // TODO: Build the Progress screen (Screen 26) first.
+              },
+              child: const _NavItem(
+                icon: Icons.bar_chart_rounded,
+                label: 'تقدّمي',
+              ),
             ),
             GestureDetector(
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
+                );
+              },
+              child: const _NavItem(
+                icon: Icons.card_giftcard_outlined,
+                label: 'المكافآت',
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (_) => const ChildWishlistScreen(),
