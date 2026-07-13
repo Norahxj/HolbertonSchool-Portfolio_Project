@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError
-from datetime import date
+from app.utils.datetime_utils import riyadh_today
 
 phone_validator = [
     validate.Length(equal=10, error="Phone number must be exactly 10 digits."),
@@ -7,15 +7,26 @@ phone_validator = [
 ]
 
 def birth_date_validator(value):
-    if value > date.today():
-        raise ValidationError("Birth date cannot be in the future.")
+    today = riyadh_today()
 
-    age = date.today().year - value.year - (
-        (date.today().month, date.today().day) < (value.month, value.day)
+    if value > today:
+        raise ValidationError(
+            "Birth date cannot be in the future."
+        )
+
+    age = (
+        today.year
+        - value.year
+        - (
+            (today.month, today.day)
+            < (value.month, value.day)
+        )
     )
 
     if age < 1 or age > 18:
-        raise ValidationError("Child age must be between 1 and 18.")
+        raise ValidationError(
+            "Child age must be between 1 and 18."
+        )
 
 class ChildResponseSchema(Schema):
     id = fields.String()

@@ -1,6 +1,6 @@
 from app.extensions import db
 from app.models.base_model import BaseModel
-from datetime import date
+from app.utils.datetime_utils import riyadh_today
 
 child_guardians = db.Table(
     "child_guardians",
@@ -23,7 +23,7 @@ class Child(BaseModel):
 
     @property
     def age(self):
-        today = date.today()
+        today = riyadh_today()
         return (
             today.year
             - self.birth_date.year

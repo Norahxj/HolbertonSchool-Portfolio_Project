@@ -7,7 +7,6 @@ from app.models.task_child_model import TaskChild
 from app.repositories.task_child_repository import TaskChildRepository
 from app.utils.recurrence_utils import is_task_due_on_date
 from app.extensions import db
-from datetime import timedelta
 from app.utils.datetime_utils import riyadh_today
 
 class TaskService:
@@ -155,7 +154,7 @@ class TaskService:
                 db.session.rollback()
                 return None, "update_failed"
 
-            today = datetime.now(RIYADH_TIMEZONE).date()
+            today = riyadh_today()
             should_create_assignment = (
                 task.task_frequency == "ONCE"
                 or is_task_due_on_date(

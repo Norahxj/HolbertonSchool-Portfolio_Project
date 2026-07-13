@@ -1,5 +1,5 @@
 import random
-from datetime import date
+from app.utils.datetime_utils import riyadh_today
 from app.repositories.child_repository import ChildRepository
 from app.seeders.financial_tasks import FINANCIAL_TASKS
 from app.seeders.social_tasks import SOCIAL_TASKS
@@ -23,7 +23,7 @@ class TaskBankService:
         return list(TASK_BANK.keys())
 
     def _default_recurrence_day(self, task_frequency):
-        today = date.today()
+        today = riyadh_today()
 
         if task_frequency == "WEEKLY":
             return today.weekday()
