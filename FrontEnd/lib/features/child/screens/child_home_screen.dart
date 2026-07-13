@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import 'child_progress_screen.dart';
 import 'child_rewards_screen.dart';
 import 'child_task_details_screen.dart';
 import 'child_wishlist_screen.dart';
@@ -354,7 +355,12 @@ class _BottomNavBar extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                // TODO: Build the Progress screen (Screen 26) first.
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ChildProgressScreen(),
+                  ),
+                );
               },
               child: const _NavItem(
                 icon: Icons.bar_chart_rounded,
