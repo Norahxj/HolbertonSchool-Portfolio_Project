@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import 'add_wishlist_screen.dart';
 
 // Child Wishlist screen (Screen 23).
 //
@@ -108,8 +109,12 @@ class ChildWishlistScreen extends StatelessWidget {
 
                     GestureDetector(
                       onTap: () {
-                        // TODO: Open the Add Wishlist Item screen once it
-                        // is built.
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddWishlistScreen(),
+                          ),
+                        );
                       },
                       child: Container(
                         height: 56,
