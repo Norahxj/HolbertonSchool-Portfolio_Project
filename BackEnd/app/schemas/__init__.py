@@ -8,5 +8,5 @@ from app.schemas.points_history_schema import PointsHistoryResponseSchema
 from app.schemas.reward_schema import RewardResponseSchema, RewardCreateSchema, RewardUpdateSchema
 from app.schemas.daily_feedback_schema import DailyFeedbackResponseSchema, DailyFeedbackCreateSchema
 from app.schemas.wishlist_schema import WishlistApproveSchema, WishlistCreateSchema, WishlistResponseSchema
-from app.schemas.family_schema import FamilyInviteSchema, FamilyInvitationResponseSchema
+from app.schemas.family_schema import FamilyInviteSchema, FamilyUpdateSchema, FamilyResponseSchema, FamilyInvitationResponseSchema
 from app.schemas.dashboard_schema import ChildDashboardResponseSchema

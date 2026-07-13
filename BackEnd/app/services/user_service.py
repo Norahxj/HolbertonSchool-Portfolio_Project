@@ -1,5 +1,5 @@
 from app.repositories.user_repository import UserRepository
-from app.extensions import db
+from app.extensions import db, bcrypt
 from app.models.Family_model import Family
 from app.models.user_model import User
 
@@ -35,9 +35,15 @@ class UserService:
             phone = user_data["phone"]
             existing_phone = self.user_repository.get_user_by_phone(phone)
             if existing_phone and str(existing_phone.id) != str(user_id):
-                return None, "Phone number already used"
+                return None, "phone_exists"
             user.phone = user_data["phone"]
 
+        if "password" in user_data:
+            user.password_hash = (
+                bcrypt.generate_password_hash(
+                    user_data["password"]
+                ).decode("utf-8")
+            )
         success, error = self.user_repository.update_user()
 
         if not success:

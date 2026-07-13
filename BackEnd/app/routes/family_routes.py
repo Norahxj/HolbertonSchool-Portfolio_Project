@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
 
 from app.services.family_service import FamilyService
-from app.schemas import FamilyInviteSchema, FamilyInvitationResponseSchema
+from app.schemas import  FamilyInviteSchema, FamilyUpdateSchema, FamilyResponseSchema, FamilyInvitationResponseSchema
 from app.api_models.family_api import get_family_models
 
 
@@ -13,9 +13,16 @@ family_service = FamilyService()
 
 family_invite_schema = FamilyInviteSchema()
 family_invitation_response_schema = FamilyInvitationResponseSchema()
+family_update_schema = FamilyUpdateSchema()
+family_response_schema = FamilyResponseSchema()
 family_invitations_response_schema = FamilyInvitationResponseSchema(many=True)
 
-family_invite_model, family_invitation_response_model = get_family_models(api)
+(
+    family_invite_model,
+    family_update_model,
+    family_response_model,
+    family_invitation_response_model
+) = get_family_models(api)
 
 
 @api.route("/invite")
@@ -55,7 +62,59 @@ class InviteParentResource(Resource):
 
         return family_invitation_response_schema.dump(invitation), 201
 
+@api.route("/me")
+class MyFamilyResource(Resource):
 
+    @api.doc(security="JWT")
+    @jwt_required()
+    @api.expect(family_update_model, validate=True)
+    @api.response(
+        200,
+        "Family name updated successfully"
+    )
+    def put(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "parent":
+            return {
+                "error": "Parent access required"
+            }, 403
+
+        try:
+            data = family_update_schema.load(
+                api.payload or {}
+            )
+        except ValidationError as err:
+            return {
+                "errors": err.messages
+            }, 400
+
+        user_id = get_jwt_identity()
+
+        family, error = (
+            family_service.update_family_name(
+                user_id,
+                data
+            )
+        )
+
+        if error == "user_not_found":
+            return {
+                "error": "User not found"
+            }, 404
+
+        if error == "family_not_found":
+            return {
+                "error": "Family not found"
+            }, 404
+
+        if error == "update_failed":
+            return {
+                "error": "Failed to update family"
+            }, 500
+
+        return family_response_schema.dump(family), 200
+    
 @api.route("/invitations")
 class MyFamilyInvitationsResource(Resource):
 

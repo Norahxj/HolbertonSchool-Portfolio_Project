@@ -80,6 +80,30 @@ class FamilyService:
         )
 
         return invitations, None
+    
+    def update_family_name(self, user_id, family_data):
+        user = self.user_repository.get_user_by_id(user_id)
+
+        if not user:
+            return None, "user_not_found"
+
+        if not user.family_id:
+            return None, "family_not_found"
+
+        family = db.session.get(Family, user.family_id)
+
+        if not family:
+            return None, "family_not_found"
+
+        family.name = family_data["name"].strip()
+
+        try:
+            db.session.commit()
+            return family, None
+
+        except Exception:
+            db.session.rollback()
+            return None, "update_failed"
 
     def accept_invitation(self, user_id, invitation_id):
         user = self.user_repository.get_user_by_id(user_id)

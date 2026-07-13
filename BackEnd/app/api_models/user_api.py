@@ -16,7 +16,8 @@ def get_user_models(api):
         "first_name": fields.String(description="First name"),
         "last_name": fields.String(description="Last name"),
         "phone": fields.String(description="Phone number"),
-        "email": fields.String(description="Email")
+        "email": fields.String(description="Email"),
+        "password": fields.String(description=("New password. Must contain uppercase, " "lowercase, number, and special character."))
     })
 
     return user_response_model, user_update_model
