@@ -1,10 +1,8 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
 from app.models.reward_model import Reward
 from app.repositories.reward_repository import RewardRepository
 from app.repositories.child_repository import ChildRepository
-RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
-
+from datetime import timedelta
+from app.utils.datetime_utils import riyadh_today
 
 class RewardService:
     def __init__(self):
@@ -21,7 +19,7 @@ class RewardService:
             return None, "child_not_found"
 
         unlock_day = reward_data.get("unlock_day", 3)
-        today_weekday = datetime.now(RIYADH_TIMEZONE).weekday()
+        today_weekday = riyadh_today().weekday()
 
         reward = Reward(
             child_id=child.id,

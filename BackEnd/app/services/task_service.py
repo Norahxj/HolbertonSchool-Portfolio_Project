@@ -6,10 +6,9 @@ from app.repositories.child_repository import ChildRepository
 from app.models.task_child_model import TaskChild
 from app.repositories.task_child_repository import TaskChildRepository
 from app.utils.recurrence_utils import is_task_due_on_date
-from datetime import datetime
-from zoneinfo import ZoneInfo
 from app.extensions import db
-RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
+from datetime import timedelta
+from app.utils.datetime_utils import riyadh_today
 
 class TaskService:
     def __init__(self):
@@ -63,7 +62,7 @@ class TaskService:
             if error:
                 db.session.rollback()
                 return None, "create_failed"
-            today = datetime.now(RIYADH_TIMEZONE).date()
+            today = riyadh_today()
             should_create_assignment = (
                 task.task_frequency == "ONCE"
                 or is_task_due_on_date(

@@ -1,4 +1,3 @@
-from datetime import datetime
 from app.extensions import db
 from app.models.wishlist_model import Wishlist
 from app.repositories.wishlist_repository import WishlistRepository

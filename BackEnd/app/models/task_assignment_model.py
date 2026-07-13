@@ -11,4 +11,4 @@ class TaskAssignment(BaseModel):
     completed_at = db.Column(db.DateTime(timezone=True), nullable=True)
     approved_at = db.Column(db.DateTime(timezone=True), nullable=True)
     child = db.relationship("Child", backref=db.backref("task_assignments", lazy=True, passive_deletes=True))
-    assigned_date = db.Column(db.DateTime(timezone=True), nullable=False)
+    assigned_date = db.Column(db.Date, nullable=False)

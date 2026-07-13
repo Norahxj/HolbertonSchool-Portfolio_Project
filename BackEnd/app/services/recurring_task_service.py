@@ -1,11 +1,10 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
 from app.models.task_assignment_model import TaskAssignment
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.utils.recurrence_utils import is_task_due_on_date
 from app.extensions import db
-RIYADH_TIMEZONE = ZoneInfo("Asia/Riyadh")
+from datetime import timedelta
+from app.utils.datetime_utils import riyadh_today
 
 class RecurringTaskService:
     def __init__(self):
@@ -13,7 +12,7 @@ class RecurringTaskService:
         self.assignment_repository = TaskAssignmentRepository()
 
     def generate_today_assignments(self):
-        today = datetime.now(RIYADH_TIMEZONE).date()
+        today = riyadh_today()
 
         tasks = self.task_repository.get_recurring_tasks()
 

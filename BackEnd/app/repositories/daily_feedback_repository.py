@@ -1,7 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.daily_feedback_model import DailyFeedback
-from datetime import date
 from datetime import datetime, time, timedelta
 from app.utils.datetime_utils import (RIYADH_TIMEZONE, UTC, riyadh_today)
 
