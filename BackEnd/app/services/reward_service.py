@@ -1,8 +1,7 @@
 from app.models.reward_model import Reward
 from app.repositories.reward_repository import RewardRepository
 from app.repositories.child_repository import ChildRepository
-from datetime import timedelta
-from app.utils.datetime_utils import riyadh_today
+from app.utils.datetime_utils import riyadh_today, riyadh_weekday
 
 class RewardService:
     def __init__(self):
@@ -19,7 +18,7 @@ class RewardService:
             return None, "child_not_found"
 
         unlock_day = reward_data.get("unlock_day", 3)
-        today_weekday = riyadh_today().weekday()
+        today_weekday = riyadh_weekday()
 
         reward = Reward(
             child_id=child.id,
@@ -68,9 +67,7 @@ class RewardService:
             reward.unlock_day = reward_data["unlock_day"]
 
             if reward.status != "CLAIMED":
-                today_weekday = datetime.now(
-                    RIYADH_TIMEZONE
-                ).weekday()
+                today_weekday =  riyadh_weekday()
 
                 reward.status = (
                     "UNLOCKED"
@@ -99,10 +96,7 @@ class RewardService:
         return True, None
 
     def unlock_today_rewards(self):
-        today_weekday = datetime.now(
-            RIYADH_TIMEZONE
-        ).weekday()
-
+        today_weekday =  riyadh_weekday()
         rewards = (
             self.reward_repository
             .get_locked_rewards_by_unlock_day(today_weekday)
