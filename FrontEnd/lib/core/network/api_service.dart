@@ -68,4 +68,40 @@ Future<HttpResponse<TaskModel>> updateTask(
 Future<HttpResponse<List<TaskModel>>> getTasksByChild(
   @Path('childId') String childId,
 );
+
+/// whish
+
+@POST('/wishlist/')
+Future<HttpResponse<dynamic>> createWish(
+  @Body() Map<String, dynamic> body,
+);
+
+@GET('/wishlist/my')
+Future<HttpResponse<dynamic>> getMyWishes();
+
+@GET('/wishlist/child/{childId}')
+Future<HttpResponse<dynamic>> getChildWishes(
+  @Path('childId') String childId,
+);
+
+@PUT('/wishlist/{wishId}/approve')
+Future<HttpResponse<dynamic>> approveWish(
+  @Path('wishId') String wishId,
+  @Body() Map<String, dynamic> body,
+);
+
+@PUT('/wishlist/{wishId}/reject')
+Future<HttpResponse<dynamic>> rejectWish(
+  @Path('wishId') String wishId,
+);
+
+@PUT('/wishlist/{wishId}/achieve')
+Future<HttpResponse<dynamic>> achieveWish(
+  @Path('wishId') String wishId,
+);
+
+@DELETE('/wishlist/{wishId}')
+Future<HttpResponse<dynamic>> deleteWish(
+  @Path('wishId') String wishId,
+);
 }
