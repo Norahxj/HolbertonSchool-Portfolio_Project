@@ -207,7 +207,6 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                     );
                     return;
                   }
-
                   try {
                     await WishlistApiService().createWish(name);
 

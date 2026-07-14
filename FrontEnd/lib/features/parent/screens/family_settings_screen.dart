@@ -20,7 +20,7 @@ class FamilySettingsScreen extends StatefulWidget {
 
 class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   final TextEditingController familyNameController = TextEditingController(
-    text: 'منزل الجهني',
+    text: 'منزل user', // Placeholder family name; will be replaced with real data later.
   );
   final TextEditingController inviteEmailController = TextEditingController();
 

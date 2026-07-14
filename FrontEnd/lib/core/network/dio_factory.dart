@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend/core/network/api_constants.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
-
+import '../../services/auth_api_service.dart';
 class DioFactory {
   DioFactory._();
 
@@ -20,16 +20,10 @@ class DioFactory {
         ),
       );
 
-
-      addDioHeaders();
       addDioInterceptor();
     }
 
     return dio!;
-  }
-
-  static void addDioHeaders() async {
-    dio?.options.headers = {};
   }
 
   static void addDioInterceptor() {
@@ -47,6 +41,30 @@ class DioFactory {
 
         handler.next(options);
       },
+    onError: (error, handler) async {
+  print("Status Code: ${error.response?.statusCode}");
+  print("Response: ${error.response?.data}");
+
+  if (error.response?.statusCode == 401 &&
+      error.response?.data["error"] == "Token has expired") {
+    try {
+      final newToken =
+          await AuthApiService().refreshAccessToken();
+
+      final request = error.requestOptions;
+
+      request.headers["Authorization"] = newToken;
+
+      final response = await dio!.fetch(request);
+
+      return handler.resolve(response);
+    } catch (e) {
+      await SecureStorage.clear();
+    }
+  }
+
+  handler.next(error);
+},
     ),
   );
 
