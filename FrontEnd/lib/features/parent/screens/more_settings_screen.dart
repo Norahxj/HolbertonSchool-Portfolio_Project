@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:frontend/models/user_model.dart';
+import '../../../services/user_api_service.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -23,28 +24,47 @@ class MoreSettingsScreen extends StatelessWidget {
       body: ScreenBackground(
         child: SafeArea(
           bottom: false,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              children: [
-                Text('المزيد', style: AppTextStyles.arabicTitle),
-
-                const SizedBox(height: AppSpacing.lg),
-
-                const _ProfileBanner(),
-
-                const SizedBox(height: AppSpacing.lg),
-
-                const _SettingsCard(),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                const _LogoutButton(),
-
-                const SizedBox(height: AppSpacing.md),
-              ],
-            ),
-          ),
+          child: FutureBuilder<UserModel>(
+           future: UserApiService().getCurrentUser(),
+           builder: (context, snapshot) {
+             if (snapshot.connectionState == ConnectionState.waiting) {
+               return const Center(
+                 child: CircularProgressIndicator(),
+               );
+             }
+         
+             if (snapshot.hasError || !snapshot.hasData) {
+               return const Center(
+                 child: Text('Error loading user'),
+               );
+             }
+         
+             final user = snapshot.data!;
+         
+             return Column(
+               children: [
+                 Text(
+                   'المزيد',
+                   style: AppTextStyles.arabicTitle,
+                 ),
+         
+                 const SizedBox(height: AppSpacing.lg),
+         
+                 _ProfileBanner(user: user),
+         
+                 const SizedBox(height: AppSpacing.lg),
+         
+                 const _SettingsCard(),
+         
+                 const SizedBox(height: AppSpacing.xl),
+         
+                 const _LogoutButton(),
+         
+                 const SizedBox(height: AppSpacing.md),
+               ],
+             );
+           },
+         ),
         ),
       ),
       bottomNavigationBar: const _BottomNavBar(),
@@ -54,7 +74,11 @@ class MoreSettingsScreen extends StatelessWidget {
 
 // Purple banner showing the signed-in parent's name and role.
 class _ProfileBanner extends StatelessWidget {
-  const _ProfileBanner();
+  final UserModel user;
+  const _ProfileBanner({
+    super.key,
+  required this.user
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +97,12 @@ class _ProfileBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Expanded(
+           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'نورة الجهني',
+                  '${user.firstName} ${user.lastName}',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

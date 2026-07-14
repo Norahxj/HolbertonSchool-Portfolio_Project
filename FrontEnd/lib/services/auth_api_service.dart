@@ -24,7 +24,33 @@ Future<bool> isLoggedIn() async {
 Future<Response?> logout() async {
   await SecureStorage.clear();
 }
+// Refresh token method
+  Future<String> refreshAccessToken() async {
+  final refreshToken = await SecureStorage.getRefreshToken();
 
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: DioFactory.getDio().options.baseUrl,
+    ),
+  );
+
+  final response = await dio.post(
+    '/auth/refresh',
+    options: Options(
+      headers: {
+        "Authorization": refreshToken,
+      },
+    ),
+  );
+
+  final newAccessToken = response.data["access_token"];
+
+  await SecureStorage.saveAccessToken(newAccessToken);
+
+  return newAccessToken;
+}
+
+  // Login method
   Future<Response> login({
     required String email,
     required String password,
