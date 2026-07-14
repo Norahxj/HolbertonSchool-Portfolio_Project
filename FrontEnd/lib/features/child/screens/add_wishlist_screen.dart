@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../services/wishlist_api_service.dart';
+import 'child_wishlist_screen.dart';
 
 // Add Wishlist Item screen (Screen 24).
 //
@@ -197,9 +199,31 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
               const SizedBox(height: AppSpacing.xl),
 
               GestureDetector(
-                onTap: () {
-                  // TODO: Save the new wish once backend integration is
-                  // ready.
+                onTap: () async {
+                  final name = nameController.text.trim();
+                  
+                  if (name.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('يرجى كتابة اسم الأمنية')),
+                    );
+                    return;
+                },
+                  try {
+                    await WishlistApiService().createWish(name);
+                    
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('تمت إضافة الأمنية بنجاح ✓')),
+                      );
+                      Navigator.pop(context);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('حدث خطأ. تحقق من الاتصال وحاول مرة أخرى.')),
+                      );
+                    }
+                  }
                 },
                 child: Container(
                   height: 56,
