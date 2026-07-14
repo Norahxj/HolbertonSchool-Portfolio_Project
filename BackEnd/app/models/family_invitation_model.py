@@ -13,8 +13,11 @@ class FamilyInvitation(BaseModel):
             unique=True,
             postgresql_where=text("status = 'PENDING'")
         ),
+        db.CheckConstraint(
+            "status IN ('PENDING', 'ACCEPTED', 'REJECTED')",
+            name="ck_family_invitations_status"
+        ),
     )
-
     family_id = db.Column(db.String(36), db.ForeignKey("families.id", ondelete="CASCADE"), nullable=False)
     invited_email = db.Column(db.String(120), nullable=False)
     invited_by = db.Column(db.String(36), db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)

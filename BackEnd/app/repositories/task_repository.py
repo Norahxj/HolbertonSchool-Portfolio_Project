@@ -3,7 +3,6 @@ from app.extensions import db
 from app.models.task_model import Task
 from app.models.child_model import Child
 from app.models.user_model import User
-from app.models.task_assignment_model import TaskAssignment
 from app.models.task_child_model import TaskChild
 
 

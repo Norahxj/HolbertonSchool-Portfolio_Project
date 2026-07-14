@@ -9,12 +9,6 @@ class TaskAssignmentRepository:
     def get_assignment_by_id(self, assignment_id):
         return db.session.get(TaskAssignment, assignment_id)
 
-    def get_assignment(self, task_id, child_id):
-        return TaskAssignment.query.filter_by(
-            task_id=task_id,
-            child_id=child_id
-        ).first()
-
     def create_assignment(self, assignment, commit=True):
         try:
             db.session.add(assignment)
@@ -39,34 +33,24 @@ class TaskAssignmentRepository:
             return False, "integrity_error"
         
     def get_assignment_for_child(self, assignment_id, child_id):
-        return TaskAssignment.query.filter_by(
-            id=assignment_id,
-            child_id=child_id
-        ).first()
+        return TaskAssignment.query.filter_by(id=assignment_id, child_id=child_id).first()
 
     def get_assignments_by_task_id(self, task_id):
-        return TaskAssignment.query.filter_by(task_id=task_id).all()
+        return TaskAssignment.query.filter_by(task_id=task_id).all().order_by(TaskAssignment.assigned_date.desc())
 
     def get_assignments_by_child_id(self, child_id):
-        return TaskAssignment.query.filter_by(child_id=child_id).all()
+        return TaskAssignment.query.filter_by(child_id=child_id).all().order_by(TaskAssignment.assigned_date.desc())
 
     def get_assignment_for_parent(self, assignment_id, parent_id):
         return (
-            TaskAssignment.query
-            .join(TaskAssignment.task)
+            TaskAssignment.query.join(TaskAssignment.task)
             .filter(
-                TaskAssignment.id == assignment_id,
-                Task.created_by == parent_id
-            )
-            .first()
+                TaskAssignment.id == assignment_id, Task.created_by == parent_id
+            ).first()
         )
     
     def get_assignment_for_date(self, task_id, child_id, assigned_date):
-        return TaskAssignment.query.filter_by(
-            task_id=task_id,
-            child_id=child_id,
-            assigned_date=assigned_date
-        ).first()
+        return TaskAssignment.query.filter_by(task_id=task_id, child_id=child_id, assigned_date=assigned_date).first()
     
     def get_child_assignments_between_dates(self, child_id, start_date, end_date):
         return (
@@ -74,6 +58,5 @@ class TaskAssignmentRepository:
                 TaskAssignment.child_id == child_id,
                 TaskAssignment.assigned_date >= start_date,
                 TaskAssignment.assigned_date <= end_date
-            )
-            .all()
+            ).all().order_by(TaskAssignment.assigned_date.desc())
         )

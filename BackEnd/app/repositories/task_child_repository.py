@@ -2,9 +2,7 @@ from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.task_child_model import TaskChild
 
-
 class TaskChildRepository:
-
     def create_task_child(self, task_child, commit=True):
         try:
             db.session.add(task_child)

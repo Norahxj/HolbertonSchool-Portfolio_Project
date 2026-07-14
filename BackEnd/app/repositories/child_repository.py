@@ -4,17 +4,11 @@ from app.models.user_model import User
 from sqlalchemy.exc import IntegrityError
 
 class ChildRepository:
-
     def get_child_by_id(self, child_id):
         return db.session.get(Child, child_id)
     
     def get_child_by_id_for_update(self, child_id):
-        return (
-            Child.query
-            .filter_by(id=child_id)
-            .with_for_update()
-            .first()
-        )
+        return (Child.query.filter_by(id=child_id).with_for_update().first())
     
     def get_child_by_access_code(self, access_code):
         return Child.query.filter_by(access_code=access_code).first()
@@ -26,16 +20,9 @@ class ChildRepository:
             return child, None
         except IntegrityError as exc:
             db.session.rollback()
-
-            constraint_name = getattr(
-                getattr(exc.orig, "diag", None),
-                "constraint_name",
-                None
-            )
-
+            constraint_name = getattr(getattr(exc.orig, "diag", None), "constraint_name", None)
             if constraint_name == "children_access_code_key":
                 return None, "access_code_exists"
-
             return None, "integrity_error"
     
     def update_child(self):
@@ -62,6 +49,5 @@ class ChildRepository:
         return (
             Child.query
             .join(Child.guardians)
-            .filter(Child.id == child_id, User.id == guardian_id)
-            .first()
+            .filter(Child.id == child_id, User.id == guardian_id).first()
         )

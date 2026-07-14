@@ -5,14 +5,21 @@ class Wishlist(BaseModel):
     __tablename__ = "wishlists"
     __table_args__ = (
         db.CheckConstraint(
-            "status IN "
-            "('PENDING', 'APPROVED', 'REJECTED', 'ACHIEVED')",
+            "status IN " "('PENDING', 'APPROVED', 'REJECTED', 'ACHIEVED')",
             name="ck_wishlists_status"
         ),
         db.CheckConstraint(
             "target_points IS NULL OR target_points > 0",
             name="ck_wishlists_target_points_positive"
         ),
+        db.CheckConstraint(
+        """
+            (status IN ('PENDING', 'REJECTED'))
+            OR
+            (status IN ('APPROVED', 'ACHIEVED') AND target_points IS NOT NULL AND target_points > 0)
+            """,
+            name="ck_wishlists_points_required_when_approved"
+        )
     )
     child_id = db.Column(db.String(36), db.ForeignKey("children.id", ondelete="CASCADE"), nullable=False)
     name = db.Column(db.String(255), nullable=False)

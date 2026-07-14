@@ -91,22 +91,3 @@ class MyDailyFeedbackResource(Resource):
         feedback, error = daily_feedback_service.get_my_feedback(child_id)
 
         return daily_feedback_list_schema.dump(feedback), 200
-
-
-@api.route("/<feedback_id>")
-class DailyFeedbackResource(Resource):
-
-    @api.doc(security="JWT")
-    @jwt_required()
-    def delete(self, feedback_id):
-        claims = get_jwt()
-        if claims.get("role") != "parent":
-            return {"error": "Parent access required"}, 403
-
-        parent_id = get_jwt_identity()
-        deleted, delete_error = daily_feedback_service.delete_feedback(feedback_id, parent_id)
-        if delete_error == "feedback_not_found":
-            return {"error": "Feedback not found"}, 404
-        if delete_error == "delete_error":
-            return {"error": "Failed to delete feedback"}, 500
-        return {"message": "Feedback deleted successfully"}, 200

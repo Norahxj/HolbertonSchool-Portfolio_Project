@@ -1,13 +1,11 @@
 from app.extensions import db
 from app.models.base_model import BaseModel
 
-
 class TaskChild(BaseModel):
     __tablename__ = "task_children"
     __table_args__ = (
         db.UniqueConstraint(
-            "task_id",
-            "child_id",
+            "task_id", "child_id",
             name="unique_task_child"
         ),
     )

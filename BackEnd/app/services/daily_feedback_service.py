@@ -49,14 +49,3 @@ class DailyFeedbackService:
         feedback = self.daily_feedback_repository.get_feedback_by_child_id(child_id)
 
         return feedback, None
-
-    def delete_feedback(self, feedback_id, parent_id):
-        feedback = self.daily_feedback_repository.get_feedback_for_creator(feedback_id, parent_id)
-        if not feedback:
-            return False, "feedback_not_found"
-
-        success, error = self.daily_feedback_repository.delete_feedback(feedback)
-        if not success:
-            return False, "delete_error"
-
-        return True, None

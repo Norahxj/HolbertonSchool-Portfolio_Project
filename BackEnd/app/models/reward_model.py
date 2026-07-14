@@ -1,7 +1,6 @@
 from app.extensions import db
 from app.models.base_model import BaseModel
 
-
 class Reward(BaseModel):
     __tablename__ = "rewards"
     __table_args__ = (

@@ -28,7 +28,6 @@ class Child(BaseModel):
             today.year
             - self.birth_date.year
             - (
-                (today.month, today.day)
-                < (self.birth_date.month, self.birth_date.day)
+                (today.month, today.day) < (self.birth_date.month, self.birth_date.day)
             )
         )

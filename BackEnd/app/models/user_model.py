@@ -6,8 +6,7 @@ class User(BaseModel):
     __tablename__ = "users"
     __table_args__ = (
         db.UniqueConstraint(
-            "family_id",
-            "guardian_type",
+            "family_id", "guardian_type",
             name="uq_users_family_guardian_type"
         ),
         db.CheckConstraint(

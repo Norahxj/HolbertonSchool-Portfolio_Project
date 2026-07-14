@@ -3,9 +3,7 @@ from app.extensions import db
 from app.models.family_invitation_model import FamilyInvitation
 from app.models.user_model import User
 
-
 class FamilyInvitationRepository:
-
     def create_invitation(self, invitation):
         try:
             db.session.add(invitation)

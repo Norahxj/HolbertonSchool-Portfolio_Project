@@ -5,7 +5,6 @@ from app.models.points_history_model import PointsHistory
 
 
 class WishlistRepository:
-
     def create_wish(self, wish):
         try:
             db.session.add(wish)
@@ -19,36 +18,19 @@ class WishlistRepository:
         return db.session.get(Wishlist, wish_id)
     
     def get_wish_by_id_for_update(self, wish_id):
-        return (
-            Wishlist.query
-            .filter_by(id=wish_id)
-            .with_for_update()
-            .first()
-        )
+        return (Wishlist.query.filter_by(id=wish_id).with_for_update().first())
 
     def get_wishes_by_child_id(self, child_id):
-        return (
-            Wishlist.query
-            .filter_by(child_id=child_id)
-            .order_by(Wishlist.created_at.desc())
-            .all()
-        )
+        return (Wishlist.query.filter_by(child_id=child_id).order_by(Wishlist.created_at.desc()).all())
 
     def get_wish_for_child(self, wish_id, child_id):
-        return Wishlist.query.filter_by(
-            id=wish_id,
-            child_id=child_id
-        ).first()
+        return Wishlist.query.filter_by(id=wish_id, child_id=child_id).first()
     
     def get_wish_for_child_for_update(self, wish_id, child_id):
         return (
             Wishlist.query
-            .filter_by(
-                id=wish_id,
-                child_id=child_id
-            )
-            .with_for_update()
-            .first()
+            .filter_by(id=wish_id, child_id=child_id)
+            .with_for_update().first()
         )
 
     def get_pending_count_by_child_id(self, child_id):
@@ -89,14 +71,12 @@ class WishlistRepository:
                 child_id=wish.child_id,
                 points=-wish.target_points,
                 action="WISH_ACHIEVED",
-                source_id=wish.id
+                wishlist_id=wish.id
             )
 
             db.session.add(history)
             db.session.commit()
-
             return wish, None
-
         except Exception:
             db.session.rollback()
             return None, "achieve_error"

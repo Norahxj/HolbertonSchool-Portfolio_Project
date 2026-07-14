@@ -2,6 +2,7 @@ from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.user_model import User
 
+
 class UserRepository:
     def get_user_by_id(self, user_id):
         return db.session.get(User, user_id)

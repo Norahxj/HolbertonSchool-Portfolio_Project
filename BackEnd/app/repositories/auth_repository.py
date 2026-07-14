@@ -3,7 +3,6 @@ from app.extensions import db
 from app.models.revoked_token_model import RevokedToken
 
 class AuthRepository:
-        
     def get_revoked_token_by_jti(self, jti):
         return RevokedToken.query.filter_by(jti=jti).first()
 
