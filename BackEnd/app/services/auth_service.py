@@ -29,9 +29,7 @@ class AuthService:
         return access_token, refresh_token
     
     def _create_access_token(self, identity, role):
-        return create_access_token(
-            identity=str(identity), additional_claims={"role": role}
-        )
+        return create_access_token(identity=str(identity), additional_claims={"role": role})
     
     def refresh_access_token(self, identity, role):
         if role == "parent":
@@ -49,7 +47,7 @@ class AuthService:
     def register(self, user_data):
         first_name = user_data["first_name"].strip()
         last_name = user_data["last_name"].strip()
-        phone = user_data["phone"]
+        phone = user_data["phone"].strip()
         email = user_data["email"].strip().lower()
         password = user_data["password"]
         guardian_type = user_data["guardian_type"]

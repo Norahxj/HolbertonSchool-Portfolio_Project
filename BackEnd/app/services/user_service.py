@@ -28,21 +28,23 @@ class UserService:
 
             if existing_user and str(existing_user.id) != str(user_id):
                 return None, "email_exists"
-
             user.email = email
             
         if "phone" in user_data:
-            phone = user_data["phone"]
+            phone = user_data["phone"].strip()
             existing_phone = self.user_repository.get_user_by_phone(phone)
             if existing_phone and str(existing_phone.id) != str(user_id):
                 return None, "phone_exists"
-            user.phone = user_data["phone"]
+            user.phone = phone
+
+        if "family_name" in user_data:
+            if not user.family:
+                return None, "family_not_found"
+            user.family.name = user_data["family_name"].strip()
 
         if "password" in user_data:
             user.password_hash = (
-                bcrypt.generate_password_hash(
-                    user_data["password"]
-                ).decode("utf-8")
+                bcrypt.generate_password_hash(user_data["password"]).decode("utf-8")
             )
         success, error = self.user_repository.update_user()
 
