@@ -3,17 +3,74 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../models/wish_model.dart';
+import '../../../services/wishlist_api_service.dart';
 import 'add_wishlist_screen.dart';
 import 'child_home_screen.dart';
 import 'child_progress_screen.dart';
 import 'child_rewards_screen.dart';
 
-// Child Wishlist screen (Screen 23).
-//
-// This first pass is static/placeholder only: the points balance and
-// wishes below are all hardcoded. No backend calls happen here yet.
-class ChildWishlistScreen extends StatelessWidget {
+class ChildWishlistScreen extends StatefulWidget {
   const ChildWishlistScreen({super.key});
+
+  @override
+  State<ChildWishlistScreen> createState() => _ChildWishlistScreenState();
+}
+
+class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
+  final WishlistApiService _wishlistService = WishlistApiService();
+
+  List<WishModel> _wishes = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWishes();
+  }
+
+  Future<void> _loadWishes() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final wishes = await _wishlistService.getMyWishes();
+      setState(() {
+        _wishes = wishes;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _deleteWish(String wishId) async {
+    try {
+      await _wishlistService.deleteWish(wishId);
+      _loadWishes(); // Refresh the list
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تعذّر حذف الأمنية')),
+      );
+    }
+  }
+
+  Future<void> _achieveWish(String wishId) async {
+    try {
+      await _wishlistService.achieveWish(wishId);
+      _loadWishes(); // Refresh the list
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تعذّر تحقيق الأمنية — تحقق من رصيد نقاطك')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +85,11 @@ class ChildWishlistScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // ── Header ──────────────────────────────────────────────
                     Row(
                       children: [
+                        // Points badge (static for now — wire to points API
+                        // in a separate step if needed)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -43,7 +103,7 @@ class ChildWishlistScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '240',
+                                '—',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -66,8 +126,6 @@ class ChildWishlistScreen extends StatelessWidget {
                             style: AppTextStyles.arabicTitle,
                           ),
                         ),
-                        // Empty box the same width as the badge, so the
-                        // title above stays centered on the screen.
                         const SizedBox(width: 56),
                       ],
                     ),
@@ -82,42 +140,75 @@ class ChildWishlistScreen extends StatelessWidget {
 
                     const SizedBox(height: AppSpacing.lg),
 
-                    const _WishCard(
-                      title: 'دراجة هوائية',
-                      subtitle: 'باقٍ 60 نقطة فقط',
-                      subtitleColor: AppColors.success,
-                      progress: 0.76,
-                      percentLabel: '76%',
-                      pointsLabel: '✦ 250 / 190',
-                      iconBackgroundColor: Color(0xFFFCE7D2),
-                      iconColor: Color(0xFFDE9A3E),
-                      icon: Icons.star,
-                    ),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    const _WishCard(
-                      title: 'مجموعة قصص',
-                      subtitle: 'استمر في جمع النقاط',
-                      subtitleColor: AppColors.textSecondary,
-                      progress: 0.40,
-                      percentLabel: '40%',
-                      pointsLabel: '✦ 120 / 48',
-                      iconBackgroundColor: AppColors.primaryLight,
-                      iconColor: AppColors.primary,
-                      icon: Icons.card_giftcard,
-                    ),
+                    // ── Body: loading / error / list ─────────────────────
+                    if (_isLoading)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(32),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else if (_errorMessage != null)
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              _errorMessage!,
+                              style: const TextStyle(color: Colors.red),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 12),
+                            ElevatedButton(
+                              onPressed: _loadWishes,
+                              child: const Text('إعادة المحاولة'),
+                            ),
+                          ],
+                        ),
+                      )
+                    else if (_wishes.isEmpty)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(32),
+                          child: Text(
+                            'لا توجد أمنيات بعد.\nأضف أمنيتك الأولى!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _wishes.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: AppSpacing.md),
+                        itemBuilder: (context, index) {
+                          final wish = _wishes[index];
+                          return _WishCard(
+                            wish: wish,
+                            onDelete: () => _deleteWish(wish.id),
+                            onAchieve: () => _achieveWish(wish.id),
+                          );
+                        },
+                      ),
 
                     const SizedBox(height: AppSpacing.xl),
 
+                    // ── Add wish button ──────────────────────────────────
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const AddWishlistScreen(),
                           ),
                         );
+                        // Reload after returning from add screen
+                        _loadWishes();
                       },
                       child: Container(
                         height: 56,
@@ -155,33 +246,51 @@ class ChildWishlistScreen extends StatelessWidget {
   }
 }
 
-// One wish card: title + status subtitle + icon on top, then a progress
-// bar, then a percent/points row below it.
+// ── Wish Card ─────────────────────────────────────────────────────────────────
+
 class _WishCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final Color subtitleColor;
-  final double progress;
-  final String percentLabel;
-  final String pointsLabel;
-  final Color iconBackgroundColor;
-  final Color iconColor;
-  final IconData icon;
+  final WishModel wish;
+  final VoidCallback onDelete;
+  final VoidCallback onAchieve;
 
   const _WishCard({
-    required this.title,
-    required this.subtitle,
-    required this.subtitleColor,
-    required this.progress,
-    required this.percentLabel,
-    required this.pointsLabel,
-    required this.iconBackgroundColor,
-    required this.iconColor,
-    required this.icon,
+    required this.wish,
+    required this.onDelete,
+    required this.onAchieve,
   });
+
+  String get _statusLabel {
+    switch (wish.status) {
+      case 'approved':
+        return ' مقبولة  ✓';
+      case 'rejected':
+        return 'مرفوضة ✗';
+      case 'achieved':
+        return 'تحققت! 🌟';
+      default:
+        return 'في الانتظار...';
+    }
+  }
+
+  Color get _statusColor {
+    switch (wish.status) {
+      case 'approved':
+        return AppColors.success;
+      case 'rejected':
+        return Colors.red;
+      case 'achieved':
+        return AppColors.gold;
+      default:
+        return AppColors.textSecondary;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Progress is only meaningful when the wish is approved and has a target
+    final hasProgress =
+        wish.status == 'approved' && wish.targetPoints != null && wish.targetPoints! > 0;
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -198,15 +307,15 @@ class _WishCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Title + status + icon row
           Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      title,
+                      wish.name,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -215,8 +324,8 @@ class _WishCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      subtitle,
-                      style: TextStyle(fontSize: 12, color: subtitleColor),
+                      _statusLabel,
+                      style: TextStyle(fontSize: 12, color: _statusColor),
                     ),
                   ],
                 ),
@@ -226,56 +335,80 @@ class _WishCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: iconBackgroundColor,
+                  color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: iconColor, size: 22),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: AppSpacing.md),
-
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 8,
-              backgroundColor: AppColors.primaryLight,
-              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
-            ),
-          ),
-
-          const SizedBox(height: AppSpacing.sm),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                percentLabel,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
+                child: const Icon(
+                  Icons.star,
                   color: AppColors.primary,
-                ),
-              ),
-              Text(
-                pointsLabel,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
+                  size: 22,
                 ),
               ),
             ],
           ),
+
+          // Progress bar (only for approved wishes)
+          if (hasProgress) ...[
+            const SizedBox(height: AppSpacing.md),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: (wish.targetPoints! > 0)
+                    ? (0.0).clamp(0.0, 1.0) // Replace 0.0 with current points / target
+                    : 0.0,
+                minHeight: 8,
+                backgroundColor: AppColors.primaryLight,
+                valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              '✦ النقاط المطلوبة: ${wish.targetPoints}',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.end,
+            ),
+          ],
+
+          // Action buttons
+          if (wish.status == 'approved') ...[
+            const SizedBox(height: AppSpacing.md),
+            ElevatedButton(
+              onPressed: onAchieve,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'لقد حققت أمنيتي! 🌟',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+
+          if (wish.status == 'pending' || wish.status == 'rejected') ...[
+            const SizedBox(height: AppSpacing.sm),
+            TextButton.icon(
+              onPressed: onDelete,
+              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
+              label: const Text(
+                'حذف',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-// Bottom navigation bar for the child screens, with "أمنياتي" highlighted
-// as the active tab.
+// ── Bottom Nav Bar ─────────────────────────────────────────────────────────────
+
 class _BottomNavBar extends StatelessWidget {
   const _BottomNavBar();
 
@@ -299,47 +432,26 @@ class _BottomNavBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildProgressScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.bar_chart_rounded,
-                label: 'تقدّمي',
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ChildProgressScreen()),
               ),
+              child: const _NavItem(icon: Icons.bar_chart_rounded, label: 'تقدّمي'),
             ),
             GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.card_giftcard_outlined,
-                label: 'المكافآت',
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
               ),
+              child: const _NavItem(icon: Icons.card_giftcard_outlined, label: 'المكافآت'),
             ),
-            const _NavItem(
-              icon: Icons.favorite_border,
-              label: 'أمنياتي',
-              isActive: true,
-            ),
+            const _NavItem(icon: Icons.favorite_border, label: 'أمنياتي', isActive: true),
             GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.home_rounded,
-                label: 'الرئيسية',
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
               ),
+              child: const _NavItem(icon: Icons.home_rounded, label: 'الرئيسية'),
             ),
           ],
         ),
@@ -348,7 +460,6 @@ class _BottomNavBar extends StatelessWidget {
   }
 }
 
-// One icon + label pair inside the bottom navigation bar.
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -363,20 +474,12 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isActive ? AppColors.primary : AppColors.textSecondary;
-
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, color: color, size: 22),
+        Icon(icon, color: color, size: 24),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: color,
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 11, color: color)),
       ],
     );
   }
