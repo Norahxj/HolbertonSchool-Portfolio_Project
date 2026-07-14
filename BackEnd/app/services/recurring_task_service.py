@@ -3,7 +3,6 @@ from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from app.utils.recurrence_utils import is_task_due_on_date
 from app.extensions import db
-from datetime import timedelta
 from app.utils.datetime_utils import riyadh_today
 
 class RecurringTaskService:
@@ -13,12 +12,9 @@ class RecurringTaskService:
 
     def generate_today_assignments(self):
         today = riyadh_today()
-
         tasks = self.task_repository.get_recurring_tasks()
-
         created_count = 0
         failed_count = 0
-
         for task in tasks:
             if not is_task_due_on_date(
                 task.task_frequency,
@@ -39,26 +35,21 @@ class RecurringTaskService:
 
                 if existing:
                     continue
-
                 new_assignment = TaskAssignment(
                     task_id=task.id,
                     child_id=task_child.child_id,
                     assigned_date=today,
                     status="PENDING"
                 )
-
                 try:
                     assignment, error = (
                         self.assignment_repository
                         .create_assignment(new_assignment)
                     )
-
                     if error:
                         failed_count += 1
                         continue
-
                     created_count += 1
-
                 except Exception:
                     db.session.rollback()
                     failed_count += 1
@@ -68,8 +59,6 @@ class RecurringTaskService:
             "created": created_count,
             "failed": failed_count
         }
-
         if failed_count > 0:
             return result, "partial_failure"
-
         return result, None

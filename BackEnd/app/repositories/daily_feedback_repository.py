@@ -1,7 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.daily_feedback_model import DailyFeedback
-from datetime import datetime, time, timedelta
 from app.utils.datetime_utils import riyadh_today
 
 
@@ -38,3 +37,11 @@ class DailyFeedbackRepository:
             created_by=parent_id,
             feedback_date=today
         ).first()
+
+    def update_feedback(self):
+        try:
+            db.session.commit()
+            return True, None
+        except IntegrityError:
+            db.session.rollback()
+            return False, "integrity_error"

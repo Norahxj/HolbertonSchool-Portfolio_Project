@@ -23,11 +23,14 @@ class ChildService:
             return None, "parent_not_found"
         if not parent.family:
             return None, "family_not_found"
+        phone = child_data.get("phone")
+        if phone is not None:
+            phone = phone.strip()
 
         child = Child(
             name=child_data["name"].strip(),
             birth_date=child_data["birth_date"],
-            phone=child_data.get("phone"),
+            phone=phone,
             access_code=self.generate_access_code(),
             family_id=parent.family_id
         )
@@ -56,7 +59,10 @@ class ChildService:
         if "birth_date" in child_data:
             child.birth_date = child_data["birth_date"]
         if "phone" in child_data:
-            child.phone = child_data["phone"]
+            phone = child_data["phone"]
+            if phone is not None:
+                phone = phone.strip()
+            child.phone = phone
         success, error = self.child_repository.update_child()
         if not success:
             return None, "update_failed"

@@ -22,35 +22,29 @@ class PointsService:
                 return None, "create_failed"
         return points, None
 
-    def add_points(self, child_id, amount, source_id=None, commit=True):
+    def add_points(self, child_id, amount, task_assignment_id, commit=True):
+        if amount <= 0:
+            return None, "invalid_points_amount"
         points, error = self.get_child_points(child_id, commit=False)
-
         if error:
             return None, error
-
         points.total_points += amount
-
         success, error = self.point_repository.update_points(commit=False)
-
         if not success:
             return None, "update_failed"
-
         history, error = self.points_history_service.create_history(
             child_id=child_id,
             points=amount,
             action="TASK_APPROVED",
-            source_id=source_id,
+            task_assignment_id=task_assignment_id,
             commit=False
         )
-
         if error:
             return None, "history_failed"
-
         if commit:
             try:
                 db.session.commit()
             except Exception:
                 db.session.rollback()
                 return None, "commit_failed"
-
         return points, None

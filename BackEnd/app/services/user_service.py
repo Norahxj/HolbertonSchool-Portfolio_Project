@@ -36,12 +36,6 @@ class UserService:
             if existing_phone and str(existing_phone.id) != str(user_id):
                 return None, "phone_exists"
             user.phone = phone
-
-        if "family_name" in user_data:
-            if not user.family:
-                return None, "family_not_found"
-            user.family.name = user_data["family_name"].strip()
-
         if "password" in user_data:
             user.password_hash = (
                 bcrypt.generate_password_hash(user_data["password"]).decode("utf-8")

@@ -23,7 +23,7 @@ class TaskService:
             points=task_data["points"],
             task_frequency=task_data.get("task_frequency", "ONCE"),
             recurrence_day=task_data.get("recurrence_day"),
-            category=task_data.get("category"),
+            category=task_data["category"],
             is_auto_verified=task_data.get("is_auto_verified", False),
             created_by=parent_id
         )
@@ -31,22 +31,23 @@ class TaskService:
     def _validate_recurrence_for_update(self, task, task_data):
         new_frequency = task_data.get("task_frequency", task.task_frequency)
         new_recurrence_day = task_data.get("recurrence_day", task.recurrence_day)
-
+        valid_frequencies = {"ONCE", "DAILY", "WEEKLY", "MONTHLY"}
+        if new_frequency not in valid_frequencies:
+            return None, None, "invalid_frequency"
         if new_frequency in ["ONCE", "DAILY"]:
             return new_frequency, None, None
-
         if new_frequency == "WEEKLY":
             if new_recurrence_day is None or new_recurrence_day < 0 or new_recurrence_day > 6:
                 return None, None, "invalid_recurrence_day"
-
         if new_frequency == "MONTHLY":
             if new_recurrence_day is None or new_recurrence_day < 1 or new_recurrence_day > 31:
                 return None, None, "invalid_recurrence_day"
-
         return new_frequency, new_recurrence_day, None
 
     def create_task(self, parent_id, task_data):
         child_ids = task_data["child_ids"]
+        if not child_ids:
+            return None, "child_ids_required"
         if len(child_ids) != len(set(child_ids)):
             return None, "duplicate_child_ids"
         children = [
@@ -64,20 +65,12 @@ class TaskService:
             today = riyadh_today()
             should_create_assignment = (
                 task.task_frequency == "ONCE"
-                or is_task_due_on_date(
-                    task.task_frequency,
-                    task.recurrence_day,
-                    today
-                )
+                or is_task_due_on_date(task.task_frequency, task.recurrence_day, today)
             )
             for child in children:
-                task_child = TaskChild(
-                    task_id=task.id,
-                    child_id=child.id
-                )
+                task_child = TaskChild(task_id=task.id, child_id=child.id)
                 _, error = self.task_child_repository.create_task_child(
-                    task_child,
-                    commit=False
+                    task_child, commit=False
                 )
                 if error:
                     db.session.rollback()
@@ -98,7 +91,6 @@ class TaskService:
                         return None, "assignment_failed"
             db.session.commit()
             return task, None
-
         except Exception:
             db.session.rollback()
             return None, "create_failed"
@@ -111,59 +103,41 @@ class TaskService:
     
     def get_tasks_by_child_for_parent(self, child_id, parent_id):
         child = self.child_repository.get_child_for_guardian(child_id, parent_id)
-
         if not child:
             return None
-
         return [task_child.task for task_child in child.task_children]
-
+    
     def update_task_for_parent(self, task_id, parent_id, task_data):
         task = self.task_repository.get_task_for_creator(task_id, parent_id)
         if not task:
             return None, "not_found"
-
         new_frequency, new_recurrence_day, error = (
             self._validate_recurrence_for_update(task, task_data)
         )
-
         if error:
             return None, error
-
         try:
             if "title" in task_data:
                 task.title = task_data["title"].strip()
-
             if "description" in task_data:
                 task.description = task_data["description"].strip()
-
             if "points" in task_data:
                 task.points = task_data["points"]
-
             if "category" in task_data:
                 task.category = task_data["category"]
-
             if "is_auto_verified" in task_data:
                 task.is_auto_verified = task_data["is_auto_verified"]
-
             task.task_frequency = new_frequency
             task.recurrence_day = new_recurrence_day
-
             success, error = self.task_repository.update_task(commit=False)
-
             if not success:
                 db.session.rollback()
                 return None, "update_failed"
-
             today = riyadh_today()
             should_create_assignment = (
                 task.task_frequency == "ONCE"
-                or is_task_due_on_date(
-                    task.task_frequency,
-                    task.recurrence_day,
-                    today
-                )
+                or is_task_due_on_date(task.task_frequency, task.recurrence_day, today)
             )
-
             if should_create_assignment:
                 for task_child in task.task_children:
                     existing_assignment = (
@@ -174,17 +148,14 @@ class TaskService:
                             today
                         )
                     )
-
                     if existing_assignment:
                         continue
-
                     assignment = TaskAssignment(
                         task_id=task.id,
                         child_id=task_child.child_id,
                         status="PENDING",
                         assigned_date=today
                     )
-
                     _, assignment_error = (
                         self.task_assignment_repository
                         .create_assignment(
@@ -192,28 +163,20 @@ class TaskService:
                             commit=False
                         )
                     )
-
                     if assignment_error:
                         db.session.rollback()
                         return None, "assignment_failed"
-
             db.session.commit()
-
             return task, None
-
         except Exception:
             db.session.rollback()
             return None, "update_failed"
 
     def delete_task_for_parent(self, task_id, parent_id):
         task = self.task_repository.get_task_for_creator(task_id, parent_id)
-
         if not task:
             return False, "task_not_found"
-
         success, error = self.task_repository.delete_task(task)
-
         if not success:
             return False, "delete_error"
-
         return True, None
