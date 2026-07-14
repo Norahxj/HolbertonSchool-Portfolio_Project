@@ -221,12 +221,12 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<TaskModel>> createTask(CreateTaskRequest body) async {
+  Future<HttpResponse<TaskModel>> createTask(Map<String, dynamic> body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body.toJson());
+    _data.addAll(body);
     final _options = _setStreamType<HttpResponse<TaskModel>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -310,13 +310,13 @@ class _ApiService implements ApiService {
   @override
   Future<HttpResponse<TaskModel>> updateTask(
     String taskId,
-    UpdateTaskRequest body,
+    Map<String, dynamic> body,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body.toJson());
+    _data.addAll(body);
     final _options = _setStreamType<HttpResponse<TaskModel>>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(

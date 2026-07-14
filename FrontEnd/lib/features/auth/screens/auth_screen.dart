@@ -10,7 +10,6 @@ import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
 import '../../../services/auth_api_service.dart';
 import '../../parent/screens/parent_dashboard_screen.dart';
 import 'package:dio/dio.dart';
-import 'package:frontend/core/network/api_service.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;

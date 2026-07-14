@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import '../core/network/api_service.dart';
 import '../core/network/dio_factory.dart';
 import '../models/child_model.dart';
@@ -19,17 +18,15 @@ class ChildApiService {
     final body = {
       'name': name,
       'birth_date': birthDate,
+      if (phone != null && phone.isNotEmpty) 'phone': phone,
     };
-
-    if (phone != null && phone.isNotEmpty) {
-      body['phone'] = phone;
-    }
 
     final response = await _apiService.addChild(body);
     return response.data;
   }
+
   Future<ChildModel> getChildById(String childId) async {
-  final response = await _apiService.getChild(childId);
-  return response.data;
-}
+    final response = await _apiService.getChild(childId);
+    return response.data;
+  }
 }

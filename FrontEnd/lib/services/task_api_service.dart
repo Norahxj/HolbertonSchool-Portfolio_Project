@@ -1,14 +1,12 @@
 import '../core/network/api_service.dart';
 import '../core/network/dio_factory.dart';
-import '../models/create_task_request.dart';
 import '../models/task_model.dart';
-import '../models/update_task_request.dart';
 
 class TaskApiService {
   final ApiService _apiService = ApiService(DioFactory.getDio());
 
-  Future<TaskModel> createTask(CreateTaskRequest request) async {
-    final response = await _apiService.createTask(request);
+  Future<TaskModel> createTask(Map<String, dynamic> body) async {
+    final response = await _apiService.createTask(body);
     return response.data;
   }
 
@@ -24,12 +22,11 @@ class TaskApiService {
 
   Future<TaskModel> updateTask(
     String taskId,
-    UpdateTaskRequest request,
+    Map<String, dynamic> body,
   ) async {
-    final response = await _apiService.updateTask(taskId, request);
+    final response = await _apiService.updateTask(taskId, body);
     return response.data;
   }
-
 
   Future<List<TaskModel>> getTasksByChild(String childId) async {
     final response = await _apiService.getTasksByChild(childId);

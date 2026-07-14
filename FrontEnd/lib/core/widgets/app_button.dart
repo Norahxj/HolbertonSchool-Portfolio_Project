@@ -4,7 +4,7 @@ import '../constants/app_text_styles.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool isFullWidth;
   final Color backgroundColor;
   final Gradient? gradient;

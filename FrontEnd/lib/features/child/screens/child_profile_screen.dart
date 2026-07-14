@@ -91,7 +91,6 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
         },
       ),
     );
-    bottomNavigationBar: const _BottomNavBar();
   }
 }
 

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/repositories/child_repository.dart';
+import 'package:dio/dio.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
-import 'package:frontend/repositories/task_repository.dart';
-import 'package:frontend/core/network/api_result.dart';
-import 'package:frontend/models/create_task_request.dart';
 import 'package:frontend/models/child_model.dart';
-
+import 'package:frontend/services/task_api_service.dart';
+import 'package:frontend/services/child_api_service.dart';
 // Add Task wizard (Screens 9-12).
 //
 // This first pass is static/placeholder only: every step just updates
@@ -24,12 +22,15 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  final TaskRepository _taskRepository = TaskRepository();
-  final ChildRepository _childRepository = ChildRepository();
+  final TaskApiService _taskApiService = TaskApiService();
+  final ChildApiService _childApiService = ChildApiService();
 
   List<ChildModel> children = [];
   List<String> selectedChildIds = [];
   bool isLoadingChildren = true;
+  bool isSubmitting = false;
+  bool isSaving = false;
+
 
   int currentStep = 0;
 
@@ -40,6 +41,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   String? frequencyError;
   String? recurrenceDayError;
   String? childError;
+  String? mapBackendError(String? message) {
+  switch (message) {
+    case "Shorter than minimum length 1.":
+      return "الرجاء اختيار طفل واحد على الأقل";
+
+    case "Must be greater than or equal to 1 and less than or equal to 100.":
+      return "عدد النقاط يجب أن يكون بين 1 و100";
+
+    case "Length must be between 2 and 100.":
+      return "اسم المهمة يجب أن يكون بين حرفين و100 حرف";
+
+    case "Length must be between 2 and 500.":
+      return "الوصف يجب أن يكون بين حرفين و500 حرف";
+
+    default:
+      return message;
+  }
+}
 
   // Step 1: which task type/category is picked. Null means none yet.
   int? selectedTaskType;
@@ -116,23 +135,20 @@ void initState() {
   super.initState();
   _loadChildren();
 }
-Future<void> _loadChildren() async {
-  final result = await _childRepository.getChildren();
 
-  result.when(
-    success: (data) {
-      setState(() {
-        children = data;
-        isLoadingChildren = false;
-      });
-    },
-    failure: (error) {
-      setState(() {
-        isLoadingChildren = false;
-      });
-      print(error);
-    },
-  );
+Future<void> _loadChildren() async {
+  try {
+    final data = await _childApiService.getChildren();
+
+    setState(() {
+      children =data;
+      isLoadingChildren = false;
+    });
+  } on DioException {
+    setState(() {
+      isLoadingChildren = false;
+    });
+  }
 }
   @override
   void dispose() {
@@ -263,6 +279,20 @@ Future<void> _loadChildren() async {
           }).toList(),
         ), 
 
+       if (childError != null) ...[
+        const SizedBox(height: AppSpacing.sm),
+        Align(
+         alignment: Alignment.centerRight,
+         child: Text(
+           childError!,
+           style: const TextStyle(
+             color: Colors.red,
+             fontSize: 12,
+           ),
+         ),
+       ),
+       ],
+
         const SizedBox(height: AppSpacing.lg),
 
         Container(
@@ -340,6 +370,7 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 0;
+                    categoryError = null; // Clear category error when a type is selected
                   });
                 },
               ),
@@ -353,6 +384,7 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 1;
+                    categoryError = null; // Clear category error when a type is selected
                   });
                 },
               ),
@@ -372,6 +404,7 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 2;
+                    categoryError = null; // Clear category error when a type is selected
                   });
                 },
               ),
@@ -385,12 +418,27 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 3;
+                    categoryError = null; // Clear category error when a type is selected
                   });
                 },
               ),
             ),
           ],
         ),
+        if (categoryError != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                categoryError!,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -500,6 +548,19 @@ Future<void> _loadChildren() async {
             ],
           ),
         ),
+        if (pointsError != null) ...[
+           const SizedBox(height: AppSpacing.sm),
+           Align(
+             alignment: Alignment.centerRight,
+             child: Text(
+               pointsError!,
+               style: const TextStyle(
+                 color: Colors.red,
+                 fontSize: 12,
+               ),
+             ),
+           ),
+         ],
 
         const SizedBox(height: AppSpacing.md),
 
@@ -696,6 +757,33 @@ Future<void> _loadChildren() async {
                 )
               : null,
         ),
+        if (frequencyError != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              frequencyError!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+
+        if (recurrenceDayError != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              recurrenceDayError!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -724,58 +812,79 @@ Future<void> _loadChildren() async {
         Expanded(
           flex: 2,
           child: AppButton(
-            text: isLastStep ? 'حفظ المهمة' : 'التالي',
-            onPressed: () async {
-              if (isLastStep) {
-                setState(() {
-                  titleError = null;
-                  descriptionError = null;
-                  pointsError = null;
-                  categoryError = null;
-                  frequencyError = null;
-                  recurrenceDayError = null;
-                  childError = null;
-                 });
-
-                final request = CreateTaskRequest(
-                  childIds: selectedChildIds,
-                  title: taskNameController.text.trim(),
-                  description: taskDescriptionController.text.trim(),
-                  points: taskPoints,
-                  taskFrequency: taskFrequency,
-                  recurrenceDay: recurrenceDay,
-                  category: category,
-                  isAutoVerified: trustChild,
-                );
-                
-                  final result = await _taskRepository.createTask(request);
-
-                result.when(
-                  success: (_) {
-                    if (!mounted) return;
-                Navigator.pop(context, true);
-                  },
-                  failure: (error) {
-                    if (error is Map<String, dynamic>) {
-                      final errors = error['errors'];
-                      if (errors != null) {
-                      setState(() {
-                        titleError = errors?['title']?.first;
-                        descriptionError = errors?['description']?.first;
-                        pointsError = errors?['points']?.first;
-                        categoryError = errors?['category']?.first;
-                        frequencyError = errors?['taskFrequency']?.first;
-                        recurrenceDayError = errors?['recurrenceDay']?.first;
-                        childError = errors?['childIds']?.first;
-                      });
-                    } 
-                    }
-                  },
-                );                  
-              } else {
-                _goToNextStep();
-              }
-            },
+             text: isLastStep ? 'حفظ المهمة' : 'التالي',
+            onPressed: isSaving
+                 ? null
+                 : () async {
+                     if (isLastStep) {
+           
+                       setState(() {
+                         isSaving = true;
+           
+                         titleError = null;
+                         descriptionError = null;
+                         pointsError = null;
+                         categoryError = null;
+                         frequencyError = null;
+                         recurrenceDayError = null;
+                         childError = null;
+                       });
+           
+                       try {
+                         print("Before API");
+           
+                         await _taskApiService.createTask({
+                           "child_ids": selectedChildIds,
+                           "title": taskNameController.text.trim(),
+                           "description": taskDescriptionController.text.trim(),
+                           "points": taskPoints,
+                           "task_frequency": taskFrequency,
+                           "recurrence_day": recurrenceDay,
+                           "category": category,
+                           "is_auto_verified": trustChild,
+                         });
+           
+                         if (!mounted) return;
+                         Navigator.pop(context, true);
+           
+                       } on DioException catch (e) {
+                         final errors = e.response?.data["errors"];
+           
+                         setState(() {
+                          titleError = mapBackendError(errors?["title"]?.first);
+                          descriptionError = mapBackendError(errors?["description"]?.first);
+                          pointsError = mapBackendError(errors?["points"]?.first);
+                          childError = mapBackendError(errors?["child_ids"]?.first);
+                          categoryError = mapBackendError(errors?["category"]?.first);
+                          frequencyError = mapBackendError(errors?["task_frequency"]?.first);
+                          recurrenceDayError = mapBackendError(errors?["recurrence_day"]?.first);
+                                     
+                           if (childError != null) {
+                             currentStep = 0;
+                           } else if (categoryError != null) {
+                             currentStep = 1;
+                           } else if (titleError != null ||
+                               descriptionError != null ||
+                               pointsError != null) {
+                             currentStep = 2;
+                           } else if (frequencyError != null ||
+                               recurrenceDayError != null) {
+                             currentStep = 3;
+                           }
+                         });
+           
+                       } finally {
+                         if (mounted) {
+                           setState(() {
+                             isSaving = false;
+                           });
+                         }
+                       }
+           
+                     } else {
+                       _goToNextStep();
+                     }
+                   },
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

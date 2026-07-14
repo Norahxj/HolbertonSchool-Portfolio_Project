@@ -1,29 +1,13 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'task_model.g.dart';
-
-@JsonSerializable()
 class TaskModel {
   final String id;
   final String title;
   final String description;
   final int points;
-
-  @JsonKey(name: 'task_frequency')
   final String taskFrequency;
-
-  @JsonKey(name: 'recurrence_day')
   final int? recurrenceDay;
-
   final String? category;
-
-  @JsonKey(name: 'is_auto_verified')
   final bool isAutoVerified;
-
-  @JsonKey(name: 'created_by')
   final String createdBy;
-
-  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   TaskModel({
@@ -39,16 +23,33 @@ class TaskModel {
     required this.createdAt,
   });
 
-  factory TaskModel.fromJson(Map<String, dynamic> json) =>
-      _$TaskModelFromJson(json);
+  factory TaskModel.fromJson(Map<String, dynamic> json) {
+    return TaskModel(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      points: json['points'],
+      taskFrequency: json['task_frequency'],
+      recurrenceDay: json['recurrence_day'],
+      category: json['category'],
+      isAutoVerified: json['is_auto_verified'],
+      createdBy: json['created_by'],
+      createdAt: DateTime.parse(json['created_at']),
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$TaskModelToJson(this);
-}
-@JsonSerializable()
-class MessageResponse {
-  final String message;
-
-  const MessageResponse({
-    required this.message,
-  });
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'points': points,
+      'task_frequency': taskFrequency,
+      'recurrence_day': recurrenceDay,
+      'category': category,
+      'is_auto_verified': isAutoVerified,
+      'created_by': createdBy,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
 }
