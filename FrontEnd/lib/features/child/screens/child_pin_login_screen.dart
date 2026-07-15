@@ -5,13 +5,15 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
+import '../../../services/auth_api_service.dart';
 import 'child_home_screen.dart';
 
 // Child PIN Login screen (Screen 20).
 //
-// This first pass is static/placeholder only: the entered pin is kept in
-// simple local state, and there is no real backend check yet. Tapping
-// "دخول" does nothing yet (see the TODO comment below).
+// The entered pin is kept in simple local state and, once 6 digits are
+// typed, is sent to the backend as the child's access code. Tapping
+// "دخول" calls AuthApiService().childLogin and only moves to the child
+// home screen once that succeeds.
 class ChildPinLoginScreen extends StatefulWidget {
   const ChildPinLoginScreen({super.key});
 
@@ -22,6 +24,39 @@ class ChildPinLoginScreen extends StatefulWidget {
 class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
   // The digits the child has typed so far, e.g. "481".
   String pin = '';
+  bool _isLoading = false;
+
+  Future<void> _handleLogin() async {
+    if (pin.length != 6 || _isLoading) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await AuthApiService().childLogin(accessCode: pin);
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('رمز الدخول غير صحيح. حاول مرة أخرى.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   void _addDigit(String digit) {
     // A pin code here is always 6 digits, so ignore taps after that.
@@ -116,17 +151,9 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
 
                 AppButton(
                   text: 'دخول',
-                  onPressed: () {
-                    // TODO: Check the entered pin with the backend once
-                    // that is ready. For now, just go to the child home
-                    // screen so the flow can be tested.
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ChildHomeScreen(),
-                      ),
-                    );
-                  },
+                  enabled: pin.length == 6 && !_isLoading,
+                  isLoading: _isLoading,
+                  onPressed: _handleLogin,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,

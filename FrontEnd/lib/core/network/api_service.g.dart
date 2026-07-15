@@ -380,7 +380,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/',
+            '/wishlists/',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -402,7 +402,7 @@ class _ApiService implements ApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/my',
+            '/wishlists/my',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -424,7 +424,7 @@ class _ApiService implements ApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/child/${childId}',
+            '/wishlists/child/${childId}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -450,7 +450,7 @@ class _ApiService implements ApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/${wishId}/approve',
+            '/wishlists/${wishId}/approve',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -472,7 +472,7 @@ class _ApiService implements ApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/${wishId}/reject',
+            '/wishlists/${wishId}/reject',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -494,7 +494,7 @@ class _ApiService implements ApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/${wishId}/achieve',
+            '/wishlists/${wishId}/achieve',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -516,7 +516,7 @@ class _ApiService implements ApiService {
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/${wishId}',
+            '/wishlists/${wishId}',
             queryParameters: queryParameters,
             data: _data,
           )

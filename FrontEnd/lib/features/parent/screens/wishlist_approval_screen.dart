@@ -4,14 +4,110 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
+import '../../../models/wish_model.dart';
+import '../../../services/child_api_service.dart';
+import '../../../services/wishlist_api_service.dart';
 
 // Wishlist Approval screen (Screen 14).
 //
-// This first pass is static/placeholder only: the wishes below are
-// hardcoded, and the approve/reject buttons don't do anything real yet
-// (see the TODO comments). No backend calls happen here.
-class WishlistApprovalScreen extends StatelessWidget {
+// Loads every child's wishes from the backend and splits them into
+// pending (needs approve/reject) and approved (already decided) groups.
+// ChildApiService().getChildren() is only used internally to resolve a
+// child's name for the card header — it is not shown as its own list.
+class WishlistApprovalScreen extends StatefulWidget {
   const WishlistApprovalScreen({super.key});
+
+  @override
+  State<WishlistApprovalScreen> createState() => _WishlistApprovalScreenState();
+}
+
+// Pairs a wish with its child's name so the cards below don't need to
+// look the child up themselves.
+class _WishEntry {
+  final WishModel wish;
+  final String childName;
+
+  _WishEntry({required this.wish, required this.childName});
+}
+
+class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
+  final ChildApiService _childApiService = ChildApiService();
+  final WishlistApiService _wishlistService = WishlistApiService();
+
+  bool _isLoading = true;
+  String? _errorMessage;
+  List<_WishEntry> _pendingWishes = [];
+  List<_WishEntry> _approvedWishes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWishes();
+  }
+
+  Future<void> _loadWishes() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final children = await _childApiService.getChildren();
+
+      final pending = <_WishEntry>[];
+      final approved = <_WishEntry>[];
+
+      for (final child in children) {
+        final wishes = await _wishlistService.getChildWishes(child.id);
+        for (final wish in wishes) {
+          final entry = _WishEntry(wish: wish, childName: child.name);
+          final status = wish.status.toUpperCase();
+          if (status == 'PENDING') {
+            pending.add(entry);
+          } else if (status == 'APPROVED') {
+            approved.add(entry);
+          }
+        }
+      }
+
+      setState(() {
+        _pendingWishes = pending;
+        _approvedWishes = approved;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _approveWish(String wishId, int targetPoints) async {
+    try {
+      await _wishlistService.approveWish(wishId, targetPoints);
+      _loadWishes();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تعذّرت الموافقة على الأمنية')),
+        );
+      }
+    }
+  }
+
+  Future<void> _rejectWish(String wishId) async {
+    try {
+      await _wishlistService.rejectWish(wishId);
+      _loadWishes();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('تعذّر رفض الأمنية')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,27 +143,74 @@ class WishlistApprovalScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                const _PendingWishCard(
-                  childName: 'سارة',
-                  wishTitle: 'دراجة هوائية',
-                  subtitle: 'أضافتها إلى قائمة أمنياتها',
-                  startingPoints: 250,
-                  avatarColor: Color(0xFFFBE3EA),
-                  iconColor: Color(0xFFD1637F),
-                ),
+                if (_isLoading)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                else if (_errorMessage != null)
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          _errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: _loadWishes,
+                          child: const Text('إعادة المحاولة'),
+                        ),
+                      ],
+                    ),
+                  )
+                else if (_pendingWishes.isEmpty && _approvedWishes.isEmpty)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32),
+                      child: Text(
+                        'لا توجد أمنيات بعد.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  )
+                else ...[
+                  for (final entry in _pendingWishes) ...[
+                    _PendingWishCard(
+                      key: ValueKey(entry.wish.id),
+                      childName: entry.childName,
+                      wishTitle: entry.wish.name,
+                      subtitle: 'أضاف هذه الأمنية إلى قائمته',
+                      startingPoints: entry.wish.targetPoints ?? 250,
+                      avatarColor: const Color(0xFFFBE3EA),
+                      iconColor: const Color(0xFFD1637F),
+                      onApprove: (points) =>
+                          _approveWish(entry.wish.id, points),
+                      onReject: () => _rejectWish(entry.wish.id),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                  for (final entry in _approvedWishes) ...[
+                    _ApprovedWishCard(
+                      childName: entry.childName,
+                      wishTitle: entry.wish.name,
+                      subtitle: 'تمت الموافقة على هذه الأمنية',
+                      points: entry.wish.targetPoints ?? 0,
+                      avatarColor: const Color(0xFFDCEBFB),
+                      iconColor: const Color(0xFF4A90D9),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                ],
 
-                const SizedBox(height: AppSpacing.md),
-
-                const _ApprovedWishCard(
-                  childName: 'سلمان',
-                  wishTitle: 'مجموعة قصص',
-                  subtitle: 'أضافها إلى قائمة أمنياته',
-                  points: 120,
-                  avatarColor: Color(0xFFDCEBFB),
-                  iconColor: Color(0xFF4A90D9),
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.sm),
 
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -205,14 +348,19 @@ class _PendingWishCard extends StatefulWidget {
   final int startingPoints;
   final Color avatarColor;
   final Color iconColor;
+  final ValueChanged<int> onApprove;
+  final VoidCallback onReject;
 
   const _PendingWishCard({
+    super.key,
     required this.childName,
     required this.wishTitle,
     required this.subtitle,
     required this.startingPoints,
     required this.avatarColor,
     required this.iconColor,
+    required this.onApprove,
+    required this.onReject,
   });
 
   @override
@@ -341,8 +489,16 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                 flex: 2,
                 child: GestureDetector(
                   onTap: () {
-                    // TODO: Approve this wish and deduct the points once
-                    // backend integration is ready.
+                    // Don't allow approving with 0 or negative points.
+                    if (requiredPoints <= 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('يجب أن تكون النقاط أكبر من صفر'),
+                        ),
+                      );
+                      return;
+                    }
+                    widget.onApprove(requiredPoints);
                   },
                   child: Container(
                     height: 56,
@@ -375,10 +531,7 @@ class _PendingWishCardState extends State<_PendingWishCard> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: GestureDetector(
-                  onTap: () {
-                    // TODO: Reject this wish once backend integration is
-                    // ready.
-                  },
+                  onTap: widget.onReject,
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(

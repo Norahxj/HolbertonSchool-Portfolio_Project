@@ -6,49 +6,41 @@ class AuthApiService {
   final Dio _dio = DioFactory.getDio();
 
   Future<void> saveTokens({
-  required String accessToken,
-  required String refreshToken,
-}) async {
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    await SecureStorage.saveAccessToken(accessToken);
+    await SecureStorage.saveRefreshToken(refreshToken);
+  }
 
-  await SecureStorage.saveAccessToken(accessToken);
-  await SecureStorage.saveRefreshToken(refreshToken);
-}
+  Future<bool> isLoggedIn() async {
+    final token = await SecureStorage.getAccessToken();
 
-Future<bool> isLoggedIn() async {
-  final token = await SecureStorage.getAccessToken();
+    print("loaded token = $token");
+    return token != null;
+  }
 
-  print("loaded token = $token");
-  return token != null;
-}
+  Future<Response?> logout() async {
+    await SecureStorage.clear();
+  }
 
-Future<Response?> logout() async {
-  await SecureStorage.clear();
-}
-// Refresh token method
+  // Refresh token method
   Future<String> refreshAccessToken() async {
-  final refreshToken = await SecureStorage.getRefreshToken();
+    final refreshToken = await SecureStorage.getRefreshToken();
 
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: DioFactory.getDio().options.baseUrl,
-    ),
-  );
+    final dio = Dio(BaseOptions(baseUrl: DioFactory.getDio().options.baseUrl));
 
-  final response = await dio.post(
-    '/auth/refresh',
-    options: Options(
-      headers: {
-        "Authorization": refreshToken,
-      },
-    ),
-  );
+    final response = await dio.post(
+      '/auth/refresh',
+      options: Options(headers: {"Authorization": refreshToken}),
+    );
 
-  final newAccessToken = response.data["access_token"];
+    final newAccessToken = response.data["access_token"];
 
-  await SecureStorage.saveAccessToken(newAccessToken);
+    await SecureStorage.saveAccessToken(newAccessToken);
 
-  return newAccessToken;
-}
+    return newAccessToken;
+  }
 
   // Login method
   Future<Response> login({
@@ -57,10 +49,7 @@ Future<Response?> logout() async {
   }) async {
     final response = await _dio.post(
       '/auth/login',
-      data: {
-        'email': email,
-        'password': password,
-      },
+      data: {'email': email, 'password': password},
     );
 
     await saveTokens(
@@ -70,6 +59,22 @@ Future<Response?> logout() async {
 
     return response;
   }
+
+  // Child login method (access code instead of email/password)
+  Future<Response> childLogin({required String accessCode}) async {
+    final response = await _dio.post(
+      '/auth/child-login',
+      data: {'access_code': accessCode},
+    );
+
+    await saveTokens(
+      accessToken: response.data['access_token'],
+      refreshToken: response.data['refresh_token'],
+    );
+
+    return response;
+  }
+
   Future<Response> register({
     required String firstName,
     required String lastName,
@@ -94,7 +99,7 @@ Future<Response?> logout() async {
       accessToken: response.data['access_token'],
       refreshToken: response.data['refresh_token'],
     );
-    
+
     return response;
   }
 }

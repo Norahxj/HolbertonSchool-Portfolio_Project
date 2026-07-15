@@ -55,9 +55,9 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
       await _wishlistService.deleteWish(wishId);
       _loadWishes(); // Refresh the list
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذّر حذف الأمنية')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('تعذّر حذف الأمنية')));
     }
   }
 
@@ -67,7 +67,9 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
       _loadWishes(); // Refresh the list
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذّر تحقيق الأمنية — تحقق من رصيد نقاطك')),
+        const SnackBar(
+          content: Text('تعذّر تحقيق الأمنية — تحقق من رصيد نقاطك'),
+        ),
       );
     }
   }
@@ -260,12 +262,12 @@ class _WishCard extends StatelessWidget {
   });
 
   String get _statusLabel {
-    switch (wish.status) {
-      case 'approved':
+    switch (wish.status.toUpperCase()) {
+      case 'APPROVED':
         return ' مقبولة  ✓';
-      case 'rejected':
+      case 'REJECTED':
         return 'مرفوضة ✗';
-      case 'achieved':
+      case 'ACHIEVED':
         return 'تحققت! 🌟';
       default:
         return 'في الانتظار...';
@@ -273,12 +275,12 @@ class _WishCard extends StatelessWidget {
   }
 
   Color get _statusColor {
-    switch (wish.status) {
-      case 'approved':
+    switch (wish.status.toUpperCase()) {
+      case 'APPROVED':
         return AppColors.success;
-      case 'rejected':
+      case 'REJECTED':
         return Colors.red;
-      case 'achieved':
+      case 'ACHIEVED':
         return AppColors.gold;
       default:
         return AppColors.textSecondary;
@@ -288,8 +290,11 @@ class _WishCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Progress is only meaningful when the wish is approved and has a target
+    final status = wish.status.toUpperCase();
     final hasProgress =
-        wish.status == 'approved' && wish.targetPoints != null && wish.targetPoints! > 0;
+        status == 'APPROVED' &&
+        wish.targetPoints != null &&
+        wish.targetPoints! > 0;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -354,7 +359,10 @@ class _WishCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
                 value: (wish.targetPoints! > 0)
-                    ? (0.0).clamp(0.0, 1.0) // Replace 0.0 with current points / target
+                    ? (0.0).clamp(
+                        0.0,
+                        1.0,
+                      ) // Replace 0.0 with current points / target
                     : 0.0,
                 minHeight: 8,
                 backgroundColor: AppColors.primaryLight,
@@ -373,7 +381,7 @@ class _WishCard extends StatelessWidget {
           ],
 
           // Action buttons
-          if (wish.status == 'approved') ...[
+          if (status == 'APPROVED') ...[
             const SizedBox(height: AppSpacing.md),
             ElevatedButton(
               onPressed: onAchieve,
@@ -390,15 +398,16 @@ class _WishCard extends StatelessWidget {
             ),
           ],
 
-          if (wish.status == 'pending' || wish.status == 'rejected') ...[
+          if (status == 'PENDING' || status == 'REJECTED') ...[
             const SizedBox(height: AppSpacing.sm),
             TextButton.icon(
               onPressed: onDelete,
-              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
-              label: const Text(
-                'حذف',
-                style: TextStyle(color: Colors.red),
+              icon: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+                size: 18,
               ),
+              label: const Text('حذف', style: TextStyle(color: Colors.red)),
             ),
           ],
         ],
@@ -436,22 +445,35 @@ class _BottomNavBar extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (_) => const ChildProgressScreen()),
               ),
-              child: const _NavItem(icon: Icons.bar_chart_rounded, label: 'تقدّمي'),
+              child: const _NavItem(
+                icon: Icons.bar_chart_rounded,
+                label: 'تقدّمي',
+              ),
             ),
             GestureDetector(
               onTap: () => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
               ),
-              child: const _NavItem(icon: Icons.card_giftcard_outlined, label: 'المكافآت'),
+              child: const _NavItem(
+                icon: Icons.card_giftcard_outlined,
+                label: 'المكافآت',
+              ),
             ),
-            const _NavItem(icon: Icons.favorite_border, label: 'أمنياتي', isActive: true),
+            const _NavItem(
+              icon: Icons.favorite_border,
+              label: 'أمنياتي',
+              isActive: true,
+            ),
             GestureDetector(
               onTap: () => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
               ),
-              child: const _NavItem(icon: Icons.home_rounded, label: 'الرئيسية'),
+              child: const _NavItem(
+                icon: Icons.home_rounded,
+                label: 'الرئيسية',
+              ),
             ),
           ],
         ),
