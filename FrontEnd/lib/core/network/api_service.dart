@@ -77,48 +77,7 @@ abstract class ApiService {
     @Path('wishId') String wishId,
     @Body() Map<String, dynamic> body,
   );
-
-  @GET('/tasks/')
-  Future<HttpResponse<List<TaskModel>>> getTasks();
-  
-  @GET('/tasks/{taskId}')
-  Future<HttpResponse<TaskModel>> getTask(
-    @Path('taskId') String taskId,
-  );
-  
-  @PUT('/tasks/{taskId}')
-  Future<HttpResponse<TaskModel>> updateTask(
-    @Path('taskId') String taskId,
-    @Body() Map<String, dynamic> body,
-  );
-  
-  @GET('/tasks/child/{childId}')
-  Future<HttpResponse<List<TaskModel>>> getTasksByChild(
-    @Path('childId') String childId,
-  );
-
-/// whish
-
-@POST('/wishlist/')
-Future<HttpResponse<dynamic>> createWish(
-  @Body() Map<String, dynamic> body,
-);
-
-@GET('/wishlist/my')
-Future<HttpResponse<dynamic>> getMyWishes();
-
-@GET('/wishlist/child/{childId}')
-Future<HttpResponse<dynamic>> getChildWishes(
-  @Path('childId') String childId,
-);
-
-@PUT('/wishlist/{wishId}/approve')
-Future<HttpResponse<dynamic>> approveWish(
-  @Path('wishId') String wishId,
-  @Body() Map<String, dynamic> body,
-);
-
-@PUT('/wishlist/{wishId}/reject')
+  @PUT('/wishlist/{wishId}/reject')
 Future<HttpResponse<dynamic>> rejectWish(
   @Path('wishId') String wishId,
 );
