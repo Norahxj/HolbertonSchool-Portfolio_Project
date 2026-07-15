@@ -5,13 +5,13 @@ def get_auth_models(api):
         "first_name": fields.String(required=True, description="First name"),
         "last_name": fields.String(required=True, description="Last name"),
         "phone": fields.String(required=True, description="Phone number"),
-        "email": fields.Email(required=True, description="Email"),
+        "email": fields.String(required=True, description="Email"),
         "password": fields.String(required=True, description="Password"),
         "guardian_type": fields.String(required=True, description="father, mother, or guardian")
     })
 
     login_model = api.model("Login", {
-        "email": fields.Email(required=True, description="Email"),
+        "email": fields.String(required=True, description="Email"),
         "password": fields.String(required=True, description="Password")
     })
 
