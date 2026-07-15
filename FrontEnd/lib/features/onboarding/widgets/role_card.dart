@@ -7,6 +7,7 @@ class RoleCard extends StatelessWidget {
   final String englishTitle;
   final IconData icon;
   final VoidCallback onTap;
+  final bool isArabic;
 
   const RoleCard({
     super.key,
@@ -14,6 +15,7 @@ class RoleCard extends StatelessWidget {
     required this.englishTitle,
     required this.icon,
     required this.onTap,
+    required this.isArabic,
   });
 
   @override
@@ -49,7 +51,7 @@ class RoleCard extends StatelessWidget {
                 child: Icon(icon, size: 34, color: AppColors.primaryDark),
               ),
               Text(
-                arabicTitle,
+                isArabic ? arabicTitle : englishTitle,
                 style: AppTextStyles.cardTitle,
                 textAlign: TextAlign.center,
               ),

@@ -138,6 +138,7 @@ class WelcomeScreen extends StatelessWidget {
                       arabicTitle: 'ولي الأمر',
                       englishTitle: 'Parent',
                       icon: Icons.family_restroom,
+                      isArabic: isArabic,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -155,6 +156,7 @@ class WelcomeScreen extends StatelessWidget {
                       arabicTitle: 'طفل',
                       englishTitle: 'Child',
                       icon: Icons.person,
+                      isArabic: isArabic,
                       onTap: () {
                         Navigator.push(
                           context,
