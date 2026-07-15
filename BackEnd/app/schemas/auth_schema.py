@@ -14,12 +14,11 @@ def validate_password(password):
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-+=/\\[\]]", password):
         raise ValidationError("Password must contain at least one special character.")
     
-def validate_email_domin(email):
+def validate_email_domain(email):
     try:
         validate_email(email,check_deliverability=True)
     except EmailNotValidError as error:
         raise ValidationError(str(error))
-    
 phone_validator = [
     validate.Length(
         equal=10,
@@ -35,7 +34,7 @@ class RegisterSchema(Schema):
     first_name = fields.String(required=True, validate=validate.Length(min=2, max=50))
     last_name = fields.String(required=True, validate=validate.Length(min=2, max=50))
     phone = fields.String(required=True, validate=phone_validator)
-    email = fields.Email(required=True, validate=[validate.Length(max=120), validate_email_domin])
+    email = fields.Email(required=True, validate=[validate.Length(max=120), validate_email_domain])
     password = fields.String(required=True, validate=validate_password)
     guardian_type = fields.String(required=True, validate=validate.OneOf(["father", "mother", "guardian"]))
 
