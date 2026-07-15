@@ -7,6 +7,7 @@ import '../../../core/widgets/screen_background.dart';
 import '../../../models/wish_model.dart';
 import '../../../services/child_api_service.dart';
 import '../../../services/wishlist_api_service.dart';
+import 'parent_dashboard_screen.dart';
 
 // Wishlist Approval screen (Screen 14).
 //
@@ -129,7 +130,16 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
                         ),
                       ),
                     ),
-                    _RoundBackButton(onTap: () => Navigator.pop(context)),
+                    _RoundBackButton(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ParentDashboardScreen(),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
 

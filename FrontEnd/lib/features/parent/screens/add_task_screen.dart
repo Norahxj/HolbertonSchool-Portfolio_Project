@@ -9,6 +9,8 @@ import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/task_api_service.dart';
 import 'package:frontend/services/child_api_service.dart';
+import 'parent_dashboard_screen.dart';
+
 // Add Task wizard (Screens 9-12).
 //
 // This first pass is static/placeholder only: every step just updates
@@ -31,7 +33,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   bool isSubmitting = false;
   bool isSaving = false;
 
-
   int currentStep = 0;
 
   String? titleError;
@@ -42,23 +43,23 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   String? recurrenceDayError;
   String? childError;
   String? mapBackendError(String? message) {
-  switch (message) {
-    case "Shorter than minimum length 1.":
-      return "الرجاء اختيار طفل واحد على الأقل";
+    switch (message) {
+      case "Shorter than minimum length 1.":
+        return "الرجاء اختيار طفل واحد على الأقل";
 
-    case "Must be greater than or equal to 1 and less than or equal to 100.":
-      return "عدد النقاط يجب أن يكون بين 1 و100";
+      case "Must be greater than or equal to 1 and less than or equal to 100.":
+        return "عدد النقاط يجب أن يكون بين 1 و100";
 
-    case "Length must be between 2 and 100.":
-      return "اسم المهمة يجب أن يكون بين حرفين و100 حرف";
+      case "Length must be between 2 and 100.":
+        return "اسم المهمة يجب أن يكون بين حرفين و100 حرف";
 
-    case "Length must be between 2 and 500.":
-      return "الوصف يجب أن يكون بين حرفين و500 حرف";
+      case "Length must be between 2 and 500.":
+        return "الوصف يجب أن يكون بين حرفين و500 حرف";
 
-    default:
-      return message;
+      default:
+        return message;
+    }
   }
-}
 
   // Step 1: which task type/category is picked. Null means none yet.
   int? selectedTaskType;
@@ -91,65 +92,66 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   ];
   final List<int> monthlyDays = const [1, 5, 10, 15, 20, 25, 30];
   String get taskFrequency {
-  switch (selectedFrequency) {
-    case 0:
-      return "DAILY";
-    case 1:
-      return "WEEKLY";
-    case 2:
-      return "MONTHLY";
-    default:
-      return "ONCE";
-  }
-}
-
-int? get recurrenceDay {
-  if (selectedFrequency == 1) {
-    return weekDays.indexOf(selectedWeeklyDay);
+    switch (selectedFrequency) {
+      case 0:
+        return "DAILY";
+      case 1:
+        return "WEEKLY";
+      case 2:
+        return "MONTHLY";
+      default:
+        return "ONCE";
+    }
   }
 
-  if (selectedFrequency == 2) {
-    return selectedMonthlyDay;
+  int? get recurrenceDay {
+    if (selectedFrequency == 1) {
+      return weekDays.indexOf(selectedWeeklyDay);
+    }
+
+    if (selectedFrequency == 2) {
+      return selectedMonthlyDay;
+    }
+
+    return null;
   }
 
-  return null;
-}
-
-String get category {
-  switch (selectedTaskType) {
-    case 0:
-      return "SOCIAL";
-    case 1:
-      return "MORAL";
-    case 2:
-      return "RELIGIOUS";
-    case 3:
-      return "FINANCIAL";
-    default:
-      return "MORAL";
+  String get category {
+    switch (selectedTaskType) {
+      case 0:
+        return "SOCIAL";
+      case 1:
+        return "MORAL";
+      case 2:
+        return "RELIGIOUS";
+      case 3:
+        return "FINANCIAL";
+      default:
+        return "MORAL";
+    }
   }
-}
 
   @override
-void initState() {
-  super.initState();
-  _loadChildren();
-}
-
-Future<void> _loadChildren() async {
-  try {
-    final data = await _childApiService.getChildren();
-
-    setState(() {
-      children =data;
-      isLoadingChildren = false;
-    });
-  } on DioException {
-    setState(() {
-      isLoadingChildren = false;
-    });
+  void initState() {
+    super.initState();
+    _loadChildren();
   }
-}
+
+  Future<void> _loadChildren() async {
+    try {
+      final data = await _childApiService.getChildren();
+
+      setState(() {
+        children = data;
+        isLoadingChildren = false;
+      });
+    } on DioException {
+      setState(() {
+        isLoadingChildren = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
     taskNameController.dispose();
@@ -189,7 +191,16 @@ Future<void> _loadChildren() async {
                         ),
                       ),
                     ),
-                    _RoundBackButton(onTap: () => Navigator.pop(context)),
+                    _RoundBackButton(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ParentDashboardScreen(),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
 
@@ -244,9 +255,7 @@ Future<void> _loadChildren() async {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (isLoadingChildren)
-          const Center(
-            child: CircularProgressIndicator(),
-          )
+          const Center(child: CircularProgressIndicator())
         else if (children.isEmpty)
           const Center(
             child: Text(
@@ -255,43 +264,40 @@ Future<void> _loadChildren() async {
             ),
           )
         else
-        Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
-          children: children.map((child) {
-            final isSelected = selectedChildIds.contains(child.id);
-            
-            return _ChildChip(
-              name: child.name,
-              avatarColor: AppColors.primaryLight,
-              iconColor: AppColors.primary,
-              isSelected: isSelected,
-              onTap: () {
-                setState(() {
-                  if (isSelected) {
-                    selectedChildIds.remove(child.id);
-                  } else {
-                    selectedChildIds.add(child.id);
-                  }
-                });
-              },
-            );
-          }).toList(),
-        ), 
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.md,
+            children: children.map((child) {
+              final isSelected = selectedChildIds.contains(child.id);
 
-       if (childError != null) ...[
-        const SizedBox(height: AppSpacing.sm),
-        Align(
-         alignment: Alignment.centerRight,
-         child: Text(
-           childError!,
-           style: const TextStyle(
-             color: Colors.red,
-             fontSize: 12,
-           ),
-         ),
-       ),
-       ],
+              return _ChildChip(
+                name: child.name,
+                avatarColor: AppColors.primaryLight,
+                iconColor: AppColors.primary,
+                isSelected: isSelected,
+                onTap: () {
+                  setState(() {
+                    if (isSelected) {
+                      selectedChildIds.remove(child.id);
+                    } else {
+                      selectedChildIds.add(child.id);
+                    }
+                  });
+                },
+              );
+            }).toList(),
+          ),
+
+        if (childError != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              childError!,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+        ],
 
         const SizedBox(height: AppSpacing.lg),
 
@@ -370,7 +376,8 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 0;
-                    categoryError = null; // Clear category error when a type is selected
+                    categoryError =
+                        null; // Clear category error when a type is selected
                   });
                 },
               ),
@@ -384,7 +391,8 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 1;
-                    categoryError = null; // Clear category error when a type is selected
+                    categoryError =
+                        null; // Clear category error when a type is selected
                   });
                 },
               ),
@@ -404,7 +412,8 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 2;
-                    categoryError = null; // Clear category error when a type is selected
+                    categoryError =
+                        null; // Clear category error when a type is selected
                   });
                 },
               ),
@@ -418,7 +427,8 @@ Future<void> _loadChildren() async {
                 onTap: () {
                   setState(() {
                     selectedTaskType = 3;
-                    categoryError = null; // Clear category error when a type is selected
+                    categoryError =
+                        null; // Clear category error when a type is selected
                   });
                 },
               ),
@@ -432,10 +442,7 @@ Future<void> _loadChildren() async {
               alignment: Alignment.centerRight,
               child: Text(
                 categoryError!,
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
           ),
@@ -549,18 +556,15 @@ Future<void> _loadChildren() async {
           ),
         ),
         if (pointsError != null) ...[
-           const SizedBox(height: AppSpacing.sm),
-           Align(
-             alignment: Alignment.centerRight,
-             child: Text(
-               pointsError!,
-               style: const TextStyle(
-                 color: Colors.red,
-                 fontSize: 12,
-               ),
-             ),
-           ),
-         ],
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              pointsError!,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+        ],
 
         const SizedBox(height: AppSpacing.md),
 
@@ -763,10 +767,7 @@ Future<void> _loadChildren() async {
             alignment: Alignment.centerRight,
             child: Text(
               frequencyError!,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
         ],
@@ -777,10 +778,7 @@ Future<void> _loadChildren() async {
             alignment: Alignment.centerRight,
             child: Text(
               recurrenceDayError!,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
         ],
@@ -812,79 +810,87 @@ Future<void> _loadChildren() async {
         Expanded(
           flex: 2,
           child: AppButton(
-             text: isLastStep ? 'حفظ المهمة' : 'التالي',
+            text: isLastStep ? 'حفظ المهمة' : 'التالي',
             onPressed: isSaving
-                 ? null
-                 : () async {
-                     if (isLastStep) {
-           
-                       setState(() {
-                         isSaving = true;
-           
-                         titleError = null;
-                         descriptionError = null;
-                         pointsError = null;
-                         categoryError = null;
-                         frequencyError = null;
-                         recurrenceDayError = null;
-                         childError = null;
-                       });
-           
-                       try {
-                         print("Before API");
-           
-                         await _taskApiService.createTask({
-                           "child_ids": selectedChildIds,
-                           "title": taskNameController.text.trim(),
-                           "description": taskDescriptionController.text.trim(),
-                           "points": taskPoints,
-                           "task_frequency": taskFrequency,
-                           "recurrence_day": recurrenceDay,
-                           "category": category,
-                           "is_auto_verified": trustChild,
-                         });
-           
-                         if (!mounted) return;
-                         Navigator.pop(context, true);
-           
-                       } on DioException catch (e) {
-                         final errors = e.response?.data["errors"];
-           
-                         setState(() {
+                ? null
+                : () async {
+                    if (isLastStep) {
+                      setState(() {
+                        isSaving = true;
+
+                        titleError = null;
+                        descriptionError = null;
+                        pointsError = null;
+                        categoryError = null;
+                        frequencyError = null;
+                        recurrenceDayError = null;
+                        childError = null;
+                      });
+
+                      try {
+                        print("Before API");
+
+                        await _taskApiService.createTask({
+                          "child_ids": selectedChildIds,
+                          "title": taskNameController.text.trim(),
+                          "description": taskDescriptionController.text.trim(),
+                          "points": taskPoints,
+                          "task_frequency": taskFrequency,
+                          "recurrence_day": recurrenceDay,
+                          "category": category,
+                          "is_auto_verified": trustChild,
+                        });
+
+                        if (!mounted) return;
+                        Navigator.pop(context, true);
+                      } on DioException catch (e) {
+                        final errors = e.response?.data["errors"];
+
+                        setState(() {
                           titleError = mapBackendError(errors?["title"]?.first);
-                          descriptionError = mapBackendError(errors?["description"]?.first);
-                          pointsError = mapBackendError(errors?["points"]?.first);
-                          childError = mapBackendError(errors?["child_ids"]?.first);
-                          categoryError = mapBackendError(errors?["category"]?.first);
-                          frequencyError = mapBackendError(errors?["task_frequency"]?.first);
-                          recurrenceDayError = mapBackendError(errors?["recurrence_day"]?.first);
-                                     
-                           if (childError != null) {
-                             currentStep = 0;
-                           } else if (categoryError != null) {
-                             currentStep = 1;
-                           } else if (titleError != null ||
-                               descriptionError != null ||
-                               pointsError != null) {
-                             currentStep = 2;
-                           } else if (frequencyError != null ||
-                               recurrenceDayError != null) {
-                             currentStep = 3;
-                           }
-                         });
-           
-                       } finally {
-                         if (mounted) {
-                           setState(() {
-                             isSaving = false;
-                           });
-                         }
-                       }
-           
-                     } else {
-                       _goToNextStep();
-                     }
-                   },
+                          descriptionError = mapBackendError(
+                            errors?["description"]?.first,
+                          );
+                          pointsError = mapBackendError(
+                            errors?["points"]?.first,
+                          );
+                          childError = mapBackendError(
+                            errors?["child_ids"]?.first,
+                          );
+                          categoryError = mapBackendError(
+                            errors?["category"]?.first,
+                          );
+                          frequencyError = mapBackendError(
+                            errors?["task_frequency"]?.first,
+                          );
+                          recurrenceDayError = mapBackendError(
+                            errors?["recurrence_day"]?.first,
+                          );
+
+                          if (childError != null) {
+                            currentStep = 0;
+                          } else if (categoryError != null) {
+                            currentStep = 1;
+                          } else if (titleError != null ||
+                              descriptionError != null ||
+                              pointsError != null) {
+                            currentStep = 2;
+                          } else if (frequencyError != null ||
+                              recurrenceDayError != null) {
+                            currentStep = 3;
+                          }
+                        });
+                      } finally {
+                        if (mounted) {
+                          setState(() {
+                            isSaving = false;
+                          });
+                        }
+                      }
+                    } else {
+                      _goToNextStep();
+                    }
+                  },
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

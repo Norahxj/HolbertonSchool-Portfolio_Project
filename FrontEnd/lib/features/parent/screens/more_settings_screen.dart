@@ -5,8 +5,12 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
+import 'add_task_screen.dart';
 import 'family_settings_screen.dart';
+import 'parent_dashboard_screen.dart';
 import 'profile_screen.dart';
+import 'reward_management_screen.dart';
+import 'wishlist_approval_screen.dart';
 import '../../../services/auth_api_service.dart';
 import '../../../app.dart';
 
@@ -25,46 +29,39 @@ class MoreSettingsScreen extends StatelessWidget {
         child: SafeArea(
           bottom: false,
           child: FutureBuilder<UserModel>(
-           future: UserApiService().getCurrentUser(),
-           builder: (context, snapshot) {
-             if (snapshot.connectionState == ConnectionState.waiting) {
-               return const Center(
-                 child: CircularProgressIndicator(),
-               );
-             }
-         
-             if (snapshot.hasError || !snapshot.hasData) {
-               return const Center(
-                 child: Text('Error loading user'),
-               );
-             }
-         
-             final user = snapshot.data!;
-         
-             return Column(
-               children: [
-                 Text(
-                   'المزيد',
-                   style: AppTextStyles.arabicTitle,
-                 ),
-         
-                 const SizedBox(height: AppSpacing.lg),
-         
-                 _ProfileBanner(user: user),
-         
-                 const SizedBox(height: AppSpacing.lg),
-         
-                 const _SettingsCard(),
-         
-                 const SizedBox(height: AppSpacing.xl),
-         
-                 const _LogoutButton(),
-         
-                 const SizedBox(height: AppSpacing.md),
-               ],
-             );
-           },
-         ),
+            future: UserApiService().getCurrentUser(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError || !snapshot.hasData) {
+                return const Center(child: Text('Error loading user'));
+              }
+
+              final user = snapshot.data!;
+
+              return Column(
+                children: [
+                  Text('المزيد', style: AppTextStyles.arabicTitle),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  _ProfileBanner(user: user),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  const _SettingsCard(),
+
+                  const SizedBox(height: AppSpacing.xl),
+
+                  const _LogoutButton(),
+
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              );
+            },
+          ),
         ),
       ),
       bottomNavigationBar: const _BottomNavBar(),
@@ -75,10 +72,7 @@ class MoreSettingsScreen extends StatelessWidget {
 // Purple banner showing the signed-in parent's name and role.
 class _ProfileBanner extends StatelessWidget {
   final UserModel user;
-  const _ProfileBanner({
-    super.key,
-  required this.user
-  });
+  const _ProfileBanner({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +91,7 @@ class _ProfileBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-           Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -387,7 +381,7 @@ class _LogoutButton extends StatelessWidget {
     return InkWell(
       onTap: () async {
         await AuthApiService().logout();
-        
+
         if (!context.mounted) return;
 
         Navigator.pushAndRemoveUntil(
@@ -416,9 +410,9 @@ class _LogoutButton extends StatelessWidget {
 }
 
 // Bottom navigation bar shown on this screen, with "المزيد" highlighted
-// as the active tab. Tapping the floating home button takes the parent
-// back to the dashboard using Navigator.pop, since this screen was opened
-// from there with Navigator.push.
+// as the active tab. Every item (including the floating home button)
+// switches screens with Navigator.pushReplacement, so tapping between
+// tabs never stacks pages.
 class _BottomNavBar extends StatelessWidget {
   const _BottomNavBar();
 
@@ -447,24 +441,57 @@ class _BottomNavBar extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _NavItem(
+                    const _NavItem(
                       icon: Icons.more_horiz,
                       label: 'المزيد',
                       isActive: true,
                     ),
-                    _NavItem(icon: Icons.favorite_border, label: 'الأمنيات'),
-                    SizedBox(width: 56),
-                    _NavItem(
-                      icon: Icons.card_giftcard_outlined,
-                      label: 'المكافآت',
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const WishlistApprovalScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.favorite_border,
+                        label: 'الأمنيات',
+                      ),
                     ),
-                    _NavItem(
-                      icon: Icons.list_alt,
-                      label: 'المهام',
-                      badgeCount: 2,
+                    const SizedBox(width: 56),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RewardManagementScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.card_giftcard_outlined,
+                        label: 'المكافآت',
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddTaskScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.list_alt,
+                        label: 'المهام',
+                        badgeCount: 2,
+                      ),
                     ),
                   ],
                 ),
@@ -477,9 +504,12 @@ class _BottomNavBar extends StatelessWidget {
               child: Center(
                 child: GestureDetector(
                   onTap: () {
-                    // This screen was opened from the Parent Dashboard with
-                    // Navigator.push, so popping it returns to that screen.
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ParentDashboardScreen(),
+                      ),
+                    );
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

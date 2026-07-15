@@ -29,19 +29,17 @@ class ParentDashboardScreen extends StatefulWidget {
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   Future<void> _openAddChildScreen() async {
-  final result = await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const AddChildScreen(),
-    ),
-  );
-  
-  print(result);
-  
-  if (result == true) {
-    setState(() {});
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AddChildScreen()),
+    );
+
+    print(result);
+
+    if (result == true) {
+      setState(() {});
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -74,66 +72,66 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                       children: [
                         const _NotificationBell(),
                         Expanded(
-                      child: Center(
-                        child: Text(
-                          'منزل ${user.firstName} ${user.lastName}',
-                          style: AppTextStyles.arabicTitle,
+                          child: Center(
+                            child: Text(
+                              'منزل ${user.firstName} ${user.lastName}',
+                              style: AppTextStyles.arabicTitle,
+                            ),
+                          ),
                         ),
-                      ),
+                        const _ProfileAvatar(),
+                      ],
                     ),
-                    const _ProfileAvatar(),
-                  ],
-                ),
 
-                const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
 
-                _WelcomeBanner(user: user),
+                    _WelcomeBanner(user: user),
 
-                const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
 
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text('أطفالك', style: AppTextStyles.arabicTitle),
-                ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('أطفالك', style: AppTextStyles.arabicTitle),
+                    ),
 
-                const SizedBox(height: AppSpacing.sm),
+                    const SizedBox(height: AppSpacing.sm),
 
-                FutureBuilder<List<ChildModel>>(
-                  future: ChildApiService().getChildren(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      print(snapshot.error);
-                      return Center(
-                        child: Text(snapshot.error.toString()),
-                        );
+                    FutureBuilder<List<ChildModel>>(
+                      future: ChildApiService().getChildren(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return Center(child: Text(snapshot.error.toString()));
                         }
                         if (!snapshot.hasData) {
-                          return const Center(
-                            child: Text('No data'),
-                            );
+                          return const Center(child: Text('No data'));
                         }
                         final children = snapshot.data!;
                         return Column(
                           children: children
-                          .map((child) => Padding(
-                                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                                child: _ChildProgressCard(child: child),
-                              ))
-                          .toList(),
-                    );
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
+                              .map(
+                                (child) => Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: AppSpacing.sm,
+                                  ),
+                                  child: _ChildProgressCard(child: child),
+                                ),
+                              )
+                              .toList(),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
 
-                _AddChildButton(onTap: _openAddChildScreen),
+                    _AddChildButton(onTap: _openAddChildScreen),
 
-                const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.lg),
 
-                _TaskReviewPreviewCard(),
+                    _TaskReviewPreviewCard(),
 
-                const SizedBox(height: AppSpacing.lg),
-              ],
-            );
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+                );
               },
             ),
           ),
@@ -202,64 +200,60 @@ class _NotificationBell extends StatelessWidget {
 
 class _WelcomeBanner extends StatelessWidget {
   final UserModel user;
-  const _WelcomeBanner({
-    required this.user,
-  });
+  const _WelcomeBanner({required this.user});
 
   @override
   Widget build(BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE4D9F7),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.home_rounded,
+            size: 56,
+            color: AppColors.primaryDark,
           ),
-          decoration: BoxDecoration(
-            color: const Color(0xFFE4D9F7),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.home_rounded,
-                size: 56,
-                color: AppColors.primaryDark,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'مرحبًا ${user.firstName} ${user.lastName}! ♥',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryDark,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'أنتِ تبنين جيلاً رائعًا',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'مرحبًا ${user.firstName} ${user.lastName}! ♥',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryDark,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                const Text(
+                  'أنتِ تبنين جيلاً رائعًا',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
           ),
-        );
+        ],
+      ),
+    );
   }
 }
 
 class _ChildProgressCard extends StatelessWidget {
   final ChildModel child;
 
-  const _ChildProgressCard({
-    required this.child,
-  });
+  const _ChildProgressCard({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -268,9 +262,7 @@ class _ChildProgressCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => ChildProfileScreen(
-            child: child,
-          )),
+          MaterialPageRoute(builder: (_) => ChildProfileScreen(child: child)),
         );
       },
       child: Container(
@@ -325,11 +317,7 @@ class _ChildProgressCard extends StatelessWidget {
                 color: Color(0xFFFBE3EA),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.child_care,
-                color: Color(0xFFD1637F),
-                size: 22,
-              ),
+              child: const Icon(Icons.girl, color: Color(0xFFD1637F), size: 22),
             ),
           ],
         ),
@@ -387,9 +375,7 @@ class _WeeklyProgressRing extends StatelessWidget {
 class _AddChildButton extends StatelessWidget {
   final void Function()? onTap;
 
-  const _AddChildButton({
-    required this.onTap,
-  });
+  const _AddChildButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -604,11 +590,8 @@ class _BottomNavBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     GestureDetector(
-                      // TODO: This navigation is temporary until the real
-                      // bottom navigation system (with tab switching) is
-                      // finalized.
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const MoreSettingsScreen(),
@@ -621,11 +604,8 @@ class _BottomNavBar extends StatelessWidget {
                       ),
                     ),
                     GestureDetector(
-                      // TODO: This navigation is temporary until the real
-                      // bottom navigation system (with tab switching) is
-                      // finalized.
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const WishlistApprovalScreen(),
@@ -639,11 +619,8 @@ class _BottomNavBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 56),
                     GestureDetector(
-                      // TODO: This navigation is temporary until the real
-                      // bottom navigation system (with tab switching) is
-                      // finalized.
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const RewardManagementScreen(),
@@ -656,11 +633,8 @@ class _BottomNavBar extends StatelessWidget {
                       ),
                     ),
                     GestureDetector(
-                      // TODO: This navigation is temporary until the real
-                      // bottom navigation system (with tab switching) is
-                      // finalized.
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const AddTaskScreen(),

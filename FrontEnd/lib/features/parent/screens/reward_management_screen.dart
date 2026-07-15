@@ -5,6 +5,10 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'add_reward_screen.dart';
+import 'add_task_screen.dart';
+import 'more_settings_screen.dart';
+import 'parent_dashboard_screen.dart';
+import 'wishlist_approval_screen.dart';
 
 // Reward Management screen (Screen 15).
 //
@@ -329,9 +333,9 @@ class _AddRewardButton extends StatelessWidget {
 }
 
 // Bottom navigation bar shown on this screen, with "المكافآت" highlighted
-// as the active tab. Tapping the floating home button takes the parent
-// back to the dashboard using Navigator.pop, since this screen was opened
-// from there with Navigator.push.
+// as the active tab. Every item (including the floating home button)
+// switches screens with Navigator.pushReplacement, so tapping between
+// tabs never stacks pages.
 class _BottomNavBar extends StatelessWidget {
   const _BottomNavBar();
 
@@ -360,21 +364,57 @@ class _BottomNavBar extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _NavItem(icon: Icons.more_horiz, label: 'المزيد'),
-                    _NavItem(icon: Icons.favorite_border, label: 'الأمنيات'),
-                    SizedBox(width: 56),
-                    _NavItem(
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MoreSettingsScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.more_horiz,
+                        label: 'المزيد',
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const WishlistApprovalScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.favorite_border,
+                        label: 'الأمنيات',
+                      ),
+                    ),
+                    const SizedBox(width: 56),
+                    const _NavItem(
                       icon: Icons.card_giftcard_outlined,
                       label: 'المكافآت',
                       isActive: true,
                     ),
-                    _NavItem(
-                      icon: Icons.list_alt,
-                      label: 'المهام',
-                      badgeCount: 2,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddTaskScreen(),
+                          ),
+                        );
+                      },
+                      child: const _NavItem(
+                        icon: Icons.list_alt,
+                        label: 'المهام',
+                        badgeCount: 2,
+                      ),
                     ),
                   ],
                 ),
@@ -387,9 +427,12 @@ class _BottomNavBar extends StatelessWidget {
               child: Center(
                 child: GestureDetector(
                   onTap: () {
-                    // This screen was opened from the Parent Dashboard with
-                    // Navigator.push, so popping it returns to that screen.
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ParentDashboardScreen(),
+                      ),
+                    );
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
