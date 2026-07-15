@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:frontend/models/child_model.dart';
+import 'package:dio/dio.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -7,6 +8,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../services/auth_api_service.dart';
 import 'child_home_screen.dart';
+import 'package:frontend/services/auth_api_service.dart';
 
 // Child PIN Login screen (Screen 20).
 //
@@ -17,46 +19,55 @@ import 'child_home_screen.dart';
 class ChildPinLoginScreen extends StatefulWidget {
   const ChildPinLoginScreen({super.key});
 
-  @override
-  State<ChildPinLoginScreen> createState() => _ChildPinLoginScreenState();
+ @override
+  State<ChildPinLoginScreen> createState() =>
+      _ChildPinLoginScreenState();
 }
 
-class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
-  // The digits the child has typed so far, e.g. "481".
+class _ChildPinLoginScreenState
+    extends State<ChildPinLoginScreen> {
+
   String pin = '';
-  bool _isLoading = false;
+  bool isLoading = false;
+  String? errorMessage;
 
-  Future<void> _handleLogin() async {
-    if (pin.length != 6 || _isLoading) {
-      return;
-    }
-
+  Future<void> _loginChild() async {
+  if (pin.length != 6) {
     setState(() {
-      _isLoading = true;
+      errorMessage = "أدخل رمز الدخول كاملاً";
     });
+    return;
+  }
 
-    try {
-      await AuthApiService().childLogin(accessCode: pin);
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('رمز الدخول غير صحيح. حاول مرة أخرى.')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+  setState(() {
+    isLoading = true;
+    errorMessage = null;
+  });
+
+  try {
+    final response = await AuthApiService().childLogin(
+      accessCode: pin,
+    );
+    
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChildHomeScreen(),
+      ),
+    );
+  } on DioException catch (e) {
+    setState(() {
+      errorMessage =
+          e.response?.data["error"] ?? "رمز الدخول غير صحيح";
+    });
+  } finally {
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
+}
 
   void _addDigit(String digit) {
     // A pin code here is always 6 digits, so ignore taps after that.
@@ -140,20 +151,27 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
 
                 if (pin.length == 6) ...[
                   const SizedBox(height: AppSpacing.lg),
-                  const _RecognizedBanner(),
                 ],
 
                 const SizedBox(height: AppSpacing.xl),
+                if (errorMessage != null) ...[
+                  Text(
+                     errorMessage!,
+                     style: const TextStyle(
+                       color: Colors.red,
+                       fontWeight: FontWeight.bold,
+                     ),
+                   ),
+                   const SizedBox(height: AppSpacing.md),
+                ],
 
                 _Keypad(onDigitTap: _addDigit, onBackspaceTap: _removeDigit),
 
                 const SizedBox(height: AppSpacing.xl),
 
                 AppButton(
-                  text: 'دخول',
-                  enabled: pin.length == 6 && !_isLoading,
-                  isLoading: _isLoading,
-                  onPressed: _handleLogin,
+                  text: isLoading ? 'جاري التحقق...' : 'دخول',
+                  onPressed: isLoading ? null : _loginChild,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -203,7 +221,9 @@ class _PinBox extends StatelessWidget {
 
 // The "تم التعرّف عليك!" banner. Only shown once all 6 digits are typed.
 class _RecognizedBanner extends StatelessWidget {
-  const _RecognizedBanner();
+  final ChildModel child;
+
+  const _RecognizedBanner({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -217,10 +237,10 @@ class _RecognizedBanner extends StatelessWidget {
         children: [
           const Icon(Icons.check_circle, color: AppColors.success, size: 20),
           const SizedBox(width: AppSpacing.sm),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
+              children:[
                 Text(
                   'تم التعرّف عليك!',
                   style: TextStyle(
@@ -230,7 +250,7 @@ class _RecognizedBanner extends StatelessWidget {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  'أهلاً سارة ✦',
+                  '✦ ${child.name}',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

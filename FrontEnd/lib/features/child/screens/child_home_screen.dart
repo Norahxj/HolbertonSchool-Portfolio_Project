@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/child_model.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -7,22 +8,52 @@ import 'child_progress_screen.dart';
 import 'child_rewards_screen.dart';
 import 'child_task_details_screen.dart';
 import 'child_wishlist_screen.dart';
+import '../../../core/storage/secure_storage.dart';
 
 // Child Home Dashboard screen (Screen 21).
 //
 // This first pass is static/placeholder only: the child's name, points
 // balance, and today's tasks are all hardcoded. No backend calls happen
 // here yet.
-class ChildHomeScreen extends StatelessWidget {
+class ChildHomeScreen extends StatefulWidget {
   const ChildHomeScreen({super.key});
+  
+
+  @override
+  State<ChildHomeScreen> createState() => _ChildHomeScreenState();
+}
+
+class _ChildHomeScreenState extends State<ChildHomeScreen> {
+  ChildModel? child;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChild();
+  }
+
+  Future<void> _loadChild() async {
+    final data = await SecureStorage.getChild();
+
+    setState(() {
+      child = data;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (child == null) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    }
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          const _HomeHeader(),
+         _HomeHeader(child: child!),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -120,7 +151,9 @@ class ChildHomeScreen extends StatelessWidget {
 
 // Purple gradient header: greeting, avatar, and the Noor points card.
 class _HomeHeader extends StatelessWidget {
-  const _HomeHeader();
+  final ChildModel child;
+
+  const _HomeHeader({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -145,18 +178,18 @@ class _HomeHeader extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
+                        const Text(
                           'أهلاً،',
                           style: TextStyle(color: Colors.white70, fontSize: 14),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
-                          '✦ سارة',
-                          style: TextStyle(
+                          '✦ ${child.name}',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,

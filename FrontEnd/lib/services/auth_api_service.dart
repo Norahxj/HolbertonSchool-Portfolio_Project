@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+
+import '../core/network/api_service.dart';
 import '../core/network/dio_factory.dart';
 import '../core/storage/secure_storage.dart';
 
 class AuthApiService {
-  final Dio _dio = DioFactory.getDio();
+  final ApiService _api = ApiService(DioFactory.getDio());
 
   Future<void> saveTokens({
     required String accessToken,
@@ -20,19 +22,27 @@ class AuthApiService {
     return token != null;
   }
 
-  Future<Response?> logout() async {
+  Future<void> logout() async {
     await SecureStorage.clear();
   }
 
-  // Refresh token method
+  // Refresh access token
   Future<String> refreshAccessToken() async {
     final refreshToken = await SecureStorage.getRefreshToken();
 
-    final dio = Dio(BaseOptions(baseUrl: DioFactory.getDio().options.baseUrl));
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: DioFactory.getDio().options.baseUrl,
+      ),
+    );
 
     final response = await dio.post(
       '/auth/refresh',
-      options: Options(headers: {"Authorization": refreshToken}),
+      options: Options(
+        headers: {
+          "Authorization": refreshToken,
+        },
+      ),
     );
 
     final newAccessToken = response.data["access_token"];
@@ -42,15 +52,15 @@ class AuthApiService {
     return newAccessToken;
   }
 
-  // Login method
-  Future<Response> login({
+  // Parent login
+  Future<dynamic> login({
     required String email,
     required String password,
   }) async {
-    final response = await _dio.post(
-      '/auth/login',
-      data: {'email': email, 'password': password},
-    );
+    final response = await _api.login({
+      'email': email,
+      'password': password,
+    });
 
     await saveTokens(
       accessToken: response.data['access_token'],
@@ -60,22 +70,8 @@ class AuthApiService {
     return response;
   }
 
-  // Child login method (access code instead of email/password)
-  Future<Response> childLogin({required String accessCode}) async {
-    final response = await _dio.post(
-      '/auth/child-login',
-      data: {'access_code': accessCode},
-    );
-
-    await saveTokens(
-      accessToken: response.data['access_token'],
-      refreshToken: response.data['refresh_token'],
-    );
-
-    return response;
-  }
-
-  Future<Response> register({
+  // Parent register
+  Future<dynamic> register({
     required String firstName,
     required String lastName,
     required String phone,
@@ -83,17 +79,14 @@ class AuthApiService {
     required String password,
     required String guardianType,
   }) async {
-    final response = await _dio.post(
-      '/auth/register',
-      data: {
-        'first_name': firstName,
-        'last_name': lastName,
-        'phone': phone,
-        'email': email,
-        'password': password,
-        'guardian_type': guardianType,
-      },
-    );
+    final response = await _api.register({
+      'first_name': firstName,
+      'last_name': lastName,
+      'phone': phone,
+      'email': email,
+      'password': password,
+      'guardian_type': guardianType,
+    });
 
     await saveTokens(
       accessToken: response.data['access_token'],
@@ -102,4 +95,24 @@ class AuthApiService {
 
     return response;
   }
+
+  // Child login
+Future<dynamic> childLogin({
+  required String accessCode,
+}) async {
+  final response = await _api.childLogin({
+    'access_code': accessCode,
+  });
+
+  await saveTokens(
+    accessToken: response.data['access_token'],
+    refreshToken: response.data['refresh_token'],
+  );
+
+  await SecureStorage.saveChild(
+    response.data['child'],
+  );
+
+  return response;
+}
 }

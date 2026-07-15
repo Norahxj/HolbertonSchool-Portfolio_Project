@@ -23,6 +23,12 @@ abstract class ApiService {
 
   @GET('/users/me')
   Future<HttpResponse<dynamic>> getCurrentUser();
+ 
+ // child 
+  @POST('/auth/child-login')
+  Future<HttpResponse<dynamic>> childLogin(
+  @Body() Map<String, dynamic> body,
+);
 
   @GET('/children/')
   Future<HttpResponse<List<ChildModel>>> getChildren();
@@ -72,12 +78,58 @@ abstract class ApiService {
     @Body() Map<String, dynamic> body,
   );
 
-  @PUT('/wishlists/{wishId}/reject')
-  Future<HttpResponse<dynamic>> rejectWish(@Path('wishId') String wishId);
+  @GET('/tasks/')
+  Future<HttpResponse<List<TaskModel>>> getTasks();
+  
+  @GET('/tasks/{taskId}')
+  Future<HttpResponse<TaskModel>> getTask(
+    @Path('taskId') String taskId,
+  );
+  
+  @PUT('/tasks/{taskId}')
+  Future<HttpResponse<TaskModel>> updateTask(
+    @Path('taskId') String taskId,
+    @Body() Map<String, dynamic> body,
+  );
+  
+  @GET('/tasks/child/{childId}')
+  Future<HttpResponse<List<TaskModel>>> getTasksByChild(
+    @Path('childId') String childId,
+  );
 
-  @PUT('/wishlists/{wishId}/achieve')
-  Future<HttpResponse<dynamic>> achieveWish(@Path('wishId') String wishId);
+/// whish
 
-  @DELETE('/wishlists/{wishId}')
-  Future<HttpResponse<dynamic>> deleteWish(@Path('wishId') String wishId);
+@POST('/wishlist/')
+Future<HttpResponse<dynamic>> createWish(
+  @Body() Map<String, dynamic> body,
+);
+
+@GET('/wishlist/my')
+Future<HttpResponse<dynamic>> getMyWishes();
+
+@GET('/wishlist/child/{childId}')
+Future<HttpResponse<dynamic>> getChildWishes(
+  @Path('childId') String childId,
+);
+
+@PUT('/wishlist/{wishId}/approve')
+Future<HttpResponse<dynamic>> approveWish(
+  @Path('wishId') String wishId,
+  @Body() Map<String, dynamic> body,
+);
+
+@PUT('/wishlist/{wishId}/reject')
+Future<HttpResponse<dynamic>> rejectWish(
+  @Path('wishId') String wishId,
+);
+
+@PUT('/wishlist/{wishId}/achieve')
+Future<HttpResponse<dynamic>> achieveWish(
+  @Path('wishId') String wishId,
+);
+
+@DELETE('/wishlist/{wishId}')
+Future<HttpResponse<dynamic>> deleteWish(
+  @Path('wishId') String wishId,
+);
 }
