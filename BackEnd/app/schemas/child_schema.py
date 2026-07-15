@@ -1,32 +1,24 @@
-from marshmallow import Schema, fields, validate, validates, ValidationError
+from marshmallow import Schema, fields, ValidationError, validates_schema
 from app.utils.datetime_utils import riyadh_today
-
-phone_validator = [
-    validate.Length(equal=10, error="Phone number must be exactly 10 digits."),
-    validate.Regexp(r"^05\d{8}$", error="Phone number must start with 05 and contain 10 digits.")
-]
+from app.schemas.auth_schema import phone_validator
 
 def birth_date_validator(value):
     today = riyadh_today()
-
     if value > today:
-        raise ValidationError(
-            "Birth date cannot be in the future."
-        )
-
+        raise ValidationError("Birth date cannot be in the future.")
     age = (
-        today.year
-        - value.year
-        - (
-            (today.month, today.day)
-            < (value.month, value.day)
-        )
+        today.year - value.year
+        - ((today.month, today.day) < (value.month, value.day))
     )
-
     if age < 1 or age > 18:
-        raise ValidationError(
-            "Child age must be between 1 and 18."
-        )
+        raise ValidationError("Child age must be between 1 and 18.")
+    
+def validate_child_name(value):
+    cleaned_value = value.strip()
+    if len(cleaned_value) < 2:
+        raise ValidationError("Child name must be at least 2 characters long.")
+    if len(cleaned_value) > 100:
+        raise ValidationError("Child name must not exceed 100 characters.")
 
 class ChildResponseSchema(Schema):
     id = fields.String()
@@ -51,20 +43,15 @@ class ChildWithAccessCodeSchema(Schema):
         return "child"
 
 class ChildCreateSchema(Schema):
-    name = fields.String(required=True, validate=validate.Length(min=2, max=100))
+    name = fields.String(required=True, validate=validate_child_name)
     birth_date = fields.Date(required=True, validate=birth_date_validator)
     phone = fields.String(required=False, allow_none=True, validate=phone_validator)
-    @validates("name")
-    def validate_name(self, value, **kwargs):
-        if not value.strip():
-            raise ValidationError("Child name cannot be empty.")
-
 
 class ChildUpdateSchema(Schema):
-    name = fields.String(required=False, validate=validate.Length(min=2, max=100))
+    name = fields.String(required=False, validate=validate_child_name)
     birth_date = fields.Date(required=False, validate=birth_date_validator)
     phone = fields.String(required=False, allow_none=True, validate=phone_validator)
-    @validates("name")
-    def validate_name(self, value, **kwargs):
-        if not value.strip():
-            raise ValidationError("Child name cannot be empty.")
+    @validates_schema
+    def validate_at_least_one_field(self, data, **kwargs):
+        if not data:
+            raise ValidationError("At least one field must be provided.")

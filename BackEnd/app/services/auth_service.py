@@ -99,7 +99,6 @@ class AuthService:
             return None, "Invalid access code"
         access_token, refresh_token = self._create_tokens(child.id, "child")
         child_data = child_response_schema.dump(child)
-        child_data["role"] = "child"
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
