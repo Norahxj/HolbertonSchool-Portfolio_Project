@@ -4,9 +4,7 @@ from flask_restx import fields
 def get_family_models(api):
     family_invite_model = api.model(
         "FamilyInvite",
-        {
-            "email": fields.String(required=True, description="Invited parent email")
-        }
+        {"email": fields.String(required=True, description="Invited parent email")}
     )
 
     family_update_model = api.model(
@@ -24,12 +22,8 @@ def get_family_models(api):
     family_response_model = api.model(
         "FamilyResponse",
         {
-            "id": fields.String(
-                description="Family ID"
-            ),
-            "name": fields.String(
-                description="Family name"
-            )
+            "id": fields.String(description="Family ID"),
+            "name": fields.String(description="Family name")
         }
     )
 
@@ -45,9 +39,4 @@ def get_family_models(api):
         }
     )
 
-    return (
-        family_invite_model,
-        family_update_model,
-        family_response_model,
-        family_invitation_response_model
-    )
+    return (family_invite_model, family_update_model, family_response_model, family_invitation_response_model)

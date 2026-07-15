@@ -9,9 +9,7 @@ def get_daily_feedback_models(api):
             ),
             "mood": fields.String(
                 required=True,
-                description=(
-                    "HAPPY, PROUD, GREAT, LOVE, STRONG, or STAR"
-                )
+                description=("HAPPY, PROUD, GREAT, LOVE, STRONG, or STAR")
             )
         }
     )
@@ -21,9 +19,7 @@ def get_daily_feedback_models(api):
         {
             "mood": fields.String(
                 required=True,
-                description=(
-                    "HAPPY, PROUD, GREAT, LOVE, STRONG, or STAR"
-                )
+                description=("HAPPY, PROUD, GREAT, LOVE, STRONG, or STAR")
             )
         }
     )
@@ -33,13 +29,9 @@ def get_daily_feedback_models(api):
             "id": fields.String(),
             "child_id": fields.String(),
             "created_by": fields.String(),
-            "mood": fields.String(),
+            "mood": fields.String(description="HAPPY, PROUD, GREAT, LOVE, STRONG, or STAR"),
             "feedback_date": fields.Date(),
             "created_at": fields.DateTime()
         }
     )
-    return (
-        daily_feedback_create_model,
-        daily_feedback_update_model,
-        daily_feedback_response_model
-    )
+    return (daily_feedback_create_model, daily_feedback_update_model, daily_feedback_response_model)
