@@ -7,7 +7,7 @@ class AssignmentTaskSchema(Schema):
     points = fields.Integer()
     task_frequency = fields.String()
     recurrence_day = fields.Integer(allow_none=True)
-    category = fields.String(allow_none=True)
+    category = fields.String()
     is_auto_verified = fields.Boolean()
 
 class AssignmentChildSchema(Schema):
