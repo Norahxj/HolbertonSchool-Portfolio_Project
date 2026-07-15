@@ -1,6 +1,8 @@
 import '../core/network/api_service.dart';
 import '../core/network/dio_factory.dart';
 import '../models/task_model.dart';
+import '../models/task_suggestion_model.dart';
+import '../models/task_suggestions_response.dart';
 
 class TaskApiService {
   final ApiService _apiService = ApiService(DioFactory.getDio());
@@ -32,4 +34,10 @@ class TaskApiService {
     final response = await _apiService.getTasksByChild(childId);
     return response.data;
   }
+  Future<List<TaskSuggestionModel>> getTaskSuggestions(
+  Map<String, dynamic> body,
+) async {
+  final response = await _apiService.getTaskSuggestions(body);
+  return response.data.suggestions;
+}
 }

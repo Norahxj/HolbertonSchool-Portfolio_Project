@@ -60,6 +60,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         return message;
     }
   }
+  String? getError(dynamic error) {
+  if (error == null) return null;
+
+  if (error is List && error.isNotEmpty) {
+    return error.first.toString();
+  }
+
+  return error.toString();
+}
 
   // Step 1: which task type/category is picked. Null means none yet.
   int? selectedTaskType;
@@ -160,14 +169,74 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   void _goToNextStep() {
-    setState(() {
-      currentStep = currentStep + 1;
-    });
+  setState(() {
+    childError = null;
+    categoryError = null;
+    titleError = null;
+    descriptionError = null;
+    pointsError = null;
+    frequencyError = null;
+    recurrenceDayError = null;
+  });
+
+  // الصفحة الأولى
+  if (currentStep == 0) {
+    if (selectedChildIds.isEmpty) {
+      setState(() {
+        childError = "الرجاء اختيار طفل واحد على الأقل";
+      });
+      return;
+    }
   }
 
+  // الصفحة الثانية
+  if (currentStep == 1) {
+    if (selectedTaskType == null) {
+      setState(() {
+        categoryError = "الرجاء اختيار نوع المهمة";
+      });
+      return;
+    }
+  }
+
+  // الصفحة الثالثة
+  if (currentStep == 2) {
+    bool hasError = false;
+
+    if (taskNameController.text.trim().isEmpty) {
+      titleError = "اسم المهمة مطلوب";
+      hasError = true;
+    }
+
+    if (taskDescriptionController.text.trim().isEmpty) {
+      descriptionError = "الوصف مطلوب";
+      hasError = true;
+    }
+
+    if (taskPoints < 1 || taskPoints > 100) {
+      pointsError = "عدد النقاط يجب أن يكون بين 1 و100";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setState(() {});
+      return;
+    }
+  }
+
+  setState(() {
+    currentStep++;
+  });
+}
+
   void _goToPreviousStep() {
+    if (currentStep == 0) {
+      Navigator.pop(context);
+      return;
+    }
+
     setState(() {
-      currentStep = currentStep - 1;
+      currentStep --;
     });
   }
 
@@ -829,6 +898,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
                       try {
                         print("Before API");
+                        print("recurrenceDay = $recurrenceDay");
+                        print("type = ${recurrenceDay.runtimeType}");
+
 
                         await _taskApiService.createTask({
                           "child_ids": selectedChildIds,
@@ -868,8 +940,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           frequencyError = mapBackendError(
                             errors?["task_frequency"]?.first,
                           );
-                          recurrenceDayError = mapBackendError(
-                            errors?["recurrence_day"]?.first,
+                          recurrenceDayError =
+                          mapBackendError(getError(errors?["recurrence_day"])
                           );
 
                           if (childError != null) {
