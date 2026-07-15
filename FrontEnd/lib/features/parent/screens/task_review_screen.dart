@@ -88,6 +88,7 @@ class TaskReviewScreen extends StatelessWidget {
                   timeText: 'أنجزتها اليوم 3:25',
                   avatarColor: const Color(0xFFFBE3EA),
                   iconColor: const Color(0xFFD1637F),
+                  icon: Icons.girl,
                 ),
 
                 const SizedBox(height: AppSpacing.md),
@@ -99,6 +100,7 @@ class TaskReviewScreen extends StatelessWidget {
                   timeText: 'أنجزها اليوم 4:30 م',
                   avatarColor: const Color(0xFFDCEBFB),
                   iconColor: const Color(0xFF4A90D9),
+                  icon: Icons.boy,
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
@@ -164,6 +166,7 @@ class _PendingTaskCard extends StatelessWidget {
   final String timeText;
   final Color avatarColor;
   final Color iconColor;
+  final IconData icon;
 
   const _PendingTaskCard({
     required this.childName,
@@ -172,6 +175,7 @@ class _PendingTaskCard extends StatelessWidget {
     required this.timeText,
     required this.avatarColor,
     required this.iconColor,
+    required this.icon,
   });
 
   @override
@@ -261,7 +265,7 @@ class _PendingTaskCard extends StatelessWidget {
                   color: avatarColor,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.person, color: iconColor, size: 20),
+                child: Icon(icon, color: iconColor, size: 20),
               ),
             ],
           ),
