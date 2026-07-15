@@ -41,22 +41,20 @@ class _AuthScreenState extends State<AuthScreen> {
       TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
- 
-// Login errors
-String? loginEmailErrorText;
-String? loginPasswordErrorText;
 
-// Register errors
-String? firstNameErrorText;
-String? familyNameErrorText;
-String? registerEmailErrorText;
-String? phoneErrorText;
-String? registerPasswordErrorText;
-String? confirmPasswordErrorText;
-  
-  
+  // Login errors
+  String? loginEmailErrorText;
+  String? loginPasswordErrorText;
+
+  // Register errors
+  String? firstNameErrorText;
+  String? familyNameErrorText;
+  String? registerEmailErrorText;
+  String? phoneErrorText;
+  String? registerPasswordErrorText;
+  String? confirmPasswordErrorText;
+
   final AuthApiService _authApiService = AuthApiService();
-
 
   @override
   void dispose() {
@@ -82,7 +80,7 @@ String? confirmPasswordErrorText;
       loginPasswordErrorText = null;
       confirmPasswordErrorText = null;
     });
-    
+
     if (isSignInSelected) {
       await _login();
     } else {
@@ -92,145 +90,144 @@ String? confirmPasswordErrorText;
 
   Future<void> _login() async {
     setState(() {
-     isLoading = true;
+      isLoading = true;
     });
-  
-  try {
-    final response = await _authApiService.login(
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
-    
-    if (response.statusCode == 200) {
-    
-        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login Success")),
+
+    try {
+      final response = await _authApiService.login(
+        email: emailController.text.trim(),
+        password: passwordController.text,
       );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const ParentDashboardScreen(),
-        ),
-      );
-    }
-  } on DioException catch (e) {
-    // Handle login errors
-    if (e.response?.statusCode == 400) {
-      final errors = e.response?.data["errors"] as Map<String, dynamic>?;
+      if (response.response.statusCode == 200) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Login Success")));
 
-    if (errors != null) {
-      setState(() {
-        loginEmailErrorText = (errors["email"] as List?)?.join("\n");
-        loginPasswordErrorText = (errors["password"] as List?)?.join("\n");
-      });
-      return;
-    }
-    }
-    
-    if (e.response?.statusCode == 401) {
-      final String? message = e.response?.data["error"]?.toString();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ParentDashboardScreen()),
+        );
+      }
+    } on DioException catch (e) {
+      // Handle login errors
+      if (e.response?.statusCode == 400) {
+        final errors = e.response?.data["errors"] as Map<String, dynamic>?;
 
-      setState(() {
-        loginEmailErrorText = message;
-        loginPasswordErrorText = message;
-      });
-      return;
-    } 
+        if (errors != null) {
+          setState(() {
+            loginEmailErrorText = (errors["email"] as List?)?.join("\n");
+            loginPasswordErrorText = (errors["password"] as List?)?.join("\n");
+          });
+          return;
+        }
+      }
+
+      if (e.response?.statusCode == 401) {
+        final String? message = e.response?.data["error"]?.toString();
+
+        setState(() {
+          loginEmailErrorText = message;
+          loginPasswordErrorText = message;
+        });
+        return;
+      }
     } finally {
-    setState(() {
-      isLoading = false;
-    });
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
-}
-
 
   Future<void> _register() async {
     setState(() {
       isLoading = true;
     });
-  try {
-    final response = await _authApiService.register(
-      firstName: firstNameController.text.trim(),
-      lastName: familyNameController.text.trim(),
-      phone: phoneController.text.trim(),
-      email: registerEmailController.text.trim(),
-      password: registerPasswordController.text,
-      guardianType: guardianType,
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-    if (registerPasswordController.text != confirmPasswordController.text) {
-        setState(() {
-          confirmPasswordErrorText = "Passwords do not match";
-          });
-          return;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Register Success")),
+    try {
+      final response = await _authApiService.register(
+        firstName: firstNameController.text.trim(),
+        lastName: familyNameController.text.trim(),
+        phone: phoneController.text.trim(),
+        email: registerEmailController.text.trim(),
+        password: registerPasswordController.text,
+        guardianType: guardianType,
       );
 
+      if (response.response.statusCode == 200 ||
+          response.response.statusCode == 201) {
+        if (registerPasswordController.text != confirmPasswordController.text) {
+          setState(() {
+            confirmPasswordErrorText = "Passwords do not match";
+          });
+          return;
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Register Success")));
+
+        setState(() {
+          isSignInSelected = true;
+        });
+      }
+    } on DioException catch (e) {
+      // Handle register errors
+      if (e.response?.statusCode == 400) {
+        final errors = e.response?.data["errors"] as Map<String, dynamic>?;
+
+        if (errors != null) {
+          setState(() {
+            firstNameErrorText = errors["first_name"]?.first;
+            familyNameErrorText = errors["last_name"]?.first;
+            registerEmailErrorText = (errors["email"] as List?)?.join("\n");
+            phoneErrorText = (errors["phone"] as List?)?.join("\n");
+            registerPasswordErrorText = errors["password"]?.first;
+
+            if (errors["password"] != null &&
+                registerPasswordController.text !=
+                    confirmPasswordController.text) {
+              confirmPasswordErrorText = "Passwords do not match";
+            }
+          });
+
+          return;
+        }
+      }
+
+      if (e.response?.statusCode == 409) {
+        final message = e.response?.data["error"]?.toString();
+
+        debugPrint(message);
+        setState(() {
+          if (message == "Email already registered") {
+            registerEmailErrorText = message;
+          } else if (message == "Phone number already used") {
+            phoneErrorText = message;
+          } else if (message == "Email or phone number already registered") {
+            registerEmailErrorText = message;
+            phoneErrorText = message;
+          }
+        });
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Server Error")));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _handleBack() {
+    if (isSignInSelected) {
+      Navigator.pop(context);
+    } else {
       setState(() {
         isSignInSelected = true;
       });
     }
-  } on DioException catch (e) {
-    // Handle register errors
-    if (e.response?.statusCode == 400) {
-      final errors = e.response?.data["errors"] as Map<String, dynamic>?;
-
-      if (errors != null) {
-        setState(() {
-          firstNameErrorText = errors["first_name"]?.first;
-          familyNameErrorText = errors["last_name"]?.first;
-          registerEmailErrorText = (errors["email"] as List?)?.join("\n");
-          phoneErrorText = (errors["phone"] as List?)?.join("\n");
-          registerPasswordErrorText = errors["password"]?.first;
-
-          if (errors["password"] != null && registerPasswordController.text != confirmPasswordController.text) {
-            confirmPasswordErrorText = "Passwords do not match";
-          }
-        });
-
-        return;
-      }
-    }
-      
-    if (e.response?.statusCode == 409) {
-        final message = e.response?.data["error"]?.toString();
-      
-      debugPrint(message);
-        setState(() {
-      if (message == "Email already registered") {
-        registerEmailErrorText = message;
-      } else if (message == "Phone number already used") {
-        phoneErrorText = message;
-      } else if (message == "Email or phone number already registered") {
-        registerEmailErrorText = message;
-        phoneErrorText = message;
-      }
-        });
-        return;
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Server Error")),
-    );
-    } finally {
-    setState(() {
-      isLoading = false;
-    });
   }
-  }
-
-    void _handleBack() {
-  if (isSignInSelected) {
-    Navigator.pop(context);
-  } else {
-    setState(() {
-      isSignInSelected = true;
-    });
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -271,11 +268,11 @@ String? confirmPasswordErrorText;
                 Text(
                   isSignInSelected
                       ? (isArabic
-                          ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
-                          : 'Sign in or create a new account')
+                            ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
+                            : 'Sign in or create a new account')
                       : (isArabic
-                          ? 'يرجى تعبئة البيانات لإنشاء حسابك'
-                          : 'Please fill in your details to create your account'),
+                            ? 'يرجى تعبئة البيانات لإنشاء حسابك'
+                            : 'Please fill in your details to create your account'),
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
