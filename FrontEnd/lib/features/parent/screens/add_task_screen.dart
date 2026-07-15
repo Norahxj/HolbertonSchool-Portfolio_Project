@@ -842,7 +842,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         });
 
                         if (!mounted) return;
-                        Navigator.pop(context, true);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ParentDashboardScreen(),
+                          ),
+                        );
                       } on DioException catch (e) {
                         final errors = e.response?.data["errors"];
 

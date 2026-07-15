@@ -413,7 +413,6 @@ class _BottomNavBar extends StatelessWidget {
                       child: const _NavItem(
                         icon: Icons.list_alt,
                         label: 'المهام',
-                        badgeCount: 2,
                       ),
                     ),
                   ],
