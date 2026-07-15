@@ -1,5 +1,11 @@
-from marshmallow import Schema, fields, validate, validates, ValidationError
+from marshmallow import Schema, fields, validate, ValidationError
 
+def validate_wish_name(value):
+    cleaned_value = value.strip()
+    if len(cleaned_value) < 2:
+        raise ValidationError("Wish name must be at least 2 characters long.")
+    if len(cleaned_value) > 255:
+        raise ValidationError("Wish name must not exceed 255 characters.")
 
 class WishlistResponseSchema(Schema):
     id = fields.String()
@@ -13,19 +19,7 @@ class WishlistResponseSchema(Schema):
 
 
 class WishlistCreateSchema(Schema):
-    name = fields.String(
-        required=True,
-        validate=validate.Length(min=2, max=255)
-    )
-
-    @validates("name")
-    def validate_name(self, value, **kwargs):
-        if not value.strip():
-            raise ValidationError("Wish name cannot be empty.")
-
+    name = fields.String(required=True, validate=validate_wish_name)
 
 class WishlistApproveSchema(Schema):
-    target_points = fields.Integer(
-        required=True,
-        validate=validate.Range(min=1, max=10000)
-    )
+    target_points = fields.Integer(required=True, validate=validate.Range(min=1, max=10000))

@@ -1,6 +1,5 @@
 from marshmallow import Schema, fields
 
-
 class ChildDashboardResponseSchema(Schema):
     child_id = fields.String()
     child_name = fields.String()
