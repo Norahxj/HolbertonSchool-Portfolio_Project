@@ -1,11 +1,11 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError
-from app.schemas.auth_schema import validate_email_domin
+from app.schemas.auth_schema import validate_email_domain
 
 
 class FamilyInviteSchema(Schema):
     email = fields.Email(
         required=True,
-        validate=[validate.Length(max=120), validate_email_domin]
+        validate=[validate.Length(max=120), validate_email_domain]
     )
 
 
