@@ -6,14 +6,12 @@ from app.seeders.social_tasks import SOCIAL_TASKS
 from app.seeders.moral_tasks import MORAL_TASKS
 from app.seeders.religious_tasks import RELIGIOUS_TASKS
 
-
 TASK_BANK = {
     "FINANCIAL": FINANCIAL_TASKS,
     "SOCIAL": SOCIAL_TASKS,
     "MORAL": MORAL_TASKS,
     "RELIGIOUS": RELIGIOUS_TASKS,
 }
-
 
 class TaskBankService:
     def __init__(self):
@@ -24,39 +22,38 @@ class TaskBankService:
 
     def _default_recurrence_day(self, task_frequency):
         today = riyadh_today()
-
         if task_frequency == "WEEKLY":
             return today.weekday()
-
         if task_frequency == "MONTHLY":
             return today.day
-
         return None
 
     def get_random_suggestions(self, parent_id, child_ids, category, lang="en", count=5):
         category = category.upper()
-
         if category not in TASK_BANK:
             return None, "invalid_category"
-
+        if not child_ids:
+            return None, "child_ids_required"
+        if len(child_ids) != len(set(child_ids)):
+            return None, "duplicate_child_ids"
+        if count <= 0:
+            return None, "invalid_count"
+        lang = lang.lower()
+        if lang not in {"ar", "en"}:
+            return None, "invalid_language"
         children = [
             self.child_repository.get_child_for_guardian(child_id, parent_id)
             for child_id in child_ids
         ]
-
         if any(child is None for child in children):
             return None, "child_not_found"
-
         ages = [child.age for child in children]
         youngest_age = min(ages)
         oldest_age = max(ages)
-
         suitable_tasks = []
-
         for task in TASK_BANK[category]:
             if task["age_min"] <= youngest_age and task["age_max"] >= oldest_age:
                 suitable_tasks.append(task)
-
         suggestions = random.sample(suitable_tasks, min(count, len(suitable_tasks)))
         result = []
         for task in suggestions:

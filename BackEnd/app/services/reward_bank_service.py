@@ -1,27 +1,19 @@
 import random
-
 from app.seeders.reward_suggestions import REWARD_SUGGESTIONS
 
 
 class RewardBankService:
-
-    def get_random_suggestions(
-        self,
-        lang="en",
-        count=5
-    ):
+    def get_random_suggestions(self, lang="en", count=5):
         lang = lang.lower()
-
         if lang not in ["ar", "en"]:
             return None, "invalid_language"
-
+        if count <= 0:
+            return None, "invalid_count"
         suggestions = random.sample(
             REWARD_SUGGESTIONS,
             min(count, len(REWARD_SUGGESTIONS))
         )
-
         result = []
-
         for reward in suggestions:
             result.append({
                 "reward_name": (
@@ -36,5 +28,4 @@ class RewardBankService:
                 ),
                 "unlock_day": reward["default_unlock_day"]
             })
-
         return result, None
