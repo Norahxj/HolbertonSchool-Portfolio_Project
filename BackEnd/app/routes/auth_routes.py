@@ -65,12 +65,11 @@ class ChildLoginResource(Resource):
     
 @api.route("/refresh")
 class RefreshResource(Resource):
-    @api.response(200, "Access token refreshed successfully")
     @api.response(401, "Invalid or expired refresh token")
     @api.response(403, "Invalid role")
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
-    @api.marshal_with(refresh_response_model, code=200)
+    @api.response(200, "Access token refreshed successfully", refresh_response_model)
     def post(self):
         identity = get_jwt_identity()
         role = get_jwt().get("role")
@@ -81,11 +80,11 @@ class RefreshResource(Resource):
 
 @api.route("/logout")
 class Logout(Resource):
-    @api.response(200, "Logged out successfully")
     @api.response(401, "Missing or invalid token")
+    @api.response(500, "Logout failed")
     @api.doc(security="JWT")
     @jwt_required()
-    @api.marshal_with(message_response_model, code=200)
+    @api.response(200, "Logged out successfully", message_response_model)
     def post(self):
         jti = get_jwt()["jti"]
         success, error = auth_service.logout(jti)
@@ -95,11 +94,11 @@ class Logout(Resource):
     
 @api.route("/logout-refresh")
 class LogoutRefresh(Resource):
-    @api.response(200, "Refresh token logged out successfully")
     @api.response(401, "Missing or invalid refresh token")
+    @api.response(500, "Refresh token logout failed")
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
-    @api.marshal_with(message_response_model, code=200)
+    @api.response(200, "Refresh token logged out successfully", message_response_model)
     def post(self):
         jti = get_jwt()["jti"]
         success, error = auth_service.logout(jti)

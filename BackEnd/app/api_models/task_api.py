@@ -26,4 +26,17 @@ def get_task_models(api):
         "is_auto_verified": fields.Boolean(description="Auto verified")
     })
 
-    return task_create_model, task_update_model
+    task_response_model = api.model("TaskResponse", {
+        "id": fields.String(),
+        "title": fields.String(),
+        "description": fields.String(),
+        "points": fields.Integer(),
+        "task_frequency": fields.String(),
+        "recurrence_day": fields.Integer(),
+        "category": fields.String(),
+        "is_auto_verified": fields.Boolean(),
+        "created_by": fields.String(),
+        "created_at": fields.DateTime(),
+    })
+
+    return task_create_model, task_update_model,  task_response_model

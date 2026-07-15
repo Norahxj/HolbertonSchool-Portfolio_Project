@@ -13,6 +13,7 @@ child_create_schema = ChildCreateSchema()
 child_update_schema = ChildUpdateSchema()
 child_with_access_code_schema = ChildWithAccessCodeSchema()
 child_model, child_update_model, child_response_model, child_with_access_code_model = get_child_models(api)
+
 def require_parent():
     claims = get_jwt()
     if claims.get("role") != "parent":
@@ -24,6 +25,11 @@ class ChildListResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
     @api.expect(child_model, validate=True)
+    @api.response(201, "Child created successfully", child_with_access_code_model)
+    @api.response(400, "Invalid input")
+    @api.response(403, "Parent access required")
+    @api.response(404, "Parent not found")
+    @api.response(500, "Failed to create child")
     def post(self):
         parent_id = get_jwt_identity()
         error = require_parent()
@@ -41,14 +47,15 @@ class ChildListResource(Resource):
         if error == "access_code_exists":
             return {"error": "Failed to generate child access code"}, 500
         if error == "integrity_error":
-            return {"message": "Could not create child due to invalid related data"}, 500
+            return {"error": "Could not create child due to invalid related data"}, 500
         if error:
-            return {"message": "Could not create child"}, 500
+            return {"error": "Could not create child"}, 500
         return child_with_access_code_schema.dump(child), 201
 
     @jwt_required()
     @api.doc(security="JWT")
-    @api.marshal_list_with(child_response_model, code=200)
+    @api.response(200, "Children retrieved successfully")
+    @api.response(403, "Parent access required")
     def get(self):
         parent_id = get_jwt_identity()
         error = require_parent()
@@ -61,7 +68,9 @@ class ChildListResource(Resource):
 class ChildResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
-    @api.marshal_with(child_with_access_code_model, code=200)
+    @api.response(200, "Child retrieved successfully", child_with_access_code_model)
+    @api.response(403, "Parent access required")
+    @api.response(404, "Child not found")
     def get(self, child_id):
         parent_id = get_jwt_identity()
         error = require_parent()
@@ -75,6 +84,11 @@ class ChildResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
     @api.expect(child_update_model, validate=True)
+    @api.response(200, "Child updated successfully", child_with_access_code_model)
+    @api.response(400, "Invalid input")
+    @api.response(403, "Parent access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to update child")
     def put(self, child_id):
         parent_id = get_jwt_identity()
         error = require_parent()
@@ -84,37 +98,29 @@ class ChildResource(Resource):
             child_data = child_update_schema.load(api.payload)
         except ValidationError as err:
             return {"errors": err.messages}, 400
-
-        if not child_data:
-            return {"error": "No fields provided for update"}, 400
-
         child, error = child_service.update_child_for_parent(child_id, parent_id, child_data)
-
         if error == "not_found":
             return {"error": "Child not found"}, 404
-        return child_response_schema.dump(child), 200
+        if error:
+            return {"error": "Failed to update child"}, 500
+        return child_with_access_code_schema.dump(child), 200
 
     @jwt_required()
     @api.doc(security="JWT")
+    @api.response(200, "Child deleted successfully")
+    @api.response(403, "Parent access required")
+    @api.response(404, "Parent or child not found")
+    @api.response(500, "Failed to delete child")
     def delete(self, child_id):
         parent_id = get_jwt_identity()
         error = require_parent()
         if error:
             return error
-
-        deleted, delete_error  = child_service.delete_child_for_parent(child_id, parent_id)
-
+        _, delete_error  = child_service.delete_child_for_parent(child_id, parent_id)
         if delete_error == "parent_not_found":
             return {"error": "Parent not found"}, 404
-
         if delete_error == "child_not_found":
             return {"error": "Child not found"}, 404
-
         if delete_error == "delete_error":
-            return {
-                "error": "Failed to delete child and related data"
-            }, 500
-
-        return {
-            "message": "Child and related data deleted successfully"
-        }, 200
+            return {"error": "Failed to delete child and related data"}, 500
+        return {"message": "Child and related data deleted successfully"}, 200
