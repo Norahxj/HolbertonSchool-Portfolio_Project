@@ -20,7 +20,8 @@ class FamilySettingsScreen extends StatefulWidget {
 
 class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   final TextEditingController familyNameController = TextEditingController(
-    text: 'منزل user', // Placeholder family name; will be replaced with real data later.
+    text:
+        'منزل user', // Placeholder family name; will be replaced with real data later.
   );
   final TextEditingController inviteEmailController = TextEditingController();
 
@@ -125,6 +126,13 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
                   iconColor: Color(0xFF4A90D9),
                   tag: _VerifiedTag(),
                 ),
+
+                const SizedBox(height: AppSpacing.xl),
+
+                // TODO: Replace this empty state with real pending
+                // invitation cards (and the accept/reject popup) once
+                // backend integration is ready.
+                const _PendingInvitationsSection(),
 
                 const SizedBox(height: AppSpacing.xl),
 
@@ -398,6 +406,54 @@ class _VerifiedTag extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: const Icon(Icons.check, color: Colors.white, size: 16),
+    );
+  }
+}
+
+// The "الدعوات المعلّقة" (Pending Invitations) section. This is just an
+// empty state for now — no real invitations exist yet, so there is
+// nothing tappable here. Once backend integration is ready, this will
+// be replaced with real invitation cards and an accept/reject popup.
+class _PendingInvitationsSection extends StatelessWidget {
+  const _PendingInvitationsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _FieldLabel('الدعوات المعلّقة'),
+
+        const SizedBox(height: AppSpacing.sm),
+
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            children: [
+              const Text(
+                'لا توجد دعوات معلّقة حاليًا',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'ستظهر هنا الدعوات عند وصولها',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
