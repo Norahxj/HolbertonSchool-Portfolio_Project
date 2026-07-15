@@ -83,7 +83,7 @@ class TaskAssignmentService:
             points, error = self.points_service.add_points(
                 child_id=assignment.child_id,
                 amount=assignment.task.points,
-                source_id=assignment.task.id,
+                task_assignment_id=assignment.id,
                 commit=False
             )
 

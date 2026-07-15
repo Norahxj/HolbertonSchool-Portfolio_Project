@@ -7,7 +7,7 @@ class DailyFeedback(BaseModel):
     __table_args__ = (
         db.UniqueConstraint("child_id", "created_by", "feedback_date",
         name="uq_daily_feedback_per_creator_per_day"
-        )
+        ),
     )
 
     child_id = db.Column(db.String(36), db.ForeignKey("children.id", ondelete="CASCADE"), nullable=False)
