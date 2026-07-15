@@ -20,8 +20,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final TextEditingController nameController = TextEditingController(
-    text: 'user name',
+  final TextEditingController firstNameController = TextEditingController(
+    text: 'نورة',
+  );
+  final TextEditingController lastNameController = TextEditingController(
+    text: 'الجهني',
   );
   final TextEditingController emailController = TextEditingController(
     text: 'user@email.com',
@@ -32,7 +35,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    nameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     emailController.dispose();
     phoneController.dispose();
     super.dispose();
@@ -82,10 +86,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: AppSpacing.xl),
 
-                const _FieldLabel('الاسم الكامل'),
+                const _FieldLabel('الاسم الأول'),
                 const SizedBox(height: AppSpacing.sm),
                 _ProfileTextField(
-                  controller: nameController,
+                  controller: firstNameController,
+                  trailingIcon: Icons.person_outline,
+                ),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                const _FieldLabel('اسم العائلة'),
+                const SizedBox(height: AppSpacing.sm),
+                _ProfileTextField(
+                  controller: lastNameController,
                   trailingIcon: Icons.person_outline,
                 ),
 
@@ -112,43 +125,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const _FieldLabel('صلتي بالأسرة'),
                 const SizedBox(height: AppSpacing.sm),
-                GestureDetector(
-                  onTap: () {
-                    // TODO: Show a real dropdown to change the family
-                    // relation once that is needed.
-                  },
-                  child: Container(
-                    height: 56,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.inputBackground,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 18,
-                          color: AppColors.textSecondary,
+                Container(
+                  height: 56,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.inputBackground,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: const Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'أم',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(color: AppColors.textPrimary),
                         ),
-                        Expanded(
-                          child: Text(
-                            'أم',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(color: AppColors.textPrimary),
-                          ),
-                        ),
-                        SizedBox(width: AppSpacing.sm),
-                        Icon(
-                          Icons.escalator_warning,
-                          size: 18,
-                          color: AppColors.textSecondary,
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(width: AppSpacing.sm),
+                      Icon(
+                        Icons.escalator_warning,
+                        size: 18,
+                        color: AppColors.textSecondary,
+                      ),
+                    ],
                   ),
                 ),
 
