@@ -10,8 +10,8 @@ def birth_date_validator(value):
         today.year - value.year
         - ((today.month, today.day) < (value.month, value.day))
     )
-    if age < 1 or age > 18:
-        raise ValidationError("Child age must be between 1 and 18.")
+    if age < 6 or age > 18:
+        raise ValidationError("Child age must be between 6 and 18.")
     
 def validate_child_name(value):
     cleaned_value = value.strip()
