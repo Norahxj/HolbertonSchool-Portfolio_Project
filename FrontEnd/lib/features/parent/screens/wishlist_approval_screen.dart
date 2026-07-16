@@ -18,7 +18,8 @@ class WishlistApprovalScreen extends StatefulWidget {
   const WishlistApprovalScreen({super.key});
 
   @override
-  State<WishlistApprovalScreen> createState() => _WishlistApprovalScreenState();
+  State<WishlistApprovalScreen> createState() =>
+      _WishlistApprovalScreenState();
 }
 
 // Pairs a wish with its child's name so the cards below don't need to
