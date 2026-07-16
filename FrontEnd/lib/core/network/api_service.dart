@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:frontend/models/task_model.dart';
+import 'package:frontend/models/task_suggestions_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../models/child_model.dart';
-
 part 'api_service.g.dart';
 
 @RestApi()
@@ -60,6 +60,11 @@ abstract class ApiService {
   Future<HttpResponse<List<TaskModel>>> getTasksByChild(
     @Path('childId') String childId,
   );
+
+  @POST('/task-bank/suggestions')
+  Future<HttpResponse<TaskSuggestionsResponse>> getTaskSuggestions(
+  @Body() Map<String, dynamic> body,
+);  
 
   /// whish
 
