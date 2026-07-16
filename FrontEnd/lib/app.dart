@@ -99,7 +99,10 @@ class _AsalahAppState extends State<AsalahApp> {
           : _isLoggedIn
               ? (_isChild
                   ? const ChildHomeScreen()
-                  : const ParentMainScreen())
+                  : ParentMainScreen(
+    isArabic: isArabic,
+    onLanguageToggle: _toggleLanguage,
+  ))
               : WelcomeScreen(
                   isArabic: isArabic,
                   onLanguageToggle: _toggleLanguage,

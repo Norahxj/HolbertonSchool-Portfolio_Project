@@ -107,7 +107,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const ParentMainScreen(),),
+          MaterialPageRoute(
+  builder: (_) => ParentMainScreen(
+    isArabic: widget.isArabic,
+    onLanguageToggle: widget.onLanguageToggle,
+  ),
+),
         );
       }
     } on DioException catch (e) {

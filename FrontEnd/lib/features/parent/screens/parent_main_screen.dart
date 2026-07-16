@@ -9,10 +9,14 @@ import 'wishlist_approval_screen.dart';
 
 class ParentMainScreen extends StatefulWidget {
   final int initialIndex;
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
 
   const ParentMainScreen({
     super.key,
     this.initialIndex = 2,
+    this.isArabic = true,
+    this.onLanguageToggle,
   });
 
   @override
@@ -22,14 +26,7 @@ class ParentMainScreen extends StatefulWidget {
 class _ParentMainScreenState extends State<ParentMainScreen> {
   late int _currentIndex;
 
-  final List<Widget> _pages = const [
-    AddTaskScreen(),
-    RewardManagementScreen(),
-    ParentDashboardScreen(),
-    WishlistApprovalScreen(),
-    MoreSettingsScreen(),
-  ];
-
+  
   @override
   void initState() {
     super.initState();
@@ -48,10 +45,20 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pages = [
+  const AddTaskScreen(),
+  const RewardManagementScreen(),
+  const ParentDashboardScreen(),
+  const WishlistApprovalScreen(),
+  MoreSettingsScreen(
+    isArabic: widget.isArabic,
+    onLanguageToggle: widget.onLanguageToggle,
+  ),
+];
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: _pages,
+        children: pages,
       ),
       bottomNavigationBar: _ParentBottomNavBar(
         currentIndex: _currentIndex,

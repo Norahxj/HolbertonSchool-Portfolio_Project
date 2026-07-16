@@ -359,7 +359,38 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ],
 
         const SizedBox(height: AppSpacing.lg),
+        const Align(
+  alignment: Alignment.centerRight,
+  child: Text(
+    'نوع المهمة',
+    style: TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+  ),
+),
 
+const SizedBox(height: AppSpacing.xs),
+
+Text(
+  selectedChildIds.isEmpty
+      ? 'اختر طفلًا أولًا لتفعيل أنواع المهام'
+      : 'اختر نوع المهمة',
+  textAlign: TextAlign.right,
+  style: TextStyle(
+    fontSize: 12,
+    color: selectedChildIds.isEmpty
+        ? Colors.grey.shade500
+        : AppColors.textSecondary,
+  ),
+),
+
+const SizedBox(height: AppSpacing.md),
+
+_buildTaskTypeStep(),
+
+const SizedBox(height: AppSpacing.lg),
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -432,6 +463,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 icon: Icons.mosque_outlined,
                 label: 'المهام الثقافية',
                 isSelected: selectedTaskType == 0,
+                isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
                   setState(() {
                     selectedTaskType = 0;
@@ -447,6 +479,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 icon: Icons.shopping_bag_outlined,
                 label: 'المهام اليومية',
                 isSelected: selectedTaskType == 1,
+                isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
                   setState(() {
                     selectedTaskType = 1;
@@ -468,6 +501,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 icon: Icons.menu_book_outlined,
                 label: 'المهام الدينية',
                 isSelected: selectedTaskType == 2,
+                isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
                   setState(() {
                     selectedTaskType = 2;
@@ -483,6 +517,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 icon: Icons.credit_card,
                 label: 'المهام المالية',
                 isSelected: selectedTaskType == 3,
+                isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
                   setState(() {
                     selectedTaskType = 3;
@@ -1162,27 +1197,37 @@ class _TaskTypeCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isSelected;
+  final bool isEnabled;
   final VoidCallback onTap;
 
   const _TaskTypeCard({
     required this.icon,
     required this.label,
     required this.isSelected,
+    this.isEnabled = true,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: isEnabled ? onTap : null,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.lg,
+        ),
         decoration: BoxDecoration(
-          color: AppColors.card,
+          color: isEnabled
+              ? AppColors.card
+              : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
+            color: !isEnabled
+                ? Colors.grey.shade300
+                : isSelected
+                    ? AppColors.primary
+                    : AppColors.border,
+            width: isSelected && isEnabled ? 2 : 1,
           ),
         ),
         child: Column(
@@ -1191,18 +1236,28 @@ class _TaskTypeCard extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
+                color: isEnabled
+                    ? AppColors.primaryLight
+                    : Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(icon, color: AppColors.primaryDark, size: 22),
+              child: Icon(
+                icon,
+                color: isEnabled
+                    ? AppColors.primaryDark
+                    : Colors.grey.shade500,
+                size: 22,
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: isEnabled
+                    ? AppColors.textPrimary
+                    : Colors.grey.shade500,
               ),
             ),
           ],
@@ -1211,9 +1266,6 @@ class _TaskTypeCard extends StatelessWidget {
     );
   }
 }
-
-// A simple rounded text field used for the task name and description on
-// Step 2.
 class _TaskTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;

@@ -15,8 +15,27 @@ import '../../../app.dart';
 // This first pass is static/placeholder only: the parent name and every
 // row action are hardcoded. No backend calls happen here yet, and none of
 // the rows navigate anywhere yet (see the TODO comments below).
-class MoreSettingsScreen extends StatelessWidget {
-  const MoreSettingsScreen({super.key});
+class MoreSettingsScreen extends StatefulWidget  {
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
+
+  const MoreSettingsScreen({
+    super.key,
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
+  @override
+  State<MoreSettingsScreen> createState() => _MoreSettingsScreenState();
+}
+class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
+  late Future<UserModel> _userFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userFuture = UserApiService().getCurrentUser();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +44,7 @@ class MoreSettingsScreen extends StatelessWidget {
         child: SafeArea(
           bottom: false,
           child: FutureBuilder<UserModel>(
-            future: UserApiService().getCurrentUser(),
+  future: _userFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -47,7 +66,10 @@ class MoreSettingsScreen extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.lg),
 
-                  const _SettingsCard(),
+                  _SettingsCard(
+  isArabic: widget.isArabic,
+  onLanguageToggle: widget.onLanguageToggle,
+),
 
                   const SizedBox(height: AppSpacing.xl),
 
@@ -124,7 +146,13 @@ class _ProfileBanner extends StatelessWidget {
 
 // White rounded card holding every settings row.
 class _SettingsCard extends StatelessWidget {
-  const _SettingsCard();
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
+
+  const _SettingsCard({
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +192,10 @@ class _SettingsCard extends StatelessWidget {
             },
           ),
           const Divider(height: 1, color: AppColors.border),
-          const _LanguageRow(),
+          _LanguageRow(
+  isArabic: isArabic,
+  onTap: onLanguageToggle,
+),
           const Divider(height: 1, color: AppColors.border),
           _SettingsRow(
             icon: Icons.notifications_none,
@@ -283,85 +314,97 @@ class _ComingSoonTag extends StatelessWidget {
 // switch the app language yet. Real language switching already exists in
 // the language_toggle widget used on other screens.
 class _LanguageRow extends StatelessWidget {
-  const _LanguageRow();
+  final bool isArabic;
+  final VoidCallback? onTap;
+
+  const _LanguageRow({
+    required this.isArabic,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.md,
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 22,
-                  height: 22,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'ع',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 22,
+                    height: 22,
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        isArabic ? 'ع' : 'EN',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                const Text(
-                  'EN',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
+                  const SizedBox(width: 6),
+                  Text(
+                    isArabic ? 'EN' : 'ع',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryDark,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'اللغة',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    isArabic ? 'اللغة' : 'Language',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(12),
+            const SizedBox(width: AppSpacing.md),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.language,
+                color: AppColors.primaryDark,
+                size: 20,
+              ),
             ),
-            child: const Icon(
-              Icons.language,
-              color: AppColors.primaryDark,
-              size: 20,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
