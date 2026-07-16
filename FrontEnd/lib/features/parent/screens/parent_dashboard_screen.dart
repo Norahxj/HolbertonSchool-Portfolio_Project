@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../child/screens/child_profile_screen.dart';
 import 'add_child_screen.dart';
-import 'add_task_screen.dart';
-import 'more_settings_screen.dart';
-import 'reward_management_screen.dart';
 import 'task_review_screen.dart';
-import 'wishlist_approval_screen.dart';
 import '../../../models/child_model.dart';
 import '../../../services/child_api_service.dart';
 import '../../../services/user_api_service.dart';
@@ -28,17 +23,31 @@ class ParentDashboardScreen extends StatefulWidget {
 }
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
+  late Future<UserModel> _userFuture;
+late Future<List<ChildModel>> _childrenFuture;
+@override
+void initState() {
+  super.initState();
+  _loadData();
+}
+
+void _loadData() {
+  _userFuture = UserApiService().getCurrentUser();
+  _childrenFuture = ChildApiService().getChildren();
+}
   Future<void> _openAddChildScreen() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const AddChildScreen()),
     );
 
-    print(result);
+    
 
     if (result == true) {
-      setState(() {});
-    }
+  setState(() {
+    _childrenFuture = ChildApiService().getChildren();
+  });
+}
   }
 
   @override
@@ -50,12 +59,9 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: FutureBuilder<UserModel>(
-              future: UserApiService().getCurrentUser(),
+              future: _userFuture,
               builder: (context, snapshot) {
-                print('state = ${snapshot.connectionState}');
-                print('error = ${snapshot.error}');
-                print('hasData = ${snapshot.hasData}');
-                print('data = ${snapshot.data}');
+                
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -97,7 +103,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                     const SizedBox(height: AppSpacing.sm),
 
                     FutureBuilder<List<ChildModel>>(
-                      future: ChildApiService().getChildren(),
+                      future: _childrenFuture,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           print(snapshot.error);
@@ -137,7 +143,6 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
@@ -558,164 +563,3 @@ class _DashedBorderPainter extends CustomPainter {
   }
 }
 
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: SizedBox(
-        height: 88,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                height: 66,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 12,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const MoreSettingsScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.more_horiz,
-                        label: 'المزيد',
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const WishlistApprovalScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.favorite_border,
-                        label: 'الأمنيات',
-                      ),
-                    ),
-                    const SizedBox(width: 56),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RewardManagementScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.card_giftcard_outlined,
-                        label: 'المكافآت',
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const AddTaskScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.list_alt,
-                        label: 'المهام',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.home_rounded,
-                        color: Colors.white,
-                        size: 26,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'الرئيسية',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _NavItem({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: AppColors.textSecondary, size: 22),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
-        ),
-      ],
-    );
-  }
-}
