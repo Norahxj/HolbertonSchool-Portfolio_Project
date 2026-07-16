@@ -83,7 +83,6 @@ String? suggestionsError;
   int taskPoints = 10;
   bool trustChild = true;
 
-  // Step 3: how often the task repeats. 0 = daily, 1 = weekly, 2 = monthly.
   int selectedFrequency = 1;
 
   // Which day of the week is picked when "مرة في الأسبوع" is selected.
@@ -221,49 +220,52 @@ Future<void> _loadTaskSuggestions() async {
   });
 
   // الصفحة الأولى
-  if (currentStep == 0) {
-    if (selectedChildIds.isEmpty) {
-      setState(() {
-        childError = "الرجاء اختيار طفل واحد على الأقل";
-      });
-      return;
-    }
+  
+    
+   // الصفحة الأولى: اختيار الطفل ونوع المهمة
+if (currentStep == 0) {
+  bool hasError = false;
+
+  if (selectedChildIds.isEmpty) {
+    childError = "الرجاء اختيار طفل واحد على الأقل";
+    hasError = true;
   }
 
-  // الصفحة الثانية
-  if (currentStep == 1) {
-    if (selectedTaskType == null) {
-      setState(() {
-        categoryError = "الرجاء اختيار نوع المهمة";
-      });
-      return;
-    }
+  if (selectedTaskType == null) {
+    categoryError = "الرجاء اختيار نوع المهمة";
+    hasError = true;
   }
 
-  // الصفحة الثالثة
-  if (currentStep == 2) {
-    bool hasError = false;
-
-    if (taskNameController.text.trim().isEmpty) {
-      titleError = "اسم المهمة مطلوب";
-      hasError = true;
-    }
-
-    if (taskDescriptionController.text.trim().isEmpty) {
-      descriptionError = "الوصف مطلوب";
-      hasError = true;
-    }
-
-    if (taskPoints < 1 || taskPoints > 100) {
-      pointsError = "عدد النقاط يجب أن يكون بين 1 و100";
-      hasError = true;
-    }
-
-    if (hasError) {
-      setState(() {});
-      return;
-    }
+  if (hasError) {
+    setState(() {});
+    return;
   }
+}
+
+// الصفحة الثانية: تفاصيل المهمة
+if (currentStep == 1) {
+  bool hasError = false;
+
+  if (taskNameController.text.trim().isEmpty) {
+    titleError = "اسم المهمة مطلوب";
+    hasError = true;
+  }
+
+  if (taskDescriptionController.text.trim().isEmpty) {
+    descriptionError = "الوصف مطلوب";
+    hasError = true;
+  }
+
+  if (taskPoints < 1 || taskPoints > 100) {
+    pointsError = "عدد النقاط يجب أن يكون بين 1 و100";
+    hasError = true;
+  }
+
+  if (hasError) {
+    setState(() {});
+    return;
+  }
+}
 
   setState(() {
     currentStep++;
@@ -316,9 +318,8 @@ Future<void> _loadTaskSuggestions() async {
                 const SizedBox(height: AppSpacing.xl),
 
                 if (currentStep == 0) _buildChooseChildStep(),
-                if (currentStep == 1) _buildTaskTypeStep(),
-                if (currentStep == 2) _buildTaskDetailsStep(),
-                if (currentStep == 3) _buildTaskScheduleStep(),
+                if (currentStep == 1) _buildTaskDetailsStep(),
+if (currentStep == 2) _buildTaskScheduleStep(),
 
                 const SizedBox(height: AppSpacing.xl),
 
@@ -335,19 +336,23 @@ Future<void> _loadTaskSuggestions() async {
 
   // The title text shown at the top for the current step.
   String get _stepTitle {
-    if (currentStep == 0) return 'إضافة مهمة';
-    if (currentStep == 1) return 'نوع المهمة';
-    if (currentStep == 2) return 'تفاصيل المهمة';
-    return 'جدول المهمة';
-  }
+  if (currentStep == 0) return 'إضافة مهمة';
+  if (currentStep == 1) return 'تفاصيل المهمة';
+  return 'جدول المهمة';
+}
 
   // The subtitle text shown below the title for the current step.
   String get _stepSubtitle {
-    if (currentStep == 0) return 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
-    if (currentStep == 1) return 'ما نوع المهمة؟';
-    if (currentStep == 2) return 'لنُضِف تفاصيل المهمة';
-    return 'كم مرة يجب تنفيذ هذه المهمة؟';
+  if (currentStep == 0) {
+    return 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
   }
+
+  if (currentStep == 1) {
+    return 'لنُضِف تفاصيل المهمة';
+  }
+
+  return 'كم مرة يجب تنفيذ هذه المهمة؟';
+}
 
   // ---- Step 0: choose child ----
 
@@ -1140,7 +1145,7 @@ const SizedBox(height: AppSpacing.lg),
     }
 
     // The last step shows "Save" instead of "Next".
-    final isLastStep = currentStep == 3;
+    final isLastStep = currentStep == 2;
 
     return Row(
       children: [
