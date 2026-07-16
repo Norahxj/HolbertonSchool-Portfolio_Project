@@ -2,7 +2,6 @@ from app.extensions import db
 import uuid
 from app.utils.datetime_utils import utc_now
 
-
 class BaseModel(db.Model):
 	__abstract__ = True  
 
