@@ -142,12 +142,13 @@ void dispose() {
                 Stack(
   children: [
     Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        for (int i = 0; i < 6; i++)
-          _PinBox(digit: i < pin.length ? pin[i] : ''),
-      ],
-    ),
+  textDirection: TextDirection.ltr,
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    for (int i = 0; i < 6; i++)
+      _PinBox(digit: i < pin.length ? pin[i] : ''),
+  ],
+),
 
     Positioned.fill(
       child: Opacity(
@@ -157,6 +158,8 @@ void dispose() {
           focusNode: _pinFocusNode,
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.done,
+          textDirection: TextDirection.ltr,
+          textAlign: TextAlign.left,
           maxLength: 6,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
