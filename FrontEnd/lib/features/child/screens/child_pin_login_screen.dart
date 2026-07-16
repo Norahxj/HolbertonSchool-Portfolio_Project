@@ -10,6 +10,7 @@ import '../../../services/auth_api_service.dart';
 import 'child_home_screen.dart';
 import '../../../core/widgets/app_back_button.dart';
 import 'package:flutter/services.dart';
+import '../../../core/widgets/language_toggle.dart';
 
 // Child PIN Login screen (Screen 20).
 //
@@ -89,6 +90,8 @@ void dispose() {
 }
   @override
   Widget build(BuildContext context) {
+    final isArabic =
+      Directionality.of(context) == TextDirection.rtl;
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
@@ -96,11 +99,16 @@ void dispose() {
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
   children: [
-    Align(
-  alignment: widget.isArabic
-      ? Alignment.centerRight
-      : Alignment.centerLeft,
-  child: const AppBackButton(),
+    Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    AppBackButton(),
+
+    LanguageToggle(
+      isArabic: isArabic,
+      onTap: widget.onLanguageToggle,
+    ),
+  ],
 ),
 
     const SizedBox(height: AppSpacing.lg),
@@ -122,14 +130,14 @@ void dispose() {
                 const SizedBox(height: AppSpacing.lg),
 
                 Text(
-  widget.isArabic ? 'أهلاً بك!' : 'Welcome!',
+  isArabic ? 'أهلاً بك!' : 'Welcome!',
   style: AppTextStyles.arabicTitle,
 ),
 
                 const SizedBox(height: AppSpacing.sm),
 
                 Text(
-  widget.isArabic
+  isArabic
       ? 'أدخل الرمز الذي أعطاك إياه ولي أمرك'
       : 'Enter the code given to you by your parent',
                   style: AppTextStyles.body,
@@ -139,11 +147,11 @@ void dispose() {
                 const SizedBox(height: AppSpacing.xl),
 
                 Align(
-  alignment: widget.isArabic
+  alignment: isArabic
       ? Alignment.centerRight
       : Alignment.centerLeft,
   child: Text(
-    widget.isArabic ? 'رمز الدخول' : 'Access code',
+    isArabic ? 'رمز الدخول' : 'Access code',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -220,7 +228,8 @@ void dispose() {
                 const SizedBox(height: AppSpacing.xl),
 
                 AppButton(
-                  text: isLoading ? 'جاري التحقق...' : 'دخول',
+                  text: isLoading ? (isArabic ? 'جاري التحقق...' : 'Verifying...')
+                  : (isArabic ? 'دخول' : 'Login'),
                   onPressed: isLoading ? null : _loginChild,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
