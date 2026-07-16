@@ -17,11 +17,13 @@ class AppBackButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap ?? () => Navigator.maybePop(context),
-        child: const SizedBox(
+        child: SizedBox(
           width: 44,
           height: 44,
           child: Icon(
-            Icons.arrow_forward_rounded,
+            Directionality.of(context) == TextDirection.rtl
+            ? Icons.arrow_back_rounded
+            : Icons.arrow_back_rounded,
             size: 18,
             color: AppColors.primaryDark,
           ),

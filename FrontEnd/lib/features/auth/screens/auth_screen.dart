@@ -10,6 +10,7 @@ import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
 import '../../../services/auth_api_service.dart';
 import 'package:dio/dio.dart';
 import '../../parent/screens/parent_main_screen.dart';
+import '../../../core/widgets/app_back_button.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
@@ -237,14 +238,14 @@ class _AuthScreenState extends State<AuthScreen> {
       body: ScreenBackground(
         child: SafeArea(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               children: [
                 Row(
                   children: [
-                    _RoundIconButton(
-                      icon: isArabic ? Icons.arrow_forward : Icons.arrow_back,
-                      onTap: _handleBack,
-                    ),
+                   AppBackButton(
+  onTap: _handleBack,
+),
                     const Spacer(),
                     LanguageToggle(
                       isArabic: isArabic,
@@ -470,30 +471,6 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _RoundIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _RoundIconButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(icon, size: 18, color: AppColors.primaryDark),
-        ),
-      ),
     );
   }
 }

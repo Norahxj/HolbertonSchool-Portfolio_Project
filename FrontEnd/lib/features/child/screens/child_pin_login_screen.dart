@@ -18,8 +18,14 @@ import 'package:flutter/services.dart';
 // "دخول" calls AuthApiService().childLogin and only moves to the child
 // home screen once that succeeds.
 class ChildPinLoginScreen extends StatefulWidget {
-  const ChildPinLoginScreen({super.key});
+  final bool isArabic;
+  final VoidCallback onLanguageToggle;
 
+  const ChildPinLoginScreen({
+    super.key,
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
  @override
   State<ChildPinLoginScreen> createState() =>
       _ChildPinLoginScreenState();
@@ -90,9 +96,11 @@ void dispose() {
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
   children: [
-    const Align(
-  alignment: Alignment.centerRight,
-  child: AppBackButton(),
+    Align(
+  alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
+  child: const AppBackButton(),
 ),
 
     const SizedBox(height: AppSpacing.lg),
@@ -113,22 +121,29 @@ void dispose() {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                Text('أهلاً بك!', style: AppTextStyles.arabicTitle),
+                Text(
+  widget.isArabic ? 'أهلاً بك!' : 'Welcome!',
+  style: AppTextStyles.arabicTitle,
+),
 
                 const SizedBox(height: AppSpacing.sm),
 
                 Text(
-                  'أدخل الرمز الذي أعطاك إياه ولي أمرك',
+  widget.isArabic
+      ? 'أدخل الرمز الذي أعطاك إياه ولي أمرك'
+      : 'Enter the code given to you by your parent',
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                const Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    'رمز الدخول',
+                Align(
+  alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
+  child: Text(
+    widget.isArabic ? 'رمز الدخول' : 'Access code',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,

@@ -159,11 +159,14 @@ class WelcomeScreen extends StatelessWidget {
                       isArabic: isArabic,
                       onTap: () {
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ChildPinLoginScreen(),
-                          ),
-                        );
+  context,
+  MaterialPageRoute(
+    builder: (_) => ChildPinLoginScreen(
+      isArabic: isArabic,
+      onLanguageToggle: onLanguageToggle,
+    ),
+  ),
+);
                       },
                     ),
                   ],
