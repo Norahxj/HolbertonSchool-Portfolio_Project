@@ -5,15 +5,101 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'add_reward_screen.dart';
+import 'package:dio/dio.dart';
+import 'package:frontend/models/child_model.dart';
+import 'package:frontend/services/child_api_service.dart';
+import 'package:frontend/models/reward_suggestion_model.dart';
+import 'package:frontend/services/reward_api_service.dart';
 
 // Reward Management screen (Screen 15).
 //
 // This first pass is static/placeholder only: the child list, the quick
 // add categories, and the button are all hardcoded. No backend calls
 // happen here yet (see the TODO comment below).
-class RewardManagementScreen extends StatelessWidget {
+class RewardManagementScreen extends StatefulWidget {
   const RewardManagementScreen({super.key});
 
+  @override
+  State<RewardManagementScreen> createState() =>
+      _RewardManagementScreenState();
+}
+
+class _RewardManagementScreenState
+    extends State<RewardManagementScreen> {
+  final ChildApiService _childApiService = ChildApiService();
+  final RewardApiService _rewardApiService = RewardApiService();
+
+  List<ChildModel> children = [];
+  String? selectedChildId;
+  List<RewardSuggestionModel> rewardSuggestions = [];
+bool isLoadingSuggestions = false;
+String? suggestionsError;
+
+  bool isLoadingChildren = true;
+  String? childrenError;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChildren();
+  }
+
+  Future<void> _loadChildren() async {
+    try {
+      final data = await _childApiService.getChildren();
+
+      if (!mounted) return;
+
+      setState(() {
+        children = data;
+        isLoadingChildren = false;
+      });
+    } on DioException {
+      if (!mounted) return;
+
+      setState(() {
+        childrenError = 'تعذر تحميل الأطفال';
+        isLoadingChildren = false;
+      });
+    }
+  }
+Future<void> _loadRewardSuggestions() async {
+  if (selectedChildId == null) return;
+
+  setState(() {
+    isLoadingSuggestions = true;
+    suggestionsError = null;
+    rewardSuggestions = [];
+  });
+
+  try {
+    final suggestions =
+        await _rewardApiService.getRewardSuggestions(
+      lang: 'ar',
+      count: 5,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      rewardSuggestions = suggestions;
+    });
+  } on DioException catch (e) {
+    if (!mounted) return;
+
+    setState(() {
+      suggestionsError =
+          e.response?.data?['error']?.toString() ??
+          'تعذر تحميل المكافآت المقترحة';
+    });
+  } finally {
+    if (mounted) {
+      setState(() {
+        isLoadingSuggestions = false;
+      });
+    }
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +127,52 @@ class RewardManagementScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                const _ChildSelector(),
+                if (isLoadingChildren)
+  const Center(
+    child: CircularProgressIndicator(),
+  )
+else if (childrenError != null)
+  Center(
+    child: Text(
+      childrenError!,
+      style: const TextStyle(
+        color: Colors.red,
+        fontSize: 13,
+      ),
+    ),
+  )
+else if (children.isEmpty)
+  const Center(
+    child: Text(
+      'لا يوجد أطفال بعد. أضف طفلًا أولًا.',
+      style: TextStyle(
+        color: AppColors.textSecondary,
+        fontSize: 13,
+      ),
+    ),
+  )
+else
+  Wrap(
+    spacing: AppSpacing.md,
+    runSpacing: AppSpacing.md,
+    children: children.map((child) {
+      final isSelected = selectedChildId == child.id;
+
+      return _ChildChip(
+        name: child.name,
+        avatarColor: AppColors.primaryLight,
+        iconColor: AppColors.primary,
+        isSelected: isSelected,
+        onTap: () {
+  setState(() {
+    selectedChildId = child.id;
+  });
+
+  _loadRewardSuggestions();
+},
+      );
+    }).toList(),
+  ),
 
                 const SizedBox(height: AppSpacing.lg),
 
@@ -59,29 +190,70 @@ class RewardManagementScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                const _QuickAddCategory(
-                  icon: Icons.shopping_bag_outlined,
-                  label: 'نزهات وأنشطة عائلية',
-                ),
-                const SizedBox(height: AppSpacing.md),
-                const _QuickAddCategory(
-                  icon: Icons.bookmark_border,
-                  label: 'ألعاب وهدايا',
-                ),
-                const SizedBox(height: AppSpacing.md),
-                const _QuickAddCategory(
-                  icon: Icons.access_time,
-                  label: 'وقت وترفيه',
-                ),
-                const SizedBox(height: AppSpacing.md),
-                const _QuickAddCategory(
-                  icon: Icons.favorite_border,
-                  label: 'امتيازات خاصة',
-                ),
+                if (selectedChildId == null)
+  Container(
+    padding: const EdgeInsets.all(AppSpacing.md),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade200,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: Colors.grey.shade300,
+      ),
+    ),
+    child: Text(
+      'اختر طفلًا أولًا لعرض المكافآت المقترحة',
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 13,
+        color: Colors.grey.shade600,
+      ),
+    ),
+  )
+else if (isLoadingSuggestions)
+  const Center(
+    child: Padding(
+      padding: EdgeInsets.all(AppSpacing.lg),
+      child: CircularProgressIndicator(),
+    ),
+  )
+else if (suggestionsError != null)
+  Column(
+    children: [
+      Text(
+        suggestionsError!,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 13,
+        ),
+      ),
+      TextButton(
+        onPressed: _loadRewardSuggestions,
+        child: const Text('إعادة المحاولة'),
+      ),
+    ],
+  )
+else
+  _QuickAddCategory(
+    suggestions: rewardSuggestions,
+    onSuggestionTap: (suggestion) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AddRewardScreen(
+  childId: selectedChildId!,
+  suggestion: suggestion,
+),
+        ),
+      );
+    },
+  ),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                const _AddRewardButton(),
+                _AddRewardButton(
+  selectedChildId: selectedChildId,
+),
 
                 const SizedBox(height: AppSpacing.md),
               ],
@@ -96,62 +268,9 @@ class RewardManagementScreen extends StatelessWidget {
 
 // Row of tappable child chips at the top of the screen. Tapping a chip
 // toggles its checkmark using simple local state (no backend yet).
-class _ChildSelector extends StatefulWidget {
-  const _ChildSelector();
 
-  @override
-  State<_ChildSelector> createState() => _ChildSelectorState();
-}
 
-class _ChildSelectorState extends State<_ChildSelector> {
-  // Placeholder starting values. In the real app this will come from the
-  // backend (which children the parent has, and which are selected).
-  bool isKhaledSelected = false;
-  bool isSalmanSelected = true;
-  bool isSaraSelected = true;
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _ChildChip(
-          name: 'خالد',
-          avatarColor: const Color(0xFFDFF3E4),
-          iconColor: const Color(0xFF4CAF50),
-          isSelected: isKhaledSelected,
-          onTap: () {
-            setState(() {
-              isKhaledSelected = !isKhaledSelected;
-            });
-          },
-        ),
-        _ChildChip(
-          name: 'سلمان',
-          avatarColor: const Color(0xFFDCEBFB),
-          iconColor: const Color(0xFF4A90D9),
-          isSelected: isSalmanSelected,
-          onTap: () {
-            setState(() {
-              isSalmanSelected = !isSalmanSelected;
-            });
-          },
-        ),
-        _ChildChip(
-          name: 'سارة',
-          avatarColor: const Color(0xFFFBE3EA),
-          iconColor: const Color(0xFFD1637F),
-          isSelected: isSaraSelected,
-          onTap: () {
-            setState(() {
-              isSaraSelected = !isSaraSelected;
-            });
-          },
-        ),
-      ],
-    );
-  }
-}
 
 // One child avatar + name, with a small checkmark badge when selected.
 class _ChildChip extends StatelessWidget {
@@ -239,55 +358,108 @@ class _ChildChip extends StatelessWidget {
 // below it where suggested rewards will appear later. The mockup uses a
 // dashed border here; we use a plain light border to keep the code simple.
 class _QuickAddCategory extends StatelessWidget {
-  final IconData icon;
-  final String label;
+  final List<RewardSuggestionModel> suggestions;
+  final ValueChanged<RewardSuggestionModel> onSuggestionTap;
 
-  const _QuickAddCategory({required this.icon, required this.label});
+  const _QuickAddCategory({
+    required this.suggestions,
+    required this.onSuggestionTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.md,
+      ),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: suggestions.isEmpty
+          ? const Text(
+              'لا توجد مكافآت مقترحة حاليًا',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
               ),
+            )
+          : Column(
+              children: [
+                for (int i = 0; i < suggestions.length; i++) ...[
+                  InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      onSuggestionTap(suggestions[i]);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.sm,
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.add_circle_outline,
+                            size: 19,
+                            color: AppColors.primary,
+                          ),
+
+                          const SizedBox(width: AppSpacing.sm),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  suggestions[i].rewardName,
+                                  textAlign: TextAlign.right,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  suggestions[i].description,
+                                  textAlign: TextAlign.right,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  if (i != suggestions.length - 1)
+                    const Divider(
+                      height: 1,
+                      color: AppColors.border,
+                    ),
+                ],
+              ],
             ),
-            const SizedBox(width: AppSpacing.sm),
-            Icon(icon, color: AppColors.primaryDark, size: 18),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.md,
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Text(
-            'ستظهر هنا المكافآت المقترحة',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-          ),
-        ),
-      ],
     );
   }
 }
-
 // Full-width "Add reward" button at the bottom of the screen.
 class _AddRewardButton extends StatelessWidget {
-  const _AddRewardButton();
+  final String? selectedChildId;
+
+  const _AddRewardButton({
+    required this.selectedChildId,
+  });
+  
 
   @override
   Widget build(BuildContext context) {
@@ -295,7 +467,11 @@ class _AddRewardButton extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const AddRewardScreen()),
+          MaterialPageRoute(
+  builder: (_) => AddRewardScreen(
+    childId: selectedChildId!,
+  ),
+),
         );
       },
       child: Container(

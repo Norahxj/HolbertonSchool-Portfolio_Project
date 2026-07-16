@@ -1421,6 +1421,7 @@ class _RoundBackButton extends StatelessWidget {
 
 // One child avatar + name used on Step 0, with a checkmark badge when
 // selected. Tapping toggles that child in or out of the task.
+
 class _ChildChip extends StatelessWidget {
   final String name;
   final Color avatarColor;
@@ -1441,58 +1442,64 @@ class _ChildChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 100,
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        width: 160,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
         decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(20),
+          color: isSelected
+              ? AppColors.primaryLight
+              : AppColors.card,
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: avatarColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.person, color: iconColor, size: 24),
+            if (isSelected)
+              const Icon(
+                Icons.check_circle,
+                color: AppColors.primary,
+                size: 20,
+              )
+            else
+              const SizedBox(width: 20),
+
+            const SizedBox(width: AppSpacing.sm),
+
+            Expanded(
+              child: Text(
+                name,
+                textAlign: TextAlign.right,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: isSelected
+                      ? FontWeight.bold
+                      : FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
-                if (isSelected)
-                  Positioned(
-                    top: -2,
-                    right: -2,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 12,
-                      ),
-                    ),
-                  ),
-              ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+
+            const SizedBox(width: AppSpacing.sm),
+
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: avatarColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.person,
+                color: iconColor,
+                size: 22,
               ),
             ),
           ],
@@ -1501,7 +1508,6 @@ class _ChildChip extends StatelessWidget {
     );
   }
 }
-
 // One "quick add" category placeholder shown on Step 0. Static only, same
 // simplification already used on the Reward Management screen: a plain
 // light border instead of a dashed one.

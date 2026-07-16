@@ -181,6 +181,10 @@ Future<HttpResponse<dynamic>> deleteReward(
 );
 // Reward Bank
 
-@GET('/reward-bank/')
-Future<HttpResponse<dynamic>> getRewardBankSuggestions();
+// Reward Bank
+
+@POST('/reward-bank/suggestions')
+Future<HttpResponse<dynamic>> getRewardBankSuggestions(
+  @Body() Map<String, dynamic> body,
+);
 }
