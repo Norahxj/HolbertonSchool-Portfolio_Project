@@ -168,16 +168,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
+  void _clearErrors() {
+  titleError = null;
+  descriptionError = null;
+  pointsError = null;
+  categoryError = null;
+  frequencyError = null;
+  recurrenceDayError = null;
+  childError = null;
+}
   void _goToNextStep() {
-  setState(() {
-    childError = null;
-    categoryError = null;
-    titleError = null;
-    descriptionError = null;
-    pointsError = null;
-    frequencyError = null;
-    recurrenceDayError = null;
-  });
+  setState(_clearErrors);
 
   // الصفحة الأولى
   if (currentStep == 0) {
@@ -262,12 +263,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ),
                     _RoundBackButton(
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
+                        Navigator.pop(context);
                       },
                     ),
                   ],
@@ -886,22 +882,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     if (isLastStep) {
                       setState(() {
                         isSaving = true;
-
-                        titleError = null;
-                        descriptionError = null;
-                        pointsError = null;
-                        categoryError = null;
-                        frequencyError = null;
-                        recurrenceDayError = null;
-                        childError = null;
+                        _clearErrors();
                       });
-
                       try {
-                        print("Before API");
-                        print("recurrenceDay = $recurrenceDay");
-                        print("type = ${recurrenceDay.runtimeType}");
-
-
                         await _taskApiService.createTask({
                           "child_ids": selectedChildIds,
                           "title": taskNameController.text.trim(),
@@ -914,12 +897,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         });
 
                         if (!mounted) return;
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
+                        Navigator.pop(context, true);
                       } on DioException catch (e) {
                         final errors = e.response?.data["errors"];
 
@@ -948,12 +926,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                             currentStep = 0;
                           } else if (categoryError != null) {
                             currentStep = 1;
-                          } else if (titleError != null ||
-                              descriptionError != null ||
+                          } else if (titleError != null || descriptionError != null ||
                               pointsError != null) {
                             currentStep = 2;
-                          } else if (frequencyError != null ||
-                              recurrenceDayError != null) {
+                          } else if (frequencyError != null || recurrenceDayError != null) {
                             currentStep = 3;
                           }
                         });
