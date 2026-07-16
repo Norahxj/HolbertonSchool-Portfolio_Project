@@ -101,7 +101,7 @@ String? suggestionsError;
     'الجمعة',
     'السبت',
   ];
-  final List<int> monthlyDays = const [1, 5, 10, 15, 20, 25, 30];
+  final List<int> monthlyDays =List<int>.generate(31, (index) => index + 1);
   String get taskFrequency {
     switch (selectedFrequency) {
       case 0:
@@ -199,6 +199,87 @@ Future<void> _loadTaskSuggestions() async {
         isLoadingSuggestions = false;
       });
     }
+  }
+}
+Future<void> _showMonthlyDayPicker() async {
+  final selectedDay = await showModalBottomSheet<int>(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(24),
+      ),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'اختر يوم الشهر',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+
+              const SizedBox(height: AppSpacing.lg),
+
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 31,
+                gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1,
+                ),
+                itemBuilder: (context, index) {
+                  final day = index + 1;
+                  final isSelected = day == selectedMonthlyDay;
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      Navigator.pop(context, day);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '$day',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.primaryDark,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+
+  if (selectedDay != null) {
+    setState(() {
+      selectedMonthlyDay = selectedDay;
+    });
   }
 }
   @override
@@ -525,7 +606,7 @@ const SizedBox(height: AppSpacing.lg),
     taskPoints = suggestion.points;
     trustChild = suggestion.isAutoVerified;
 
-    currentStep = 2;
+    currentStep = 1;
   });
 },
 ),
@@ -1083,22 +1164,55 @@ const SizedBox(height: AppSpacing.lg),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: [
-                        for (final day in monthlyDays)
-                          _SelectableChip(
-                            label: '$day',
-                            isSelected: selectedMonthlyDay == day,
-                            onTap: () {
-                              setState(() {
-                                selectedMonthlyDay = day;
-                              });
-                            },
-                          ),
-                      ],
-                    ),
+                    
+  Center(
+  child: InkWell(
+    borderRadius: BorderRadius.circular(14),
+    onTap: _showMonthlyDayPicker,
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppColors.border,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.calendar_month_outlined,
+            size: 18,
+            color: AppColors.primaryDark,
+          ),
+
+          const SizedBox(width: AppSpacing.sm),
+
+          Text(
+            '$selectedMonthlyDay',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryDark,
+            ),
+          ),
+
+          const SizedBox(width: AppSpacing.xs),
+
+          const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            size: 18,
+            color: AppColors.primaryDark,
+          ),
+        ],
+      ),
+    ),
+  ),
+),
                   ],
                 )
               : null,
@@ -1219,18 +1333,16 @@ const SizedBox(height: AppSpacing.lg),
                           mapBackendError(getError(errors?["recurrence_day"])
                           );
 
-                          if (childError != null) {
-                            currentStep = 0;
-                          } else if (categoryError != null) {
-                            currentStep = 1;
-                          } else if (titleError != null ||
-                              descriptionError != null ||
-                              pointsError != null) {
-                            currentStep = 2;
-                          } else if (frequencyError != null ||
-                              recurrenceDayError != null) {
-                            currentStep = 3;
-                          }
+                          if (childError != null || categoryError != null) {
+  currentStep = 0;
+} else if (titleError != null ||
+    descriptionError != null ||
+    pointsError != null) {
+  currentStep = 1;
+} else if (frequencyError != null ||
+    recurrenceDayError != null) {
+  currentStep = 2;
+}
                         });
                       } finally {
                         if (mounted) {
