@@ -10,6 +10,7 @@ import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/task_api_service.dart';
 import 'package:frontend/services/child_api_service.dart';
 import 'parent_main_screen.dart';
+import 'package:frontend/models/task_suggestion_model.dart';
 // Add Task wizard (Screens 9-12).
 //
 // This first pass is static/placeholder only: every step just updates
@@ -31,6 +32,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   bool isLoadingChildren = true;
   bool isSubmitting = false;
   bool isSaving = false;
+  List<TaskSuggestionModel> taskSuggestions = [];
+bool isLoadingSuggestions = false;
+String? suggestionsError;
 
   int currentStep = 0;
 
@@ -159,7 +163,45 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       });
     }
   }
+Future<void> _loadTaskSuggestions() async {
+  if (selectedChildIds.isEmpty || selectedTaskType == null) {
+    return;
+  }
 
+  setState(() {
+    isLoadingSuggestions = true;
+    suggestionsError = null;
+    taskSuggestions = [];
+  });
+
+  try {
+    final suggestions = await _taskApiService.getTaskSuggestions({
+      'child_ids': selectedChildIds,
+      'category': category,
+      'lang': 'ar',
+    });
+
+    if (!mounted) return;
+
+    setState(() {
+      taskSuggestions = suggestions;
+    });
+  } on DioException catch (e) {
+    if (!mounted) return;
+
+    setState(() {
+      suggestionsError =
+          e.response?.data?['error']?.toString() ??
+          'تعذر تحميل المهام المقترحة';
+    });
+  } finally {
+    if (mounted) {
+      setState(() {
+        isLoadingSuggestions = false;
+      });
+    }
+  }
+}
   @override
   void dispose() {
     taskNameController.dispose();
@@ -391,6 +433,8 @@ const SizedBox(height: AppSpacing.md),
 _buildTaskTypeStep(),
 
 const SizedBox(height: AppSpacing.lg),
+
+const SizedBox(height: AppSpacing.lg),
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -414,43 +458,77 @@ const SizedBox(height: AppSpacing.lg),
 
         const SizedBox(height: AppSpacing.lg),
 
-        const Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            'إضافة سريعة',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
+        if (selectedTaskType != null) ...[
+  const Align(
+    alignment: Alignment.centerRight,
+    child: Text(
+      'إضافة سريعة',
+      style: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
+      ),
+    ),
+  ),
+
+  const SizedBox(height: AppSpacing.sm),
+
+  if (isLoadingSuggestions)
+    const Center(
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: CircularProgressIndicator(),
+      ),
+    )
+  else if (suggestionsError != null)
+    Column(
+      children: [
+        Text(
+          suggestionsError!,
+          style: const TextStyle(
+            color: Colors.red,
+            fontSize: 12,
           ),
         ),
+        TextButton(
+          onPressed: _loadTaskSuggestions,
+          child: const Text('إعادة المحاولة'),
+        ),
+      ],
+    )
+  else
+    _QuickAddCategory(
+  icon: selectedTaskType == 0
+      ? Icons.mosque_outlined
+      : selectedTaskType == 1
+          ? Icons.shopping_bag_outlined
+          : selectedTaskType == 2
+              ? Icons.menu_book_outlined
+              : Icons.credit_card,
+  label: selectedTaskType == 0
+      ? 'المهام الثقافية'
+      : selectedTaskType == 1
+          ? 'المهام اليومية'
+          : selectedTaskType == 2
+              ? 'المهام الدينية'
+              : 'المهام المالية',
+  suggestions: taskSuggestions,
+  onSuggestionTap: (suggestion) {
+  setState(() {
+    taskNameController.text = suggestion.title;
+    taskDescriptionController.text = suggestion.description;
+    taskPoints = suggestion.points;
+    trustChild = suggestion.isAutoVerified;
 
-        const SizedBox(height: AppSpacing.sm),
+    currentStep = 2;
+  });
+},
+),
+],
 
-        const _QuickAddCategory(
-          icon: Icons.shopping_bag_outlined,
-          label: 'المهام اليومية',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        const _QuickAddCategory(
-          icon: Icons.mosque_outlined,
-          label: 'المهام الثقافية',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        const _QuickAddCategory(
-          icon: Icons.credit_card,
-          label: 'المهام المالية',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        const _QuickAddCategory(
-          icon: Icons.menu_book_outlined,
-          label: 'المهام الدينية',
-        ),
       ],
     );
   }
-
   // ---- Step 1: task type ----
 
   Widget _buildTaskTypeStep() {
@@ -465,12 +543,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 0,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-                  setState(() {
-                    selectedTaskType = 0;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
+  setState(() {
+    selectedTaskType = 0;
+    categoryError = null;
+  });
+
+  _loadTaskSuggestions();
+},
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -481,12 +560,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 1,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-                  setState(() {
-                    selectedTaskType = 1;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
+  setState(() {
+    selectedTaskType = 1;
+    categoryError = null;
+  });
+
+  _loadTaskSuggestions();
+},
               ),
             ),
           ],
@@ -503,12 +583,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 2,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-                  setState(() {
-                    selectedTaskType = 2;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
+  setState(() {
+    selectedTaskType = 2;
+    categoryError = null;
+  });
+
+  _loadTaskSuggestions();
+},
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -519,12 +600,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 3,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-                  setState(() {
-                    selectedTaskType = 3;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
+  setState(() {
+    selectedTaskType = 3;
+    categoryError = null;
+  });
+
+  _loadTaskSuggestions();
+},
               ),
             ),
           ],
@@ -543,6 +625,167 @@ const SizedBox(height: AppSpacing.lg),
       ],
     );
   }
+  Widget _buildTaskSuggestionsSection() {
+  if (selectedTaskType == null) {
+    return const SizedBox.shrink();
+  }
+
+  if (isLoadingSuggestions) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  if (suggestionsError != null) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Column(
+        children: [
+          Text(
+            suggestionsError!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.red,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          TextButton(
+            onPressed: _loadTaskSuggestions,
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  if (taskSuggestions.isEmpty) {
+    return const SizedBox.shrink();
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      const Align(
+        alignment: Alignment.centerRight,
+        child: Text(
+          'مهام مقترحة',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ),
+
+      const SizedBox(height: AppSpacing.xs),
+
+      const Text(
+        'اضغط على المهمة التي تناسبك',
+        textAlign: TextAlign.right,
+        style: TextStyle(
+          fontSize: 12,
+          color: AppColors.textSecondary,
+        ),
+      ),
+
+      const SizedBox(height: AppSpacing.md),
+
+      ...taskSuggestions.map(
+        (suggestion) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              setState(() {
+                taskNameController.text = suggestion.title;
+                taskDescriptionController.text = suggestion.description;
+                taskPoints = suggestion.points;
+                trustChild = suggestion.isAutoVerified;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.border,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 16,
+                    color: AppColors.primary,
+                  ),
+
+                  const SizedBox(width: AppSpacing.sm),
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          suggestion.title,
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+
+                        const SizedBox(height: 4),
+
+                        Text(
+                          suggestion.description,
+                          textAlign: TextAlign.right,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+
+                        const SizedBox(height: AppSpacing.xs),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              '${suggestion.points} نقطة',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryDark,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.auto_awesome,
+                              size: 14,
+                              color: AppColors.gold,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
   // ---- Step 2: task details ----
 
@@ -1148,8 +1391,15 @@ class _ChildChip extends StatelessWidget {
 class _QuickAddCategory extends StatelessWidget {
   final IconData icon;
   final String label;
+  final List<TaskSuggestionModel> suggestions;
+  final ValueChanged<TaskSuggestionModel> onSuggestionTap;
 
-  const _QuickAddCategory({required this.icon, required this.label});
+  const _QuickAddCategory({
+    required this.icon,
+    required this.label,
+    required this.suggestions,
+    required this.onSuggestionTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1168,30 +1418,87 @@ class _QuickAddCategory extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Icon(icon, color: AppColors.primaryDark, size: 18),
+            Icon(
+              icon,
+              color: AppColors.primaryDark,
+              size: 18,
+            ),
           ],
         ),
+
         const SizedBox(height: AppSpacing.sm),
+
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.md,
           ),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
+            border: Border.all(
+              color: AppColors.border,
+            ),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Text(
-            'ستظهر هنا المهام المقترحة',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-          ),
+          child: suggestions.isEmpty
+              ? const Text(
+                  'لا توجد مهام مقترحة حاليًا',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                )
+              : Column(
+                  children: [
+                    for (int i = 0; i < suggestions.length; i++) ...[
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          onSuggestionTap(suggestions[i]);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.sm,
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.add_circle_outline,
+                                size: 18,
+                                color: AppColors.primary,
+                              ),
+
+                              const SizedBox(width: AppSpacing.sm),
+
+                              Expanded(
+                                child: Text(
+                                  suggestions[i].title,
+                                  textAlign: TextAlign.right,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      if (i != suggestions.length - 1)
+                        const Divider(
+                          height: 1,
+                          color: AppColors.border,
+                        ),
+                    ],
+                  ],
+                ),
         ),
       ],
     );
   }
 }
-
 // One selectable task-type card shown on Step 1, arranged in a 2x2 grid.
 class _TaskTypeCard extends StatelessWidget {
   final IconData icon;
