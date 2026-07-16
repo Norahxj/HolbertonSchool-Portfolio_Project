@@ -259,18 +259,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                       ),
                     ),
-                    _RoundBackButton(
-                      onTap: () {
-                        Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(
-    builder: (_) => const ParentMainScreen(
-      initialIndex: 2,
-    ),
-  ),
-);
-                      },
-                    ),
+                    
                   ],
                 ),
 

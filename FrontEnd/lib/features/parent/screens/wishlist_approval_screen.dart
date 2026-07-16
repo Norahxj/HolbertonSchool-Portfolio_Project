@@ -131,16 +131,6 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
                         ),
                       ),
                     ),
-                    _RoundBackButton(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
-                      },
-                    ),
                   ],
                 ),
 
