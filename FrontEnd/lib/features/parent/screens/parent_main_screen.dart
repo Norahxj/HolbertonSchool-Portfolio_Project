@@ -72,6 +72,8 @@ class _ParentBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic =
+    Directionality.of(context) == TextDirection.rtl;
     return SafeArea(
       top: false,
       child: SizedBox(
@@ -100,26 +102,26 @@ class _ParentBottomNavBar extends StatelessWidget {
                   children: [
                     _NavItem(
                       icon: Icons.list_alt,
-                      label: 'المهام',
+                      label: isArabic ? 'المهام' : 'Tasks',
                       isSelected: currentIndex == 0,
                       onTap: () => onTap(0),
                     ),
                     _NavItem(
                       icon: Icons.card_giftcard_outlined,
-                      label: 'المكافآت',
+                      label: isArabic ? 'المكافآت' : 'Rewards',
                       isSelected: currentIndex == 1,
                       onTap: () => onTap(1),
                     ),
                     const SizedBox(width: 56),
                     _NavItem(
                       icon: Icons.favorite_border,
-                      label: 'الأمنيات',
+                      label: isArabic ? 'الأمنيات' : 'Wishes',
                       isSelected: currentIndex == 3,
                       onTap: () => onTap(3),
                     ),
                     _NavItem(
                       icon: Icons.more_horiz,
-                      label: 'المزيد',
+                      label: isArabic ? 'المزيد' : 'More',
                       isSelected: currentIndex == 4,
                       onTap: () => onTap(4),
                     ),
@@ -164,7 +166,7 @@ class _ParentBottomNavBar extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'الرئيسية',
+                        isArabic ? 'الرئيسية' : 'Home',
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
