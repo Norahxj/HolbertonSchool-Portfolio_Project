@@ -9,12 +9,13 @@ import 'child_rewards_screen.dart';
 import 'child_task_details_screen.dart';
 import 'child_wishlist_screen.dart';
 import '../../../core/storage/secure_storage.dart';
+import '../../../models/task_assignment_model.dart';
+import '../../../services/task_api_service.dart';
+import '../../../services/point_api_service.dart';
 
 // Child Home Dashboard screen (Screen 21).
 //
-// This first pass is static/placeholder only: the child's name, points
-// balance, and today's tasks are all hardcoded. No backend calls happen
-// here yet.
+
 class ChildHomeScreen extends StatefulWidget {
   const ChildHomeScreen({super.key});
   
@@ -24,136 +25,246 @@ class ChildHomeScreen extends StatefulWidget {
 }
 
 class _ChildHomeScreenState extends State<ChildHomeScreen> {
-  ChildModel? child;
+int _currentTab = 0;
+
+ChildModel? _child;
+List<TaskAssignmentModel> _assignments = [];
+int _points = 0;
+bool _isLoading = true;
+String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadChild();
+    _loadData();
   }
 
-  Future<void> _loadChild() async {
-    final data = await SecureStorage.getChild();
+  Future<void> _loadData() async {
+  setState(() {
+    _isLoading = true;
+    _error = null;
+  });
+
+  try {
+    final child = await SecureStorage.getChild();
+    final assignments = await TaskApiService().getMyAssignments();
+    final points = await PointApiService().getMyPoints();
+
+    if (!mounted) return;
 
     setState(() {
-      child = data;
+      _child = child;
+      _assignments = assignments;
+      _points = points;
+      _isLoading = false;
+    });
+  } catch (e) {
+    if (!mounted) return;
+
+    setState(() {
+      _error = e.toString();
+      _isLoading = false;
     });
   }
+}
 
   @override
-  Widget build(BuildContext context) {
-    if (child == null) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: AppColors.background,
+    body: IndexedStack(
+      index: _currentTab,
+      children: [
+        _buildHomeTab(),
+        const ChildWishlistScreen(),
+        const ChildRewardsScreen(),
+        const ChildProgressScreen(),
+      ],
+    ),
+    bottomNavigationBar: _BottomNavBar(
+      currentIndex: _currentTab,
+      onTap: (index) {
+        setState(() {
+          _currentTab = index;
+        });
+      },
+    ),
+  );
+}
+// Purple gradient header: greeting, avatar, and the Noor points card.
+Widget _buildHomeTab() {
+  if (_isLoading) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  if (_error != null) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.error_outline,
+            color: AppColors.error,
+            size: 48,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'حدث خطأ أثناء تحميل البيانات',
+            style: AppTextStyles.arabicTitle,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          TextButton(
+            onPressed: _loadData,
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
       ),
     );
-    }
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-         _HomeHeader(child: child!),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Text(
-                          '3/5',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryDark,
-                          ),
+  }
+
+  return Column(
+    children: [
+      _HomeHeader(
+        childName: _child?.name ?? '',
+        points: _points,
+      ),
+      Expanded(
+        child: RefreshIndicator(
+          onRefresh: _loadData,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        '${_assignments.where((assignment) {
+                          final status = assignment.status.toLowerCase();
+                          return status == 'approved' || status == 'pending_review';
+                        }).length}/${_assignments.length}',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryDark,
                         ),
                       ),
-                      Text('مهام اليوم', style: AppTextStyles.arabicTitle),
-                    ],
-                  ),
+                    ),
+                    Text(
+                      'مهام اليوم',
+                      style: AppTextStyles.arabicTitle,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                if (_assignments.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    child: Text(
+                      'لا توجد مهام اليوم 🎉',
+                      style: AppTextStyles.body,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                else
+                  ..._assignments.map(
+                    (assignment) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: AppSpacing.md,
+                        ),
+                        child: _AssignmentCard(
+                          assignment: assignment,
+                          onComplete: assignment.status.toLowerCase() == 'pending'
+                              ? () async {
+                                  try {
+                                    await TaskApiService()
+                                        .completeAssignment(assignment.id);
+                                    await _loadData();
+                                  } catch (e) {
+                                    if (!mounted) return;
 
-                  const SizedBox(height: AppSpacing.md),
-
-                  const _TaskCard(
-                    title: 'الصلاة في وقتها',
-                    points: 10,
-                    statusText: 'معتمدة تلقائيًا',
-                    statusColor: AppColors.success,
-                    borderColor: Color(0xFFBFE3C6),
-                    circleColor: AppColors.success,
-                    circleIcon: Icons.check,
-                    taskIcon: Icons.mosque,
-                  ),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  _TaskCard(
-                    title: 'ترتيب السرير',
-                    points: 5,
-                    statusText: 'بانتظار المراجعة',
-                    statusColor: const Color(0xFFC08A3E),
-                    borderColor: const Color(0xFFF0DFA8),
-                    circleColor: AppColors.gold,
-                    circleIcon: Icons.access_time,
-                    taskIcon: Icons.king_bed_outlined,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ChildTaskDetailsScreen(
-                            title: 'ترتيب السرير',
-                            points: 5,
-                            description:
-                                'رتّب سريرك في الصباح قبل الذهاب للمدرسة.',
-                            frequencyLabel: 'يوميًا',
-                            icon: Icons.king_bed_outlined,
-                          ),
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'تعذر إكمال المهمة',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              : null,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChildTaskDetailsScreen(
+                                  title: assignment.task.title,
+                                  points: assignment.task.points,
+                                  description:
+                                      assignment.task.description,
+                                  frequencyLabel:
+                                      assignment.task.taskFrequency,
+                                  icon: _categoryIcon(
+                                    assignment.task.category,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },
                   ),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  const _TaskCard(
-                    title: 'توفير مصروفي',
-                    points: 10,
-                    statusText: 'مرفوضة',
-                    statusColor: AppColors.error,
-                    borderColor: Color(0xFFF0B8B8),
-                    circleColor: AppColors.error,
-                    circleIcon: Icons.close,
-                    taskIcon: Icons.credit_card,
-                  ),
-                ],
-              ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
-    );
-  }
+    ],
+  );
 }
 
-// Purple gradient header: greeting, avatar, and the Noor points card.
-class _HomeHeader extends StatelessWidget {
-  final ChildModel child;
+IconData _categoryIcon(String? category) {
+  switch (category?.toLowerCase()) {
+    case 'religious':
+      return Icons.mosque;
 
-  const _HomeHeader({required this.child});
+    case 'financial':
+      return Icons.credit_card;
+
+    case 'moral':
+      return Icons.volunteer_activism;
+
+    case 'social':
+      return Icons.groups;
+
+    default:
+      return Icons.task_alt;
+  }
+}
+}
+class _HomeHeader extends StatelessWidget {
+  final String childName;
+  final int points;
+
+  const _HomeHeader({
+    required this.childName,
+    required this.points,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +299,7 @@ class _HomeHeader extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '✦ ${child.name}',
+                          '✦ $childName',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
@@ -226,7 +337,7 @@ class _HomeHeader extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Expanded(
+                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -239,7 +350,7 @@ class _HomeHeader extends StatelessWidget {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            '240 نقطة',
+                            '$points نقطة',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -268,58 +379,101 @@ class _HomeHeader extends StatelessWidget {
 // One task card for the "مهام اليوم" list. Same shape is reused for
 // completed, pending, and rejected tasks, just with different colors,
 // icons, and status text passed in.
-class _TaskCard extends StatelessWidget {
-  final String title;
-  final int points;
-  final String statusText;
-  final Color statusColor;
-  final Color borderColor;
-  final Color circleColor;
-  final IconData circleIcon;
-  final IconData taskIcon;
+class _AssignmentCard extends StatelessWidget {
+  final TaskAssignmentModel assignment;
+  final VoidCallback? onComplete;
   final VoidCallback? onTap;
 
-  const _TaskCard({
-    required this.title,
-    required this.points,
-    required this.statusText,
-    required this.statusColor,
-    required this.borderColor,
-    required this.circleColor,
-    required this.circleIcon,
-    required this.taskIcon,
+  const _AssignmentCard({
+    required this.assignment,
+    this.onComplete,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final status = assignment.status.toLowerCase();
+
+    late final Color statusColor;
+    late final Color borderColor;
+    late final Color circleColor;
+    late final IconData circleIcon;
+    late final String statusText;
+
+    switch (status) {
+      case 'approved':
+        statusColor = AppColors.success;
+        borderColor = const Color(0xFFBFE3C6);
+        circleColor = AppColors.success;
+        circleIcon = Icons.check;
+        statusText = 'معتمدة';
+        break;
+
+      case 'pending_review':
+        statusColor = const Color(0xFFC08A3E);
+        borderColor = const Color(0xFFF0DFA8);
+        circleColor = AppColors.gold;
+        circleIcon = Icons.access_time;
+        statusText = 'بانتظار المراجعة';
+        break;
+
+      case 'rejected':
+        statusColor = AppColors.error;
+        borderColor = const Color(0xFFF0B8B8);
+        circleColor = AppColors.error;
+        circleIcon = Icons.close;
+        statusText = 'مرفوضة';
+        break;
+
+      case 'pending':
+      default:
+        statusColor = AppColors.primary;
+        borderColor = AppColors.primaryLight;
+        circleColor = AppColors.primary;
+        circleIcon = Icons.radio_button_unchecked;
+        statusText = 'لم تُنجز بعد';
+        break;
+    }
+
     final card = Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor, width: 1.5),
+        border: Border.all(
+          color: borderColor,
+          width: 1.5,
+        ),
       ),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: circleColor,
-              shape: BoxShape.circle,
+          GestureDetector(
+            onTap: status == 'pending' ? onComplete : null,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: circleColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                circleIcon,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
-            child: Icon(circleIcon, color: Colors.white, size: 18),
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    title,
+                    assignment.task.title,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -328,7 +482,7 @@ class _TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '$points نقاط ✦ $statusText',
+                    '${assignment.task.points} نقاط ✦ $statusText',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -346,29 +500,78 @@ class _TaskCard extends StatelessWidget {
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(taskIcon, color: AppColors.primaryDark, size: 20),
+            child: Icon(
+              _categoryIcon(assignment.task.category),
+              color: AppColors.primaryDark,
+              size: 20,
+            ),
           ),
         ],
       ),
     );
 
-    // Only wrap the card in a GestureDetector when there is something to
-    // do on tap. Cards with no onTap are shown as plain, non-tappable
-    // cards, same as before.
     if (onTap == null) {
       return card;
     }
-    return GestureDetector(onTap: onTap, child: card);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: card,
+    );
+  }
+
+  IconData _categoryIcon(String? category) {
+    switch (category?.toLowerCase()) {
+      case 'religious':
+        return Icons.mosque;
+
+      case 'financial':
+        return Icons.credit_card;
+
+      case 'moral':
+        return Icons.volunteer_activism;
+
+      case 'social':
+        return Icons.groups;
+
+      default:
+        return Icons.task_alt;
+    }
   }
 }
 
 // Bottom navigation bar for the child screens. Simpler than the parent
 // one: just 4 plain items in a row, no floating center button.
 class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  const _BottomNavBar({
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    const items = [
+      _NavItem(
+        icon: Icons.home_rounded,
+        label: 'الرئيسية',
+      ),
+      _NavItem(
+        icon: Icons.favorite_border,
+        label: 'أمنياتي',
+      ),
+      _NavItem(
+        icon: Icons.card_giftcard_outlined,
+        label: 'المكافآت',
+      ),
+      _NavItem(
+        icon: Icons.bar_chart_rounded,
+        label: 'تقدّمي',
+      ),
+    ];
+
     return SafeArea(
       top: false,
       child: Container(
@@ -385,53 +588,17 @@ class _BottomNavBar extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildProgressScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.bar_chart_rounded,
-                label: 'تقدّمي',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.card_giftcard_outlined,
-                label: 'المكافآت',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildWishlistScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.favorite_border,
-                label: 'أمنياتي',
-              ),
-            ),
-            const _NavItem(
-              icon: Icons.home_rounded,
-              label: 'الرئيسية',
-              isActive: true,
-            ),
-          ],
+          children: List.generate(
+            items.length,
+            (index) {
+              return GestureDetector(
+                onTap: () => onTap(index),
+                child: items[index].build(
+                  isActive: currentIndex == index,
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -439,31 +606,38 @@ class _BottomNavBar extends StatelessWidget {
 }
 
 // One icon + label pair inside the bottom navigation bar.
-class _NavItem extends StatelessWidget {
+class _NavItem {
   final IconData icon;
   final String label;
-  final bool isActive;
 
   const _NavItem({
     required this.icon,
     required this.label,
-    this.isActive = false,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    final color = isActive ? AppColors.primary : AppColors.textSecondary;
+  Widget build({
+    required bool isActive,
+  }) {
+    final color = isActive
+        ? AppColors.primary
+        : AppColors.textSecondary;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: color, size: 22),
+        Icon(
+          icon,
+          color: color,
+          size: 22,
+        ),
         const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
             fontSize: 10,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            fontWeight: isActive
+                ? FontWeight.bold
+                : FontWeight.normal,
             color: color,
           ),
         ),

@@ -66,6 +66,31 @@ abstract class ApiService {
   @Body() Map<String, dynamic> body,
 );  
 
+// Task Assignments
+
+@GET('/task-assignments/my')
+Future<HttpResponse<dynamic>> getMyAssignments();
+
+@PUT('/task-assignments/{assignmentId}/complete')
+Future<HttpResponse<dynamic>> completeAssignment(
+  @Path('assignmentId') String assignmentId,
+);
+
+@PUT('/task-assignments/{assignmentId}/approve')
+Future<HttpResponse<dynamic>> approveAssignment(
+  @Path('assignmentId') String assignmentId,
+);
+
+@PUT('/task-assignments/{assignmentId}/reject')
+Future<HttpResponse<dynamic>> rejectAssignment(
+  @Path('assignmentId') String assignmentId,
+);
+
+@GET('/task-assignments/task/{taskId}')
+Future<HttpResponse<dynamic>> getAssignmentsForTask(
+  @Path('taskId') String taskId,
+);
+
   /// whish
 
   @POST('/wishlists/')
@@ -96,4 +121,66 @@ Future<HttpResponse<dynamic>> achieveWish(
 Future<HttpResponse<dynamic>> deleteWish(
   @Path('wishId') String wishId,
 );
+// Points
+
+@GET('/points/my')
+Future<HttpResponse<dynamic>> getMyPoints();
+
+@GET('/points/child/{childId}')
+Future<HttpResponse<dynamic>> getChildPoints(
+  @Path('childId') String childId,
+);
+// Daily Feedback
+
+@POST('/daily-feedback/')
+Future<HttpResponse<dynamic>> createDailyFeedback(
+  @Body() Map<String, dynamic> body,
+);
+
+@GET('/daily-feedback/child/{childId}')
+Future<HttpResponse<dynamic>> getDailyFeedbackForChild(
+  @Path('childId') String childId,
+);
+
+@GET('/daily-feedback/today/{childId}')
+Future<HttpResponse<dynamic>> getTodayFeedback(
+  @Path('childId') String childId,
+);
+
+@GET('/daily-feedback/my')
+Future<HttpResponse<dynamic>> getMyDailyFeedback();
+
+@PUT('/daily-feedback/{feedbackId}')
+Future<HttpResponse<dynamic>> updateDailyFeedback(
+  @Path('feedbackId') String feedbackId,
+  @Body() Map<String, dynamic> body,
+);
+// Rewards
+
+@POST('/rewards/')
+Future<HttpResponse<dynamic>> createReward(
+  @Body() Map<String, dynamic> body,
+);
+
+@GET('/rewards/child/{childId}')
+Future<HttpResponse<dynamic>> getRewardsForChild(
+  @Path('childId') String childId,
+);
+
+@GET('/rewards/my')
+Future<HttpResponse<dynamic>> getMyRewards();
+
+@PUT('/rewards/{rewardId}/claim')
+Future<HttpResponse<dynamic>> claimReward(
+  @Path('rewardId') String rewardId,
+);
+
+@DELETE('/rewards/{rewardId}')
+Future<HttpResponse<dynamic>> deleteReward(
+  @Path('rewardId') String rewardId,
+);
+// Reward Bank
+
+@GET('/reward-bank/')
+Future<HttpResponse<dynamic>> getRewardBankSuggestions();
 }
