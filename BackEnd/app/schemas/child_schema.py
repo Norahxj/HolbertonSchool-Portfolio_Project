@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, ValidationError, validates_schema
 from app.utils.datetime_utils import riyadh_today
 from app.schemas.auth_schema import phone_validator
+import re
 
 def birth_date_validator(value):
     today = riyadh_today()
@@ -19,6 +20,8 @@ def validate_child_name(value):
         raise ValidationError("Child name must be at least 2 characters long.")
     if len(cleaned_value) > 100:
         raise ValidationError("Child name must not exceed 100 characters.")
+    if not re.fullmatch(r"[A-Za-z\u0600-\u06FF ]+", cleaned_value):
+        raise ValidationError("Child name must contain letters only.")
 
 class ChildResponseSchema(Schema):
     id = fields.String()

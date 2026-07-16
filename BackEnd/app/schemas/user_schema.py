@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError, validates_schema
 from app.schemas.auth_schema import validate_email_domain, phone_validator, validate_password
+import re
 
 class UserResponseSchema(Schema):
     id = fields.String()
@@ -25,6 +26,8 @@ class UserUpdateSchema(Schema):
             raise ValidationError("First name must be at least 2 characters long.")
         if len(cleaned_value) > 50:
             raise ValidationError("First name must not exceed 50 characters.")
+        if not re.fullmatch(r"[A-Za-z\u0600-\u06FF ]+", cleaned_value):
+            raise ValidationError("First name must contain letters only.")
         
     @validates("last_name")
     def validate_last_name(self, value, **kwargs):
@@ -33,6 +36,8 @@ class UserUpdateSchema(Schema):
             raise ValidationError("Last name must be at least 2 characters long.")
         if len(cleaned_value) > 50:
             raise ValidationError("Last name must not exceed 50 characters.")
+        if not re.fullmatch(r"[A-Za-z\u0600-\u06FF ]+", cleaned_value):
+            raise ValidationError("Last name must contain letters only.")
         
     @validates_schema
     def validate_at_least_one_field(self, data, **kwargs):
