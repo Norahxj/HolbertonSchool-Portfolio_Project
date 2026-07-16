@@ -9,8 +9,7 @@ import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/task_api_service.dart';
 import 'package:frontend/services/child_api_service.dart';
-import 'parent_dashboard_screen.dart';
-
+import 'parent_main_screen.dart';
 // Add Task wizard (Screens 9-12).
 //
 // This first pass is static/placeholder only: every step just updates
@@ -263,11 +262,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     _RoundBackButton(
                       onTap: () {
                         Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
+  context,
+  MaterialPageRoute(
+    builder: (_) => const ParentMainScreen(
+      initialIndex: 2,
+    ),
+  ),
+);
                       },
                     ),
                   ],
@@ -915,11 +916,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
                         if (!mounted) return;
                         Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
+  context,
+  MaterialPageRoute(
+    builder: (_) => const ParentMainScreen(
+      initialIndex: 2,
+    ),
+  ),
+);
                       } on DioException catch (e) {
                         final errors = e.response?.data["errors"];
 
