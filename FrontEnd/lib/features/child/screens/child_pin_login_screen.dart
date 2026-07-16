@@ -8,7 +8,8 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../services/auth_api_service.dart';
 import 'child_home_screen.dart';
-import 'package:frontend/services/auth_api_service.dart';
+import '../../../core/widgets/app_back_button.dart';
+import 'package:flutter/services.dart';
 
 // Child PIN Login screen (Screen 20).
 //
@@ -30,6 +31,8 @@ class _ChildPinLoginScreenState
   String pin = '';
   bool isLoading = false;
   String? errorMessage;
+  final TextEditingController _pinController = TextEditingController();
+final FocusNode _pinFocusNode = FocusNode();
 
   Future<void> _loginChild() async {
   if (pin.length != 6) {
@@ -45,9 +48,9 @@ class _ChildPinLoginScreenState
   });
 
   try {
-    final response = await AuthApiService().childLogin(
-      accessCode: pin,
-    );
+    await AuthApiService().childLogin(
+  accessCode: pin,
+);
     
     Navigator.pushReplacement(
       context,
@@ -69,25 +72,15 @@ class _ChildPinLoginScreenState
   }
 }
 
-  void _addDigit(String digit) {
-    // A pin code here is always 6 digits, so ignore taps after that.
-    if (pin.length >= 6) {
-      return;
-    }
-    setState(() {
-      pin = pin + digit;
-    });
-  }
+  
 
-  void _removeDigit() {
-    if (pin.isEmpty) {
-      return;
-    }
-    setState(() {
-      pin = pin.substring(0, pin.length - 1);
-    });
-  }
-
+  
+@override
+void dispose() {
+  _pinController.dispose();
+  _pinFocusNode.dispose();
+  super.dispose();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,10 +89,15 @@ class _ChildPinLoginScreenState
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
-              children: [
-                const SizedBox(height: AppSpacing.md),
+  children: [
+    const Align(
+  alignment: Alignment.centerRight,
+  child: AppBackButton(),
+),
 
-                Container(
+    const SizedBox(height: AppSpacing.lg),
+
+    Container(
                   width: 72,
                   height: 72,
                   decoration: const BoxDecoration(
@@ -141,13 +139,49 @@ class _ChildPinLoginScreenState
 
                 const SizedBox(height: AppSpacing.sm),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    for (int i = 0; i < 6; i++)
-                      _PinBox(digit: i < pin.length ? pin[i] : ''),
-                  ],
-                ),
+                Stack(
+  children: [
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        for (int i = 0; i < 6; i++)
+          _PinBox(digit: i < pin.length ? pin[i] : ''),
+      ],
+    ),
+
+    Positioned.fill(
+      child: Opacity(
+        opacity: 0,
+        child: TextField(
+          controller: _pinController,
+          focusNode: _pinFocusNode,
+          keyboardType: TextInputType.number,
+          textInputAction: TextInputAction.done,
+          maxLength: 6,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(6),
+          ],
+          onChanged: (value) {
+            setState(() {
+              pin = value;
+              errorMessage = null;
+            });
+          },
+          onSubmitted: (_) {
+            if (pin.length == 6) {
+              _loginChild();
+            }
+          },
+          decoration: const InputDecoration(
+            counterText: '',
+            border: InputBorder.none,
+          ),
+        ),
+      ),
+    ),
+  ],
+),
 
                 if (pin.length == 6) ...[
                   const SizedBox(height: AppSpacing.lg),
@@ -164,8 +198,6 @@ class _ChildPinLoginScreenState
                    ),
                    const SizedBox(height: AppSpacing.md),
                 ],
-
-                _Keypad(onDigitTap: _addDigit, onBackspaceTap: _removeDigit),
 
                 const SizedBox(height: AppSpacing.xl),
 
@@ -279,112 +311,3 @@ class _RecognizedBanner extends StatelessWidget {
   }
 }
 
-// The 4x3 number keypad. Reports every tap upward through the two
-// callbacks it is given, instead of holding the pin itself.
-class _Keypad extends StatelessWidget {
-  final ValueChanged<String> onDigitTap;
-  final VoidCallback onBackspaceTap;
-
-  const _Keypad({required this.onDigitTap, required this.onBackspaceTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _KeypadRow(onDigitTap: onDigitTap, labels: const ['3', '2', '1']),
-        const SizedBox(height: AppSpacing.sm),
-        _KeypadRow(onDigitTap: onDigitTap, labels: const ['6', '5', '4']),
-        const SizedBox(height: AppSpacing.sm),
-        _KeypadRow(onDigitTap: onDigitTap, labels: const ['9', '8', '7']),
-        const SizedBox(height: AppSpacing.sm),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _BackspaceKey(onTap: onBackspaceTap),
-            _DigitKey(label: '0', onTap: () => onDigitTap('0')),
-            const SizedBox(width: 84, height: 60),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-// One row of 3 number keys, built from a list of labels.
-class _KeypadRow extends StatelessWidget {
-  final List<String> labels;
-  final ValueChanged<String> onDigitTap;
-
-  const _KeypadRow({required this.labels, required this.onDigitTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        for (final label in labels)
-          _DigitKey(label: label, onTap: () => onDigitTap(label)),
-      ],
-    );
-  }
-}
-
-// One number key on the keypad.
-class _DigitKey extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _DigitKey({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 84,
-        height: 60,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// The backspace key at the bottom-left of the keypad.
-class _BackspaceKey extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _BackspaceKey({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 84,
-        height: 60,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const Icon(
-          Icons.backspace_outlined,
-          color: AppColors.textSecondary,
-          size: 20,
-        ),
-      ),
-    );
-  }
-}
