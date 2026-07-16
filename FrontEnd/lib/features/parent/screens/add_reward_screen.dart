@@ -76,6 +76,7 @@ void initState() {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
+                  textDirection: TextDirection.ltr,
                   children: [
                     Expanded(
                       child: Center(

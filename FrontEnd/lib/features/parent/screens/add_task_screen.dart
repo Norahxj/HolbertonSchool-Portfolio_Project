@@ -1046,6 +1046,7 @@ const SizedBox(height: AppSpacing.lg),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
+                  textDirection: TextDirection.ltr,
                   children: [
                     const Text(
                       'هل تثق بجدية طفلك في هذه المهمة؟',
