@@ -80,4 +80,19 @@ Future<List<TaskAssignmentModel>> getAssignmentsForTask(
       )
       .toList();
 }
+Future<List<TaskAssignmentModel>> getAssignmentsForChild(
+  String childId,
+) async {
+  final response = await _apiService.getAssignmentsForChild(childId);
+
+  final List<dynamic> data = response.data as List<dynamic>;
+
+  return data
+      .map(
+        (json) => TaskAssignmentModel.fromJson(
+          json as Map<String, dynamic>,
+        ),
+      )
+      .toList();
+}
 }

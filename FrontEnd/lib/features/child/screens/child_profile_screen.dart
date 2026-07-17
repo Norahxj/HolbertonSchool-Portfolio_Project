@@ -5,11 +5,13 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../models/child_model.dart';
+import '../../../models/task_assignment_model.dart';
+import '../../../services/task_api_service.dart';
 // Child Profile / Tasks screen (Screen 6).
 //
 // This first pass is static/placeholder only: the child's name, age,
 // progress, join code, and tasks are all hardcoded. No backend calls here.
-class ChildProfileScreen extends StatelessWidget {
+class ChildProfileScreen  extends StatefulWidget {
   final ChildModel child;
   final ChildDashboardModel dashboard;
 
@@ -20,42 +22,106 @@ class ChildProfileScreen extends StatelessWidget {
   });
 
   @override
+State<ChildProfileScreen> createState() =>
+    _ChildProfileScreenState();
+}
+class _ChildProfileScreenState
+    extends State<ChildProfileScreen> {
+  late Future<List<TaskAssignmentModel>> _assignmentsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _assignmentsFuture =
+        TaskApiService().getAssignmentsForChild(
+      widget.child.id,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          _ProfileHeader(child: child),
+          _ProfileHeader(child: widget.child),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 children: [
                   _WeeklyProgressCard(
-                    progress: dashboard.progressPercentage,
-                    approvedTasks: dashboard.approvedTasks,
-                    totalTasks: dashboard.totalTasks,
+                    progress: widget.dashboard.progressPercentage,
+approvedTasks: widget.dashboard.approvedTasks,
+totalTasks: widget.dashboard.totalTasks,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  _JoinCodeCard(child: child),
+                  _JoinCodeCard(child: widget.child),
                   const SizedBox(height: AppSpacing.lg),
                   const _TasksHeader(),
                   const SizedBox(height: AppSpacing.md),
-                  const _TaskItem(
-                    label: 'الصلاة في وقتها',
-                    icon: Icons.mosque,
-                    isDone: true,
-                  ),
-                  const _TaskItem(
-                    label: 'قراءة القرآن',
-                    icon: Icons.menu_book_outlined,
-                    isDone: true,
-                  ),
-                  const _TaskItem(
-                    label: 'ترتيب السرير',
-                    icon: Icons.king_bed_outlined,
-                    isDone: false,
-                  ),
+                  FutureBuilder<List<TaskAssignmentModel>>(
+  future: _assignmentsFuture,
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Padding(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (snapshot.hasError) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'تعذر تحميل المهام',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textSecondary,
+          ),
+        ),
+      );
+    }
+
+    final assignments = snapshot.data ?? [];
+
+    if (assignments.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'لا توجد مهام لهذا الطفل',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textSecondary,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: assignments.map((assignment) {
+        return _TaskItem(
+          label: assignment.task.title,
+          icon: _getTaskIcon(assignment.task.category),
+          isDone: assignment.status.toUpperCase() == 'APPROVED',
+        );
+      }).toList(),
+    );
+  },
+),
                 ],
               ),
             ),
@@ -64,7 +130,29 @@ class ChildProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+  
+
+  IconData _getTaskIcon(String? category) {
+    switch (category?.toUpperCase()) {
+      case 'RELIGIOUS':
+        return Icons.mosque_outlined;
+
+      case 'FINANCIAL':
+        return Icons.credit_card_outlined;
+
+      case 'MORAL':
+        return Icons.favorite_border;
+
+      case 'SOCIAL':
+        return Icons.groups_outlined;
+
+      default:
+        return Icons.task_alt_outlined;
+    }
+  }
 }
+
 class _ProfileHeader extends StatelessWidget {
   final ChildModel child;
 

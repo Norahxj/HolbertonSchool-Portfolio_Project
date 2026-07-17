@@ -92,6 +92,10 @@ Future<HttpResponse<dynamic>> rejectAssignment(
 Future<HttpResponse<dynamic>> getAssignmentsForTask(
   @Path('taskId') String taskId,
 );
+@GET('/task-assignments/child/{childId}')
+Future<HttpResponse<dynamic>> getAssignmentsForChild(
+  @Path('childId') String childId,
+);
 
   /// whish
 
