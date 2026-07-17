@@ -39,7 +39,7 @@ class TaskAssignmentRepository:
         return TaskAssignment.query.filter_by(task_id=task_id).order_by(TaskAssignment.assigned_date.desc().all())
 
     def get_assignments_by_child_id(self, child_id):
-        return TaskAssignment.query.filter_by(child_id=child_id).order_by(TaskAssignment.assigned_date.desc().all())
+        return TaskAssignment.query.filter_by(child_id=child_id).order_by(TaskAssignment.assigned_date.desc()).all()
 
     def get_assignment_for_parent(self, assignment_id, parent_id):
         return (
