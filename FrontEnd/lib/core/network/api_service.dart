@@ -3,7 +3,9 @@ import 'package:frontend/models/task_model.dart';
 import 'package:frontend/models/task_suggestions_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../models/child_model.dart';
+import '../../models/child_dashboard_model.dart';
 part 'api_service.g.dart';
+
 
 @RestApi()
 abstract class ApiService {
@@ -107,17 +109,17 @@ Future<HttpResponse<dynamic>> getAssignmentsForTask(
     @Path('wishId') String wishId,
     @Body() Map<String, dynamic> body,
   );
-  @PUT('/wishlist/{wishId}/reject')
+  @PUT('/wishlists/{wishId}/reject')
 Future<HttpResponse<dynamic>> rejectWish(
   @Path('wishId') String wishId,
 );
 
-@PUT('/wishlist/{wishId}/achieve')
+@PUT('/wishlists/{wishId}/achieve')
 Future<HttpResponse<dynamic>> achieveWish(
   @Path('wishId') String wishId,
 );
 
-@DELETE('/wishlist/{wishId}')
+@DELETE('/wishlists/{wishId}')
 Future<HttpResponse<dynamic>> deleteWish(
   @Path('wishId') String wishId,
 );
@@ -187,4 +189,6 @@ Future<HttpResponse<dynamic>> deleteReward(
 Future<HttpResponse<dynamic>> getRewardBankSuggestions(
   @Body() Map<String, dynamic> body,
 );
+@GET('/dashboard/')
+Future<HttpResponse<List<ChildDashboardModel>>> getDashboard();
 }

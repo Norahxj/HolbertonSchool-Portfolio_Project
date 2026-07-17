@@ -10,6 +10,8 @@ import '../../../models/child_model.dart';
 import '../../../services/child_api_service.dart';
 import '../../../services/user_api_service.dart';
 import '../../../models/user_model.dart';
+import '../../../models/child_dashboard_model.dart';
+import '../../../services/dashboard_api_service.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
@@ -24,7 +26,7 @@ class ParentDashboardScreen extends StatefulWidget {
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   late Future<UserModel> _userFuture;
-late Future<List<ChildModel>> _childrenFuture;
+late Future<List<ChildDashboardModel>> _dashboardFuture;
 @override
 void initState() {
   super.initState();
@@ -33,7 +35,7 @@ void initState() {
 
 void _loadData() {
   _userFuture = UserApiService().getCurrentUser();
-  _childrenFuture = ChildApiService().getChildren();
+  _dashboardFuture = DashboardApiService().getDashboard();
 }
   Future<void> _openAddChildScreen() async {
     final result = await Navigator.push(
@@ -45,10 +47,9 @@ void _loadData() {
 
     if (result == true) {
   setState(() {
-    _childrenFuture = ChildApiService().getChildren();
+    _dashboardFuture = DashboardApiService().getDashboard();
   });
-}
-  }
+}}
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +103,8 @@ void _loadData() {
 
                     const SizedBox(height: AppSpacing.sm),
 
-                    FutureBuilder<List<ChildModel>>(
-                      future: _childrenFuture,
+                    FutureBuilder<List<ChildDashboardModel>>(
+  future: _dashboardFuture,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           print(snapshot.error);
@@ -120,7 +121,7 @@ void _loadData() {
                                   padding: const EdgeInsets.only(
                                     bottom: AppSpacing.sm,
                                   ),
-                                  child: _ChildProgressCard(child: child),
+                                  child: _ChildProgressCard(dashboard: child),
                                 ),
                               )
                               .toList(),
@@ -258,20 +259,38 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
 }
 
 class _ChildProgressCard extends StatelessWidget {
-  final ChildModel child;
+  final ChildDashboardModel dashboard;
 
-  const _ChildProgressCard({required this.child});
+  const _ChildProgressCard({required this.dashboard});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       // TODO: This navigation is temporary until real child/profile routing is finalized.
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => ChildProfileScreen(child: child)),
-        );
-      },
+      onTap: () async {
+  try {
+    final child = await ChildApiService().getChildById(
+      dashboard.childId,
+    );
+
+    if (!context.mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChildProfileScreen(child: child),
+      ),
+    );
+  } catch (error) {
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('تعذر تحميل بيانات الطفل'),
+      ),
+    );
+  }
+},
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -290,7 +309,9 @@ class _ChildProgressCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _WeeklyProgressRing(percent: child.weeklyProgress),
+            _WeeklyProgressRing(
+  percent: dashboard.progressPercentage.round(),
+),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -298,7 +319,7 @@ class _ChildProgressCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      child.name,
+                      dashboard.childName,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -307,7 +328,7 @@ class _ChildProgressCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${child.age} سنوات',
+                      '${dashboard.childAge} سنوات',
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,

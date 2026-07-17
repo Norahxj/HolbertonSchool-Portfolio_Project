@@ -636,7 +636,7 @@ class _ApiService implements ApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/${wishId}/reject',
+            '/wishlists/${wishId}/reject',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -658,7 +658,7 @@ class _ApiService implements ApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/${wishId}/achieve',
+            '/wishlists/${wishId}/achieve',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -680,7 +680,7 @@ class _ApiService implements ApiService {
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/wishlist/${wishId}',
+            '/wishlists/${wishId}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -985,6 +985,39 @@ class _ApiService implements ApiService {
     );
     final _result = await _dio.fetch(_options);
     final _value = _result.data;
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<List<ChildDashboardModel>>> getDashboard() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HttpResponse<List<ChildDashboardModel>>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/dashboard/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<ChildDashboardModel> _value;
+    try {
+      _value = _result.data!
+          .map(
+            (dynamic i) =>
+                ChildDashboardModel.fromJson(i as Map<String, dynamic>),
+          )
+          .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
     final httpResponse = HttpResponse(_value, _result);
     return httpResponse;
   }

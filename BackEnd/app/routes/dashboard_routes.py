@@ -22,7 +22,7 @@ class ParentDashboardResource(Resource):
         if claims.get("role") != "parent":
             return {"error": "Parent access required"}, 403
         parent_id = get_jwt_identity()
-        dashboard, error = dashboard_service.get_parent_dashboard(parent_id)
+        dashboard, error = dashboard_service.get_dashboard(parent_id, claims.get("role"))
         if error == "parent_not_found":
             return {"error": "Parent not found"}, 404
         if error:
