@@ -58,5 +58,5 @@ class TaskAssignmentRepository:
                 TaskAssignment.child_id == child_id,
                 TaskAssignment.assigned_date >= start_date,
                 TaskAssignment.assigned_date <= end_date
-            ).order_by(TaskAssignment.assigned_date.desc().all())
+            ).order_by(TaskAssignment.assigned_date.desc()).all()
         )
