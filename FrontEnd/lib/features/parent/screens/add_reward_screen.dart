@@ -7,6 +7,8 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/models/reward_suggestion_model.dart';
 import '../../../core/widgets/app_back_button.dart';
+import 'package:dio/dio.dart';
+import '../../../services/reward_api_service.dart';
 
 // Add New Reward screen (Screen 16).
 //
@@ -28,6 +30,10 @@ class AddRewardScreen extends StatefulWidget {
 }
 
 class _AddRewardScreenState extends State<AddRewardScreen> {
+  final RewardApiService _rewardApiService =
+    RewardApiService();
+
+bool isSaving = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
@@ -222,12 +228,12 @@ Wrap(
                 const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
-                  text: 'حفظ المكافأة',
-                  onPressed: () {
-                    // TODO: Save the new reward once backend integration is
-                    // ready.
-                    Navigator.pop(context);
-                  },
+  text: isSaving
+      ? 'جارٍ الحفظ...'
+      : 'حفظ المكافأة',
+  onPressed: isSaving
+      ? null
+      : _saveReward,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,

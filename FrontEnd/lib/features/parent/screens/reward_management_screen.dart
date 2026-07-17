@@ -10,6 +10,7 @@ import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/child_api_service.dart';
 import 'package:frontend/models/reward_suggestion_model.dart';
 import 'package:frontend/services/reward_api_service.dart';
+import '../../../models/reward_model.dart';
 
 // Reward Management screen (Screen 15).
 //
@@ -34,6 +35,9 @@ class _RewardManagementScreenState
   List<RewardSuggestionModel> rewardSuggestions = [];
 bool isLoadingSuggestions = false;
 String? suggestionsError;
+List<RewardModel> currentRewards = [];
+bool isLoadingRewards = false;
+String? rewardsError;
 
   bool isLoadingChildren = true;
   String? childrenError;
@@ -174,6 +178,83 @@ else
     }).toList(),
   ),
 
+const SizedBox(height: AppSpacing.lg),
+
+if (selectedChildId != null) ...[
+  const Align(
+    alignment: Alignment.centerRight,
+    child: Text(
+      'مكافآت الطفل الحالية',
+      style: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
+      ),
+    ),
+  ),
+
+  const SizedBox(height: AppSpacing.sm),
+
+  if (isLoadingRewards)
+    const Center(
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: CircularProgressIndicator(),
+      ),
+    )
+  else if (rewardsError != null)
+    Column(
+      children: [
+        Text(
+          rewardsError!,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.red,
+            fontSize: 13,
+          ),
+        ),
+        TextButton(
+          onPressed: _loadCurrentRewards,
+          child: const Text('إعادة المحاولة'),
+        ),
+      ],
+    )
+  else if (currentRewards.isEmpty)
+    Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.border,
+        ),
+      ),
+      child: const Text(
+        'لا توجد مكافآت لهذا الطفل حتى الآن',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 13,
+          color: AppColors.textSecondary,
+        ),
+      ),
+    )
+  else
+    Column(
+      children: currentRewards.map((reward) {
+        return _CurrentRewardCard(
+          reward: reward,
+        );
+      }).toList(),
+    ),
+
+  const SizedBox(height: AppSpacing.lg),
+],
+
+const Align(
+  alignment: Alignment.centerRight,
+  child: Text(
+    'إضافة سريعة',
                 const SizedBox(height: AppSpacing.lg),
 
                 const Align(
@@ -357,6 +438,141 @@ class _ChildChip extends StatelessWidget {
 // One "quick add" category: a label with an icon, and a placeholder box
 // below it where suggested rewards will appear later. The mockup uses a
 // dashed border here; we use a plain light border to keep the code simple.
+class _CurrentRewardCard extends StatelessWidget {
+  final RewardModel reward;
+
+  const _CurrentRewardCard({
+    required this.reward,
+  });
+
+  String get statusLabel {
+    switch (reward.status.toUpperCase()) {
+      case 'UNLOCKED':
+        return 'متاحة';
+
+      case 'CLAIMED':
+        return 'تم استلامها';
+
+      case 'LOCKED':
+      default:
+        return 'مقفلة';
+    }
+  }
+
+  IconData get statusIcon {
+    switch (reward.status.toUpperCase()) {
+      case 'UNLOCKED':
+        return Icons.lock_open_outlined;
+
+      case 'CLAIMED':
+        return Icons.check_circle_outline;
+
+      case 'LOCKED':
+      default:
+        return Icons.lock_outline;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(
+        bottom: AppSpacing.sm,
+      ),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppColors.border,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(
+              Icons.card_giftcard_outlined,
+              color: AppColors.primary,
+            ),
+          ),
+
+          const SizedBox(width: AppSpacing.md),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  reward.rewardName,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                if (reward.description != null &&
+                    reward.description!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    reward.description!,
+                    textAlign: TextAlign.right,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 6),
+
+                Text(
+                  'تفتح يوم ${reward.unlockDayLabel}',
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: AppSpacing.sm),
+
+          Column(
+            children: [
+              Icon(
+                statusIcon,
+                size: 19,
+                color: AppColors.primary,
+              ),
+              const SizedBox(height: 3),
+              Text(
+                statusLabel,
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: AppColors.primaryDark,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
 class _QuickAddCategory extends StatelessWidget {
   final List<RewardSuggestionModel> suggestions;
   final ValueChanged<RewardSuggestionModel> onSuggestionTap;
