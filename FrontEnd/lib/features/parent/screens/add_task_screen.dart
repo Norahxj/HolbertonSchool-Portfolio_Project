@@ -696,11 +696,21 @@ const SizedBox(height: AppSpacing.lg),
           : selectedTaskType == 2
               ? 'المهام الدينية'
               : 'المهام المالية',
-  suggestions: taskSuggestions,
+              suggestions: taskSuggestions,
   onSuggestionTap: (suggestion) {
   setState(() {
     _applyTaskSuggestion(suggestion);
     currentStep = 1;
+  });
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    }
   });
 },
 ),
@@ -1413,15 +1423,18 @@ Container(
 
 
                         await _taskApiService.createTask({
-                          "child_ids": selectedChildIds,
-                          "title": taskNameController.text.trim(),
-                          "description": taskDescriptionController.text.trim(),
-                          "points": taskPoints,
-                          "task_frequency": taskFrequency,
-                          "recurrence_day": recurrenceDay,
-                          "category": category,
-                          "is_auto_verified": trustChild,
-                        });
+  "child_ids": selectedChildIds,
+  "title": taskNameController.text.trim(),
+  "description": taskDescriptionController.text.trim(),
+  "points": taskPoints,
+  "task_frequency": taskFrequency,
+
+  if (recurrenceDay != null)
+    "recurrence_day": recurrenceDay,
+
+  "category": category,
+  "is_auto_verified": trustChild,
+});
 
                         if (!mounted) return;
                         Navigator.pushReplacement(
