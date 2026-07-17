@@ -51,20 +51,15 @@ class AssignmentsByChildResource(Resource):
     @jwt_required()
     def get(self, child_id):
         claims = get_jwt()
-
         if claims.get("role") != "parent":
             return {"error": "Parent access required"}, 403
-
         parent_id = get_jwt_identity()
-
         assignments = assignment_service.get_assignments_for_child_by_parent(
             child_id,
             parent_id
         )
-
         if assignments is None:
             return {"error": "Child not found or access denied"}, 404
-
         return parent_assignments_response_schema.dump(assignments), 200
 
 @api.route("/<assignment_id>/complete")
