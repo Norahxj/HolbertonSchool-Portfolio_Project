@@ -117,8 +117,23 @@ String? suggestionsError;
 
   int? get recurrenceDay {
     if (selectedFrequency == 1) {
-      return weekDays.indexOf(selectedWeeklyDay);
-    }
+  switch (selectedWeeklyDay) {
+    case 'الإثنين':
+      return 0;
+    case 'الثلاثاء':
+      return 1;
+    case 'الأربعاء':
+      return 2;
+    case 'الخميس':
+      return 3;
+    case 'الجمعة':
+      return 4;
+    case 'السبت':
+      return 5;
+    case 'الأحد':
+      return 6;
+  }
+}
 
     if (selectedFrequency == 2) {
       return selectedMonthlyDay;
@@ -199,6 +214,56 @@ Future<void> _loadTaskSuggestions() async {
         isLoadingSuggestions = false;
       });
     }
+  }
+}
+
+void _applyTaskSuggestion(TaskSuggestionModel suggestion) {
+  taskNameController.text = suggestion.title;
+  taskDescriptionController.text = suggestion.description;
+  taskPoints = suggestion.points;
+  trustChild = suggestion.isAutoVerified;
+
+  switch (suggestion.taskFrequency) {
+    case 'DAILY':
+      selectedFrequency = 0;
+      break;
+
+    case 'WEEKLY':
+      selectedFrequency = 1;
+
+      switch (suggestion.recurrenceDay) {
+        case 0:
+          selectedWeeklyDay = 'الإثنين';
+          break;
+        case 1:
+          selectedWeeklyDay = 'الثلاثاء';
+          break;
+        case 2:
+          selectedWeeklyDay = 'الأربعاء';
+          break;
+        case 3:
+          selectedWeeklyDay = 'الخميس';
+          break;
+        case 4:
+          selectedWeeklyDay = 'الجمعة';
+          break;
+        case 5:
+          selectedWeeklyDay = 'السبت';
+          break;
+        case 6:
+          selectedWeeklyDay = 'الأحد';
+          break;
+      }
+      break;
+
+    case 'MONTHLY':
+      selectedFrequency = 2;
+
+      final day = suggestion.recurrenceDay;
+      if (day != null && day >= 1 && day <= 31) {
+        selectedMonthlyDay = day;
+      }
+      break;
   }
 }
 Future<void> _showMonthlyDayPicker() async {
@@ -400,7 +465,6 @@ if (currentStep == 1) {
 
                 if (currentStep == 0) _buildChooseChildStep(),
                 if (currentStep == 1) _buildTaskDetailsStep(),
-if (currentStep == 2) _buildTaskScheduleStep(),
 
                 const SizedBox(height: AppSpacing.xl),
 
@@ -418,8 +482,7 @@ if (currentStep == 2) _buildTaskScheduleStep(),
   // The title text shown at the top for the current step.
   String get _stepTitle {
   if (currentStep == 0) return 'إضافة مهمة';
-  if (currentStep == 1) return 'تفاصيل المهمة';
-  return 'جدول المهمة';
+  return 'تفاصيل المهمة';
 }
 
   // The subtitle text shown below the title for the current step.
@@ -428,11 +491,7 @@ if (currentStep == 2) _buildTaskScheduleStep(),
     return 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
   }
 
-  if (currentStep == 1) {
-    return 'لنُضِف تفاصيل المهمة';
-  }
-
-  return 'كم مرة يجب تنفيذ هذه المهمة؟';
+  return 'أضيفي تفاصيل المهمة وحددي تكرارها';
 }
 
   // ---- Step 0: choose child ----
@@ -601,11 +660,7 @@ const SizedBox(height: AppSpacing.lg),
   suggestions: taskSuggestions,
   onSuggestionTap: (suggestion) {
   setState(() {
-    taskNameController.text = suggestion.title;
-    taskDescriptionController.text = suggestion.description;
-    taskPoints = suggestion.points;
-    trustChild = suggestion.isAutoVerified;
-
+    _applyTaskSuggestion(suggestion);
     currentStep = 1;
   });
 },
@@ -787,10 +842,7 @@ const SizedBox(height: AppSpacing.lg),
             borderRadius: BorderRadius.circular(16),
             onTap: () {
               setState(() {
-                taskNameController.text = suggestion.title;
-                taskDescriptionController.text = suggestion.description;
-                taskPoints = suggestion.points;
-                trustChild = suggestion.isAutoVerified;
+                _applyTaskSuggestion(suggestion);
               });
             },
             child: Container(
@@ -1014,65 +1066,96 @@ const SizedBox(height: AppSpacing.lg),
 
         const SizedBox(height: AppSpacing.md),
 
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+        
+
+const SizedBox(height: AppSpacing.xl),
+
+const Align(
+  alignment: Alignment.centerRight,
+  child: Text(
+    'تكرار المهمة',
+    style: TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+  ),
+),
+
+const SizedBox(height: AppSpacing.md),
+
+_buildTaskScheduleStep(),
+
+const SizedBox(height: AppSpacing.xl),
+
+Container(
+  padding: const EdgeInsets.all(AppSpacing.md),
+  decoration: BoxDecoration(
+    color: AppColors.card,
+    borderRadius: BorderRadius.circular(18),
+    border: Border.all(color: AppColors.border),
+  ),
+  child: Row(
+    children: [
+      GestureDetector(
+        onTap: () {
+          setState(() {
+            trustChild = !trustChild;
+          });
+        },
+        child: Container(
+          width: 24,
+          height: 24,
           decoration: BoxDecoration(
-            color: AppColors.card,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
+            color: trustChild ? AppColors.primary : Colors.white,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: AppColors.primary,
+              width: 1.5,
+            ),
           ),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    trustChild = !trustChild;
-                  });
-                },
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: trustChild ? AppColors.primary : Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: AppColors.primary, width: 1.5),
-                  ),
-                  child: trustChild
-                      ? const Icon(Icons.check, color: Colors.white, size: 16)
-                      : null,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  textDirection: TextDirection.ltr,
-                  children: [
-                    const Text(
-                      'هل تثق بجدية طفلك في هذه المهمة؟',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          child: trustChild
+              ? const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 16,
+                )
+              : null,
         ),
-      ],
+      ),
+
+      const SizedBox(width: AppSpacing.sm),
+
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          textDirection: TextDirection.ltr,
+          children: const [
+            Text(
+              'هل تثق بجدية طفلك في هذه المهمة؟',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: 2),
+            Text(
+              'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+),
+     ],
     );
   }
 
@@ -1260,7 +1343,7 @@ const SizedBox(height: AppSpacing.lg),
     }
 
     // The last step shows "Save" instead of "Next".
-    final isLastStep = currentStep == 2;
+    final isLastStep = currentStep == 1;
 
     return Row(
       children: [
@@ -1338,11 +1421,10 @@ const SizedBox(height: AppSpacing.lg),
   currentStep = 0;
 } else if (titleError != null ||
     descriptionError != null ||
-    pointsError != null) {
-  currentStep = 1;
-} else if (frequencyError != null ||
+    pointsError != null ||
+    frequencyError != null ||
     recurrenceDayError != null) {
-  currentStep = 2;
+  currentStep = 1;
 }
                         });
                       } finally {
