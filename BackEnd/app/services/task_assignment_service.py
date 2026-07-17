@@ -21,17 +21,17 @@ class TaskAssignmentService:
     def get_assignments_for_child(self, child_id):
         return self.task_assignment_repository.get_assignments_by_child_id(child_id)
     def get_assignments_for_child_by_parent(self, child_id, parent_id):
-    child = self.child_repository.get_child_for_guardian(
-        child_id,
-        parent_id
-    )
+        child = self.child_repository.get_child_for_guardian(
+            child_id,
+            parent_id
+        )
 
-    if not child:
-        return None
+        if not child:
+            return None
 
-    return self.task_assignment_repository.get_assignments_by_child_id(
-        child_id
-    )
+        return self.task_assignment_repository.get_assignments_by_child_id(
+            child_id
+        )
 
     def complete_assignment(self, assignment_id, child_id):
         assignment = self.task_assignment_repository.get_assignment_for_child(assignment_id, child_id)
