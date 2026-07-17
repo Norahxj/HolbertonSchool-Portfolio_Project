@@ -219,38 +219,40 @@ class _WelcomeBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
+        textDirection: TextDirection.rtl,
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const Icon(
-            Icons.home_rounded,
-            size: 56,
-            color: AppColors.primaryDark,
+          Text(
+            'مرحبًا ${user.firstName} ${user.lastName}! ♥',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryDark,
+            ),
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'مرحبًا ${user.firstName} ${user.lastName}! ♥',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'أنتِ تبنين جيلاً رائعًا',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 4),
+          const Text(
+            'أنتِ تبنين جيلاً رائعًا',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.textSecondary,
             ),
           ),
         ],
       ),
+    ),
+    const SizedBox(width: AppSpacing.md),
+    const Icon(
+      Icons.home_rounded,
+      size: 56,
+      color: AppColors.primaryDark,
+    ),
+  ],
+)
     );
   }
 }
