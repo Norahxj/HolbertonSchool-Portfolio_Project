@@ -20,43 +20,22 @@ class ChildProfileScreen extends StatelessWidget {
   });
 
   @override
-  State<ChildProfileScreen> createState() => _ChildProfileScreenState();
-}
-
-class _ChildProfileScreenState extends State<ChildProfileScreen> {
-  
-
-  
-  
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FutureBuilder<ChildModel>(
-        future: _childFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-            child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(
-              child: Text('Error loading child'),
-            );
-          }
-          
-          final child = snapshot.data!;
-          
-          return Column(
-            children: [
+      body: Column(
+        children: [
           _ProfileHeader(child: child),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 children: [
-                  const _WeeklyProgressCard(),
+                  _WeeklyProgressCard(
+                    progress: dashboard.progressPercentage,
+                    approvedTasks: dashboard.approvedTasks,
+                    totalTasks: dashboard.totalTasks,
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   _JoinCodeCard(child: child),
                   const SizedBox(height: AppSpacing.lg),
@@ -82,14 +61,10 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
             ),
           ),
         ],
-          );
-        },
       ),
     );
   }
 }
-
-
 class _ProfileHeader extends StatelessWidget {
   final ChildModel child;
 
@@ -249,9 +224,10 @@ class _WeeklyProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeProgress = progress.clamp(0, 100).toDouble();
+    final percent = safeProgress.round();
+
     return Container(
-      final safeProgress = progress.clamp(0, 100);
-final percent = safeProgress.round();
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -268,8 +244,8 @@ final percent = safeProgress.round();
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children:  [
-              Text(
+            children: [
+              const Text(
                 'التقدم الأسبوعي',
                 style: TextStyle(
                   fontSize: 16,
@@ -280,18 +256,27 @@ final percent = safeProgress.round();
               _WeeklyRing(percent: percent),
             ],
           ),
-
           const SizedBox(height: AppSpacing.sm),
-
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
-  value: safeProgress / 100,
+              value: safeProgress / 100,
               minHeight: 8,
               backgroundColor: AppColors.primaryLight,
               valueColor: const AlwaysStoppedAnimation(
-  AppColors.primary,
-),
+                AppColors.primary,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '$approvedTasks من $totalTasks مهام مكتملة',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
         ],

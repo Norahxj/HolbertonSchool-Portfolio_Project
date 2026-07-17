@@ -41,11 +41,20 @@ void _loadData() {
 }
     
 
-    if (result == true) {
-  setState(() {
-    _dashboardFuture = DashboardApiService().getDashboard();
-    _childrenFuture = ChildApiService().getChildren();
-  });
+  Future<void> _openAddChildScreen() async {
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const AddChildScreen(),
+    ),
+  );
+
+  if (result == true && mounted) {
+    setState(() {
+      _dashboardFuture = DashboardApiService().getDashboard();
+      _childrenFuture = ChildApiService().getChildren();
+    });
+  }
 }
 
   @override
