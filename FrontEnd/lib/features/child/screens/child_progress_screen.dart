@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import 'child_home_screen.dart';
-import 'child_rewards_screen.dart';
-import 'child_wishlist_screen.dart';
 
 // Child Progress screen (Screen 26).
 //
@@ -18,93 +15,86 @@ class ChildProgressScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
-      // The bottom navigation bar remains fixed.
-      bottomNavigationBar: const _BottomNavBar(),
-
       body: SafeArea(
-        child: Column(
-          children: [
-            // Everything inside this Expanded widget can scroll.
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'تقدّمي',
-                      style: AppTextStyles.arabicTitle,
-                      textAlign: TextAlign.center,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'تقدّمي',
+                style: AppTextStyles.arabicTitle,
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: AppSpacing.lg),
+
+              const _ProgressSummaryCard(
+                percent: 72,
+                message: 'أحسنت! أنجزت 18 مهمة هذا الأسبوع',
+              ),
+
+              const SizedBox(height: AppSpacing.lg),
+
+              const Row(
+                children: [
+                  Expanded(
+                    child: _StatTile(
+                      icon: Icons.water_drop,
+                      iconColor: Color(0xFFDE9A3E),
+                      value: '6',
+                      label: 'أيام متتالية',
                     ),
-
-                    const SizedBox(height: AppSpacing.lg),
-
-                    const _ProgressSummaryCard(
-                      percent: 72,
-                      message: 'أحسنت! أنجزت 18 مهمة هذا الأسبوع',
+                  ),
+                  SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: _StatTile(
+                      icon: Icons.check_circle_outline,
+                      iconColor: AppColors.success,
+                      value: '54',
+                      label: 'مهمة مكتملة',
                     ),
-
-                    const SizedBox(height: AppSpacing.lg),
-
-                    const Row(
-                      children: [
-                        Expanded(
-                          child: _StatTile(
-                            icon: Icons.water_drop,
-                            iconColor: Color(0xFFDE9A3E),
-                            value: '6',
-                            label: 'أيام متتالية',
-                          ),
-                        ),
-                        SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: _StatTile(
-                            icon: Icons.check_circle_outline,
-                            iconColor: AppColors.success,
-                            value: '54',
-                            label: 'مهمة مكتملة',
-                          ),
-                        ),
-                        SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: _StatTile(
-                            icon: Icons.auto_awesome,
-                            iconColor: AppColors.gold,
-                            value: '240',
-                            label: 'إجمالي النقاط',
-                          ),
-                        ),
-                      ],
+                  ),
+                  SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: _StatTile(
+                      icon: Icons.auto_awesome,
+                      iconColor: AppColors.gold,
+                      value: '240',
+                      label: 'إجمالي النقاط',
                     ),
+                  ),
+                ],
+              ),
 
-                    const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.xl),
 
-                    // Child trophies section.
-                    _TrophiesSection(),
+              // Child trophies section.
+              _TrophiesSection(),
 
-                    const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.xl),
 
-                    const Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'نشاط الأسبوع',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: AppSpacing.sm),
-
-                    const _WeeklyBarChart(),
-                  ],
+              const Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'نشاط الأسبوع',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: AppSpacing.sm),
+
+              const _WeeklyBarChart(),
+
+              // Extra space at the bottom so the chart does not touch
+              // the shared navigation bar.
+              const SizedBox(height: AppSpacing.lg),
+            ],
+          ),
         ),
       ),
     );
@@ -304,7 +294,6 @@ class _TrophiesSection extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.md),
 
-          // The cards appear in one row.
           const Row(
             children: [
               Expanded(
@@ -343,7 +332,6 @@ class _TrophiesSection extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.md),
 
-          // The explanation now appears under the trophies.
           const Text(
             'يفتح كل وسام بعد إنجاز 5 مهام من فئته',
             textAlign: TextAlign.center,
@@ -471,14 +459,12 @@ class _TrophyBadge extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Trophy icon area.
           SizedBox(
             width: 62,
             height: 62,
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Soft circular background.
                 Container(
                   width: 54,
                   height: 54,
@@ -490,14 +476,12 @@ class _TrophyBadge extends StatelessWidget {
                   ),
                 ),
 
-                // Main trophy icon.
                 Icon(
                   Icons.emoji_events_rounded,
                   size: 36,
                   color: accentColor,
                 ),
 
-                // Small category icon.
                 Positioned(
                   top: 0,
                   right: 0,
@@ -521,7 +505,6 @@ class _TrophyBadge extends StatelessWidget {
                   ),
                 ),
 
-                // Small lock shown on trophies that are not unlocked.
                 if (!unlocked)
                   const Positioned(
                     bottom: 0,
@@ -558,7 +541,6 @@ class _TrophyBadge extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          // Small progress pill.
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: 7,
@@ -704,125 +686,6 @@ class _DayBar extends StatelessWidget {
           style: const TextStyle(
             fontSize: 11,
             color: AppColors.textSecondary,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// Bottom navigation bar for the child screens.
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            const _NavItem(
-              icon: Icons.bar_chart_rounded,
-              label: 'تقدّمي',
-              isActive: true,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildRewardsScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.card_giftcard_outlined,
-                label: 'المكافآت',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildWishlistScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.favorite_border,
-                label: 'أمنياتي',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildHomeScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.home_rounded,
-                label: 'الرئيسية',
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// One icon and label inside the bottom navigation bar.
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isActive
-        ? AppColors.primary
-        : AppColors.textSecondary;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: color,
-          size: 22,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive
-                ? FontWeight.bold
-                : FontWeight.normal,
-            color: color,
           ),
         ),
       ],
