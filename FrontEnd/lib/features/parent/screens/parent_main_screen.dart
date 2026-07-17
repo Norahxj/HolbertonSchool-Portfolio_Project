@@ -25,7 +25,7 @@ class ParentMainScreen extends StatefulWidget {
 
 class _ParentMainScreenState extends State<ParentMainScreen> {
   late int _currentIndex;
-
+int _tasksResetVersion = 0;
   
   @override
   void initState() {
@@ -34,19 +34,27 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
   }
 
   void _changePage(int index) {
-    if (_currentIndex == index) {
-      return;
+  if (_currentIndex == index) {
+    if (index == 0) {
+      setState(() {
+        _tasksResetVersion++;
+      });
     }
 
-    setState(() {
-      _currentIndex = index;
-    });
+    return;
   }
+
+  setState(() {
+    _currentIndex = index;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
     final pages = [
-  const AddTaskScreen(),
+  AddTaskScreen(
+    resetVersion: _tasksResetVersion,
+  ),
   const RewardManagementScreen(),
   const ParentDashboardScreen(),
   const WishlistApprovalScreen(),

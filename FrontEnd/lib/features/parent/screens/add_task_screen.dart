@@ -17,15 +17,25 @@ import 'package:frontend/models/task_suggestion_model.dart';
 // simple local state, and there are no backend calls yet. The 4 mockup
 // screens are combined into one file, switching on currentStep.
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+  final int resetVersion;
+
+  const AddTaskScreen({
+    super.key,
+    this.resetVersion = 0,
+  });
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
 
+  @override
+  State<AddTaskScreen> createState() => _AddTaskScreenState();
+
+
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final TaskApiService _taskApiService = TaskApiService();
   final ChildApiService _childApiService = ChildApiService();
+  final ScrollController _scrollController = ScrollController();
 
   List<ChildModel> children = [];
   List<String> selectedChildIds = [];
@@ -162,7 +172,34 @@ String? suggestionsError;
     super.initState();
     _loadChildren();
   }
+@override
+void didUpdateWidget(covariant AddTaskScreen oldWidget) {
+  super.didUpdateWidget(oldWidget);
 
+  if (oldWidget.resetVersion != widget.resetVersion) {
+    setState(() {
+      currentStep = 0;
+
+      titleError = null;
+      descriptionError = null;
+      pointsError = null;
+      categoryError = null;
+      frequencyError = null;
+      recurrenceDayError = null;
+      childError = null;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
+  }
+}
   Future<void> _loadChildren() async {
     try {
       final data = await _childApiService.getChildren();
@@ -348,11 +385,12 @@ Future<void> _showMonthlyDayPicker() async {
   }
 }
   @override
-  void dispose() {
-    taskNameController.dispose();
-    taskDescriptionController.dispose();
-    super.dispose();
-  }
+void dispose() {
+  _scrollController.dispose();
+  taskNameController.dispose();
+  taskDescriptionController.dispose();
+  super.dispose();
+}
 
   void _goToNextStep() {
   setState(() {
@@ -435,6 +473,7 @@ if (currentStep == 1) {
       body: ScreenBackground(
         child: SafeArea(
           child: SingleChildScrollView(
+            controller: _scrollController,
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
