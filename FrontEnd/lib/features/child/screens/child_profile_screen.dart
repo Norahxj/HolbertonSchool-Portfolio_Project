@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/services/child_api_service.dart';
-
+import '../../../models/child_dashboard_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -10,28 +9,24 @@ import '../../../models/child_model.dart';
 //
 // This first pass is static/placeholder only: the child's name, age,
 // progress, join code, and tasks are all hardcoded. No backend calls here.
-class ChildProfileScreen extends StatefulWidget {
+class ChildProfileScreen extends StatelessWidget {
   final ChildModel child;
-  
+  final ChildDashboardModel dashboard;
+
   const ChildProfileScreen({
     super.key,
     required this.child,
-    });
+    required this.dashboard,
+  });
 
   @override
   State<ChildProfileScreen> createState() => _ChildProfileScreenState();
 }
 
 class _ChildProfileScreenState extends State<ChildProfileScreen> {
-  late Future<ChildModel> _childFuture;
+  
 
-  @override
-  void initState() {
-    super.initState();
-
-    _childFuture =
-        ChildApiService().getChildById(widget.child.id);
-  }
+  
   
   @override
   Widget build(BuildContext context) {
@@ -242,11 +237,21 @@ class _HeaderIconButton extends StatelessWidget {
 }
 
 class _WeeklyProgressCard extends StatelessWidget {
-  const _WeeklyProgressCard();
+  final double progress;
+  final int approvedTasks;
+  final int totalTasks;
+
+  const _WeeklyProgressCard({
+    required this.progress,
+    required this.approvedTasks,
+    required this.totalTasks,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      final safeProgress = progress.clamp(0, 100);
+final percent = safeProgress.round();
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -263,7 +268,7 @@ class _WeeklyProgressCard extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children:  [
               Text(
                 'التقدم الأسبوعي',
                 style: TextStyle(
@@ -272,7 +277,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              _WeeklyRing(percent: 72),
+              _WeeklyRing(percent: percent),
             ],
           ),
 
@@ -280,11 +285,13 @@ class _WeeklyProgressCard extends StatelessWidget {
 
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: const LinearProgressIndicator(
-              value: 0.72,
+            child: LinearProgressIndicator(
+  value: safeProgress / 100,
               minHeight: 8,
               backgroundColor: AppColors.primaryLight,
-              valueColor: AlwaysStoppedAnimation(AppColors.primary),
+              valueColor: const AlwaysStoppedAnimation(
+  AppColors.primary,
+),
             ),
           ),
         ],

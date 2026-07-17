@@ -27,6 +27,7 @@ class ParentDashboardScreen extends StatefulWidget {
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   late Future<UserModel> _userFuture;
 late Future<List<ChildDashboardModel>> _dashboardFuture;
+late Future<List<ChildModel>> _childrenFuture;
 @override
 void initState() {
   super.initState();
@@ -36,20 +37,16 @@ void initState() {
 void _loadData() {
   _userFuture = UserApiService().getCurrentUser();
   _dashboardFuture = DashboardApiService().getDashboard();
+  _childrenFuture = ChildApiService().getChildren();
 }
-  Future<void> _openAddChildScreen() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AddChildScreen()),
-    );
-
     
 
     if (result == true) {
   setState(() {
     _dashboardFuture = DashboardApiService().getDashboard();
+    _childrenFuture = ChildApiService().getChildren();
   });
-}}
+}
 
   @override
   Widget build(BuildContext context) {
@@ -103,31 +100,65 @@ void _loadData() {
 
                     const SizedBox(height: AppSpacing.sm),
 
-                    FutureBuilder<List<ChildDashboardModel>>(
-  future: _dashboardFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return Center(child: Text(snapshot.error.toString()));
-                        }
-                        if (!snapshot.hasData) {
-                          return const Center(child: Text('No data'));
-                        }
-                        final children = snapshot.data!;
-                        return Column(
-                          children: children
-                              .map(
-                                (child) => Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: AppSpacing.sm,
-                                  ),
-                                  child: _ChildProgressCard(dashboard: child),
-                                ),
-                              )
-                              .toList(),
-                        );
-                      },
-                    ),
+                    FutureBuilder<List<ChildModel>>(
+  future: _childrenFuture,
+  builder: (context, childrenSnapshot) {
+    if (childrenSnapshot.connectionState ==
+        ConnectionState.waiting) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (childrenSnapshot.hasError) {
+      return const Center(
+        child: Text('تعذر تحميل الأطفال'),
+      );
+    }
+
+    final children = childrenSnapshot.data ?? [];
+
+    return FutureBuilder<List<ChildDashboardModel>>(
+      future: _dashboardFuture,
+      builder: (context, dashboardSnapshot) {
+        if (dashboardSnapshot.connectionState ==
+            ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (dashboardSnapshot.hasError) {
+          return Center(
+            child: Text(
+              dashboardSnapshot.error.toString(),
+            ),
+          );
+        }
+
+        final dashboards = dashboardSnapshot.data ?? [];
+
+        return Column(
+          children: dashboards.map((dashboard) {
+            final child = children.firstWhere(
+              (item) => item.id == dashboard.childId,
+            );
+
+            return Padding(
+              padding: const EdgeInsets.only(
+                bottom: AppSpacing.sm,
+              ),
+              child: _ChildProgressCard(
+                child: child,
+                dashboard: dashboard,
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  },
+),
                     const SizedBox(height: AppSpacing.sm),
 
                     _AddChildButton(onTap: _openAddChildScreen),
@@ -259,37 +290,27 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
 }
 
 class _ChildProgressCard extends StatelessWidget {
+  final ChildModel child;
   final ChildDashboardModel dashboard;
 
-  const _ChildProgressCard({required this.dashboard});
-
+  const _ChildProgressCard({
+    required this.child,
+    required this.dashboard,
+  });
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       // TODO: This navigation is temporary until real child/profile routing is finalized.
-      onTap: () async {
-  try {
-    final child = await ChildApiService().getChildById(
-      dashboard.childId,
-    );
-
-    if (!context.mounted) return;
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChildProfileScreen(child: child),
+      onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ChildProfileScreen(
+        child: child,
+        dashboard: dashboard,
       ),
-    );
-  } catch (error) {
-    if (!context.mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تعذر تحميل بيانات الطفل'),
-      ),
-    );
-  }
+    ),
+  );
 },
       child: Container(
         padding: const EdgeInsets.symmetric(
