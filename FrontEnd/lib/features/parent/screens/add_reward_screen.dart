@@ -44,14 +44,14 @@ bool isSaving = false;
   int selectedUnlockDay = 3;
 
 final List<String> weekDays = const [
-  'الإثنين',
-  'الثلاثاء',
-  'الأربعاء',
-  'الخميس',
-  'الجمعة',
-  'السبت',
-  'الأحد',
-];
+    'الأحد',
+    'الإثنين',
+    'الثلاثاء',
+    'الأربعاء',
+    'الخميس',
+    'الجمعة',
+    'السبت',
+  ];
 @override
 void initState() {
   super.initState();
@@ -69,6 +69,45 @@ void initState() {
     nameController.dispose();
     descriptionController.dispose();
     super.dispose();
+  }
+
+
+  Future<void> _saveReward() async {
+    final rewardName = nameController.text.trim();
+    final description = descriptionController.text.trim();
+
+    if (rewardName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('اكتب اسم المكافأة أولًا')),
+      );
+      return;
+    }
+
+    setState(() => isSaving = true);
+
+    try {
+      await _rewardApiService.createReward(
+        childId: widget.childId,
+        rewardName: rewardName,
+        description: description.isEmpty ? null : description,
+        unlockDay: selectedUnlockDay,
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } on DioException catch (e) {
+      if (!mounted) return;
+      debugPrint('خطأ حفظ المكافأة: ${e.response?.data ?? e.message}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.response?.data?['error']?.toString() ?? 'تعذر حفظ المكافأة',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isSaving = false);
+    }
   }
 
   @override
