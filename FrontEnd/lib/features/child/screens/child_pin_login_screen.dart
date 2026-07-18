@@ -7,7 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../services/auth_api_service.dart';
-import 'child_home_screen.dart';
+import '../widgets/child_nav.dart';
 import '../../../core/widgets/app_back_button.dart';
 import 'package:flutter/services.dart';
 import '../../../core/widgets/language_toggle.dart';
@@ -58,11 +58,12 @@ final FocusNode _pinFocusNode = FocusNode();
     await AuthApiService().childLogin(
   accessCode: pin,
 );
-    
+    if (!mounted) return;
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => ChildHomeScreen(),
+        builder: (_) => ChildNav(),
       ),
     );
   } on DioException catch (e) {
