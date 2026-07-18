@@ -3,7 +3,7 @@ import 'package:frontend/services/auth_api_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/constants/app_colors.dart';
 import 'features/onboarding/screens/welcome_screen.dart';
-import 'features/child/screens/child_home_screen.dart';
+import 'features/child/widgets/child_nav.dart';
 import 'core/storage/secure_storage.dart';
 import 'features/parent/screens/parent_main_screen.dart';
 
@@ -98,7 +98,7 @@ class _AsalahAppState extends State<AsalahApp> {
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : _isLoggedIn
               ? (_isChild
-                  ? const ChildHomeScreen()
+                  ? const ChildNav()
                   : ParentMainScreen(
     isArabic: isArabic,
     onLanguageToggle: _toggleLanguage,
