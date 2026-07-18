@@ -1,37 +1,111 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/child_model.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import 'child_progress_screen.dart';
-import 'child_rewards_screen.dart';
-import 'child_task_details_screen.dart';
-import 'child_wishlist_screen.dart';
 import '../../../core/storage/secure_storage.dart';
+import '../../../models/child_model.dart';
 import '../../../models/task_assignment_model.dart';
-import '../../../services/task_api_service.dart';
 import '../../../services/point_api_service.dart';
+import '../../../services/task_api_service.dart';
+import 'child_task_details_screen.dart';
 
-// Child Home Dashboard screen (Screen 21).
+// The child's home tab.
 //
-
+// This screen loads the signed-in child, today's task assignments, and the
+// current Noor Points balance. Navigation is handled by ChildNav.
 class ChildHomeScreen extends StatefulWidget {
   const ChildHomeScreen({super.key});
-  
 
   @override
   State<ChildHomeScreen> createState() => _ChildHomeScreenState();
 }
 
 class _ChildHomeScreenState extends State<ChildHomeScreen> {
-int _currentTab = 0;
+  ChildModel? _child;
+  List<TaskAssignmentModel> _assignments = [];
+  int _points = 0;
 
-ChildModel? _child;
-List<TaskAssignmentModel> _assignments = [];
-int _points = 0;
-bool _isLoading = true;
-String? _error;
+  bool _isLoading = true;
+  String? _errorMessage;
+  final Set<String> _updatingAssignments = {};
+
+  Future<void> _loadData({bool showPageLoader = true}) async {
+    if (showPageLoader) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
+
+    try {
+      final child = await SecureStorage.getChild();
+      final assignments = await TaskApiService().getMyAssignments();
+      final points = await PointApiService().getMyPoints();
+
+      if (!mounted) return;
+
+      if (child == null) {
+        setState(() {
+          _errorMessage = 'لم نتمكن من العثور على بيانات الطفل.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      setState(() {
+        _child = child;
+        _assignments = assignments;
+        _points = points;
+        _errorMessage = null;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        _errorMessage = 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.';
+        _isLoading = false;
+      });
+
+      debugPrint('Child home loading error: $error');
+    }
+  }
+
+  Future<void> _completeAssignment(String assignmentId) async {
+    setState(() {
+      _updatingAssignments.add(assignmentId);
+    });
+
+    try {
+      await TaskApiService().completeAssignment(assignmentId);
+      await _loadData(showPageLoader: false);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.'),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تعذّر إكمال المهمة. حاول مرة أخرى.'),
+        ),
+      );
+
+      debugPrint('Complete assignment error: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _updatingAssignments.remove(assignmentId);
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -39,334 +113,628 @@ String? _error;
     _loadData();
   }
 
-  Future<void> _loadData() async {
-  setState(() {
-    _isLoading = true;
-    _error = null;
-  });
+  bool _isFinished(String status) {
+    final normalizedStatus = status.toLowerCase();
 
-  try {
-    final child = await SecureStorage.getChild();
-    final assignments = await TaskApiService().getMyAssignments();
-    final points = await PointApiService().getMyPoints();
-
-    if (!mounted) return;
-
-    setState(() {
-      _child = child;
-      _assignments = assignments;
-      _points = points;
-      _isLoading = false;
-    });
-  } catch (e) {
-    if (!mounted) return;
-
-    setState(() {
-      _error = e.toString();
-      _isLoading = false;
-    });
+    return normalizedStatus == 'approved' ||
+        normalizedStatus == 'completed' ||
+        normalizedStatus == 'pending_review';
   }
-}
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: AppColors.background,
-    body: IndexedStack(
-      index: _currentTab,
-      children: [
-        _buildHomeTab(),
-        const ChildWishlistScreen(),
-        const ChildRewardsScreen(),
-        const ChildProgressScreen(),
-      ],
-    ),
-    bottomNavigationBar: _BottomNavBar(
-      currentIndex: _currentTab,
-      onTap: (index) {
-        setState(() {
-          _currentTab = index;
-        });
-      },
-    ),
-  );
-}
-// Purple gradient header: greeting, avatar, and the Noor points card.
-Widget _buildHomeTab() {
-  if (_isLoading) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
-  }
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
-  if (_error != null) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    if (_errorMessage != null || _child == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: _ErrorState(
+          message: _errorMessage ?? 'تعذّر تحميل الصفحة.',
+          onRetry: _loadData,
+        ),
+      );
+    }
+
+    final completedCount = _assignments
+        .where((assignment) => _isFinished(assignment.status))
+        .length;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Column(
         children: [
-          const Icon(
-            Icons.error_outline,
-            color: AppColors.error,
-            size: 48,
+          _HomeHeader(
+            childName: _child!.name,
+            points: _points,
+            completedTasks: completedCount,
+            totalTasks: _assignments.length,
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            'حدث خطأ أثناء تحميل البيانات',
-            style: AppTextStyles.arabicTitle,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          TextButton(
-            onPressed: _loadData,
-            child: const Text('إعادة المحاولة'),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () => _loadData(showPageLoader: false),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _DailyGoalCard(
+                      completedTasks: completedCount,
+                      totalTasks: _assignments.length,
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    _SectionHeader(
+                      title: 'مهام اليوم',
+                      count: '${_assignments.length}',
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    if (_assignments.isEmpty)
+                      const _EmptyTasksCard()
+                    else
+                      ..._assignments.map(
+                        (assignment) => Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: AppSpacing.md,
+                          ),
+                          child: _AssignmentCard(
+                            assignment: assignment,
+                            isUpdating:
+                                _updatingAssignments.contains(assignment.id),
+                            onComplete:
+                                assignment.status.toLowerCase() == 'pending'
+                                    ? () => _completeAssignment(assignment.id)
+                                    : null,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ChildTaskDetailsScreen(
+                                    title: assignment.task.title,
+                                    points: assignment.task.points,
+                                    description: assignment.task.description,
+                                    frequencyLabel:
+                                        assignment.task.taskFrequency,
+                                    icon: _categoryStyle(
+                                      assignment.task.category,
+                                    ).icon,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    if (_assignments.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      const _EncouragementCard(),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
-
-  return Column(
-    children: [
-      _HomeHeader(
-        childName: _child?.name ?? '',
-        points: _points,
-      ),
-      Expanded(
-        child: RefreshIndicator(
-          onRefresh: _loadData,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Text(
-                        '${_assignments.where((assignment) {
-                          final status = assignment.status.toLowerCase();
-                          return status == 'approved' || status == 'pending_review';
-                        }).length}/${_assignments.length}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryDark,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'مهام اليوم',
-                      style: AppTextStyles.arabicTitle,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                if (_assignments.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(AppSpacing.xl),
-                    child: Text(
-                      'لا توجد مهام اليوم 🎉',
-                      style: AppTextStyles.body,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                else
-                  ..._assignments.map(
-                    (assignment) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: AppSpacing.md,
-                        ),
-                        child: _AssignmentCard(
-                          assignment: assignment,
-                          onComplete: assignment.status.toLowerCase() == 'pending'
-                              ? () async {
-                                  try {
-                                    await TaskApiService()
-                                        .completeAssignment(assignment.id);
-                                    await _loadData();
-                                  } catch (e) {
-                                    if (!mounted) return;
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'تعذر إكمال المهمة',
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-                              : null,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ChildTaskDetailsScreen(
-                                  title: assignment.task.title,
-                                  points: assignment.task.points,
-                                  description:
-                                      assignment.task.description,
-                                  frequencyLabel:
-                                      assignment.task.taskFrequency,
-                                  icon: _categoryIcon(
-                                    assignment.task.category,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
 }
 
-IconData _categoryIcon(String? category) {
-  switch (category?.toLowerCase()) {
-    case 'religious':
-      return Icons.mosque;
-
-    case 'financial':
-      return Icons.credit_card;
-
-    case 'moral':
-      return Icons.volunteer_activism;
-
-    case 'social':
-      return Icons.groups;
-
-    default:
-      return Icons.task_alt;
-  }
-}
-}
 class _HomeHeader extends StatelessWidget {
   final String childName;
   final int points;
+  final int completedTasks;
+  final int totalTasks;
 
   const _HomeHeader({
     required this.childName,
     required this.points,
+    required this.completedTasks,
+    required this.totalTasks,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
           colors: AppColors.primaryGradient,
         ),
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+          bottomLeft: Radius.circular(36),
+          bottomRight: Radius.circular(36),
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
+      child: Stack(
+        children: [
+          Positioned(
+            top: -35,
+            left: -20,
+            child: _DecorativeBubble(
+              size: 110,
+              color: Colors.white.withOpacity(0.10),
+            ),
+          ),
+          Positioned(
+            bottom: -30,
+            right: -15,
+            child: _DecorativeBubble(
+              size: 90,
+              color: AppColors.gold.withOpacity(0.16),
+            ),
+          ),
+          const Positioned(
+            top: 74,
+            left: 32,
+            child: Icon(
+              Icons.auto_awesome,
+              size: 18,
+              color: AppColors.gold,
+            ),
+          ),
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
+                AppSpacing.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Text(
-                          'أهلاً،',
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'أهلًا يا بطل! 👋',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              childName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.childTitle.copyWith(
+                                color: Colors.white,
+                                fontSize: 28,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'يوم جديد وإنجازات جديدة بانتظارك',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '✦ $childName',
-                          style: const TextStyle(
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Container(
+                        width: 66,
+                        height: 66,
+                        decoration: BoxDecoration(
+                          color: AppColors.pinkLight,
+                          shape: BoxShape.circle,
+                          border: Border.all(
                             color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                            width: 3,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryDark.withOpacity(0.22),
+                              blurRadius: 12,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                        child: const Icon(
+                          Icons.child_care_rounded,
+                          color: AppColors.pink,
+                          size: 34,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: AppSpacing.md),
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFBE3EA),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.girl,
-                      color: Color(0xFFD1637F),
-                      size: 28,
-                    ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _HeaderMetric(
+                          icon: Icons.auto_awesome_rounded,
+                          iconColor: AppColors.gold,
+                          value: '$points',
+                          label: 'نقاط نور',
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: _HeaderMetric(
+                          icon: Icons.task_alt_rounded,
+                          iconColor: AppColors.mint,
+                          value: '$completedTasks/$totalTasks',
+                          label: 'مهام اليوم',
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-              const SizedBox(height: AppSpacing.lg),
+class _DecorativeBubble extends StatelessWidget {
+  final double size;
+  final Color color;
 
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+  const _DecorativeBubble({
+    required this.size,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
+class _HeaderMetric extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String value;
+  final String label;
+
+  const _HeaderMetric({
+    required this.icon,
+    required this.iconColor,
+    required this.value,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: 11,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.25),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: iconColor, size: 22),
+          const SizedBox(width: AppSpacing.sm),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
                 ),
-                child: Row(
+              ),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DailyGoalCard extends StatelessWidget {
+  final int completedTasks;
+  final int totalTasks;
+
+  const _DailyGoalCard({
+    required this.completedTasks,
+    required this.totalTasks,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = totalTasks == 0
+        ? 0.0
+        : (completedTasks / totalTasks).clamp(0.0, 1.0).toDouble();
+    final remainingTasks =
+        (totalTasks - completedTasks).clamp(0, totalTasks).toInt();
+
+    String message;
+
+    if (totalTasks == 0) {
+      message = 'لا توجد مهام اليوم، استمتع بيومك!';
+    } else if (remainingTasks == 0) {
+      message = 'رائع! أنجزت جميع مهام اليوم 🎉';
+    } else if (remainingTasks == 1) {
+      message = 'بقيت لك مهمة واحدة لإكمال هدف اليوم!';
+    } else {
+      message = 'بقيت لك $remainingTasks مهام لإكمال هدف اليوم';
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            AppColors.goldLight,
+            Color(0xFFFFF9E7),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.gold.withOpacity(0.35),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.gold.withOpacity(0.12),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.flag_rounded,
+                  color: AppColors.orange,
+                  size: 23,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'رصيدك من نقاط نور',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            '$points نقطة',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      'هدف اليوم',
+                      style: AppTextStyles.sectionTitle.copyWith(fontSize: 17),
                     ),
-                    const Icon(
-                      Icons.auto_awesome,
-                      color: AppColors.gold,
-                      size: 28,
+                    Text(
+                      message,
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.caption,
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                '$completedTasks/$totalTasks',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.orange,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: Colors.white,
+              valueColor: const AlwaysStoppedAnimation(AppColors.orange),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final String count;
+
+  const _SectionHeader({
+    required this.title,
+    required this.count,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 6,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Text(
+            count,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primaryDark,
+            ),
+          ),
+        ),
+        const Spacer(),
+        Text(
+          title,
+          style: AppTextStyles.sectionTitle,
+        ),
+      ],
+    );
+  }
+}
+
+class _AssignmentCard extends StatelessWidget {
+  final TaskAssignmentModel assignment;
+  final VoidCallback? onComplete;
+  final VoidCallback onTap;
+  final bool isUpdating;
+
+  const _AssignmentCard({
+    required this.assignment,
+    required this.onTap,
+    required this.isUpdating,
+    this.onComplete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final category = _categoryStyle(assignment.task.category);
+    final status = _statusStyle(assignment.status);
+    final canComplete =
+        assignment.status.toLowerCase() == 'pending' && onComplete != null;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: onTap,
+        child: Ink(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: category.color.withOpacity(0.28),
+              width: 1.3,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: category.color.withOpacity(0.10),
+                blurRadius: 16,
+                offset: const Offset(0, 7),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: category.background,
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                child: Icon(
+                  category.icon,
+                  color: category.color,
+                  size: 25,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      assignment.task.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      category.label,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: category.color,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      alignment: WrapAlignment.end,
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        _SmallBadge(
+                          icon: status.icon,
+                          text: status.label,
+                          foreground: status.color,
+                          background: status.background,
+                        ),
+                        _SmallBadge(
+                          icon: Icons.auto_awesome_rounded,
+                          text: '${assignment.task.points} نقاط',
+                          foreground: const Color(0xFFB77700),
+                          background: AppColors.goldLight,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              _TaskActionButton(
+                isUpdating: isUpdating,
+                canComplete: canComplete,
+                status: status,
+                onTap: onComplete,
               ),
             ],
           ),
@@ -376,228 +744,45 @@ class _HomeHeader extends StatelessWidget {
   }
 }
 
-// One task card for the "مهام اليوم" list. Same shape is reused for
-// completed, pending, and rejected tasks, just with different colors,
-// icons, and status text passed in.
-class _AssignmentCard extends StatelessWidget {
-  final TaskAssignmentModel assignment;
-  final VoidCallback? onComplete;
+class _TaskActionButton extends StatelessWidget {
+  final bool isUpdating;
+  final bool canComplete;
+  final _StatusStyle status;
   final VoidCallback? onTap;
 
-  const _AssignmentCard({
-    required this.assignment,
-    this.onComplete,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final status = assignment.status.toLowerCase();
-
-    late final Color statusColor;
-    late final Color borderColor;
-    late final Color circleColor;
-    late final IconData circleIcon;
-    late final String statusText;
-
-    switch (status) {
-      case 'approved':
-        statusColor = AppColors.success;
-        borderColor = const Color(0xFFBFE3C6);
-        circleColor = AppColors.success;
-        circleIcon = Icons.check;
-        statusText = 'معتمدة';
-        break;
-
-      case 'pending_review':
-        statusColor = const Color(0xFFC08A3E);
-        borderColor = const Color(0xFFF0DFA8);
-        circleColor = AppColors.gold;
-        circleIcon = Icons.access_time;
-        statusText = 'بانتظار المراجعة';
-        break;
-
-      case 'rejected':
-        statusColor = AppColors.error;
-        borderColor = const Color(0xFFF0B8B8);
-        circleColor = AppColors.error;
-        circleIcon = Icons.close;
-        statusText = 'مرفوضة';
-        break;
-
-      case 'pending':
-      default:
-        statusColor = AppColors.primary;
-        borderColor = AppColors.primaryLight;
-        circleColor = AppColors.primary;
-        circleIcon = Icons.radio_button_unchecked;
-        statusText = 'لم تُنجز بعد';
-        break;
-    }
-
-    final card = Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: borderColor,
-          width: 1.5,
-        ),
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: status == 'pending' ? onComplete : null,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: circleColor,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                circleIcon,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    assignment.task.title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${assignment.task.points} نقاط ✦ $statusText',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: statusColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              _categoryIcon(assignment.task.category),
-              color: AppColors.primaryDark,
-              size: 20,
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (onTap == null) {
-      return card;
-    }
-
-    return GestureDetector(
-      onTap: onTap,
-      child: card,
-    );
-  }
-
-  IconData _categoryIcon(String? category) {
-    switch (category?.toLowerCase()) {
-      case 'religious':
-        return Icons.mosque;
-
-      case 'financial':
-        return Icons.credit_card;
-
-      case 'moral':
-        return Icons.volunteer_activism;
-
-      case 'social':
-        return Icons.groups;
-
-      default:
-        return Icons.task_alt;
-    }
-  }
-}
-
-// Bottom navigation bar for the child screens. Simpler than the parent
-// one: just 4 plain items in a row, no floating center button.
-class _BottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-
-  const _BottomNavBar({
-    required this.currentIndex,
+  const _TaskActionButton({
+    required this.isUpdating,
+    required this.canComplete,
+    required this.status,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      _NavItem(
-        icon: Icons.home_rounded,
-        label: 'الرئيسية',
-      ),
-      _NavItem(
-        icon: Icons.favorite_border,
-        label: 'أمنياتي',
-      ),
-      _NavItem(
-        icon: Icons.card_giftcard_outlined,
-        label: 'المكافآت',
-      ),
-      _NavItem(
-        icon: Icons.bar_chart_rounded,
-        label: 'تقدّمي',
-      ),
-    ];
-
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
+    if (isUpdating) {
+      return const SizedBox(
+        width: 38,
+        height: 38,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: CircularProgressIndicator(strokeWidth: 2.5),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(
-            items.length,
-            (index) {
-              return GestureDetector(
-                onTap: () => onTap(index),
-                child: items[index].build(
-                  isActive: currentIndex == index,
-                ),
-              );
-            },
+      );
+    }
+
+    return Material(
+      color: canComplete ? AppColors.primary : status.background,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: canComplete ? onTap : null,
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: Icon(
+            canComplete ? Icons.check_rounded : status.icon,
+            color: canComplete ? Colors.white : status.color,
+            size: 20,
           ),
         ),
       ),
@@ -605,43 +790,282 @@ class _BottomNavBar extends StatelessWidget {
   }
 }
 
-// One icon + label pair inside the bottom navigation bar.
-class _NavItem {
+class _SmallBadge extends StatelessWidget {
   final IconData icon;
-  final String label;
+  final String text;
+  final Color foreground;
+  final Color background;
 
-  const _NavItem({
+  const _SmallBadge({
     required this.icon,
-    required this.label,
+    required this.text,
+    required this.foreground,
+    required this.background,
   });
 
-  Widget build({
-    required bool isActive,
-  }) {
-    final color = isActive
-        ? AppColors.primary
-        : AppColors.textSecondary;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 5,
+      ),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: foreground),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: foreground,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: color,
-          size: 22,
+class _EmptyTasksCard extends StatelessWidget {
+  const _EmptyTasksCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      decoration: BoxDecoration(
+        color: AppColors.skyLight,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(
+          color: AppColors.sky.withOpacity(0.25),
         ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive
-                ? FontWeight.bold
-                : FontWeight.normal,
-            color: color,
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.celebration_rounded,
+              color: AppColors.sky,
+              size: 36,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'لا توجد مهام اليوم',
+            style: AppTextStyles.sectionTitle,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'استمتع بوقتك، وعد لاحقًا لرؤية مهام جديدة.',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.body,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EncouragementCard extends StatelessWidget {
+  const _EncouragementCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.mintLight,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: const Row(
+        children: [
+          Icon(
+            Icons.emoji_events_rounded,
+            color: AppColors.mint,
+            size: 30,
+          ),
+          SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              'كل مهمة تنجزها تقرّبك من هدف جديد ومكافأة أجمل!',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.5,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  final String message;
+  final Future<void> Function() onRetry;
+
+  const _ErrorState({
+    required this.message,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 82,
+                height: 82,
+                decoration: const BoxDecoration(
+                  color: AppColors.coralLight,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.cloud_off_rounded,
+                  color: AppColors.coral,
+                  size: 40,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.sectionTitle,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              FilledButton.icon(
+                onPressed: () => onRetry(),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('إعادة المحاولة'),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
+  }
+}
+
+class _CategoryStyle {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final Color background;
+
+  const _CategoryStyle({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.background,
+  });
+}
+
+_CategoryStyle _categoryStyle(String? category) {
+  switch (category?.toLowerCase()) {
+    case 'religious':
+      return const _CategoryStyle(
+        label: 'قيمة دينية',
+        icon: Icons.mosque_rounded,
+        color: AppColors.primaryDark,
+        background: AppColors.primaryLight,
+      );
+    case 'financial':
+      return const _CategoryStyle(
+        label: 'مهارة مالية',
+        icon: Icons.monetization_on_rounded,
+        color: Color(0xFFB77700),
+        background: AppColors.goldLight,
+      );
+    case 'moral':
+      return const _CategoryStyle(
+        label: 'قيمة أخلاقية',
+        icon: Icons.volunteer_activism_rounded,
+        color: AppColors.pink,
+        background: AppColors.pinkLight,
+      );
+    case 'social':
+      return const _CategoryStyle(
+        label: 'مهمة اجتماعية',
+        icon: Icons.groups_rounded,
+        color: AppColors.sky,
+        background: AppColors.skyLight,
+      );
+    default:
+      return const _CategoryStyle(
+        label: 'مهمة يومية',
+        icon: Icons.task_alt_rounded,
+        color: AppColors.mint,
+        background: AppColors.mintLight,
+      );
+  }
+}
+
+class _StatusStyle {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final Color background;
+
+  const _StatusStyle({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.background,
+  });
+}
+
+_StatusStyle _statusStyle(String status) {
+  switch (status.toLowerCase()) {
+    case 'approved':
+      return const _StatusStyle(
+        label: 'تم الاعتماد',
+        icon: Icons.verified_rounded,
+        color: AppColors.mint,
+        background: AppColors.mintLight,
+      );
+    case 'completed':
+    case 'pending_review':
+      return const _StatusStyle(
+        label: 'بانتظار المراجعة',
+        icon: Icons.hourglass_top_rounded,
+        color: AppColors.orange,
+        background: AppColors.orangeLight,
+      );
+    case 'rejected':
+      return const _StatusStyle(
+        label: 'حاول مرة أخرى',
+        icon: Icons.refresh_rounded,
+        color: AppColors.coral,
+        background: AppColors.coralLight,
+      );
+    case 'pending':
+    default:
+      return const _StatusStyle(
+        label: 'جاهزة للإنجاز',
+        icon: Icons.play_arrow_rounded,
+        color: AppColors.sky,
+        background: AppColors.skyLight,
+      );
   }
 }
