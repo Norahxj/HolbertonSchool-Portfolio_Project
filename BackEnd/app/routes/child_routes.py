@@ -8,7 +8,7 @@ from app.schemas import ChildResponseSchema, ChildCreateSchema, ChildUpdateSchem
 api = Namespace("children", description="Child operations")
 child_service = ChildService()
 child_response_schema = ChildResponseSchema()
-children_response_schema = ChildResponseSchema(many=True)
+children_response_schema = ChildWithAccessCodeSchema(many=True)
 child_create_schema = ChildCreateSchema()
 child_update_schema = ChildUpdateSchema()
 child_with_access_code_schema = ChildWithAccessCodeSchema()
