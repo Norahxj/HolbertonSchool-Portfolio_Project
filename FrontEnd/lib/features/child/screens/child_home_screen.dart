@@ -17,7 +17,6 @@ import '../../../core/storage/secure_storage.dart';
 // here yet.
 class ChildHomeScreen extends StatefulWidget {
   const ChildHomeScreen({super.key});
-  
 
   @override
   State<ChildHomeScreen> createState() => _ChildHomeScreenState();
@@ -43,17 +42,13 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (child == null) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-         _HomeHeader(child: child!),
+          _HomeHeader(child: child!),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),

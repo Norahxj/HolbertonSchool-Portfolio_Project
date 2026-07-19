@@ -6,9 +6,8 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../../services/auth_api_service.dart';
 import 'child_home_screen.dart';
-import 'package:frontend/services/auth_api_service.dart';
+import 'package:frontend/features/auth/services/auth_api_service.dart';
 
 // Child PIN Login screen (Screen 20).
 //
@@ -19,55 +18,47 @@ import 'package:frontend/services/auth_api_service.dart';
 class ChildPinLoginScreen extends StatefulWidget {
   const ChildPinLoginScreen({super.key});
 
- @override
-  State<ChildPinLoginScreen> createState() =>
-      _ChildPinLoginScreenState();
+  @override
+  State<ChildPinLoginScreen> createState() => _ChildPinLoginScreenState();
 }
 
-class _ChildPinLoginScreenState
-    extends State<ChildPinLoginScreen> {
-
+class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
   String pin = '';
   bool isLoading = false;
   String? errorMessage;
 
   Future<void> _loginChild() async {
-  if (pin.length != 6) {
-    setState(() {
-      errorMessage = "أدخل رمز الدخول كاملاً";
-    });
-    return;
-  }
-
-  setState(() {
-    isLoading = true;
-    errorMessage = null;
-  });
-
-  try {
-    final response = await AuthApiService().childLogin(
-      accessCode: pin,
-    );
-    
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChildHomeScreen(),
-      ),
-    );
-  } on DioException catch (e) {
-    setState(() {
-      errorMessage =
-          e.response?.data["error"] ?? "رمز الدخول غير صحيح";
-    });
-  } finally {
-    if (mounted) {
+    if (pin.length != 6) {
       setState(() {
-        isLoading = false;
+        errorMessage = "أدخل رمز الدخول كاملاً";
       });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final response = await AuthApiService().childLogin(accessCode: pin);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => ChildHomeScreen()),
+      );
+    } on DioException catch (e) {
+      setState(() {
+        errorMessage = e.response?.data["error"] ?? "رمز الدخول غير صحيح";
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
-}
 
   void _addDigit(String digit) {
     // A pin code here is always 6 digits, so ignore taps after that.
@@ -149,20 +140,18 @@ class _ChildPinLoginScreenState
                   ],
                 ),
 
-                if (pin.length == 6) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                ],
+                if (pin.length == 6) ...[const SizedBox(height: AppSpacing.lg)],
 
                 const SizedBox(height: AppSpacing.xl),
                 if (errorMessage != null) ...[
                   Text(
-                     errorMessage!,
-                     style: const TextStyle(
-                       color: Colors.red,
-                       fontWeight: FontWeight.bold,
-                     ),
-                   ),
-                   const SizedBox(height: AppSpacing.md),
+                    errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
                 ],
 
                 _Keypad(onDigitTap: _addDigit, onBackspaceTap: _removeDigit),
@@ -240,7 +229,7 @@ class _RecognizedBanner extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children:[
+              children: [
                 Text(
                   'تم التعرّف عليك!',
                   style: TextStyle(

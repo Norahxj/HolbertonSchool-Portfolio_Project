@@ -8,7 +8,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/task_api_service.dart';
-import 'package:frontend/services/child_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 import 'parent_dashboard_screen.dart';
 
 // Add Task wizard (Screens 9-12).
