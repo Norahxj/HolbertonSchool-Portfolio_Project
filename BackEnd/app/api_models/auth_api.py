@@ -1,7 +1,5 @@
 from flask_restx import fields
 
-
-
 def get_auth_models(api):
     register_model = api.model("Register", {
         "first_name": fields.String(required=True, description="First name"),
