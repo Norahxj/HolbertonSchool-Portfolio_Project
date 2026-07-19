@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend/core/network/api_constants.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:frontend/core/storage/secure_storage.dart';
-import '../../services/auth_api_service.dart';
+import '../../features/auth/services/auth_api_service.dart';
 class DioFactory {
   DioFactory._();
 

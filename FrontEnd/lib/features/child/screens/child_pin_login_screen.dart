@@ -6,9 +6,8 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../../services/auth_api_service.dart';
 import 'child_home_screen.dart';
-import 'package:frontend/services/auth_api_service.dart';
+import 'package:frontend/features/auth/services/auth_api_service.dart';
 
 // Child PIN Login screen (Screen 20).
 //

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 
-import '../core/network/api_service.dart';
-import '../core/network/dio_factory.dart';
-import '../core/storage/secure_storage.dart';
+import 'package:frontend/core/network/api_service.dart';
+import 'package:frontend/core/network/dio_factory.dart';
+import 'package:frontend/core/storage/secure_storage.dart';
 
 class AuthApiService {
   final ApiService _api = ApiService(DioFactory.getDio());
