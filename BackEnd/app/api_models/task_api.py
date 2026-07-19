@@ -11,7 +11,7 @@ def get_task_models(api):
         "description": fields.String(required=True, description="Task description"),
         "points": fields.Integer(required=True, description="Points"),
         "task_frequency": fields.String(description="ONCE, DAILY, WEEKLY, or MONTHLY"),
-        "recurrence_day": fields.Raw(description="0-6 for weekly, 1-31 for monthly"),
+        "recurrence_day": fields.Integer(description="0-6 for weekly, 1-31 for monthly"),
         "category": fields.String(description="RELIGIOUS, FINANCIAL, MORAL, or SOCIAL"),
         "is_auto_verified": fields.Boolean(description="Auto verified")
     })
@@ -21,7 +21,7 @@ def get_task_models(api):
         "description": fields.String(description="Task description"),
         "points": fields.Integer(description="Points"),
         "task_frequency": fields.String(description="ONCE, DAILY, WEEKLY, or MONTHLY"),
-        "recurrence_day": fields.Raw(description="0-6 for weekly, 1-31 for monthly"),
+        "recurrence_day": fields.Integer(description="0-6 for weekly, 1-31 for monthly"),
         "category": fields.String(description="RELIGIOUS, FINANCIAL, MORAL, or SOCIAL"),
         "is_auto_verified": fields.Boolean(description="Auto verified")
     })

@@ -5,7 +5,6 @@ from app.schemas import PointsHistoryResponseSchema
 from app.api_models.points_history_api import get_points_history_models
 from app.repositories.child_repository import ChildRepository
 
-
 api = Namespace("points-history", description="Points history operations")
 points_history_service = PointsHistoryService()
 child_repository = ChildRepository()
@@ -14,45 +13,43 @@ history_response_model = get_points_history_models(api)
 
 @api.route("/my")
 class MyPointsHistoryResource(Resource):
-
+    @api.response(200, "Points history retrieved successfully", history_response_model)
+    @api.response(403, "Child access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to retrieve points history")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self):
         claims = get_jwt()
-
         if claims.get("role") != "child":
             return {"error": "Child access required"}, 403
-
         child_id = get_jwt_identity()
-
         history, error = points_history_service.get_history_for_child(child_id)
-
         if error == "child_not_found":
             return {"error": "Child not found"}, 404
-
+        if error:
+            return {"error": "Failed to retrieve points history"}, 500
         return history_response_schema.dump(history), 200
-
 
 @api.route("/child/<child_id>")
 class ChildPointsHistoryResource(Resource):
-
+    @api.response(200, "Child points history retrieved successfully", history_response_model)
+    @api.response(403, "Parent access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to retrieve points history")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self, child_id):
         claims = get_jwt()
-
         if claims.get("role") != "parent":
             return {"error": "Parent access required"}, 403
         parent_id = get_jwt_identity()
-
         child = child_repository.get_child_for_guardian(child_id, parent_id)
-
         if not child:
             return {"error": "Child not found"}, 404
-
         history, error = points_history_service.get_history_for_child(child_id)
-
         if error == "child_not_found":
             return {"error": "Child not found"}, 404
-
+        if error:
+            return {"error": "Failed to retrieve points history"}, 500
         return history_response_schema.dump(history), 200

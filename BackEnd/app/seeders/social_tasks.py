@@ -35,7 +35,7 @@ SOCIAL_TASKS = [
         "description_en": "Say 'As-salamu Alaykum' to everyone when entering a room.",
         "description_ar": "ابدأ بإلقاء السلام على الجميع عند دخول الغرفة أو المنزل.",
         "default_points": 10,
-        "age_min": 4,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -45,7 +45,7 @@ SOCIAL_TASKS = [
         "description_en": "Show respect through polite behavior and good manners when interacting with older people.",
         "description_ar": "أظهر احترامك لكبار السن من خلال الأدب وحسن التعامل معهم.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -55,7 +55,7 @@ SOCIAL_TASKS = [
         "description_en": "Listen carefully when an older person or anyone else is speaking without interrupting.",
         "description_ar": "استمع باهتمام ولا تقاطع الآخرين أثناء حديثهم.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -75,7 +75,7 @@ SOCIAL_TASKS = [
         "description_en": "Welcome guests with a smile and kind words.",
         "description_ar": "استقبل الضيوف بابتسامة وكلمات ترحيبية لطيفة.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -125,7 +125,7 @@ SOCIAL_TASKS = [
         "description_en": "Use polite expressions such as 'Please', 'Thank you', and 'Excuse me' whenever appropriate.",
         "description_ar": "استخدم عبارات مثل «لو سمحت»، «شكرًا»، و«عفوًا» في تعاملاتك طوال اليوم.",
         "default_points": 10,
-        "age_min": 4,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -145,7 +145,7 @@ SOCIAL_TASKS = [
         "description_en": "Smile and greet your neighbor politely when you meet them.",
         "description_ar": "ابتسم وألقِ التحية على جارك عند لقائه.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -165,7 +165,7 @@ SOCIAL_TASKS = [
         "description_en": "Avoid making loud noises that may disturb your neighbors.",
         "description_ar": "تجنب رفع صوتك أو إحداث ضوضاء قد تزعج جيرانك.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -205,7 +205,7 @@ SOCIAL_TASKS = [
         "description_en": "Knock on the door and ask for permission before entering a room.",
         "description_ar": "اطرق الباب واستأذن قبل دخول أي غرفة.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -215,7 +215,7 @@ SOCIAL_TASKS = [
         "description_en": "Keep your clothes clean and your appearance neat throughout the day.",
         "description_ar": "حافظ على نظافة ملابسك وترتيب مظهرك طوال اليوم.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -225,7 +225,7 @@ SOCIAL_TASKS = [
         "description_en": "Listen patiently and wait until others finish speaking before responding.",
         "description_ar": "استمع باهتمام وانتظر حتى ينتهي الآخرون من الحديث قبل أن تتكلم.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -235,7 +235,7 @@ SOCIAL_TASKS = [
         "description_en": "Express gratitude by saying 'Jazak Allah Khair' to someone who helped you today.",
         "description_ar": "عبّر عن امتنانك لمن ساعدك اليوم بقول «جزاك الله خيرًا».",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -265,7 +265,7 @@ SOCIAL_TASKS = [
         "description_en": "Choose honesty in every situation today, even if it feels difficult.",
         "description_ar": "احرص على قول الصدق في جميع مواقف اليوم حتى لو كان ذلك صعبًا.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -275,7 +275,7 @@ SOCIAL_TASKS = [
         "description_en": "Wait patiently for your turn without complaining or rushing others.",
         "description_ar": "انتظر دورك بصبر دون تذمر أو استعجال الآخرين.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -285,7 +285,7 @@ SOCIAL_TASKS = [
         "description_en": "Thank your parents today for something they did for you.",
         "description_ar": "اشكر والديك اليوم على شيء قدماه لك.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },

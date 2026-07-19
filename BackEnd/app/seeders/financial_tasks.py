@@ -175,7 +175,7 @@ FINANCIAL_TASKS = [
         "description_en": "Practice counting coins and banknotes correctly.",
         "description_ar": "تدرّب على عد العملات المعدنية والأوراق النقدية بشكل صحيح.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 12,
         "suggested_frequency": "MONTHLY"
     },
