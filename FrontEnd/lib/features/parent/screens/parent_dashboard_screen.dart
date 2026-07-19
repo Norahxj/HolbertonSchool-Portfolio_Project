@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/task_api_service.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../child/screens/child_profile_screen.dart';
-import 'add_child_screen.dart';
+import 'package:frontend/features/parent/screens/add_child_screen.dart';
 import 'add_task_screen.dart';
 import 'more_settings_screen.dart';
 import 'reward_management_screen.dart';
 import 'task_review_screen.dart';
 import 'wishlist_approval_screen.dart';
 import '../../../models/child_model.dart';
-import '../../../services/child_api_service.dart';
+import '../services/child_api_service.dart';
 import '../../../services/user_api_service.dart';
 import '../../../models/user_model.dart';
 
@@ -260,6 +261,8 @@ class _ChildProgressCard extends StatelessWidget {
     return GestureDetector(
       // TODO: This navigation is temporary until real child/profile routing is finalized.
       onTap: () {
+        print("inside child card");
+        print(TaskApiService().getTasksByChild(child.id));
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ChildProfileScreen(child: child)),

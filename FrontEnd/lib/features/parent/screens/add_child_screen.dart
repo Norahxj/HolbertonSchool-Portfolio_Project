@@ -6,7 +6,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import 'package:frontend/core/widgets/screen_background.dart';
 import 'package:dio/dio.dart';
-import '../../../services/child_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 // Add Child screen (Screen 5).
 //
 // This first pass is static/placeholder only: avatar and date selection
