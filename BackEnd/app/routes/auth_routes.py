@@ -14,11 +14,10 @@ register_model, login_model, child_login_model, refresh_response_model, message_
 
 @api.route("/register")
 class RegisterResource(Resource):
-    @api.expect(register_model, validate=True)
+    @api.expect(register_model)
     @api.response(201, "User registered successfully")
     @api.response(400, "Invalid input")
-    @api.response(409, "Email already registered")
-    @api.response(409, "Phone number already used")
+    @api.response(409, "Email or phone number already registered")
     def post(self):
         try:
             data = register_schema.load(api.payload)
@@ -33,7 +32,7 @@ class RegisterResource(Resource):
 
 @api.route("/login")
 class LoginResource(Resource):
-    @api.expect(login_model, validate=True)
+    @api.expect(login_model)
     @api.response(200, "User logged in successfully")
     @api.response(400, "Invalid input")
     @api.response(401, "Invalid email or password")
@@ -49,7 +48,7 @@ class LoginResource(Resource):
     
 @api.route("/child-login")
 class ChildLoginResource(Resource):
-    @api.expect(child_login_model, validate=True)
+    @api.expect(child_login_model)
     @api.response(200, "Child logged in successfully")
     @api.response(400, "Invalid input")
     @api.response(401, "Invalid access code")
@@ -65,6 +64,7 @@ class ChildLoginResource(Resource):
     
 @api.route("/refresh")
 class RefreshResource(Resource):
+    @api.response(404, "User or child not found")
     @api.response(401, "Invalid or expired refresh token")
     @api.response(403, "Invalid role")
     @api.doc(security="JWT")
@@ -95,7 +95,7 @@ class Logout(Resource):
 @api.route("/logout-refresh")
 class LogoutRefresh(Resource):
     @api.response(401, "Missing or invalid refresh token")
-    @api.response(500, "Refresh token logout failed")
+    @api.response(500, "Logout failed")
     @api.doc(security="JWT")
     @jwt_required(refresh=True)
     @api.response(200, "Refresh token logged out successfully", message_response_model)

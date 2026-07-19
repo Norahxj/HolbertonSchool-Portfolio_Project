@@ -7,7 +7,7 @@ def get_auth_models(api):
         "phone": fields.String(required=True, description="Phone number"),
         "email": fields.String(required=True, description="Email"),
         "password": fields.String(required=True, description="Password"),
-        "guardian_type": fields.String(required=True, description="father, mother, or guardian")
+        "guardian_type": fields.String(required=True, enum=["father", "mother", "guardian"], description="Guardian type")
     })
 
     login_model = api.model("Login", {
