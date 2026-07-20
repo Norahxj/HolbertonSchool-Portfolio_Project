@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import 'child_home_screen.dart';
-import 'child_progress_screen.dart';
-import 'child_wishlist_screen.dart';
 
 // Child Rewards screen (Screen 25).
 //
@@ -74,7 +71,6 @@ class ChildRewardsScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
@@ -252,82 +248,6 @@ class _RewardCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// Bottom navigation bar for the child screens, with "المكافآت" highlighted
-// as the active tab.
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildProgressScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.bar_chart_rounded,
-                label: 'تقدّمي',
-              ),
-            ),
-            const _NavItem(
-              icon: Icons.card_giftcard_outlined,
-              label: 'المكافآت',
-              isActive: true,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildWishlistScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.favorite_border,
-                label: 'أمنياتي',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.home_rounded,
-                label: 'الرئيسية',
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

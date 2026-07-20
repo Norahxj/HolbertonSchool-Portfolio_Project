@@ -4,17 +4,13 @@ import 'package:frontend/models/child_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import 'child_progress_screen.dart';
-import 'child_rewards_screen.dart';
-import 'child_task_details_screen.dart';
-import 'child_wishlist_screen.dart';
 import '../../../core/storage/secure_storage.dart';
+import 'child_task_details_screen.dart';
 
 // Child Home Dashboard screen (Screen 21).
 //
-// This first pass is static/placeholder only: the child's name, points
-// balance, and today's tasks are all hardcoded. No backend calls happen
-// here yet.
+// The child's information is loaded from secure storage.
+// The task information is currently static placeholder data.
 class ChildHomeScreen extends StatefulWidget {
   const ChildHomeScreen({super.key});
 
@@ -34,6 +30,8 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
   Future<void> _loadChild() async {
     final data = await SecureStorage.getChild();
 
+    if (!mounted) return;
+
     setState(() {
       child = data;
     });
@@ -42,13 +40,19 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (child == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
           _HomeHeader(child: child!),
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -76,7 +80,11 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                           ),
                         ),
                       ),
-                      Text('مهام اليوم', style: AppTextStyles.arabicTitle),
+
+                      Text(
+                        'مهام اليوم',
+                        style: AppTextStyles.arabicTitle,
+                      ),
                     ],
                   ),
 
@@ -139,16 +147,18 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
 
-// Purple gradient header: greeting, avatar, and the Noor points card.
+// Purple gradient header containing the greeting, avatar,
+// and the child's Noor Points balance.
 class _HomeHeader extends StatelessWidget {
   final ChildModel child;
 
-  const _HomeHeader({required this.child});
+  const _HomeHeader({
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -179,9 +189,14 @@ class _HomeHeader extends StatelessWidget {
                       children: [
                         const Text(
                           'أهلاً،',
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
                         ),
+
                         const SizedBox(height: 2),
+
                         Text(
                           '✦ ${child.name}',
                           style: const TextStyle(
@@ -193,7 +208,9 @@ class _HomeHeader extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   const SizedBox(width: AppSpacing.md),
+
                   Container(
                     width: 56,
                     height: 56,
@@ -217,11 +234,13 @@ class _HomeHeader extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                  ),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -232,7 +251,9 @@ class _HomeHeader extends StatelessWidget {
                               fontSize: 13,
                             ),
                           ),
+
                           SizedBox(height: 4),
+
                           Text(
                             '240 نقطة',
                             style: TextStyle(
@@ -244,7 +265,8 @@ class _HomeHeader extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Icon(
+
+                    Icon(
                       Icons.auto_awesome,
                       color: AppColors.gold,
                       size: 28,
@@ -260,9 +282,7 @@ class _HomeHeader extends StatelessWidget {
   }
 }
 
-// One task card for the "مهام اليوم" list. Same shape is reused for
-// completed, pending, and rejected tasks, just with different colors,
-// icons, and status text passed in.
+// One task card used for completed, pending, and rejected tasks.
 class _TaskCard extends StatelessWidget {
   final String title;
   final int points;
@@ -293,7 +313,10 @@ class _TaskCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor, width: 1.5),
+        border: Border.all(
+          color: borderColor,
+          width: 1.5,
+        ),
       ),
       child: Row(
         children: [
@@ -304,11 +327,18 @@ class _TaskCard extends StatelessWidget {
               color: circleColor,
               shape: BoxShape.circle,
             ),
-            child: Icon(circleIcon, color: Colors.white, size: 18),
+            child: Icon(
+              circleIcon,
+              color: Colors.white,
+              size: 18,
+            ),
           ),
+
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -321,7 +351,9 @@ class _TaskCard extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
+
                   const SizedBox(height: 2),
+
                   Text(
                     '$points نقاط ✦ $statusText',
                     style: TextStyle(
@@ -334,6 +366,7 @@ class _TaskCard extends StatelessWidget {
               ),
             ),
           ),
+
           Container(
             width: 40,
             height: 40,
@@ -341,128 +374,23 @@ class _TaskCard extends StatelessWidget {
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(taskIcon, color: AppColors.primaryDark, size: 20),
+            child: Icon(
+              taskIcon,
+              color: AppColors.primaryDark,
+              size: 20,
+            ),
           ),
         ],
       ),
     );
 
-    // Only wrap the card in a GestureDetector when there is something to
-    // do on tap. Cards with no onTap are shown as plain, non-tappable
-    // cards, same as before.
     if (onTap == null) {
       return card;
     }
-    return GestureDetector(onTap: onTap, child: card);
-  }
-}
 
-// Bottom navigation bar for the child screens. Simpler than the parent
-// one: just 4 plain items in a row, no floating center button.
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildProgressScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.bar_chart_rounded,
-                label: 'تقدّمي',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.card_giftcard_outlined,
-                label: 'المكافآت',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildWishlistScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.favorite_border,
-                label: 'أمنياتي',
-              ),
-            ),
-            const _NavItem(
-              icon: Icons.home_rounded,
-              label: 'الرئيسية',
-              isActive: true,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// One icon + label pair inside the bottom navigation bar.
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isActive ? AppColors.primary : AppColors.textSecondary;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 22),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: color,
-          ),
-        ),
-      ],
+    return GestureDetector(
+      onTap: onTap,
+      child: card,
     );
   }
 }

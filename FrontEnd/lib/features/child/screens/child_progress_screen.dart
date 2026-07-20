@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import 'child_home_screen.dart';
-import 'child_rewards_screen.dart';
-import 'child_wishlist_screen.dart';
 
 // Child Progress screen (Screen 26).
 //
@@ -97,7 +94,6 @@ class ChildProgressScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
@@ -317,114 +313,6 @@ class _DayBar extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-        ),
-      ],
-    );
-  }
-}
-
-// Bottom navigation bar for the child screens, with "تقدّمي" highlighted
-// as the active tab.
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            const _NavItem(
-              icon: Icons.bar_chart_rounded,
-              label: 'تقدّمي',
-              isActive: true,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.card_giftcard_outlined,
-                label: 'المكافآت',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChildWishlistScreen(),
-                  ),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.favorite_border,
-                label: 'أمنياتي',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
-                );
-              },
-              child: const _NavItem(
-                icon: Icons.home_rounded,
-                label: 'الرئيسية',
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// One icon + label pair inside the bottom navigation bar.
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isActive ? AppColors.primary : AppColors.textSecondary;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 22),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: color,
-          ),
         ),
       ],
     );
