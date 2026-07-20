@@ -14,6 +14,7 @@ points_response_model = get_point_models(api)
 @api.route("/child/<child_id>")
 class ChildPointsResource(Resource):
     @api.response(200, "Child points retrieved successfully", points_response_model)
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to retrieve child points")
@@ -37,6 +38,7 @@ class ChildPointsResource(Resource):
 @api.route("/my")
 class MyPointsResource(Resource):
     @api.response(200, "Points retrieved successfully", points_response_model)
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to retrieve points")
