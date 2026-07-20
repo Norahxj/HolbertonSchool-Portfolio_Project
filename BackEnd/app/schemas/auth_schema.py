@@ -69,5 +69,5 @@ class LoginSchema(Schema):
 class ChildLoginSchema(Schema):
     access_code = fields.String(required=True, validate=[
             validate.Length(equal=6),
-            validate.Regexp(r"^\d{6}$", error="Access code must be exactly 6 digits.")
+            validate.Regexp(r"^[0-9]{6}$", error="Access code must be exactly 6 digits.")
         ])
