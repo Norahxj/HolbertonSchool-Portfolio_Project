@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 import 'package:frontend/features/parent/utils/task_validation.dart';
 
 import '../../../models/child_model.dart';
 import '../../../models/task_suggestion_model.dart';
-import '../../../services/child_api_service.dart';
 import '../../../services/task_api_service.dart';
 
 class AddTaskController {

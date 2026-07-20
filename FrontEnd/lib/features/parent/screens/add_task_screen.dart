@@ -190,7 +190,6 @@ void initState() {
           },
            onCategorySelected: (category) async {
             await controller.loadSuggestions(category);
-         
              if (mounted) {
                setState(() {});
              }
