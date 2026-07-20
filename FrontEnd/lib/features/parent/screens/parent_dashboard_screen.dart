@@ -7,11 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../child/screens/child_profile_screen.dart';
 import 'package:frontend/features/parent/screens/add_child_screen.dart';
-import 'add_task_screen.dart';
-import 'more_settings_screen.dart';
-import 'reward_management_screen.dart';
 import 'task_review_screen.dart';
-import 'wishlist_approval_screen.dart';
 import '../../../models/child_model.dart';
 import '../services/child_api_service.dart';
 import '../../../services/user_api_service.dart';
@@ -138,7 +134,6 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
@@ -558,167 +553,5 @@ class _DashedBorderPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) {
     return oldDelegate.color != color || oldDelegate.radius != radius;
-  }
-}
-
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: SizedBox(
-        height: 88,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                height: 66,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 12,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const MoreSettingsScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.more_horiz,
-                        label: 'المزيد',
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const WishlistApprovalScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.favorite_border,
-                        label: 'الأمنيات',
-                      ),
-                    ),
-                    const SizedBox(width: 56),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RewardManagementScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.card_giftcard_outlined,
-                        label: 'المكافآت',
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const AddTaskScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.list_alt,
-                        label: 'المهام',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.home_rounded,
-                        color: Colors.white,
-                        size: 26,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'الرئيسية',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _NavItem({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: AppColors.textSecondary, size: 22),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
-        ),
-      ],
-    );
   }
 }

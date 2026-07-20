@@ -3,7 +3,7 @@ import 'package:frontend/features/auth/services/auth_api_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/constants/app_colors.dart';
 import 'features/onboarding/screens/welcome_screen.dart';
-import 'features/parent/screens/parent_dashboard_screen.dart';
+import 'features/parent/widgets/parent_nav.dart';
 import 'features/child/widgets/child_nav.dart';
 import 'core/storage/secure_storage.dart';
 
@@ -99,7 +99,7 @@ class _AsalahAppState extends State<AsalahApp> {
           : _isLoggedIn
               ? (_isChild
                   ? const ChildNav()
-                  : const ParentDashboardScreen())
+                  : const ParentNav())
               : WelcomeScreen(
                   isArabic: isArabic,
                   onLanguageToggle: _toggleLanguage,

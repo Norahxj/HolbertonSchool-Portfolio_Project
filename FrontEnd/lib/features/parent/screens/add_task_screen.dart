@@ -9,7 +9,6 @@ import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/task_api_service.dart';
 import 'package:frontend/features/parent/services/child_api_service.dart';
-import 'parent_dashboard_screen.dart';
 
 // Add Task wizard (Screens 9-12).
 //
@@ -181,28 +180,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          _stepTitle,
-                          style: AppTextStyles.arabicTitle,
-                        ),
-                      ),
-                    ),
-                    _RoundBackButton(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+Text(
+  _stepTitle,
+  style: AppTextStyles.arabicTitle,
+  textAlign: TextAlign.center,
+),
 
                 const SizedBox(height: AppSpacing.sm),
 
@@ -841,13 +823,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           "is_auto_verified": trustChild,
                         });
 
-                        if (!mounted) return;
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
+if (!mounted) return;
+
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(
+    content: Text('تم حفظ المهمة بنجاح'),
+  ),
+);
                       } on DioException catch (e) {
                         final errors = e.response?.data["errors"];
 
@@ -927,35 +909,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           ),
         ),
       ],
-    );
-  }
-}
-
-// Round back button in the top-right corner. Always exits the whole
-// wizard, no matter which step is showing (same as every mockup screen).
-class _RoundBackButton extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _RoundBackButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ),
-      ),
     );
   }
 }

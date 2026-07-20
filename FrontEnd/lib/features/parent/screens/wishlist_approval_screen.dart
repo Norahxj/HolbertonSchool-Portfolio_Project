@@ -7,7 +7,6 @@ import '../../../core/widgets/screen_background.dart';
 import '../../../models/wish_model.dart';
 import '../services/child_api_service.dart';
 import '../../../services/wishlist_api_service.dart';
-import 'parent_dashboard_screen.dart';
 
 // Wishlist Approval screen (Screen 14).
 //
@@ -120,28 +119,11 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'موافقة الأمنيات',
-                          style: AppTextStyles.arabicTitle,
-                        ),
-                      ),
-                    ),
-                    _RoundBackButton(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+Text(
+  'موافقة الأمنيات',
+  style: AppTextStyles.arabicTitle,
+  textAlign: TextAlign.center,
+),
 
                 const SizedBox(height: AppSpacing.sm),
 

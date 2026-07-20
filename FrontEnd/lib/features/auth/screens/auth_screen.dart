@@ -8,7 +8,7 @@ import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
 import '../services/auth_api_service.dart';
-import '../../parent/screens/parent_dashboard_screen.dart';
+import '../../parent/widgets/parent_nav.dart';
 import 'package:dio/dio.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -104,10 +104,12 @@ class _AuthScreenState extends State<AuthScreen> {
           context,
         ).showSnackBar(const SnackBar(content: Text("Login Success")));
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const ParentDashboardScreen()),
-        );
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (_) => const ParentNav(),
+  ),
+);
       }
     } on DioException catch (e) {
       // Handle login errors
