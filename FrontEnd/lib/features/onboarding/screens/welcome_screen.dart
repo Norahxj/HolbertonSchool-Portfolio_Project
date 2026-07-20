@@ -6,9 +6,9 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../widgets/role_card.dart';
 import '../../auth/screens/auth_screen.dart';
 import '../../child/screens/child_pin_login_screen.dart';
+import '../widgets/role_card.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final bool isArabic;
@@ -45,17 +45,17 @@ class WelcomeScreen extends StatelessWidget {
                   alignment: Alignment.center,
                   clipBehavior: Clip.none,
                   children: [
-                    Positioned(
+                    const Positioned(
                       top: 0,
                       left: 4,
                       child: _SoftPill(width: 74, height: 22),
                     ),
-                    Positioned(
+                    const Positioned(
                       top: 50,
                       right: 0,
                       child: _SoftPill(width: 58, height: 20),
                     ),
-                    Positioned(
+                    const Positioned(
                       top: -8,
                       right: 56,
                       child: Icon(
@@ -64,7 +64,7 @@ class WelcomeScreen extends StatelessWidget {
                         color: AppColors.gold,
                       ),
                     ),
-                    Positioned(
+                    const Positioned(
                       top: 34,
                       left: 40,
                       child: Icon(
@@ -73,7 +73,7 @@ class WelcomeScreen extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    Positioned(
+                    const Positioned(
                       bottom: 6,
                       right: 30,
                       child: Icon(
@@ -151,7 +151,9 @@ class WelcomeScreen extends StatelessWidget {
                         );
                       },
                     ),
+
                     const SizedBox(width: AppSpacing.md),
+
                     RoleCard(
                       arabicTitle: 'طفل',
                       englishTitle: 'Child',
@@ -161,7 +163,10 @@ class WelcomeScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const ChildPinLoginScreen(),
+                            builder: (_) => ChildPinLoginScreen(
+                              isArabic: isArabic,
+                              onLanguageToggle: onLanguageToggle,
+                            ),
                           ),
                         );
                       },

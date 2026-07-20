@@ -2,19 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/features/auth/services/auth_api_service.dart';
-import 'package:frontend/models/child_model.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import '../../../core/widgets/app_back_button.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../widgets/child_nav.dart';
 
 // Child PIN Login screen (Screen 20).
-
 class ChildPinLoginScreen extends StatefulWidget {
   final bool isArabic;
   final VoidCallback onLanguageToggle;
@@ -26,8 +23,7 @@ class ChildPinLoginScreen extends StatefulWidget {
   });
 
   @override
-  State<ChildPinLoginScreen> createState() =>
-      _ChildPinLoginScreenState();
+  State<ChildPinLoginScreen> createState() => _ChildPinLoginScreenState();
 }
 
 class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
@@ -35,8 +31,7 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
   bool isLoading = false;
   String? errorMessage;
 
-  final TextEditingController _pinController =
-      TextEditingController();
+  final TextEditingController _pinController = TextEditingController();
 
   final FocusNode _pinFocusNode = FocusNode();
 
@@ -57,24 +52,18 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
     });
 
     try {
-      await AuthApiService().childLogin(
-        accessCode: pin,
-      );
+      await AuthApiService().childLogin(accessCode: pin);
 
-      // Make sure this screen still exists before navigating.
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const ChildNav(),
-        ),
+        MaterialPageRoute(builder: (_) => const ChildNav()),
       );
     } on DioException catch (error) {
       if (!mounted) return;
 
       final responseData = error.response?.data;
-
       String? backendMessage;
 
       if (responseData is Map) {
@@ -119,8 +108,7 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
     final isArabic = widget.isArabic;
 
     return Directionality(
-      textDirection:
-          isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         body: ScreenBackground(
           child: SafeArea(
@@ -129,10 +117,14 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      AppBackButton(),
+                      _RoundBackButton(
+                        isArabic: isArabic,
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                       LanguageToggle(
                         isArabic: isArabic,
                         onTap: widget.onLanguageToggle,
@@ -192,19 +184,15 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
 
                   const SizedBox(height: AppSpacing.sm),
 
-                  // The six visible PIN boxes and the invisible input field.
                   Stack(
                     children: [
                       Row(
                         textDirection: TextDirection.ltr,
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           for (int index = 0; index < 6; index++)
                             _PinBox(
-                              digit: index < pin.length
-                                  ? pin[index]
-                                  : '',
+                              digit: index < pin.length ? pin[index] : '',
                             ),
                         ],
                       ),
@@ -222,8 +210,7 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
                             textAlign: TextAlign.left,
                             maxLength: 6,
                             inputFormatters: [
-                              FilteringTextInputFormatter
-                                  .digitsOnly,
+                              FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(6),
                             ],
                             onChanged: (value) {
@@ -263,12 +250,9 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
 
                   AppButton(
                     text: isLoading
-                        ? (isArabic
-                            ? 'جاري التحقق...'
-                            : 'Verifying...')
+                        ? (isArabic ? 'جاري التحقق...' : 'Verifying...')
                         : (isArabic ? 'دخول' : 'Login'),
-                    onPressed:
-                        isLoading ? null : _loginChild,
+                    onPressed: isLoading ? null : _loginChild,
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -287,13 +271,40 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
   }
 }
 
+// Back button displayed in the top corner.
+class _RoundBackButton extends StatelessWidget {
+  final bool isArabic;
+  final VoidCallback onTap;
+
+  const _RoundBackButton({required this.isArabic, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.primaryLight,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(
+            isArabic ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+            size: 18,
+            color: AppColors.primaryDark,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // One box in the access-code row.
 class _PinBox extends StatelessWidget {
   final String digit;
 
-  const _PinBox({
-    required this.digit,
-  });
+  const _PinBox({required this.digit});
 
   @override
   Widget build(BuildContext context) {
@@ -304,10 +315,7 @@ class _PinBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.primary,
-          width: 1.5,
-        ),
+        border: Border.all(color: AppColors.primary, width: 1.5),
       ),
       child: Text(
         digit,
@@ -316,78 +324,6 @@ class _PinBox extends StatelessWidget {
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),
-      ),
-    );
-  }
-}
-
-// This banner is available if you later want to display the identified
-// child's name after a successful PIN check.
-class _RecognizedBanner extends StatelessWidget {
-  final ChildModel child;
-
-  const _RecognizedBanner({
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.check_circle,
-            color: AppColors.success,
-            size: 20,
-          ),
-
-          const SizedBox(width: AppSpacing.sm),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Text(
-                  'تم التعرّف عليك!',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-
-                const SizedBox(height: 2),
-
-                Text(
-                  '✦ ${child.name}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFBE3EA),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.child_care,
-              color: Color(0xFFD1637F),
-              size: 20,
-            ),
-          ),
-        ],
       ),
     );
   }
