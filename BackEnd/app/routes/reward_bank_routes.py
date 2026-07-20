@@ -16,6 +16,7 @@ def require_parent():
 @api.route("/suggestions")
 class RandomSuggestedRewardsResource(Resource):
     @api.response(400, "Invalid language or count")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(500, "Failed to retrieve reward suggestions")
     @api.doc(security="JWT")

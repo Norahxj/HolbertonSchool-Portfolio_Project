@@ -17,6 +17,9 @@ def require_parent():
 
 @api.route("/categories")
 class TaskBankCategoriesResource(Resource):
+    @api.response(200, "Categories retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Parent access required")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self):
@@ -30,9 +33,15 @@ class TaskBankCategoriesResource(Resource):
 
 @api.route("/suggestions")
 class RandomSuggestedTasksResource(Resource):
+    @api.response(200, "Task suggestions retrieved successfully")
+    @api.response(400, "Invalid request data")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Parent access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to retrieve task suggestions")
     @api.doc(security="JWT")
     @jwt_required()
-    @api.expect(suggestion_request_model)
+    @api.expect(suggestion_request_model, validate=True)
     def post(self):
         parent_id = get_jwt_identity()
 
@@ -60,8 +69,12 @@ class RandomSuggestedTasksResource(Resource):
 
         if error == "invalid_category":
             return {"error": "Invalid category"}, 400
+        if error == "invalid_language":
+            return {"error": "Invalid language"}, 400
 
         if error == "child_not_found":
             return {"error": "Child not found"}, 404
+        if error:
+            return {"error": "Failed to retrieve task suggestions"}, 500
 
         return {"suggestions": suggestions}, 200

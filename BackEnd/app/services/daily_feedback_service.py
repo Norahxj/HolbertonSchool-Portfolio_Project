@@ -51,6 +51,9 @@ class DailyFeedbackService:
         return feedback, None
 
     def get_my_feedback(self, child_id):
+        child = self.child_repository.get_child_by_id(child_id)
+        if not child:
+            return None, "child_not_found"
         feedback = (
             self.daily_feedback_repository
             .get_feedback_by_child_id(child_id)

@@ -17,6 +17,7 @@ daily_feedback_create_model, daily_feedback_update_model, daily_feedback_respons
 class DailyFeedbackListResource(Resource):
     @api.response(201, "Feedback created successfully", daily_feedback_response_model)
     @api.response(400, "Invalid input or feedback already exists today")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to create feedback")
@@ -44,6 +45,7 @@ class DailyFeedbackListResource(Resource):
 @api.route("/child/<child_id>")
 class ChildDailyFeedbackResource(Resource):
     @api.response(200, "Feedback retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to retrieve feedback")
@@ -64,7 +66,9 @@ class ChildDailyFeedbackResource(Resource):
 @api.route("/my")
 class MyDailyFeedbackResource(Resource):
     @api.response(200, "Feedback retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
+    @api.response(404, "Child not found")
     @api.response(500, "Failed to retrieve feedback")
     @api.doc(security="JWT")
     @jwt_required()
@@ -74,6 +78,8 @@ class MyDailyFeedbackResource(Resource):
             return {"error": "Child access required"}, 403
         child_id = get_jwt_identity()
         feedback, error = daily_feedback_service.get_my_feedback(child_id)
+        if error == "child_not_found":
+            return {"error": "Child not found"}, 404
         if error:
             return {"error": "Failed to retrieve feedback"}, 500
         return daily_feedback_list_schema.dump(feedback), 200
@@ -82,6 +88,7 @@ class MyDailyFeedbackResource(Resource):
 class DailyFeedbackResource(Resource):
     @api.response(200, "Feedback updated successfully", daily_feedback_response_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Feedback not found")
     @api.response(500, "Failed to update feedback")
