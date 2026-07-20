@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:frontend/core/constants/app_rtl_align.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import 'package:frontend/features/parent/widgets/task_error_text.dart';
@@ -58,14 +58,16 @@ class TaskDetailsStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
 
-        const Text(
-          'نقاط نور',
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
+        const RtlAlign(
+          child: Text(
+            'نقاط نور',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
           ),
+        ),
         ),
 
         const SizedBox(height: AppSpacing.sm),

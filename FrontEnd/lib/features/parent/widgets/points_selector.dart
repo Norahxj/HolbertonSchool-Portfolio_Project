@@ -7,14 +7,12 @@ class PointsSelector extends StatelessWidget {
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
 
-
   const PointsSelector({
     super.key,
     required this.points,
     required this.onIncrease,
     required this.onDecrease,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -23,32 +21,39 @@ class PointsSelector extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Row(
         children: [
-          IconButton(
-            onPressed: onIncrease,
-            icon: const Icon(Icons.add),
+          const Icon(
+            Icons.auto_awesome,
+            color: AppColors.gold,
           ),
-          IconButton(
-            onPressed: onDecrease,
-            icon: const Icon(Icons.remove),
-          ),
-          const Spacer(),
+
+          const SizedBox(width: AppSpacing.xs),
+
           Text(
             '$points نقطة',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: AppSpacing.xs),
-          const Icon(Icons.auto_awesome,
-            color: AppColors.gold,
+
+          const Spacer(),
+
+          IconButton(
+            onPressed: onDecrease,
+            icon: const Icon(Icons.remove),
+          ),
+
+          IconButton(
+            onPressed: onIncrease,
+            icon: const Icon(Icons.add),
           ),
         ],
       ),
     );
   }
 }
-

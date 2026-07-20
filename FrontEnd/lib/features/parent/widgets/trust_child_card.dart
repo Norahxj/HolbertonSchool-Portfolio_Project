@@ -25,17 +25,24 @@ class TrustChildCard extends StatelessWidget {
       ),
       child: SwitchListTile(
         contentPadding: EdgeInsets.zero,
-        title: const Text(
-          'هل تثق بجدية طفلك في هذه المهمة؟',
-          textAlign: TextAlign.right,
+        controlAffinity: ListTileControlAffinity.leading,
+        title: const Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            'هل تثق بجدية طفلك في هذه المهمة؟',
+            textAlign: TextAlign.right,
+          ),
         ),
-        subtitle: const Text(
-          'إذا وثقت، ستُعتمد المهمة تلقائيًا',
-          textAlign: TextAlign.right,
+        subtitle: const Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            'إذا وثقت، ستُعتمد المهمة تلقائيًا',
+            textAlign: TextAlign.right,
+          ),
         ),
         value: value,
         onChanged: onChanged,
       ),
-    );
+    ); 
   }
 }

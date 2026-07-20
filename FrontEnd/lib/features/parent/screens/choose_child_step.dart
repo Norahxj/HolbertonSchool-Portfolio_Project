@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/task_suggestion_model.dart';
-import 'package:frontend/core/constants/app_rtl_align.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../models/child_model.dart';
@@ -83,16 +82,15 @@ class ChooseChildStep extends StatelessWidget {
         ),
         
         const SizedBox(height: AppSpacing.lg),
-        
-        const RtlAlign(
-          child: Text(
+
+        const Text(
           'إضافة سريعة',
+          textAlign: TextAlign.right,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
           ),
-        ),
         ),
 
         const SizedBox(height: AppSpacing.sm),
@@ -146,64 +144,35 @@ class ChooseChildStep extends StatelessWidget {
         if (!isLoadingSuggestions &&
             selectedCategory != null &&
             suggestions.isNotEmpty) ...[
-          const RtlAlign(
-            child: Text(
+          const Text(
             'المقترحات',
+            textAlign: TextAlign.right,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          ),
 
           const SizedBox(height: AppSpacing.md),
 
           ...suggestions.map(
-                        (suggestion) => Card(
+            (suggestion) => Card(
               margin: const EdgeInsets.only(
                 bottom: AppSpacing.sm,
               ),
-              child: InkWell(
-                onTap: () => onSuggestionSelected(suggestion),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Row(
-                    children: [
-                      Text(
-                        '${suggestion.points} نقطة',
-                        style: const TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-            
-                      const SizedBox(width: AppSpacing.md),
-            
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              suggestion.title,
-                              textAlign: TextAlign.right,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-            
-                            const SizedBox(height: 4),
-            
-                            Text(
-                              suggestion.description,
-                              textAlign: TextAlign.right,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+              child: ListTile(
+                title: Text(suggestion.title),
+                subtitle: Text(suggestion.description),
+                trailing: Text(
+                  '${suggestion.points} نقطة',
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                onTap: () =>
+                    onSuggestionSelected(suggestion),
               ),
             ),
           ),

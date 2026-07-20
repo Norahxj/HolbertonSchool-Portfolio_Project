@@ -17,54 +17,57 @@ class SelectableOptions extends StatelessWidget {
     required this.onSelected,
   });
 
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          title,
-          textAlign: TextAlign.right,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSecondary,
-          ),
+ @override
+Widget build(BuildContext context) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Text(
+        title,
+        textAlign: TextAlign.right,
+        style: const TextStyle(
+          fontSize: 12,
+          color: AppColors.textSecondary,
         ),
-        const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: options.map((option) {
-            final isSelected = option == selected;
+      ),
 
+      const SizedBox(height: AppSpacing.sm),
 
-            return GestureDetector(onTap: () => onSelected(option),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
+      Wrap(
+        alignment: WrapAlignment.end,
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: options.map((option) {
+          final isSelected = option == selected;
+
+          return GestureDetector(
+            onTap: () => onSelected(option),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                option,
+                textAlign: TextAlign.center,
+                style: TextStyle(
                   color: isSelected
-                      ? AppColors.primary
-                      : AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    color: isSelected
-                        ? Colors.white
-                        : AppColors.primaryDark,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      ? Colors.white
+                      : AppColors.primaryDark,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
+            ),
+          );
+        }).toList(),
+      ),
+    ],
+  );
+}
 }
