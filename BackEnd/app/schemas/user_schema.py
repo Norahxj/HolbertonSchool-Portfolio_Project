@@ -21,9 +21,16 @@ class UserUpdateSchema(Schema):
 
     @pre_load
     def clean_names(self, data, **kwargs):
+        if not isinstance(data, dict):
+            return data
         if isinstance(data.get("first_name"), str):
             data["first_name"] = " ".join(data["first_name"].split())
-        if isinstance(data.get("last_name"), str):data["last_name"] = " ".join(data["last_name"].split())
+        if isinstance(data.get("last_name"), str):
+            data["last_name"] = " ".join(data["last_name"].split())
+        if isinstance(data.get("email"), str):
+            data["email"] = data["email"].strip().lower()
+        if isinstance(data.get("phone"), str):
+            data["phone"] = data["phone"].strip()
         return data
 
     @validates("first_name")
