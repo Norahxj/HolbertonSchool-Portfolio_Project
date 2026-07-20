@@ -8,7 +8,6 @@ import 'package:frontend/features/parent/widgets/child_card.dart';
 import 'package:frontend/features/parent/widgets/task_error_text.dart';
 import 'package:frontend/features/parent/widgets/task_info_box.dart';
 import 'package:frontend/features/parent/widgets/task_type_card.dart';
-import '';
 
 class ChooseChildStep extends StatelessWidget {
   final List<ChildModel> children;
@@ -18,6 +17,7 @@ class ChooseChildStep extends StatelessWidget {
   final bool isLoadingSuggestions;
   final String? error;
   final ValueChanged<String> onChildSelected;
+  final ValueChanged<String> onCategorySelected;
   final ValueChanged<TaskSuggestionModel> onSuggestionSelected;
 
   const ChooseChildStep({
@@ -27,6 +27,7 @@ class ChooseChildStep extends StatelessWidget {
     required this.isLoading,
     required this.error,
     required this.onChildSelected,
+    required this.onCategorySelected,
     required this.suggestions,
     required this.isLoadingSuggestions,
     required this.onSuggestionSelected,
@@ -91,31 +92,62 @@ class ChooseChildStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.sm),
 
-        const QuickAddCategory(
+         QuickAddCategory(
           icon: Icons.shopping_bag_outlined,
-          label: 'المهام اليومية',
+          label: 'المهام الأخلاقية',
+          onTap: () => onCategorySelected('MORAL'),
         ),
 
         const SizedBox(height: AppSpacing.md),
 
-        const QuickAddCategory(
+         QuickAddCategory(
           icon: Icons.mosque_outlined,
-          label: 'المهام الثقافية',
+          label: 'المهام الاجتماعية',
+          onTap: () => onCategorySelected('SOCIAL'),
         ),
 
         const SizedBox(height: AppSpacing.md),
 
-        const QuickAddCategory(
+         QuickAddCategory(
           icon: Icons.credit_card,
           label: 'المهام المالية',
+          onTap: () => onCategorySelected('FINANCIAL'),
         ),
 
         const SizedBox(height: AppSpacing.md),
 
-        const QuickAddCategory(
+         QuickAddCategory(
           icon: Icons.menu_book_outlined,
           label: 'المهام الدينية',
+          onTap: () => onCategorySelected('RELIGIOUS'),
         ),
+        const SizedBox(height: AppSpacing.xl),
+       
+       if (isLoadingSuggestions)
+         const Center(
+           child: CircularProgressIndicator(),
+         ),
+       
+       if (!isLoadingSuggestions && suggestions.isNotEmpty) ...[
+         const Text(
+           'الاقتراحات',
+           textAlign: TextAlign.right,
+           style: TextStyle(
+             fontSize: 16,
+             fontWeight: FontWeight.bold,
+           ),
+         ),
+       
+         const SizedBox(height: AppSpacing.md),
+       
+         ...suggestions.map(
+           (suggestion) => ListTile(
+             title: Text(suggestion.title),
+             subtitle: Text(suggestion.description),
+             onTap: () => onSuggestionSelected(suggestion),
+           ),
+         ),
+       ],
       ],
     );
   }

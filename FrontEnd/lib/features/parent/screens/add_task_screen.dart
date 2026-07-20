@@ -28,25 +28,18 @@ class _AddTaskScreenState
   late final AddTaskController controller;
 
   int currentStep = 0;
-
   bool isSaving = false;
 
-  @override
-  void initState() {
-    super.initState();
+ @override
+void initState() {
+  super.initState();
 
-    controller = AddTaskController();
+  controller = AddTaskController();
 
-    _loadChildren();
-  }
-
-  Future<void> _loadChildren() async {
-    await controller.loadChildren();
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  controller.loadChildren().then((_) {
+    if (mounted) setState(() {});
+  });
+}  
 
   @override
   void dispose() {
@@ -56,32 +49,29 @@ class _AddTaskScreenState
   }
 
   void _nextStep() {
-    if (currentStep == 0) {
-      final isValid =
-          controller.validateChildren();
+  bool isValid = true;
 
-      if (!isValid) {
-        setState(() {});
-        return;
-      }
-    }
+  switch (currentStep) {
+    case 0:
+      isValid = controller.validateChildren();
+      break;
 
-    if (currentStep == 1) {
-      final isValid =
-          controller.validateDetails();
-
-      if (!isValid) {
-        setState(() {});
-        return;
-      }
-    }
-
-    if (currentStep < 2) {
-      setState(() {
-        currentStep++;
-      });
-    }
+    case 1:
+      isValid = controller.validateDetails();
+      break;
   }
+
+  if (!isValid) {
+    setState(() {});
+    return;
+  }
+
+  if (currentStep < 2) {
+    setState(() {
+      currentStep++;
+    });
+  }
+}
 
   void _previousStep() {
     if (currentStep == 0) {
@@ -192,14 +182,19 @@ class _AddTaskScreenState
           suggestions: controller.suggestions,
           isLoadingSuggestions: controller.isLoadingSuggestions,
           onChildSelected: (childId) async {
-            await controller.selectChild(
-              childId,
-            );
+            await controller.selectChild(childId);
 
             if (mounted) {
               setState(() {});
               }
           },
+           onCategorySelected: (category) async {
+            await controller.loadSuggestions(category);
+         
+             if (mounted) {
+               setState(() {});
+             }
+           },
           onSuggestionSelected: (suggestion) {
             controller.useSuggestion(
               suggestion,

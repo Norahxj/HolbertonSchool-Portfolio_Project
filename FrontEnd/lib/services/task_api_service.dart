@@ -39,9 +39,11 @@ class TaskApiService {
   
   Future<HttpResponse<TaskSuggestionsResponse>> getTaskSuggestions(
     List<String> childIds,
+    String category,
   ) async {
     return await _apiService.getTaskSuggestions({
       'child_ids': childIds,
+      'category': category,
     });
   }
 }

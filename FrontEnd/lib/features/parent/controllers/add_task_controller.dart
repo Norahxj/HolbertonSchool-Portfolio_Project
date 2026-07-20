@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/features/parent/utils/task_validation.dart';
 
 import '../../../models/child_model.dart';
 import '../../../models/task_suggestion_model.dart';
@@ -72,11 +73,9 @@ class AddTaskController {
     } else {
       selectedChildIds.add(childId);
     }
-
-    await loadSuggestions();
   }
 
-  Future<void> loadSuggestions() async {
+  Future<void> loadSuggestions(String category) async {
     if (selectedChildIds.isEmpty) {
       suggestions = [];
       return;
@@ -88,12 +87,14 @@ class AddTaskController {
       final response =
           await taskApiService.getTaskSuggestions(
         selectedChildIds,
+        category,
       );
 
       suggestions = response.data.suggestions;
       isLoadingSuggestions = false;
     } on DioException {
       suggestions = [];
+    } finally {
       isLoadingSuggestions = false;
     }
   }
@@ -102,17 +103,10 @@ class AddTaskController {
     TaskSuggestionModel suggestion,
   ) {
     taskNameController.text = suggestion.title;
-
-    taskDescriptionController.text =
-        suggestion.description;
-
+    taskDescriptionController.text = suggestion.description;
     taskPoints = suggestion.points;
-
     trustChild = suggestion.isAutoVerified;
-
-    selectedFrequency = frequencyToInt(
-      suggestion.taskFrequency,
-    );
+    selectedFrequency = frequencyToInt(suggestion.taskFrequency);
 
     if (suggestion.recurrenceDay != null) {
       if (suggestion.taskFrequency == 'WEEKLY') {
@@ -174,39 +168,26 @@ class AddTaskController {
   }
 
   bool validateChildren() {
-    childError = null;
-
-    if (selectedChildIds.isEmpty) {
-      childError =
-          'الرجاء اختيار طفل واحد على الأقل';
-
-      return false;
-    }
-
-    return true;
-  }
-
+  childError = TaskValidation.validateChildren(selectedChildIds);
+  return childError == null;
+}
   bool validateDetails() {
-    titleError = null;
-    descriptionError = null;
-    pointsError = null;
+  titleError = TaskValidation.validateTitle(
+    taskNameController.text,
+  );
 
-    if (taskNameController.text.trim().isEmpty) {
-      titleError = 'اسم المهمة مطلوب';
-    }
+  descriptionError = TaskValidation.validateDescription(
+    taskDescriptionController.text,
+  );
 
-    if (taskDescriptionController.text.trim().isEmpty) {
-      descriptionError = 'الوصف مطلوب';
-    }
+  pointsError = TaskValidation.validatePoints(
+    taskPoints,
+  );
 
-    if (taskPoints < 1 || taskPoints > 100) {
-      pointsError =
-          'عدد النقاط يجب أن يكون بين 1 و100';
-    }
-    return titleError == null &&
-        descriptionError == null &&
-        pointsError == null;
-  }
+  return titleError == null &&
+      descriptionError == null &&
+      pointsError == null;
+}
 
   Future<void> saveTask() async {
     await taskApiService.createTask({
@@ -227,29 +208,12 @@ class AddTaskController {
   ) {
     final errors = error.response?.data['errors'];
 
-    titleError = backendError(
-      errors?['title'],
-    );
-
-    descriptionError = backendError(
-      errors?['description'],
-    );
-
-    pointsError = backendError(
-      errors?['points'],
-    );
-
-    childError = backendError(
-      errors?['child_ids'],
-    );
-
-    frequencyError = backendError(
-      errors?['task_frequency'],
-    );
-
-    recurrenceDayError = backendError(
-      errors?['recurrence_day'],
-    );
+    titleError = backendError(errors?['title']);
+    descriptionError = backendError(errors?['description']);
+    pointsError = backendError(errors?['points']);
+    childError = backendError(errors?['child_ids']);
+    frequencyError = backendError(errors?['task_frequency']);
+    recurrenceDayError = backendError(errors?['recurrence_day']);
   }
 
   String? backendError(dynamic error) {
@@ -262,10 +226,10 @@ class AddTaskController {
         ? error.first.toString()
         : error.toString();
 
-    return mapBackendError(message);
+    return _getArabicError(message);
   }
 
-  String? mapBackendError(String message) {
+  String? _getArabicError(String message) {
     switch (message) {
       case 'Shorter than minimum length 1.':
         return 'الرجاء اختيار طفل واحد على الأقل';

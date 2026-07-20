@@ -5,44 +5,45 @@ import 'package:frontend/core/constants/app_spacing.dart';
 class QuickAddCategory extends StatelessWidget {
   final IconData icon;
   final String label;
-
+  final VoidCallback onTap;
 
   const QuickAddCategory({
     super.key,
     required this.icon,
     required this.label,
+    required this.onTap,
   });
-
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Icon(
-            icon,
-            color: AppColors.primaryDark,
-          ),
-        ],
+            const SizedBox(width: AppSpacing.sm),
+            Icon(
+              icon,
+              color: AppColors.primaryDark,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-
 
 class TaskTypeCard extends StatelessWidget {
   final IconData icon;
