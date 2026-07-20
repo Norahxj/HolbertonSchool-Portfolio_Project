@@ -66,6 +66,8 @@ class MyRewardsResource(Resource):
     @api.response(200, "Rewards retrieved successfully")
     @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to retrieve rewards")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self):
@@ -74,6 +76,8 @@ class MyRewardsResource(Resource):
             return {"error": "Child access required"}, 403
         child_id = get_jwt_identity()
         rewards, error = reward_service.get_my_rewards(child_id)
+        if error == "child_not_found":
+            return {"error": "Child not found"}, 404
         if error:
             return {"error": "Failed to retrieve rewards"}, 500
         return rewards_response_schema.dump(rewards), 200
@@ -97,6 +101,8 @@ class RewardResource(Resource):
             reward_data = reward_update_schema.load(api.payload)
         except ValidationError as err:
             return {"errors": err.messages}, 400
+        if not reward_data:
+            return {"error": "At least one field must be provided"}, 400
         parent_id = get_jwt_identity()
         reward, error = reward_service.update_reward(reward_id, parent_id, reward_data)
         if error == "reward_not_found":
