@@ -900,7 +900,6 @@ Returned when the authenticated account is not a parent.
   "error": "Parent access required"
 }
 ```
-
 #### User Not Found
 
 Returned when the parent account associated with the access token no longer exists.
