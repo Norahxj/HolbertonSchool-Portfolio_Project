@@ -1,4 +1,4 @@
-name: Backend Tests
+name: BackEnd Tests
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backEnd
+        working-directory: BackEnd
 
     steps:
       - name: Checkout repository
@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: "3.14"
           cache: pip
-          cache-dependency-path: backEnd/requirements.txt
+          cache-dependency-path: BackEnd/requirements.txt
 
       - name: Install dependencies
         run: |
