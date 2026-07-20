@@ -44,6 +44,7 @@ class TaskApiService {
     return await _apiService.getTaskSuggestions({
       'child_ids': childIds,
       'category': category,
+      'lang': 'ar',
     });
   }
 }

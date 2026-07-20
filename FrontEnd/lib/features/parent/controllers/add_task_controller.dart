@@ -18,6 +18,7 @@ class AddTaskController {
 
   List<TaskSuggestionModel> suggestions = [];
   bool isLoadingSuggestions = false;
+  String? selectedCategory;
 
   final taskNameController = TextEditingController();
   final taskDescriptionController = TextEditingController();
@@ -37,6 +38,7 @@ class AddTaskController {
   String? frequencyError;
   String? recurrenceDayError;
   String? childError;
+  String? categoryError;
 
   final weekDays = const [
     'الأحد',
@@ -73,9 +75,13 @@ class AddTaskController {
     } else {
       selectedChildIds.add(childId);
     }
+    if (selectedCategory != null) {
+      await loadSuggestions(selectedCategory!);
+    }
   }
-
+  
   Future<void> loadSuggestions(String category) async {
+    selectedCategory = category;
     if (selectedChildIds.isEmpty) {
       suggestions = [];
       return;
@@ -215,6 +221,13 @@ class AddTaskController {
     frequencyError = backendError(errors?['task_frequency']);
     recurrenceDayError = backendError(errors?['recurrence_day']);
   }
+  bool validateCategory() {
+  categoryError = TaskValidation.validateCategory(
+    selectedCategory,
+  );
+
+  return categoryError == null;
+}
 
   String? backendError(dynamic error) {
     if (error == null) {

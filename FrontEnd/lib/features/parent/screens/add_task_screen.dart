@@ -54,6 +54,10 @@ void initState() {
   switch (currentStep) {
     case 0:
       isValid = controller.validateChildren();
+
+      if (isValid) {
+        isValid = controller.validateCategory();
+      }
       break;
 
     case 1:
@@ -177,9 +181,11 @@ void initState() {
         return ChooseChildStep(
           children: controller.children,
           selectedChildIds: controller.selectedChildIds,
+          selectedCategory: controller.selectedCategory,
           isLoading: controller.isLoadingChildren,
           error: controller.childError,
           suggestions: controller.suggestions,
+          categoryError: controller.categoryError,
           isLoadingSuggestions: controller.isLoadingSuggestions,
           onChildSelected: (childId) async {
             await controller.selectChild(childId);

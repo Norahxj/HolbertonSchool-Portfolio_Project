@@ -6,6 +6,13 @@ class TaskValidation {
     return null;
   }
 
+  static String? validateCategory(String? category) {
+  if (category == null || category.isEmpty) {
+    return 'اختر الفئة أولاً';
+  }
+
+  return null;
+}
   static String? validateTitle(String title) {
     if (title.trim().isEmpty) {
       return 'اسم المهمة مطلوب';

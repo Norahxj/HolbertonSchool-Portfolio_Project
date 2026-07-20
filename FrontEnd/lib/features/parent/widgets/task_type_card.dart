@@ -6,43 +6,68 @@ class QuickAddCategory extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final bool isSelected;
 
   const QuickAddCategory({
     super.key,
     required this.icon,
     required this.label,
     required this.onTap,
+    required this.isSelected,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+Widget build(BuildContext context) {
+  return Material(
+    color: Colors.transparent,
+    borderRadius: BorderRadius.circular(16),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(16),
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
+          color: isSelected
+              ? AppColors.primary.withOpacity(0.08)
+              : Colors.white,
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.border,
+            width: isSelected ? 2 : 1,
+          ),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.primaryDark,
               ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Icon(
-              icon,
-              color: AppColors.primaryDark,
-            ),
-          ],
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? AppColors.primary
+                      : Colors.black,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class TaskTypeCard extends StatelessWidget {
@@ -51,7 +76,6 @@ class TaskTypeCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-
   const TaskTypeCard({
     super.key,
     required this.icon,
@@ -59,6 +83,8 @@ class TaskTypeCard extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
   });
+
+
 
 
   @override
