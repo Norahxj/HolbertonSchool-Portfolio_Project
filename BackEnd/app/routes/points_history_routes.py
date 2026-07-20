@@ -14,6 +14,7 @@ history_response_model = get_points_history_models(api)
 @api.route("/my")
 class MyPointsHistoryResource(Resource):
     @api.response(200, "Points history retrieved successfully", history_response_model)
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to retrieve points history")
@@ -34,6 +35,7 @@ class MyPointsHistoryResource(Resource):
 @api.route("/child/<child_id>")
 class ChildPointsHistoryResource(Resource):
     @api.response(200, "Child points history retrieved successfully", history_response_model)
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to retrieve points history")

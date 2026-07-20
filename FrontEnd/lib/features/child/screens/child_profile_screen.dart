@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/models/task_assignment_model.dart';
-import 'package:frontend/services/child_api_service.dart';
 import 'package:frontend/services/task_assignment_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';

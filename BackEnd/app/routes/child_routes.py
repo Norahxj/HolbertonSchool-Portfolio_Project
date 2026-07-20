@@ -8,7 +8,7 @@ from app.schemas import ChildResponseSchema, ChildCreateSchema, ChildUpdateSchem
 api = Namespace("children", description="Child operations")
 child_service = ChildService()
 child_response_schema = ChildResponseSchema()
-children_response_schema = ChildResponseSchema(many=True)
+children_response_schema = ChildWithAccessCodeSchema(many=True)
 child_create_schema = ChildCreateSchema()
 child_update_schema = ChildUpdateSchema()
 child_with_access_code_schema = ChildWithAccessCodeSchema()
@@ -27,8 +27,10 @@ class ChildListResource(Resource):
     @api.expect(child_model, validate=True)
     @api.response(201, "Child created successfully", child_with_access_code_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Parent not found")
+    @api.response(409, "Phone number already used")
     @api.response(500, "Failed to create child")
     def post(self):
         parent_id = get_jwt_identity()
@@ -44,6 +46,8 @@ class ChildListResource(Resource):
             return {"error": "Parent not found"}, 404
         if error == "family_not_found":
             return {"error": "Parent is not assigned to a family"}, 400
+        if error == "phone_exists":
+            return {"error": "Phone number already used"}, 409
         if error == "access_code_exists":
             return {"error": "Failed to generate child access code"}, 500
         if error == "integrity_error":
@@ -55,6 +59,7 @@ class ChildListResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
     @api.response(200, "Children retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     def get(self):
         parent_id = get_jwt_identity()
@@ -83,11 +88,13 @@ class ChildResource(Resource):
 
     @jwt_required()
     @api.doc(security="JWT")
-    @api.expect(child_update_model, validate=True)
+    @api.expect(child_update_model)
     @api.response(200, "Child updated successfully", child_with_access_code_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
+    @api.response(409, "Phone number already used")
     @api.response(500, "Failed to update child")
     def put(self, child_id):
         parent_id = get_jwt_identity()
@@ -101,6 +108,8 @@ class ChildResource(Resource):
         child, error = child_service.update_child_for_parent(child_id, parent_id, child_data)
         if error == "not_found":
             return {"error": "Child not found"}, 404
+        if error == "phone_exists":
+            return {"error": "Phone number already used"}, 409
         if error:
             return {"error": "Failed to update child"}, 500
         return child_with_access_code_schema.dump(child), 200
@@ -108,6 +117,7 @@ class ChildResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
     @api.response(200, "Child deleted successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Parent or child not found")
     @api.response(500, "Failed to delete child")

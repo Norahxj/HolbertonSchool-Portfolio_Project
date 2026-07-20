@@ -11,6 +11,9 @@ class AppColors {
   static const Color background = Color(0xFFF8F5FC);
   static const Color card = Color(0xFFFFFFFF);
 
+  // Used specifically for the shared bottom navigation bar.
+  static const Color navBackground = Color(0xFFFFFFFF);
+
   static const Color textPrimary = Color(0xFF2D2140);
   static const Color textSecondary = Color(0xFF7B728C);
 
@@ -20,5 +23,8 @@ class AppColors {
   static const Color error = Color(0xFFE45C5C);
   static const Color success = Color(0xFF4CAF50);
 
-  static const List<Color> primaryGradient = [primary, primaryDark];
+  static const List<Color> primaryGradient = [
+    primary,
+    primaryDark,
+  ];
 }

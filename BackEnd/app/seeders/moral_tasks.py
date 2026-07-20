@@ -5,7 +5,7 @@ MORAL_TASKS = [
         "description_en": "Make your bed neatly after waking up.",
         "description_ar": "رتّب سريرك بعناية بعد الاستيقاظ.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -15,7 +15,7 @@ MORAL_TASKS = [
         "description_en": "Brush your teeth in the morning and before going to bed.",
         "description_ar": "اغسل أسنانك صباحًا وقبل النوم.",
         "default_points": 10,
-        "age_min": 4,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -25,7 +25,7 @@ MORAL_TASKS = [
         "description_en": "Choose and prepare your clothes for the next day before bedtime.",
         "description_ar": "اختر وجهّز ملابسك لليوم التالي قبل النوم.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -45,7 +45,7 @@ MORAL_TASKS = [
         "description_en": "Take a shower and keep yourself clean.",
         "description_ar": "استحم وحافظ على نظافتك الشخصية.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -55,7 +55,7 @@ MORAL_TASKS = [
         "description_en": "Put your toys and games back after you finish playing.",
         "description_ar": "أعد ألعابك إلى مكانها بعد الانتهاء من اللعب.",
         "default_points": 10,
-        "age_min": 4,
+        "age_min": 6,
         "age_max": 12,
         "suggested_frequency": "DAILY"
     },
@@ -65,7 +65,7 @@ MORAL_TASKS = [
         "description_en": "Keep your bedroom floor clean and free of clutter.",
         "description_ar": "حافظ على أرضية غرفتك مرتبة وخالية من الفوضى.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -85,7 +85,7 @@ MORAL_TASKS = [
         "description_en": "Take your plate and utensils to the kitchen after eating.",
         "description_ar": "انقل طبقك وأدواتك إلى المطبخ بعد الانتهاء من الطعام.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -145,7 +145,7 @@ MORAL_TASKS = [
         "description_en": "Water the indoor plants and help take care of them.",
         "description_ar": "اسقِ النباتات الداخلية واعتنِ بها.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -155,7 +155,7 @@ MORAL_TASKS = [
         "description_en": "Turn off lights and electronic devices when leaving a room.",
         "description_ar": "أطفئ الأنوار والأجهزة الإلكترونية عند مغادرة الغرفة.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -225,7 +225,7 @@ MORAL_TASKS = [
         "description_en": "Stay within the screen time limit agreed upon with your family.",
         "description_ar": "التزم بمدة استخدام الشاشات المتفق عليها مع عائلتك.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -275,7 +275,7 @@ MORAL_TASKS = [
         "description_en": "Keep your school supplies clean and organized.",
         "description_ar": "حافظ على ترتيب ونظافة أدواتك المدرسية.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },

@@ -11,7 +11,7 @@ import 'parent_dashboard_screen.dart';
 import 'profile_screen.dart';
 import 'reward_management_screen.dart';
 import 'wishlist_approval_screen.dart';
-import '../../../services/auth_api_service.dart';
+import '../../auth/services/auth_api_service.dart';
 import '../../../app.dart';
 
 // More / Settings screen (Screen 17).

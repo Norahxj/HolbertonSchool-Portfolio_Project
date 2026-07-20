@@ -16,6 +16,7 @@ class CurrentUserResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.response(200, "User retrieved successfully", user_response_model)
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access only")
     @api.response(404, "User not found")
     def get(self):
@@ -30,9 +31,10 @@ class CurrentUserResource(Resource):
 
     @api.doc(security="JWT")
     @jwt_required()
-    @api.expect(user_update_model, validate=True)
+    @api.expect(user_update_model)
     @api.response(200, "User updated successfully", user_response_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access only")
     @api.response(404, "User not found")
     @api.response(409, "Email or phone already exists")
@@ -62,6 +64,7 @@ class CurrentUserResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.response(200, "User deleted successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access only")
     @api.response(404, "User not found")
     @api.response(500, "Failed to delete user")

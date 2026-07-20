@@ -23,14 +23,21 @@ class ChildRepository:
             constraint_name = getattr(getattr(exc.orig, "diag", None), "constraint_name", None)
             if constraint_name == "children_access_code_key":
                 return None, "access_code_exists"
+            if constraint_name == "children_phone_key":
+                return None, "phone_exists"
             return None, "integrity_error"
     
     def update_child(self):
         try:
             db.session.commit()
             return True, None
-        except IntegrityError:
+        except IntegrityError as exc:
             db.session.rollback()
+            constraint_name = getattr(
+            getattr(exc.orig, "diag", None), "constraint_name", None)
+
+            if constraint_name == "children_phone_key":
+                return False, "phone_exists"
             return False, "integrity_error"
     
     def delete_child(self, child):

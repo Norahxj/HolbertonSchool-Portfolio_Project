@@ -36,10 +36,10 @@ class TaskAssignmentRepository:
         return TaskAssignment.query.filter_by(id=assignment_id, child_id=child_id).first()
 
     def get_assignments_by_task_id(self, task_id):
-        return TaskAssignment.query.filter_by(task_id=task_id).all().order_by(TaskAssignment.assigned_date.desc())
+        return (TaskAssignment.query.filter_by(task_id=task_id).order_by(TaskAssignment.assigned_date.desc()).all())
 
     def get_assignments_by_child_id(self, child_id):
-        return TaskAssignment.query.filter_by(child_id=child_id).all().order_by(TaskAssignment.assigned_date.desc())
+        return TaskAssignment.query.filter_by(child_id=child_id).order_by(TaskAssignment.assigned_date.desc()).all()
 
     def get_assignment_for_parent(self, assignment_id, parent_id):
         return (
@@ -58,5 +58,5 @@ class TaskAssignmentRepository:
                 TaskAssignment.child_id == child_id,
                 TaskAssignment.assigned_date >= start_date,
                 TaskAssignment.assigned_date <= end_date
-            ).all().order_by(TaskAssignment.assigned_date.desc())
+            ).order_by(TaskAssignment.assigned_date.desc()).all()
         )
