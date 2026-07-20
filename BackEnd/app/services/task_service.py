@@ -35,6 +35,8 @@ class TaskService:
         if new_frequency not in valid_frequencies:
             return None, None, "invalid_frequency"
         if new_frequency in ["ONCE", "DAILY"]:
+            if ("recurrence_day" in task_data and task_data["recurrence_day"] is not None):
+                return None, None, "invalid_recurrence_day"
             return new_frequency, None, None
         if new_frequency == "WEEKLY":
             if new_recurrence_day is None or new_recurrence_day < 0 or new_recurrence_day > 6:

@@ -14,6 +14,7 @@ parent_assignments_response_schema = ParentTaskAssignmentResponseSchema(many=Tru
 @api.route("/task/<task_id>")
 class AssignmentsByTaskResource(Resource):
     @api.response(200, "Assignments retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Task not found")
     @api.doc(security="JWT")
@@ -31,6 +32,7 @@ class AssignmentsByTaskResource(Resource):
 @api.route("/my")
 class MyAssignmentsResource(Resource):
     @api.response(200, "Assignments retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
     @api.doc(security="JWT")
     @jwt_required()
@@ -45,6 +47,7 @@ class MyAssignmentsResource(Resource):
 @api.route("/child/<child_id>")
 class AssignmentsByChildResource(Resource):
     @api.response(200, "Assignments retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found or access denied")
     @api.doc(security="JWT")
@@ -66,6 +69,7 @@ class AssignmentsByChildResource(Resource):
 class CompleteAssignmentResource(Resource):
     @api.response(200, "Assignment completed successfully")
     @api.response(400, "Assignment already completed or waiting for review")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
     @api.response(404, "Assignment not found")
     @api.response(500, "Failed to complete assignment")
@@ -89,6 +93,7 @@ class CompleteAssignmentResource(Resource):
 class ApproveAssignmentResource(Resource):
     @api.response(200, "Assignment approved successfully")
     @api.response(400, "Assignment is not waiting for review")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Assignment not found")
     @api.response(500, "Failed to approve assignment")
@@ -112,6 +117,7 @@ class ApproveAssignmentResource(Resource):
 class RejectAssignmentResource(Resource):
     @api.response(200, "Assignment rejected successfully")
     @api.response(400, "Assignment is not waiting for review")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Assignment not found")
     @api.response(500, "Failed to reject assignment")

@@ -12,7 +12,7 @@ def get_task_models(api):
         "points": fields.Integer(required=True, description="Points"),
         "task_frequency": fields.String(description="ONCE, DAILY, WEEKLY, or MONTHLY"),
         "recurrence_day": fields.Integer(description="0-6 for weekly, 1-31 for monthly"),
-        "category": fields.String(description="RELIGIOUS, FINANCIAL, MORAL, or SOCIAL"),
+        "category": fields.String(required=True, description="RELIGIOUS, FINANCIAL, MORAL, or SOCIAL"),
         "is_auto_verified": fields.Boolean(description="Auto verified")
     })
 

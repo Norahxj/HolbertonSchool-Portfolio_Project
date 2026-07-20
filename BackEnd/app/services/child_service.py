@@ -65,7 +65,7 @@ class ChildService:
             child.phone = phone
         success, error = self.child_repository.update_child()
         if not success:
-            return None, "update_failed"
+            return None, error
         return child, None
 
     def delete_child_for_parent(self, child_id, parent_id):
