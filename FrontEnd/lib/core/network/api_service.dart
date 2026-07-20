@@ -59,7 +59,7 @@ abstract class ApiService {
 
   @GET('/tasks/child/{childId}')
   Future<HttpResponse<List<TaskModel>>> getTasksByChild(
-    @Path('childId') String childId,
+  @Path('childId') String childId,
   );
   @GET('/task-assignments/task/{taskId}')
   Future<HttpResponse<List<TaskAssignmentModel>>> getAssignmentsByTask(

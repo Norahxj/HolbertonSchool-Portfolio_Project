@@ -1,7 +1,5 @@
 import 'package:frontend/models/task_suggestion_model.dart';
 
-import 'task_model.dart';
-
 class TaskSuggestionsResponse {
   final List<TaskSuggestionModel> suggestions;
 

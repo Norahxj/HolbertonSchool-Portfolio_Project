@@ -1,3 +1,5 @@
+import 'package:retrofit/dio.dart';
+
 import '../core/network/api_service.dart';
 import '../core/network/dio_factory.dart';
 import '../models/task_model.dart';
@@ -34,10 +36,12 @@ class TaskApiService {
     final response = await _apiService.getTasksByChild(childId);
     return response.data;
   }
-  Future<List<TaskSuggestionModel>> getTaskSuggestions(
-  Map<String, dynamic> body,
-) async {
-  final response = await _apiService.getTaskSuggestions(body);
-  return response.data.suggestions;
-}
+  
+  Future<HttpResponse<TaskSuggestionsResponse>> getTaskSuggestions(
+    List<String> childIds,
+  ) async {
+    return await _apiService.getTaskSuggestions({
+      'child_ids': childIds,
+    });
+  }
 }

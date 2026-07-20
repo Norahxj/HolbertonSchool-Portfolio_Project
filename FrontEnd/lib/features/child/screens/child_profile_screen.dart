@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/models/task_assignment_model.dart';
 import 'package:frontend/services/child_api_service.dart';
+import 'package:frontend/services/task_assignment_api_service.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -24,6 +26,7 @@ class ChildProfileScreen extends StatefulWidget {
 
 class _ChildProfileScreenState extends State<ChildProfileScreen> {
   late Future<ChildModel> _childFuture;
+  late Future<List<TaskAssignmentModel>> _assignmentsFuture;
 
   @override
   void initState() {
@@ -31,6 +34,8 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
 
     _childFuture =
         ChildApiService().getChildById(widget.child.id);
+    _assignmentsFuture =
+        TaskAssignmentApiService().getMyAssignments();
   }
   
   @override
@@ -67,20 +72,35 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                   const SizedBox(height: AppSpacing.lg),
                   const _TasksHeader(),
                   const SizedBox(height: AppSpacing.md),
-                  const _TaskItem(
-                    label: 'الصلاة في وقتها',
-                    icon: Icons.mosque,
-                    isDone: true,
-                  ),
-                  const _TaskItem(
-                    label: 'قراءة القرآن',
-                    icon: Icons.menu_book_outlined,
-                    isDone: true,
-                  ),
-                  const _TaskItem(
-                    label: 'ترتيب السرير',
-                    icon: Icons.king_bed_outlined,
-                    isDone: false,
+                  FutureBuilder<List<TaskAssignmentModel>>(
+                    future:_assignmentsFuture,
+                    builder: (context, taskSnapshot) {
+                     if (taskSnapshot.connectionState == ConnectionState.waiting) {
+                       return const Center(child: CircularProgressIndicator());
+                     }
+                 
+                     if (taskSnapshot.hasError) {
+                       return const Text('حدث خطأ أثناء تحميل المهام');
+                     }
+                 
+                     final tasks = taskSnapshot.data ?? [];
+                 
+                     if (tasks.isEmpty) {
+                       return const Text('لا توجد مهام');
+                     }
+                     final assignments = taskSnapshot.data ?? [];
+
+                     return Column(
+                       children: assignments.map((assignment) {
+                        print(assignment.status);
+                         return _TaskItem(
+                           label: assignment.task.title,
+                           icon: Icons.task_alt,
+                           isDone: assignment.status == "COMPLETED",
+                         );
+                       }).toList(),
+                     );
+                   },
                   ),
                 ],
               ),
