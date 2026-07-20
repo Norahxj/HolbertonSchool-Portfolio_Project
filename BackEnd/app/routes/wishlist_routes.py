@@ -24,6 +24,12 @@ class WishlistListResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.expect(wishlist_create_model, validate=True)
+    @api.response(201, "Wish created successfully")
+    @api.response(400, "Validation error or wishlist limit reached")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Child access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to create wish")
     def post(self):
         claims = get_jwt()
 
@@ -39,6 +45,9 @@ class WishlistListResource(Resource):
 
         wish, error = wishlist_service.create_wish(child_id, wish_data)
 
+        if error == "child_not_found":
+            return {"error": "Child not found"}, 404
+
         if error == "wishlist_limit_reached":
             return {"error": "Wishlist limit reached. Maximum 5 pending wishes allowed."}, 400
 
@@ -50,7 +59,9 @@ class WishlistListResource(Resource):
 
 @api.route("/my")
 class MyWishlistResource(Resource):
-
+    @api.response(200, "Wishes retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Child access required")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self):
@@ -68,7 +79,10 @@ class MyWishlistResource(Resource):
 
 @api.route("/child/<child_id>")
 class ChildWishlistResource(Resource):
-
+    @api.response(200, "Wishes retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Parent access required")
+    @api.response(404, "Child not found")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self, child_id):
@@ -89,7 +103,12 @@ class ChildWishlistResource(Resource):
 
 @api.route("/<wish_id>/approve")
 class ApproveWishResource(Resource):
-
+    @api.response(200, "Wish approved successfully")
+    @api.response(400, "Validation error, wish already reviewed, or approved limit reached")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Parent access required")
+    @api.response(404, "Wish or child not found")
+    @api.response(500, "Failed to approve wish")
     @api.doc(security="JWT")
     @jwt_required()
     @api.expect(wishlist_approve_model, validate=True)
@@ -111,7 +130,8 @@ class ApproveWishResource(Resource):
             parent_id,
             data["target_points"]
         )
-
+        if error == "invalid_target_points":
+            return {"error": "Target points must be between 1 and 10000"}, 400
         if error == "wish_not_found":
             return {"error": "Wish not found"}, 404
 
@@ -131,7 +151,12 @@ class ApproveWishResource(Resource):
 
 @api.route("/<wish_id>/reject")
 class RejectWishResource(Resource):
-
+    @api.response(200, "Wish rejected successfully")
+    @api.response(400, "Wish has already been reviewed")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Parent access required")
+    @api.response(404, "Wish or child not found")
+    @api.response(500, "Failed to reject wish")
     @api.doc(security="JWT")
     @jwt_required()
     def put(self, wish_id):
@@ -150,17 +175,22 @@ class RejectWishResource(Resource):
         if error == "child_not_found":
             return {"error": "Child not found"}, 404
 
-        if error == "update_failed":
-            return {"error": "Failed to reject wish"}, 500
         if error == "wish_already_reviewed":
             return {"error": "Wish has already been reviewed"}, 400
+        if error == "update_failed":
+            return {"error": "Failed to reject wish"}, 500
 
         return wishlist_response_schema.dump(wish), 200
 
 
 @api.route("/<wish_id>/achieve")
 class AchieveWishResource(Resource):
-
+    @api.response(200, "Wish achieved successfully")
+    @api.response(400, "Wish already achieved, wish not approved, invalid target points, or insufficient points")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Child access required")
+    @api.response(404, "Wish not found")
+    @api.response(500, "Failed to achieve wish")
     @api.doc(security="JWT")
     @jwt_required()
     def put(self, wish_id):
@@ -200,7 +230,12 @@ class AchieveWishResource(Resource):
 
 @api.route("/<wish_id>")
 class WishlistResource(Resource):
-
+    @api.response(200, "Wish deleted successfully")
+    @api.response(400, "Wish cannot be deleted")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Child access required")
+    @api.response(404, "Wish not found")
+    @api.response(500, "Failed to delete wish")
     @api.doc(security="JWT")
     @jwt_required()
     def delete(self, wish_id):
@@ -211,7 +246,7 @@ class WishlistResource(Resource):
 
         child_id = get_jwt_identity()
 
-        deleted, delete_error  = wishlist_service.delete_wish(wish_id, child_id)
+        _, delete_error  = wishlist_service.delete_wish(wish_id, child_id)
 
         if delete_error == "wish_not_found":
             return {"error": "Wish not found"}, 404
