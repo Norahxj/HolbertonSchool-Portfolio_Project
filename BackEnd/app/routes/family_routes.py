@@ -18,6 +18,7 @@ family_invite_model, family_update_model, family_response_model, family_invitati
 class InviteParentResource(Resource):
     @api.response(201, "Invitation created successfully", family_invitation_response_model)
     @api.response(400, "Invalid invitation request")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "User not found")
     @api.response(500, "Failed to create invitation")
@@ -58,6 +59,7 @@ class InviteParentResource(Resource):
 class MyFamilyResource(Resource):
     @api.response(200, "Family name updated successfully", family_response_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "User or family not found")
     @api.response(500, "Failed to update family")
@@ -85,6 +87,7 @@ class MyFamilyResource(Resource):
 @api.route("/invitations")
 class MyFamilyInvitationsResource(Resource):
     @api.response(200, "Invitations retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "User not found")
     @api.response(500, "Failed to retrieve invitations")
@@ -106,6 +109,7 @@ class MyFamilyInvitationsResource(Resource):
 class AcceptFamilyInvitationResource(Resource):
     @api.response(200, "Invitation accepted successfully", family_invitation_response_model)
     @api.response(400, "Invitation cannot be accepted")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "User or invitation not found")
     @api.response(500, "Failed to accept invitation")
@@ -125,8 +129,8 @@ class AcceptFamilyInvitationResource(Resource):
             return {"error": "Invitation is not pending"}, 400
         if error == "guardian_type_already_exists":
             return {"error": "This family already has this guardian type"}, 400
-        if error == "already_in_family":
-            return {"error": "User already belongs to a family"}, 400
+        if error == "current_family_has_children":
+            return {"error": "User cannot leave a family that has children"}, 400
         if error == "already_in_same_family":
             return {"error": "User is already in this family"}, 400
         if error == "update_failed":
@@ -139,6 +143,7 @@ class AcceptFamilyInvitationResource(Resource):
 class RejectFamilyInvitationResource(Resource):
     @api.response(200, "Invitation rejected successfully", family_invitation_response_model)
     @api.response(400, "Invitation is not pending")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "User or invitation not found")
     @api.response(500, "Failed to reject invitation")

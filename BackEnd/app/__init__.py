@@ -34,7 +34,7 @@ authorizations = {
 }
 
 
-def create_app():
+def create_app(test_config=None):
     app = Flask(__name__)
     
     CORS(
@@ -43,7 +43,12 @@ def create_app():
         supports_credentials=True,
     )
     app.config.from_object(Config)
-    Config.validate()
+
+    if test_config:
+        app.config.update(test_config)
+    else:
+        Config.validate()
+
     app.config["JWT_HEADER_TYPE"] = ""
 
     db.init_app(app)

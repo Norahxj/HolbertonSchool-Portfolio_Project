@@ -11,6 +11,7 @@ dashboard_response_model = get_dashboard_models(api)
 
 @api.route("/")
 class ParentDashboardResource(Resource):
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Parent not found")
     @api.response(500, "Failed to retrieve dashboard")

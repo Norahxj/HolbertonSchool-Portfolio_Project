@@ -17,6 +17,7 @@ reward_create_model, reward_update_model, reward_response_model = get_reward_mod
 class RewardListResource(Resource):
     @api.response(201, "Reward created successfully", reward_response_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to create reward")
@@ -42,8 +43,10 @@ class RewardListResource(Resource):
 @api.route("/child/<child_id>")
 class ChildRewardsResource(Resource):
     @api.response(200, "Rewards retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
+    @api.response(500, "Failed to retrieve rewards")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self, child_id):
@@ -61,7 +64,10 @@ class ChildRewardsResource(Resource):
 @api.route("/my")
 class MyRewardsResource(Resource):
     @api.response(200, "Rewards retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to retrieve rewards")
     @api.doc(security="JWT")
     @jwt_required()
     def get(self):
@@ -70,6 +76,8 @@ class MyRewardsResource(Resource):
             return {"error": "Child access required"}, 403
         child_id = get_jwt_identity()
         rewards, error = reward_service.get_my_rewards(child_id)
+        if error == "child_not_found":
+            return {"error": "Child not found"}, 404
         if error:
             return {"error": "Failed to retrieve rewards"}, 500
         return rewards_response_schema.dump(rewards), 200
@@ -78,6 +86,7 @@ class MyRewardsResource(Resource):
 class RewardResource(Resource):
     @api.response(200, "Reward updated successfully", reward_response_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Reward not found")
     @api.response(500, "Failed to update reward")
@@ -92,6 +101,8 @@ class RewardResource(Resource):
             reward_data = reward_update_schema.load(api.payload)
         except ValidationError as err:
             return {"errors": err.messages}, 400
+        if not reward_data:
+            return {"error": "At least one field must be provided"}, 400
         parent_id = get_jwt_identity()
         reward, error = reward_service.update_reward(reward_id, parent_id, reward_data)
         if error == "reward_not_found":
@@ -103,6 +114,7 @@ class RewardResource(Resource):
     @api.doc(security="JWT")
     @api.response(200, "Reward deleted successfully")
     @api.response(400, "Claimed rewards cannot be deleted")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Reward not found")
     @api.response(500, "Failed to delete reward")
@@ -124,7 +136,8 @@ class RewardResource(Resource):
 @api.route("/<reward_id>/claim")
 class ClaimRewardResource(Resource):
     @api.response(200, "Reward claimed successfully", reward_response_model)
-    @api.response(400, "Reward is not unlocked")
+    @api.response(400, "Reward is not unlocked yet")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Child access required")
     @api.response(404, "Reward not found")
     @api.response(500, "Failed to claim reward")
