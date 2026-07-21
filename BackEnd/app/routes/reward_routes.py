@@ -23,7 +23,7 @@ class RewardListResource(Resource):
     @api.response(500, "Failed to create reward")
     @api.doc(security="JWT")
     @jwt_required()
-    @api.expect(reward_create_model, validate=True)
+    @api.expect(reward_create_model)
     def post(self):
         claims = get_jwt()
         if claims.get("role") != "parent":

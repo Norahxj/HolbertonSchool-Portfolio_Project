@@ -419,15 +419,24 @@ def test_logout_rejects_tampered_access_token(client):
 
     original_token = parent_data["access_token"]
 
+    header, payload, signature = original_token.split(".")
+
+    index = len(signature) // 2
+
     replacement_character = (
         "a"
-        if original_token[-1] != "a"
+        if signature[index] != "a"
         else "b"
     )
 
-    tampered_token = (
-        original_token[:-1]
+    tampered_signature = (
+        signature[:index]
         + replacement_character
+        + signature[index + 1:]
+    )
+
+    tampered_token = (
+        f"{header}.{payload}.{tampered_signature}"
     )
 
     response = logout(
@@ -437,9 +446,11 @@ def test_logout_rejects_tampered_access_token(client):
 
     response_data = response.get_json()
 
-    assert response.status_code in (401, 422), response_data
-
-
+    assert response.status_code in (
+        401,
+        422,
+    ), response_data
+    
 def test_logout_rejects_expired_access_token(client, app):
     with app.app_context():
         expired_token = create_access_token(

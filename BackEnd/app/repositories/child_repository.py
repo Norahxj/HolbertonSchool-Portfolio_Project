@@ -21,12 +21,13 @@ class ChildRepository:
         except IntegrityError as exc:
             db.session.rollback()
             constraint_name = getattr(getattr(exc.orig, "diag", None), "constraint_name", None)
-            if constraint_name == "children_access_code_key":
+            error_message = str(exc.orig).lower()
+            if constraint_name == "children_access_code_key" or "children.access_code" in error_message:
                 return None, "access_code_exists"
-            if constraint_name == "children_phone_key":
+            if constraint_name == "children_phone_key" or "children.phone" in error_message:
                 return None, "phone_exists"
             return None, "integrity_error"
-    
+
     def update_child(self):
         try:
             db.session.commit()
@@ -35,8 +36,8 @@ class ChildRepository:
             db.session.rollback()
             constraint_name = getattr(
             getattr(exc.orig, "diag", None), "constraint_name", None)
-
-            if constraint_name == "children_phone_key":
+            error_message = str(exc.orig).lower()
+            if constraint_name == "children_phone_key" or "children.phone" in error_message:
                 return False, "phone_exists"
             return False, "integrity_error"
     
