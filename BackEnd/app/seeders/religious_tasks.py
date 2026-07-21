@@ -13,9 +13,9 @@ RELIGIOUS_TASKS = [
         "title_en": "Learn and recite a new short Surah",
         "title_ar": "تعلّم سورة قصيرة جديدة",
         "description_en": "Learn and recite a new short Surah from the Holy Quran.",
-        "description_ar": "تعلّم سورة قصيرة جديدة من القرآن الكريم وتلُها.",
+        "description_ar": "تعلّم سورة قصيرة جديدة من القرآن الكريم وأتلُها.",
         "default_points": 20,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -25,7 +25,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Observe silence and show respect while the Adhan is being called.",
         "description_ar": "التزم بالهدوء وأظهر الاحترام أثناء رفع الأذان.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -75,7 +75,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Speak politely and avoid shouting throughout the day.",
         "description_ar": "استخدم كلمات مهذبة وتجنب الصراخ طوال اليوم.",
         "default_points": 10,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -85,7 +85,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Share your food or toys with someone today.",
         "description_ar": "شارك طعامك أو ألعابك مع الآخرين اليوم.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -105,7 +105,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Treat animals kindly and never harm them.",
         "description_ar": "عامل الحيوانات برفق وتجنب إيذاءها.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -125,7 +125,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Choose honesty in everything you say today.",
         "description_ar": "احرص على قول الصدق في جميع مواقف اليوم.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -175,7 +175,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Treat your siblings kindly and share with them throughout the day.",
         "description_ar": "عامل إخوتك بلطف وشاركهم ما تستطيع طوال اليوم.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -185,7 +185,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Visit your relatives and strengthen family ties.",
         "description_ar": "زر أقاربك وشارك في صلة الرحم وتعزيز العلاقات العائلية.",
         "default_points": 25,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "MONTHLY"
     },
@@ -215,7 +215,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Help your family prepare for Eid celebrations.",
         "description_ar": "شارك عائلتك في الاستعداد لاستقبال عيد الفطر أو عيد الأضحى.",
         "default_points": 20,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "ONCE"
     },
@@ -235,7 +235,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Take a moment to thank Allah for the blessings you have today.",
         "description_ar": "تذكر نعم الله عليك اليوم، وأظهر الشكر والامتنان عليها.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     },
@@ -255,7 +255,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Memorize and recite the Dua for entering and leaving your home.",
         "description_ar": "تعلّم دعاء دخول المنزل والخروج منه وطبّقه في يومك.",
         "default_points": 20,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -265,7 +265,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Water plants or trees while remembering that caring for living things is rewarded.",
         "description_ar": "اسقِ النباتات أو الأشجار بنية الإحسان والعناية بمخلوقات الله.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "WEEKLY"
     },
@@ -275,7 +275,7 @@ RELIGIOUS_TASKS = [
         "description_en": "Dispose of trash properly and help keep your surroundings clean.",
         "description_ar": "تخلّص من النفايات في مكانها الصحيح وساهم في الحفاظ على نظافة المكان.",
         "default_points": 15,
-        "age_min": 5,
+        "age_min": 6,
         "age_max": 18,
         "suggested_frequency": "DAILY"
     }

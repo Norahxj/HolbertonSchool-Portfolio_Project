@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:frontend/models/task_assignment_model.dart';
 import 'package:frontend/models/task_model.dart';
+import 'package:frontend/models/task_suggestions_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../models/child_model.dart';
-
 part 'api_service.g.dart';
 
 @RestApi()
@@ -58,8 +59,19 @@ abstract class ApiService {
 
   @GET('/tasks/child/{childId}')
   Future<HttpResponse<List<TaskModel>>> getTasksByChild(
-    @Path('childId') String childId,
+  @Path('childId') String childId,
   );
+  @GET('/task-assignments/task/{taskId}')
+  Future<HttpResponse<List<TaskAssignmentModel>>> getAssignmentsByTask(
+  @Path('taskId') String taskId,
+);
+  @GET('/task-assignments/my')
+  Future<HttpResponse<List<TaskAssignmentModel>>> getMyAssignments();
+
+  @POST('/task-bank/suggestions')
+  Future<HttpResponse<TaskSuggestionsResponse>> getTaskSuggestions(
+  @Body() Map<String, dynamic> body,
+);  
 
   /// whish
 
@@ -78,7 +90,7 @@ abstract class ApiService {
     @Body() Map<String, dynamic> body,
   );
   @PUT('/wishlist/{wishId}/reject')
-Future<HttpResponse<dynamic>> rejectWish(
+  Future<HttpResponse<dynamic>> rejectWish(
   @Path('wishId') String wishId,
 );
 

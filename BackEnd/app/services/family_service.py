@@ -89,8 +89,8 @@ class FamilyService:
             return None, "invitation_not_found"
         if user.family_id == invitation.family_id:
             return None, "already_in_same_family"
-        if user.family_id is not None and user.family.children:
-            return None, "already_in_family"
+        if user.family_id is not None and user.family and user.family.children:
+            return None, "current_family_has_children"
         if invitation.status != "PENDING":
             return None, "invitation_not_pending"
         existing_type = (

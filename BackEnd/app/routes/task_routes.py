@@ -23,9 +23,10 @@ def require_parent():
 class TaskListResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
-    @api.expect(task_create_model, validate=True)
+    @api.expect(task_create_model)
     @api.response(201, "Task created successfully", task_response_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
     @api.response(500, "Failed to create task")
@@ -52,6 +53,7 @@ class TaskListResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.response(200, "Tasks retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     def get(self):
         parent_id = get_jwt_identity()
@@ -66,6 +68,7 @@ class TaskResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.response(200, "Task retrieved successfully", task_response_model)
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Task not found")
     def get(self, task_id):
@@ -80,9 +83,10 @@ class TaskResource(Resource):
 
     @api.doc(security="JWT")
     @jwt_required()
-    @api.expect(task_update_model, validate=True)
+    @api.expect(task_update_model)
     @api.response(200, "Task updated successfully", task_response_model)
     @api.response(400, "Invalid input")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Task not found")
     @api.response(500, "Failed to update task")
@@ -109,6 +113,7 @@ class TaskResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.response(200, "Task deleted successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Task not found")
     @api.response(500, "Failed to delete task")
@@ -130,6 +135,7 @@ class TasksByChildResource(Resource):
     @api.doc(security="JWT")
     @jwt_required()
     @api.response(200, "Child tasks retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
     @api.response(403, "Parent access required")
     @api.response(404, "Child not found")
     def get(self, child_id):

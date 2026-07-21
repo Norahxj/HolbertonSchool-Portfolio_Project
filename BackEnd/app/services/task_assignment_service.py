@@ -1,5 +1,6 @@
 from app.repositories.task_repository import TaskRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
+from app.repositories.child_repository import ChildRepository
 from app.services.points_service import PointsService
 from app.extensions import db
 from app.utils.datetime_utils import utc_now
@@ -9,9 +10,7 @@ class TaskAssignmentService:
         self.task_repository = TaskRepository()
         self.task_assignment_repository = TaskAssignmentRepository()
         self.points_service = PointsService()
-
-    def get_assignment(self, assignment_id):
-        return self.task_assignment_repository.get_assignment_by_id(assignment_id)
+        self.child_repository = ChildRepository()
 
     def get_assignments_for_task(self, task_id, parent_id):
         task = self.task_repository.get_task_for_guardian_children(task_id, parent_id)
@@ -21,6 +20,18 @@ class TaskAssignmentService:
 
     def get_assignments_for_child(self, child_id):
         return self.task_assignment_repository.get_assignments_by_child_id(child_id)
+    def get_assignments_for_child_by_parent(self, child_id, parent_id):
+        child = self.child_repository.get_child_for_guardian(
+            child_id,
+            parent_id
+        )
+
+        if not child:
+            return None
+
+        return self.task_assignment_repository.get_assignments_by_child_id(
+            child_id
+        )
 
     def complete_assignment(self, assignment_id, child_id):
         assignment = self.task_assignment_repository.get_assignment_for_child(assignment_id, child_id)
@@ -112,3 +123,4 @@ class TaskAssignmentService:
         if not success:
             return None, "update_failed"
         return assignment, None
+        

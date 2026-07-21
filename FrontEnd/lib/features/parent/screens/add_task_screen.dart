@@ -1,20 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
-import 'package:frontend/models/child_model.dart';
-import 'package:frontend/services/task_api_service.dart';
-import 'package:frontend/features/parent/services/child_api_service.dart';
 
-// Add Task wizard (Screens 9-12).
-//
-// This first pass is static/placeholder only: every step just updates
-// simple local state, and there are no backend calls yet. The 4 mockup
-// screens are combined into one file, switching on currentStep.
+import '../controllers/add_task_controller.dart';
+
+import 'choose_child_step.dart';
+import 'task_details_step.dart';
+import 'task_schedule_step.dart';
+
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
 
@@ -23,151 +21,92 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  final TaskApiService _taskApiService = TaskApiService();
-  final ChildApiService _childApiService = ChildApiService();
-
-  List<ChildModel> children = [];
-  List<String> selectedChildIds = [];
-  bool isLoadingChildren = true;
-  bool isSubmitting = false;
-  bool isSaving = false;
+  late final AddTaskController controller;
 
   int currentStep = 0;
-
-  String? titleError;
-  String? descriptionError;
-  String? pointsError;
-  String? categoryError;
-  String? frequencyError;
-  String? recurrenceDayError;
-  String? childError;
-  String? mapBackendError(String? message) {
-    switch (message) {
-      case "Shorter than minimum length 1.":
-        return "الرجاء اختيار طفل واحد على الأقل";
-
-      case "Must be greater than or equal to 1 and less than or equal to 100.":
-        return "عدد النقاط يجب أن يكون بين 1 و100";
-
-      case "Length must be between 2 and 100.":
-        return "اسم المهمة يجب أن يكون بين حرفين و100 حرف";
-
-      case "Length must be between 2 and 500.":
-        return "الوصف يجب أن يكون بين حرفين و500 حرف";
-
-      default:
-        return message;
-    }
-  }
-
-  // Step 1: which task type/category is picked. Null means none yet.
-  int? selectedTaskType;
-
-  // Step 2: task name, description, points, and the trust toggle.
-  final TextEditingController taskNameController = TextEditingController();
-  final TextEditingController taskDescriptionController =
-      TextEditingController();
-  int taskPoints = 10;
-  bool trustChild = true;
-
-  // Step 3: how often the task repeats. 0 = daily, 1 = weekly, 2 = monthly.
-  int selectedFrequency = 1;
-
-  // Which day of the week is picked when "مرة في الأسبوع" is selected.
-  String selectedWeeklyDay = 'الأحد';
-
-  // Which day of the month is picked when "شهريًا" is selected.
-  int selectedMonthlyDay = 1;
-
-  // The choices shown for the weekly day and monthly date pickers.
-  final List<String> weekDays = const [
-    'الأحد',
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-  ];
-  final List<int> monthlyDays = const [1, 5, 10, 15, 20, 25, 30];
-  String get taskFrequency {
-    switch (selectedFrequency) {
-      case 0:
-        return "DAILY";
-      case 1:
-        return "WEEKLY";
-      case 2:
-        return "MONTHLY";
-      default:
-        return "ONCE";
-    }
-  }
-
-  int? get recurrenceDay {
-    if (selectedFrequency == 1) {
-      return weekDays.indexOf(selectedWeeklyDay);
-    }
-
-    if (selectedFrequency == 2) {
-      return selectedMonthlyDay;
-    }
-
-    return null;
-  }
-
-  String get category {
-    switch (selectedTaskType) {
-      case 0:
-        return "SOCIAL";
-      case 1:
-        return "MORAL";
-      case 2:
-        return "RELIGIOUS";
-      case 3:
-        return "FINANCIAL";
-      default:
-        return "MORAL";
-    }
-  }
+  bool isSaving = false;
 
   @override
   void initState() {
     super.initState();
-    _loadChildren();
-  }
 
-  Future<void> _loadChildren() async {
-    try {
-      final data = await _childApiService.getChildren();
+    controller = AddTaskController();
 
-      setState(() {
-        children = data;
-        isLoadingChildren = false;
-      });
-    } on DioException {
-      setState(() {
-        isLoadingChildren = false;
-      });
-    }
+    controller.loadChildren().then((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    taskNameController.dispose();
-    taskDescriptionController.dispose();
+    controller.dispose();
+
     super.dispose();
   }
 
-  void _goToNextStep() {
-    setState(() {
-      currentStep = currentStep + 1;
-    });
+  void _nextStep() {
+    bool isValid = true;
+
+    switch (currentStep) {
+      case 0:
+        isValid = controller.validateChildren();
+
+        if (isValid) {
+          isValid = controller.validateCategory();
+        }
+        break;
+
+      case 1:
+        isValid = controller.validateDetails();
+        break;
+    }
+
+    if (!isValid) {
+      setState(() {});
+      return;
+    }
+
+    if (currentStep < 2) {
+      setState(() {
+        currentStep++;
+      });
+    }
   }
 
-  void _goToPreviousStep() {
+  void _previousStep() {
+    if (currentStep > 0) {
+      setState(() {
+        currentStep--;
+      });
+    }
+  }
+
+  Future<void> _saveTask() async {
     setState(() {
-      currentStep = currentStep - 1;
+      isSaving = true;
     });
+
+    try {
+      await controller.saveTask();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('تم حفظ المهمة بنجاح')));
+    } on DioException catch (error) {
+      controller.handleBackendErrors(error);
+
+      if (mounted) {
+        setState(() {});
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSaving = false;
+        });
+      }
+    }
   }
 
   @override
@@ -178,34 +117,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-Text(
-  _stepTitle,
-  style: AppTextStyles.arabicTitle,
-  textAlign: TextAlign.center,
-),
-
-                const SizedBox(height: AppSpacing.sm),
-
-                Text(
-                  _stepSubtitle,
-                  style: AppTextStyles.body,
-                  textAlign: TextAlign.center,
-                ),
+                _buildHeader(),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                if (currentStep == 0) _buildChooseChildStep(),
-                if (currentStep == 1) _buildTaskTypeStep(),
-                if (currentStep == 2) _buildTaskDetailsStep(),
-                if (currentStep == 3) _buildTaskScheduleStep(),
+                _buildCurrentStep(),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                _buildBottomButtons(),
-
-                const SizedBox(height: AppSpacing.lg),
+                _buildButtons(),
               ],
             ),
           ),
@@ -214,1094 +135,127 @@ Text(
     );
   }
 
-  // The title text shown at the top for the current step.
-  String get _stepTitle {
-    if (currentStep == 0) return 'إضافة مهمة';
-    if (currentStep == 1) return 'نوع المهمة';
-    if (currentStep == 2) return 'تفاصيل المهمة';
-    return 'جدول المهمة';
-  }
+  Widget _buildHeader() {
+    final titles = ['إضافة مهمة', 'تفاصيل المهمة', 'جدول المهمة'];
 
-  // The subtitle text shown below the title for the current step.
-  String get _stepSubtitle {
-    if (currentStep == 0) return 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
-    if (currentStep == 1) return 'ما نوع المهمة؟';
-    if (currentStep == 2) return 'لنُضِف تفاصيل المهمة';
-    return 'كم مرة يجب تنفيذ هذه المهمة؟';
-  }
-
-  // ---- Step 0: choose child ----
-
-  Widget _buildChooseChildStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (isLoadingChildren)
-          const Center(child: CircularProgressIndicator())
-        else if (children.isEmpty)
-          const Center(
-            child: Text(
-              'لا يوجد أطفال بعد. الرجاء إضافة طفل أولاً.',
-              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
-            ),
-          )
-        else
-          Wrap(
-            spacing: AppSpacing.md,
-            runSpacing: AppSpacing.md,
-            children: children.map((child) {
-              final isSelected = selectedChildIds.contains(child.id);
-
-              return _ChildChip(
-                name: child.name,
-                avatarColor: AppColors.primaryLight,
-                iconColor: AppColors.primary,
-                isSelected: isSelected,
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      selectedChildIds.remove(child.id);
-                    } else {
-                      selectedChildIds.add(child.id);
-                    }
-                  });
-                },
-              );
-            }).toList(),
-          ),
-
-        if (childError != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              childError!,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
-            ),
-          ),
-        ],
-
-        const SizedBox(height: AppSpacing.lg),
-
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 13, color: AppColors.textPrimary),
-                ),
-              ),
-              SizedBox(width: AppSpacing.sm),
-              Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        const Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            'إضافة سريعة',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ),
-
-        const SizedBox(height: AppSpacing.sm),
-
-        const _QuickAddCategory(
-          icon: Icons.shopping_bag_outlined,
-          label: 'المهام اليومية',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        const _QuickAddCategory(
-          icon: Icons.mosque_outlined,
-          label: 'المهام الثقافية',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        const _QuickAddCategory(
-          icon: Icons.credit_card,
-          label: 'المهام المالية',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        const _QuickAddCategory(
-          icon: Icons.menu_book_outlined,
-          label: 'المهام الدينية',
-        ),
-      ],
+    return Text(
+      titles[currentStep],
+      style: AppTextStyles.arabicTitle,
+      textAlign: TextAlign.center,
     );
   }
 
-  // ---- Step 1: task type ----
+  Widget _buildCurrentStep() {
+    switch (currentStep) {
+      case 0:
+        return ChooseChildStep(
+          children: controller.children,
+          selectedChildIds: controller.selectedChildIds,
+          selectedCategory: controller.selectedCategory,
+          isLoading: controller.isLoadingChildren,
+          error: controller.childError,
+          suggestions: controller.suggestions,
+          categoryError: controller.categoryError,
+          isLoadingSuggestions: controller.isLoadingSuggestions,
+          onChildSelected: (childId) async {
+            await controller.selectChild(childId);
 
-  Widget _buildTaskTypeStep() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _TaskTypeCard(
-                icon: Icons.mosque_outlined,
-                label: 'المهام الثقافية',
-                isSelected: selectedTaskType == 0,
-                onTap: () {
-                  setState(() {
-                    selectedTaskType = 0;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: _TaskTypeCard(
-                icon: Icons.shopping_bag_outlined,
-                label: 'المهام اليومية',
-                isSelected: selectedTaskType == 1,
-                onTap: () {
-                  setState(() {
-                    selectedTaskType = 1;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
+            if (mounted) {
+              setState(() {});
+            }
+          },
+          onCategorySelected: (category) async {
+            await controller.loadSuggestions(category);
+            if (mounted) {
+              setState(() {});
+            }
+          },
+          onSuggestionSelected: (suggestion) {
+            controller.useSuggestion(suggestion);
 
-        const SizedBox(height: AppSpacing.md),
-
-        Row(
-          children: [
-            Expanded(
-              child: _TaskTypeCard(
-                icon: Icons.menu_book_outlined,
-                label: 'المهام الدينية',
-                isSelected: selectedTaskType == 2,
-                onTap: () {
-                  setState(() {
-                    selectedTaskType = 2;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: _TaskTypeCard(
-                icon: Icons.credit_card,
-                label: 'المهام المالية',
-                isSelected: selectedTaskType == 3,
-                onTap: () {
-                  setState(() {
-                    selectedTaskType = 3;
-                    categoryError =
-                        null; // Clear category error when a type is selected
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        if (categoryError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                categoryError!,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  // ---- Step 2: task details ----
-
-  Widget _buildTaskDetailsStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            'اسم المهمة',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        _TaskTextField(
-          controller: taskNameController,
-          hint: 'مثال: ترتيب سريرك',
-          errorText: titleError,
-        ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        const Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            'الوصف',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        _TaskTextField(
-          controller: taskDescriptionController,
-          hint: 'صف المهمة باختصار...',
-          maxLines: 2,
-          errorText: descriptionError,
-        ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        const Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            'نقاط نور',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.card,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              _PointsButton(
-                icon: Icons.add,
-                onTap: () {
-                  setState(() {
-                    taskPoints = taskPoints + 5;
-                  });
-                },
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _PointsButton(
-                icon: Icons.remove,
-                onTap: () {
-                  // Do not let points go below zero.
-                  if (taskPoints > 0) {
-                    setState(() {
-                      taskPoints = taskPoints - 5;
-                    });
-                  }
-                },
-              ),
-              const Spacer(),
-              Text(
-                '$taskPoints نقطة',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              const Icon(Icons.auto_awesome, color: AppColors.gold, size: 18),
-            ],
-          ),
-        ),
-        if (pointsError != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              pointsError!,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
-            ),
-          ),
-        ],
-
-        const SizedBox(height: AppSpacing.md),
-
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 13, color: AppColors.textPrimary),
-                ),
-              ),
-              SizedBox(width: AppSpacing.sm),
-              Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            color: AppColors.card,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    trustChild = !trustChild;
-                  });
-                },
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: trustChild ? AppColors.primary : Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: AppColors.primary, width: 1.5),
-                  ),
-                  child: trustChild
-                      ? const Icon(Icons.check, color: Colors.white, size: 16)
-                      : null,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const Text(
-                      'هل تثق بجدية طفلك في هذه المهمة؟',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ---- Step 3: task schedule ----
-
-  Widget _buildTaskScheduleStep() {
-    return Column(
-      children: [
-        _FrequencyCard(
-          title: 'يوميًا',
-          subtitle: 'تُنفَّذ المهمة كل يوم',
-          isSelected: selectedFrequency == 0,
-          onTap: () {
             setState(() {
-              selectedFrequency = 0;
+              currentStep = 1;
             });
           },
-        ),
+        );
 
-        const SizedBox(height: AppSpacing.md),
-
-        _FrequencyCard(
-          title: 'مرة في الأسبوع',
-          subtitle: 'تُنفَّذ المهمة مرة في الأسبوع',
-          isSelected: selectedFrequency == 1,
-          onTap: () {
+      case 1:
+        return TaskDetailsStep(
+          nameController: controller.taskNameController,
+          descriptionController: controller.taskDescriptionController,
+          points: controller.taskPoints,
+          trustChild: controller.trustChild,
+          titleError: controller.titleError,
+          descriptionError: controller.descriptionError,
+          pointsError: controller.pointsError,
+          onPointsChanged: (value) {
             setState(() {
-              selectedFrequency = 1;
+              controller.taskPoints = value;
             });
           },
-          extraContent: selectedFrequency == 1
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'اختر يوم الأسبوع',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: [
-                        for (final day in weekDays)
-                          _SelectableChip(
-                            label: day,
-                            isSelected: selectedWeeklyDay == day,
-                            onTap: () {
-                              setState(() {
-                                selectedWeeklyDay = day;
-                              });
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                )
-              : null,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        _FrequencyCard(
-          title: 'شهريًا',
-          subtitle: 'تُنفَّذ المهمة مرة في الشهر',
-          isSelected: selectedFrequency == 2,
-          onTap: () {
+          onTrustChanged: (value) {
             setState(() {
-              selectedFrequency = 2;
+              controller.trustChild = value;
             });
           },
-          extraContent: selectedFrequency == 2
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'اختر تاريخ التكرار',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: [
-                        for (final day in monthlyDays)
-                          _SelectableChip(
-                            label: '$day',
-                            isSelected: selectedMonthlyDay == day,
-                            onTap: () {
-                              setState(() {
-                                selectedMonthlyDay = day;
-                              });
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                )
-              : null,
-        ),
-        if (frequencyError != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              frequencyError!,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
-            ),
-          ),
-        ],
+        );
 
-        if (recurrenceDayError != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              recurrenceDayError!,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
+      case 2:
+        return TaskScheduleStep(
+          selectedFrequency: controller.selectedFrequency,
+          selectedWeeklyDay: controller.selectedWeeklyDay,
+          selectedMonthlyDay: controller.selectedMonthlyDay,
+          weekDays: controller.weekDays,
+          monthlyDays: controller.monthlyDays,
+          frequencyError: controller.frequencyError,
+          recurrenceDayError: controller.recurrenceDayError,
+          onFrequencyChanged: (value) {
+            setState(() {
+              controller.selectedFrequency = value;
+            });
+          },
+          onWeeklyDayChanged: (day) {
+            setState(() {
+              controller.selectedWeeklyDay = day;
+            });
+          },
+          onMonthlyDayChanged: (day) {
+            setState(() {
+              controller.selectedMonthlyDay = day;
+            });
+          },
+        );
 
-  // ---- Bottom buttons (change depending on the current step) ----
-
-  Widget _buildBottomButtons() {
-    // Step 0 only has a single full-width "Next" button.
-    if (currentStep == 0) {
-      return AppButton(
-        text: 'التالي',
-        onPressed: _goToNextStep,
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: AppColors.primaryGradient,
-        ),
-      );
+      default:
+        return const SizedBox();
     }
+  }
 
-    // The last step shows "Save" instead of "Next".
-    final isLastStep = currentStep == 3;
-
+  Widget _buildButtons() {
     return Row(
       children: [
         Expanded(
           flex: 2,
           child: AppButton(
-            text: isLastStep ? 'حفظ المهمة' : 'التالي',
+            text: currentStep == 2 ? 'حفظ المهمة' : 'التالي',
             onPressed: isSaving
                 ? null
-                : () async {
-                    if (isLastStep) {
-                      setState(() {
-                        isSaving = true;
-
-                        titleError = null;
-                        descriptionError = null;
-                        pointsError = null;
-                        categoryError = null;
-                        frequencyError = null;
-                        recurrenceDayError = null;
-                        childError = null;
-                      });
-
-                      try {
-                        print("Before API");
-
-                        await _taskApiService.createTask({
-                          "child_ids": selectedChildIds,
-                          "title": taskNameController.text.trim(),
-                          "description": taskDescriptionController.text.trim(),
-                          "points": taskPoints,
-                          "task_frequency": taskFrequency,
-                          "recurrence_day": recurrenceDay,
-                          "category": category,
-                          "is_auto_verified": trustChild,
-                        });
-
-if (!mounted) return;
-
-ScaffoldMessenger.of(context).showSnackBar(
-  const SnackBar(
-    content: Text('تم حفظ المهمة بنجاح'),
-  ),
-);
-                      } on DioException catch (e) {
-                        final errors = e.response?.data["errors"];
-
-                        setState(() {
-                          titleError = mapBackendError(errors?["title"]?.first);
-                          descriptionError = mapBackendError(
-                            errors?["description"]?.first,
-                          );
-                          pointsError = mapBackendError(
-                            errors?["points"]?.first,
-                          );
-                          childError = mapBackendError(
-                            errors?["child_ids"]?.first,
-                          );
-                          categoryError = mapBackendError(
-                            errors?["category"]?.first,
-                          );
-                          frequencyError = mapBackendError(
-                            errors?["task_frequency"]?.first,
-                          );
-                          recurrenceDayError = mapBackendError(
-                            errors?["recurrence_day"]?.first,
-                          );
-
-                          if (childError != null) {
-                            currentStep = 0;
-                          } else if (categoryError != null) {
-                            currentStep = 1;
-                          } else if (titleError != null ||
-                              descriptionError != null ||
-                              pointsError != null) {
-                            currentStep = 2;
-                          } else if (frequencyError != null ||
-                              recurrenceDayError != null) {
-                            currentStep = 3;
-                          }
-                        });
-                      } finally {
-                        if (mounted) {
-                          setState(() {
-                            isSaving = false;
-                          });
-                        }
-                      }
-                    } else {
-                      _goToNextStep();
-                    }
-                  },
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: AppColors.primaryGradient,
-            ),
+                : currentStep == 2
+                ? _saveTask
+                : _nextStep,
+            gradient: const LinearGradient(colors: AppColors.primaryGradient),
           ),
         ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: SizedBox(
-            height: 56,
+        if (currentStep > 0) ...[
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
             child: OutlinedButton(
-              onPressed: _goToPreviousStep,
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.primary, width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              child: const Text(
-                'رجوع',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
+              onPressed: _previousStep,
+              child: const Text('رجوع'),
             ),
           ),
-        ),
+        ],
       ],
-    );
-  }
-}
-
-// One child avatar + name used on Step 0, with a checkmark badge when
-// selected. Tapping toggles that child in or out of the task.
-class _ChildChip extends StatelessWidget {
-  final String name;
-  final Color avatarColor;
-  final Color iconColor;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _ChildChip({
-    required this.name,
-    required this.avatarColor,
-    required this.iconColor,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 100,
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: avatarColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.person, color: iconColor, size: 24),
-                ),
-                if (isSelected)
-                  Positioned(
-                    top: -2,
-                    right: -2,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 12,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// One "quick add" category placeholder shown on Step 0. Static only, same
-// simplification already used on the Reward Management screen: a plain
-// light border instead of a dashed one.
-class _QuickAddCategory extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _QuickAddCategory({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Icon(icon, color: AppColors.primaryDark, size: 18),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.md,
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Text(
-            'ستظهر هنا المهام المقترحة',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// One selectable task-type card shown on Step 1, arranged in a 2x2 grid.
-class _TaskTypeCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _TaskTypeCard({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, color: AppColors.primaryDark, size: 22),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// A simple rounded text field used for the task name and description on
-// Step 2.
-class _TaskTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final int maxLines;
-  final String? errorText;
-
-  const _TaskTextField({
-    required this.controller,
-    required this.hint,
-    this.maxLines = 1,
-    this.errorText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      textAlign: TextAlign.right,
-      textDirection: TextDirection.rtl,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: AppColors.inputBackground,
-        contentPadding: const EdgeInsets.all(AppSpacing.md),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorText: errorText,
-      ),
-    );
-  }
-}
-
-// The small round + / - buttons next to the points value on Step 2.
-class _PointsButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _PointsButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: icon == Icons.add ? AppColors.primary : AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(
-          icon,
-          size: 18,
-          color: icon == Icons.add ? Colors.white : AppColors.primaryDark,
-        ),
-      ),
-    );
-  }
-}
-
-// A small rounded chip used to pick one weekly day or one monthly date.
-// Turns purple when selected, light lavender otherwise.
-class _SelectableChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SelectableChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : AppColors.primaryDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// One selectable frequency card shown on Step 3 (daily/weekly/monthly).
-// extraContent is an optional row shown below the title when this card
-// is selected, e.g. the weekly day picker or the monthly date picker.
-class _FrequencyCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final Widget? extraContent;
-
-  const _FrequencyCard({
-    required this.title,
-    required this.subtitle,
-    required this.isSelected,
-    required this.onTap,
-    this.extraContent,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary : Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primary, width: 1.5),
-                  ),
-                  child: isSelected
-                      ? const Icon(Icons.check, color: Colors.white, size: 14)
-                      : null,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.calendar_today_outlined,
-                    color: AppColors.primaryDark,
-                    size: 18,
-                  ),
-                ),
-              ],
-            ),
-            if (extraContent != null) ...[
-              const SizedBox(height: AppSpacing.sm),
-              extraContent!,
-            ],
-          ],
-        ),
-      ),
     );
   }
 }
