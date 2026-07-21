@@ -5,11 +5,6 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../services/wishlist_api_service.dart';
 
-// Add Wishlist Item screen (Screen 24).
-//
-// This first pass is static/placeholder only: the text fields and icon
-// choice are simple local state, and Save doesn't do anything real yet
-// (see the TODO comment). No backend calls happen here.
 class AddWishlistScreen extends StatefulWidget {
   const AddWishlistScreen({super.key});
 
@@ -19,17 +14,50 @@ class AddWishlistScreen extends StatefulWidget {
 
 class _AddWishlistScreenState extends State<AddWishlistScreen> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController promiseController = TextEditingController();
-
-  // Which icon in the "الأيقونة" row is currently selected. 3 is the
-  // star, selected by default to match the mockup.
   int selectedIconIndex = 3;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     nameController.dispose();
-    promiseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveWish() async {
+    final name = nameController.text.trim();
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('يرجى كتابة اسم الأمنية')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await WishlistApiService().createWish(name);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تمت إضافة الأمنية بنجاح ✓')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('حدث خطأ. تحقق من الاتصال وحاول مرة أخرى.'),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -77,7 +105,7 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Text(
-                    'لديك أمنيتان من أصل 3',
+                    'أضف أمنيتك المفضلة',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -154,18 +182,6 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
               const SizedBox(height: AppSpacing.lg),
 
-              const _FieldLabel('وعدي لأهلي'),
-              const SizedBox(height: AppSpacing.sm),
-              _WishTextField(
-                controller: promiseController,
-                hint:
-                    'مثال: سأرتب سريري كل يوم وأساعد أمي في المنزل حتى '
-                    'أستحق أمنيتي',
-                maxLines: 3,
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
@@ -182,8 +198,7 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                     SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
-                        'اختر أمنياتك بعناية – يمكنك إضافة 3 أمنيات كحد '
-                        'أقصى في قائمتك.',
+                        'اختر أمنياتك بعناية. يمكنك إضافة 3 أمنيات كحد أقصى في قائمتك.',
                         textAlign: TextAlign.right,
                         style: TextStyle(
                           fontSize: 13,
@@ -198,38 +213,7 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
               const SizedBox(height: AppSpacing.xl),
 
               GestureDetector(
-                onTap: () async {
-                  final name = nameController.text.trim();
-
-                  if (name.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('يرجى كتابة اسم الأمنية')),
-                    );
-                    return;
-                  }
-                  try {
-                    await WishlistApiService().createWish(name);
-
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('تمت إضافة الأمنية بنجاح ✓'),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'حدث خطأ. تحقق من الاتصال وحاول مرة أخرى.',
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                },
+                onTap: _isLoading ? null : _saveWish,
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
@@ -240,15 +224,26 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                     ),
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Center(
-                    child: Text(
-                      'حفظ الأمنية',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                  child: Center(
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'حفظ الأمنية',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -262,7 +257,6 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
   }
 }
 
-// Round back button in the top-right corner, same style as other screens.
 class _RoundBackButton extends StatelessWidget {
   final VoidCallback onTap;
 
@@ -290,8 +284,6 @@ class _RoundBackButton extends StatelessWidget {
   }
 }
 
-// A bold label shown above a field, right-aligned to match the Arabic
-// layout used across the app.
 class _FieldLabel extends StatelessWidget {
   final String text;
 
@@ -313,7 +305,6 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-// A simple rounded text field used for the wish name and the promise.
 class _WishTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
@@ -350,8 +341,6 @@ class _WishTextField extends StatelessWidget {
   }
 }
 
-// One icon choice inside the "الأيقونة" row. Tapping it selects that icon,
-// shown with a colored border matching the icon's own color.
 class _IconOption extends StatelessWidget {
   final IconData icon;
   final Color backgroundColor;
