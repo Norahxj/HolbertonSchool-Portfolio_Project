@@ -7,7 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'family_settings_screen.dart';
 import 'profile_screen.dart';
-import '../../../services/auth_api_service.dart';
+import 'package:frontend/features/auth/services/auth_api_service.dart';
 import '../../../app.dart';
 
 // More / Settings screen (Screen 17).
@@ -15,7 +15,7 @@ import '../../../app.dart';
 // This first pass is static/placeholder only: the parent name and every
 // row action are hardcoded. No backend calls happen here yet, and none of
 // the rows navigate anywhere yet (see the TODO comments below).
-class MoreSettingsScreen extends StatefulWidget  {
+class MoreSettingsScreen extends StatefulWidget {
   final bool isArabic;
   final VoidCallback? onLanguageToggle;
 
@@ -27,6 +27,7 @@ class MoreSettingsScreen extends StatefulWidget  {
   @override
   State<MoreSettingsScreen> createState() => _MoreSettingsScreenState();
 }
+
 class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   late Future<UserModel> _userFuture;
 
@@ -36,7 +37,6 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
     _userFuture = UserApiService().getCurrentUser();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +44,7 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
         child: SafeArea(
           bottom: false,
           child: FutureBuilder<UserModel>(
-  future: _userFuture,
+            future: _userFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -67,9 +67,9 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
                   const SizedBox(height: AppSpacing.lg),
 
                   _SettingsCard(
-  isArabic: widget.isArabic,
-  onLanguageToggle: widget.onLanguageToggle,
-),
+                    isArabic: widget.isArabic,
+                    onLanguageToggle: widget.onLanguageToggle,
+                  ),
 
                   const SizedBox(height: AppSpacing.xl),
 
@@ -149,10 +149,7 @@ class _SettingsCard extends StatelessWidget {
   final bool isArabic;
   final VoidCallback? onLanguageToggle;
 
-  const _SettingsCard({
-    required this.isArabic,
-    required this.onLanguageToggle,
-  });
+  const _SettingsCard({required this.isArabic, required this.onLanguageToggle});
 
   @override
   Widget build(BuildContext context) {
@@ -192,10 +189,7 @@ class _SettingsCard extends StatelessWidget {
             },
           ),
           const Divider(height: 1, color: AppColors.border),
-          _LanguageRow(
-  isArabic: isArabic,
-  onTap: onLanguageToggle,
-),
+          _LanguageRow(isArabic: isArabic, onTap: onLanguageToggle),
           const Divider(height: 1, color: AppColors.border),
           _SettingsRow(
             icon: Icons.notifications_none,
@@ -317,10 +311,7 @@ class _LanguageRow extends StatelessWidget {
   final bool isArabic;
   final VoidCallback? onTap;
 
-  const _LanguageRow({
-    required this.isArabic,
-    required this.onTap,
-  });
+  const _LanguageRow({required this.isArabic, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -334,10 +325,7 @@ class _LanguageRow extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(20),

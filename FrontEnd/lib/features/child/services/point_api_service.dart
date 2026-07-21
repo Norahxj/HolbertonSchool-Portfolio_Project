@@ -1,5 +1,5 @@
-import '../core/network/api_service.dart';
-import '../core/network/dio_factory.dart';
+import 'package:frontend/core/network/api_service.dart';
+import 'package:frontend/core/network/dio_factory.dart';
 
 class PointApiService {
   final ApiService _apiService = ApiService(DioFactory.getDio());

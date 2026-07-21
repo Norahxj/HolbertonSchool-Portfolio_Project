@@ -8,7 +8,7 @@ import '../../../core/widgets/screen_background.dart';
 import '../../../models/child_model.dart';
 import '../../../models/reward_model.dart';
 import '../../../models/reward_suggestion_model.dart';
-import '../../../services/child_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 import '../../../services/reward_api_service.dart';
 import 'add_reward_screen.dart';
 
@@ -16,8 +16,7 @@ class RewardManagementScreen extends StatefulWidget {
   const RewardManagementScreen({super.key});
 
   @override
-  State<RewardManagementScreen> createState() =>
-      _RewardManagementScreenState();
+  State<RewardManagementScreen> createState() => _RewardManagementScreenState();
 }
 
 class _RewardManagementScreenState extends State<RewardManagementScreen> {
@@ -80,7 +79,8 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
     } on DioException catch (e) {
       if (!mounted) return;
       setState(() {
-        suggestionsError = e.response?.data?['error']?.toString() ??
+        suggestionsError =
+            e.response?.data?['error']?.toString() ??
             'تعذر تحميل المكافآت المقترحة';
       });
     } finally {
@@ -98,16 +98,17 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
     });
 
     try {
-      final rewards =
-          await _rewardApiService.getRewardsForChild(selectedChildId!);
+      final rewards = await _rewardApiService.getRewardsForChild(
+        selectedChildId!,
+      );
       if (!mounted) return;
       setState(() => currentRewards = rewards);
     } on DioException catch (e) {
       if (!mounted) return;
       debugPrint('خطأ تحميل مكافآت الطفل: ${e.response?.data ?? e.message}');
       setState(() {
-        rewardsError = e.response?.data?['error']?.toString() ??
-            'تعذر تحميل مكافآت الطفل';
+        rewardsError =
+            e.response?.data?['error']?.toString() ?? 'تعذر تحميل مكافآت الطفل';
       });
     } finally {
       if (mounted) setState(() => isLoadingRewards = false);
@@ -120,10 +121,8 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
     final saved = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => AddRewardScreen(
-          childId: selectedChildId!,
-          suggestion: suggestion,
-        ),
+        builder: (_) =>
+            AddRewardScreen(childId: selectedChildId!, suggestion: suggestion),
       ),
     );
 
@@ -226,7 +225,10 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
                         Text(
                           rewardsError!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.red, fontSize: 13),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 13,
+                          ),
                         ),
                         TextButton(
                           onPressed: _loadCurrentRewards,
@@ -285,7 +287,10 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
                     child: Text(
                       'اختر طفلًا أولًا لعرض المكافآت المقترحة',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   )
                 else if (isLoadingSuggestions)
@@ -419,9 +424,7 @@ class _ChildChip extends StatelessWidget {
 class _CurrentRewardCard extends StatelessWidget {
   final RewardModel reward;
 
-  const _CurrentRewardCard({
-    required this.reward,
-  });
+  const _CurrentRewardCard({required this.reward});
 
   String get statusLabel {
     switch (reward.status.toUpperCase()) {
@@ -455,16 +458,12 @@ class _CurrentRewardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(
-        bottom: AppSpacing.sm,
-      ),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -530,11 +529,7 @@ class _CurrentRewardCard extends StatelessWidget {
 
           Column(
             children: [
-              Icon(
-                statusIcon,
-                size: 19,
-                color: AppColors.primary,
-              ),
+              Icon(statusIcon, size: 19, color: AppColors.primary),
               const SizedBox(height: 3),
               Text(
                 statusLabel,
@@ -551,6 +546,7 @@ class _CurrentRewardCard extends StatelessWidget {
     );
   }
 }
+
 class _QuickAddCategory extends StatelessWidget {
   final List<RewardSuggestionModel> suggestions;
   final ValueChanged<RewardSuggestionModel> onSuggestionTap;
@@ -575,10 +571,7 @@ class _QuickAddCategory extends StatelessWidget {
           ? const Text(
               'لا توجد مكافآت مقترحة حاليًا',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
             )
           : Column(
               children: [
@@ -604,8 +597,7 @@ class _QuickAddCategory extends StatelessWidget {
 
                           Expanded(
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   suggestions[i].rewardName,
@@ -636,25 +628,20 @@ class _QuickAddCategory extends StatelessWidget {
                   ),
 
                   if (i != suggestions.length - 1)
-                    const Divider(
-                      height: 1,
-                      color: AppColors.border,
-                    ),
+                    const Divider(height: 1, color: AppColors.border),
                 ],
               ],
             ),
     );
   }
 }
+
 // Full-width "Add reward" button at the bottom of the screen.
 class _AddRewardButton extends StatelessWidget {
   final bool enabled;
   final VoidCallback onTap;
 
-  const _AddRewardButton({
-    required this.enabled,
-    required this.onTap,
-  });
+  const _AddRewardButton({required this.enabled, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

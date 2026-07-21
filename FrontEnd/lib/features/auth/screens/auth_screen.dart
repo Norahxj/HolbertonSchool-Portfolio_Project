@@ -7,7 +7,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
-import '../../../services/auth_api_service.dart';
+import 'package:frontend/features/auth/services/auth_api_service.dart';
 import 'package:dio/dio.dart';
 import '../../parent/screens/parent_main_screen.dart';
 import '../../../core/widgets/app_back_button.dart';
@@ -108,11 +108,11 @@ class _AuthScreenState extends State<AuthScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-  builder: (_) => ParentMainScreen(
-    isArabic: widget.isArabic,
-    onLanguageToggle: widget.onLanguageToggle,
-  ),
-),
+            builder: (_) => ParentMainScreen(
+              isArabic: widget.isArabic,
+              onLanguageToggle: widget.onLanguageToggle,
+            ),
+          ),
         );
       }
     } on DioException catch (e) {
@@ -248,9 +248,7 @@ class _AuthScreenState extends State<AuthScreen> {
               children: [
                 Row(
                   children: [
-                   AppBackButton(
-  onTap: _handleBack,
-),
+                    AppBackButton(onTap: _handleBack),
                     const Spacer(),
                     LanguageToggle(
                       isArabic: isArabic,

@@ -8,9 +8,10 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/task_api_service.dart';
-import 'package:frontend/services/child_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 import 'parent_main_screen.dart';
 import 'package:frontend/models/task_suggestion_model.dart';
+
 // Add Task wizard (Screens 9-12).
 //
 // This first pass is static/placeholder only: every step just updates
@@ -19,18 +20,11 @@ import 'package:frontend/models/task_suggestion_model.dart';
 class AddTaskScreen extends StatefulWidget {
   final int resetVersion;
 
-  const AddTaskScreen({
-    super.key,
-    this.resetVersion = 0,
-  });
+  const AddTaskScreen({super.key, this.resetVersion = 0});
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
-
-  @override
-  State<AddTaskScreen> createState() => _AddTaskScreenState();
-
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final TaskApiService _taskApiService = TaskApiService();
@@ -43,8 +37,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   bool isSubmitting = false;
   bool isSaving = false;
   List<TaskSuggestionModel> taskSuggestions = [];
-bool isLoadingSuggestions = false;
-String? suggestionsError;
+  bool isLoadingSuggestions = false;
+  String? suggestionsError;
 
   int currentStep = 0;
 
@@ -73,15 +67,16 @@ String? suggestionsError;
         return message;
     }
   }
+
   String? getError(dynamic error) {
-  if (error == null) return null;
+    if (error == null) return null;
 
-  if (error is List && error.isNotEmpty) {
-    return error.first.toString();
+    if (error is List && error.isNotEmpty) {
+      return error.first.toString();
+    }
+
+    return error.toString();
   }
-
-  return error.toString();
-}
 
   // Step 1: which task type/category is picked. Null means none yet.
   int? selectedTaskType;
@@ -111,7 +106,7 @@ String? suggestionsError;
     'الجمعة',
     'السبت',
   ];
-  final List<int> monthlyDays =List<int>.generate(31, (index) => index + 1);
+  final List<int> monthlyDays = List<int>.generate(31, (index) => index + 1);
   String get taskFrequency {
     switch (selectedFrequency) {
       case 0:
@@ -127,23 +122,23 @@ String? suggestionsError;
 
   int? get recurrenceDay {
     if (selectedFrequency == 1) {
-  switch (selectedWeeklyDay) {
-    case 'الإثنين':
-      return 0;
-    case 'الثلاثاء':
-      return 1;
-    case 'الأربعاء':
-      return 2;
-    case 'الخميس':
-      return 3;
-    case 'الجمعة':
-      return 4;
-    case 'السبت':
-      return 5;
-    case 'الأحد':
-      return 6;
-  }
-}
+      switch (selectedWeeklyDay) {
+        case 'الإثنين':
+          return 0;
+        case 'الثلاثاء':
+          return 1;
+        case 'الأربعاء':
+          return 2;
+        case 'الخميس':
+          return 3;
+        case 'الجمعة':
+          return 4;
+        case 'السبت':
+          return 5;
+        case 'الأحد':
+          return 6;
+      }
+    }
 
     if (selectedFrequency == 2) {
       return selectedMonthlyDay;
@@ -172,34 +167,36 @@ String? suggestionsError;
     super.initState();
     _loadChildren();
   }
-@override
-void didUpdateWidget(covariant AddTaskScreen oldWidget) {
-  super.didUpdateWidget(oldWidget);
 
-  if (oldWidget.resetVersion != widget.resetVersion) {
-    setState(() {
-      currentStep = 0;
+  @override
+  void didUpdateWidget(covariant AddTaskScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-      titleError = null;
-      descriptionError = null;
-      pointsError = null;
-      categoryError = null;
-      frequencyError = null;
-      recurrenceDayError = null;
-      childError = null;
-    });
+    if (oldWidget.resetVersion != widget.resetVersion) {
+      setState(() {
+        currentStep = 0;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          0,
-          duration: const Duration(milliseconds: 350),
-          curve: Curves.easeOutCubic,
-        );
-      }
-    });
+        titleError = null;
+        descriptionError = null;
+        pointsError = null;
+        categoryError = null;
+        frequencyError = null;
+        recurrenceDayError = null;
+        childError = null;
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      });
+    }
   }
-}
+
   Future<void> _loadChildren() async {
     try {
       final data = await _childApiService.getChildren();
@@ -214,247 +211,246 @@ void didUpdateWidget(covariant AddTaskScreen oldWidget) {
       });
     }
   }
-Future<void> _loadTaskSuggestions() async {
-  if (selectedChildIds.isEmpty || selectedTaskType == null) {
-    return;
+
+  Future<void> _loadTaskSuggestions() async {
+    if (selectedChildIds.isEmpty || selectedTaskType == null) {
+      return;
+    }
+
+    setState(() {
+      isLoadingSuggestions = true;
+      suggestionsError = null;
+      taskSuggestions = [];
+    });
+
+    try {
+      final suggestions = await _taskApiService.getTaskSuggestions({
+        'child_ids': selectedChildIds,
+        'category': category,
+        'lang': 'ar',
+      });
+
+      if (!mounted) return;
+
+      setState(() {
+        taskSuggestions = suggestions;
+      });
+    } on DioException catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        suggestionsError =
+            e.response?.data?['error']?.toString() ??
+            'تعذر تحميل المهام المقترحة';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingSuggestions = false;
+        });
+      }
+    }
   }
 
-  setState(() {
-    isLoadingSuggestions = true;
-    suggestionsError = null;
-    taskSuggestions = [];
-  });
+  void _applyTaskSuggestion(TaskSuggestionModel suggestion) {
+    taskNameController.text = suggestion.title;
+    taskDescriptionController.text = suggestion.description;
+    taskPoints = suggestion.points;
+    trustChild = suggestion.isAutoVerified;
 
-  try {
-    final suggestions = await _taskApiService.getTaskSuggestions({
-      'child_ids': selectedChildIds,
-      'category': category,
-      'lang': 'ar',
-    });
+    switch (suggestion.taskFrequency) {
+      case 'DAILY':
+        selectedFrequency = 0;
+        break;
 
-    if (!mounted) return;
+      case 'WEEKLY':
+        selectedFrequency = 1;
 
-    setState(() {
-      taskSuggestions = suggestions;
-    });
-  } on DioException catch (e) {
-    if (!mounted) return;
+        switch (suggestion.recurrenceDay) {
+          case 0:
+            selectedWeeklyDay = 'الإثنين';
+            break;
+          case 1:
+            selectedWeeklyDay = 'الثلاثاء';
+            break;
+          case 2:
+            selectedWeeklyDay = 'الأربعاء';
+            break;
+          case 3:
+            selectedWeeklyDay = 'الخميس';
+            break;
+          case 4:
+            selectedWeeklyDay = 'الجمعة';
+            break;
+          case 5:
+            selectedWeeklyDay = 'السبت';
+            break;
+          case 6:
+            selectedWeeklyDay = 'الأحد';
+            break;
+        }
+        break;
 
-    setState(() {
-      suggestionsError =
-          e.response?.data?['error']?.toString() ??
-          'تعذر تحميل المهام المقترحة';
-    });
-  } finally {
-    if (mounted) {
+      case 'MONTHLY':
+        selectedFrequency = 2;
+
+        final day = suggestion.recurrenceDay;
+        if (day != null && day >= 1 && day <= 31) {
+          selectedMonthlyDay = day;
+        }
+        break;
+    }
+  }
+
+  Future<void> _showMonthlyDayPicker() async {
+    final selectedDay = await showModalBottomSheet<int>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'اختر يوم الشهر',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 31,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1,
+                  ),
+                  itemBuilder: (context, index) {
+                    final day = index + 1;
+                    final isSelected = day == selectedMonthlyDay;
+
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        Navigator.pop(context, day);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.primaryLight,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '$day',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.primaryDark,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedDay != null) {
       setState(() {
-        isLoadingSuggestions = false;
+        selectedMonthlyDay = selectedDay;
       });
     }
   }
-}
 
-void _applyTaskSuggestion(TaskSuggestionModel suggestion) {
-  taskNameController.text = suggestion.title;
-  taskDescriptionController.text = suggestion.description;
-  taskPoints = suggestion.points;
-  trustChild = suggestion.isAutoVerified;
-
-  switch (suggestion.taskFrequency) {
-    case 'DAILY':
-      selectedFrequency = 0;
-      break;
-
-    case 'WEEKLY':
-      selectedFrequency = 1;
-
-      switch (suggestion.recurrenceDay) {
-        case 0:
-          selectedWeeklyDay = 'الإثنين';
-          break;
-        case 1:
-          selectedWeeklyDay = 'الثلاثاء';
-          break;
-        case 2:
-          selectedWeeklyDay = 'الأربعاء';
-          break;
-        case 3:
-          selectedWeeklyDay = 'الخميس';
-          break;
-        case 4:
-          selectedWeeklyDay = 'الجمعة';
-          break;
-        case 5:
-          selectedWeeklyDay = 'السبت';
-          break;
-        case 6:
-          selectedWeeklyDay = 'الأحد';
-          break;
-      }
-      break;
-
-    case 'MONTHLY':
-      selectedFrequency = 2;
-
-      final day = suggestion.recurrenceDay;
-      if (day != null && day >= 1 && day <= 31) {
-        selectedMonthlyDay = day;
-      }
-      break;
-  }
-}
-Future<void> _showMonthlyDayPicker() async {
-  final selectedDay = await showModalBottomSheet<int>(
-    context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(24),
-      ),
-    ),
-    builder: (context) {
-      return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'اختر يوم الشهر',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 31,
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 1,
-                ),
-                itemBuilder: (context, index) {
-                  final day = index + 1;
-                  final isSelected = day == selectedMonthlyDay;
-
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      Navigator.pop(context, day);
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '$day',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isSelected
-                              ? Colors.white
-                              : AppColors.primaryDark,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-
-  if (selectedDay != null) {
-    setState(() {
-      selectedMonthlyDay = selectedDay;
-    });
-  }
-}
   @override
-void dispose() {
-  _scrollController.dispose();
-  taskNameController.dispose();
-  taskDescriptionController.dispose();
-  super.dispose();
-}
+  void dispose() {
+    _scrollController.dispose();
+    taskNameController.dispose();
+    taskDescriptionController.dispose();
+    super.dispose();
+  }
 
   void _goToNextStep() {
-  setState(() {
-    childError = null;
-    categoryError = null;
-    titleError = null;
-    descriptionError = null;
-    pointsError = null;
-    frequencyError = null;
-    recurrenceDayError = null;
-  });
+    setState(() {
+      childError = null;
+      categoryError = null;
+      titleError = null;
+      descriptionError = null;
+      pointsError = null;
+      frequencyError = null;
+      recurrenceDayError = null;
+    });
 
-  // الصفحة الأولى
-  
-    
-   // الصفحة الأولى: اختيار الطفل ونوع المهمة
-if (currentStep == 0) {
-  bool hasError = false;
+    // الصفحة الأولى
 
-  if (selectedChildIds.isEmpty) {
-    childError = "الرجاء اختيار طفل واحد على الأقل";
-    hasError = true;
+    // الصفحة الأولى: اختيار الطفل ونوع المهمة
+    if (currentStep == 0) {
+      bool hasError = false;
+
+      if (selectedChildIds.isEmpty) {
+        childError = "الرجاء اختيار طفل واحد على الأقل";
+        hasError = true;
+      }
+
+      if (selectedTaskType == null) {
+        categoryError = "الرجاء اختيار نوع المهمة";
+        hasError = true;
+      }
+
+      if (hasError) {
+        setState(() {});
+        return;
+      }
+    }
+
+    // الصفحة الثانية: تفاصيل المهمة
+    if (currentStep == 1) {
+      bool hasError = false;
+
+      if (taskNameController.text.trim().isEmpty) {
+        titleError = "اسم المهمة مطلوب";
+        hasError = true;
+      }
+
+      if (taskDescriptionController.text.trim().isEmpty) {
+        descriptionError = "الوصف مطلوب";
+        hasError = true;
+      }
+
+      if (taskPoints < 1 || taskPoints > 100) {
+        pointsError = "عدد النقاط يجب أن يكون بين 1 و100";
+        hasError = true;
+      }
+
+      if (hasError) {
+        setState(() {});
+        return;
+      }
+    }
+
+    setState(() {
+      currentStep++;
+    });
   }
-
-  if (selectedTaskType == null) {
-    categoryError = "الرجاء اختيار نوع المهمة";
-    hasError = true;
-  }
-
-  if (hasError) {
-    setState(() {});
-    return;
-  }
-}
-
-// الصفحة الثانية: تفاصيل المهمة
-if (currentStep == 1) {
-  bool hasError = false;
-
-  if (taskNameController.text.trim().isEmpty) {
-    titleError = "اسم المهمة مطلوب";
-    hasError = true;
-  }
-
-  if (taskDescriptionController.text.trim().isEmpty) {
-    descriptionError = "الوصف مطلوب";
-    hasError = true;
-  }
-
-  if (taskPoints < 1 || taskPoints > 100) {
-    pointsError = "عدد النقاط يجب أن يكون بين 1 و100";
-    hasError = true;
-  }
-
-  if (hasError) {
-    setState(() {});
-    return;
-  }
-}
-
-  setState(() {
-    currentStep++;
-  });
-}
 
   void _goToPreviousStep() {
     if (currentStep == 0) {
@@ -463,7 +459,7 @@ if (currentStep == 1) {
     }
 
     setState(() {
-      currentStep --;
+      currentStep--;
     });
   }
 
@@ -488,7 +484,6 @@ if (currentStep == 1) {
                         ),
                       ),
                     ),
-                    
                   ],
                 ),
 
@@ -520,18 +515,18 @@ if (currentStep == 1) {
 
   // The title text shown at the top for the current step.
   String get _stepTitle {
-  if (currentStep == 0) return 'إضافة مهمة';
-  return 'تفاصيل المهمة';
-}
+    if (currentStep == 0) return 'إضافة مهمة';
+    return 'تفاصيل المهمة';
+  }
 
   // The subtitle text shown below the title for the current step.
   String get _stepSubtitle {
-  if (currentStep == 0) {
-    return 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
-  }
+    if (currentStep == 0) {
+      return 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
+    }
 
-  return 'أضيفي تفاصيل المهمة وحددي تكرارها';
-}
+    return 'أضيفي تفاصيل المهمة وحددي تكرارها';
+  }
 
   // ---- Step 0: choose child ----
 
@@ -586,39 +581,39 @@ if (currentStep == 1) {
 
         const SizedBox(height: AppSpacing.lg),
         const Align(
-  alignment: Alignment.centerRight,
-  child: Text(
-    'نوع المهمة',
-    style: TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.bold,
-      color: AppColors.textPrimary,
-    ),
-  ),
-),
+          alignment: Alignment.centerRight,
+          child: Text(
+            'نوع المهمة',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
 
-const SizedBox(height: AppSpacing.xs),
+        const SizedBox(height: AppSpacing.xs),
 
-Text(
-  selectedChildIds.isEmpty
-      ? 'اختر طفلًا أولًا لتفعيل أنواع المهام'
-      : 'اختر نوع المهمة',
-  textAlign: TextAlign.right,
-  style: TextStyle(
-    fontSize: 12,
-    color: selectedChildIds.isEmpty
-        ? Colors.grey.shade500
-        : AppColors.textSecondary,
-  ),
-),
+        Text(
+          selectedChildIds.isEmpty
+              ? 'اختر طفلًا أولًا لتفعيل أنواع المهام'
+              : 'اختر نوع المهمة',
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            fontSize: 12,
+            color: selectedChildIds.isEmpty
+                ? Colors.grey.shade500
+                : AppColors.textSecondary,
+          ),
+        ),
 
-const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.md),
 
-_buildTaskTypeStep(),
+        _buildTaskTypeStep(),
 
-const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
 
-const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -643,79 +638,75 @@ const SizedBox(height: AppSpacing.lg),
         const SizedBox(height: AppSpacing.lg),
 
         if (selectedTaskType != null) ...[
-  const Align(
-    alignment: Alignment.centerRight,
-    child: Text(
-      'إضافة سريعة',
-      style: TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-      ),
-    ),
-  ),
-
-  const SizedBox(height: AppSpacing.sm),
-
-  if (isLoadingSuggestions)
-    const Center(
-      child: Padding(
-        padding: EdgeInsets.all(AppSpacing.md),
-        child: CircularProgressIndicator(),
-      ),
-    )
-  else if (suggestionsError != null)
-    Column(
-      children: [
-        Text(
-          suggestionsError!,
-          style: const TextStyle(
-            color: Colors.red,
-            fontSize: 12,
+          const Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              'إضافة سريعة',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: _loadTaskSuggestions,
-          child: const Text('إعادة المحاولة'),
-        ),
-      ],
-    )
-  else
-    _QuickAddCategory(
-  icon: selectedTaskType == 0
-      ? Icons.mosque_outlined
-      : selectedTaskType == 1
-          ? Icons.shopping_bag_outlined
-          : selectedTaskType == 2
-              ? Icons.menu_book_outlined
-              : Icons.credit_card,
-  label: selectedTaskType == 0
-      ? 'المهام الثقافية'
-      : selectedTaskType == 1
-          ? 'المهام اليومية'
-          : selectedTaskType == 2
-              ? 'المهام الدينية'
-              : 'المهام المالية',
+
+          const SizedBox(height: AppSpacing.sm),
+
+          if (isLoadingSuggestions)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(AppSpacing.md),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else if (suggestionsError != null)
+            Column(
+              children: [
+                Text(
+                  suggestionsError!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+                TextButton(
+                  onPressed: _loadTaskSuggestions,
+                  child: const Text('إعادة المحاولة'),
+                ),
+              ],
+            )
+          else
+            _QuickAddCategory(
+              icon: selectedTaskType == 0
+                  ? Icons.mosque_outlined
+                  : selectedTaskType == 1
+                  ? Icons.shopping_bag_outlined
+                  : selectedTaskType == 2
+                  ? Icons.menu_book_outlined
+                  : Icons.credit_card,
+              label: selectedTaskType == 0
+                  ? 'المهام الثقافية'
+                  : selectedTaskType == 1
+                  ? 'المهام اليومية'
+                  : selectedTaskType == 2
+                  ? 'المهام الدينية'
+                  : 'المهام المالية',
               suggestions: taskSuggestions,
-  onSuggestionTap: (suggestion) {
-  setState(() {
-    _applyTaskSuggestion(suggestion);
-    currentStep = 1;
-  });
+              onSuggestionTap: (suggestion) {
+                setState(() {
+                  _applyTaskSuggestion(suggestion);
+                  currentStep = 1;
+                });
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-      );
-    }
-  });
-},
-),
-],
-
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (_scrollController.hasClients) {
+                    _scrollController.animateTo(
+                      0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutCubic,
+                    );
+                  }
+                });
+              },
+            ),
+        ],
       ],
     );
   }
@@ -733,13 +724,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 0,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-  setState(() {
-    selectedTaskType = 0;
-    categoryError = null;
-  });
+                  setState(() {
+                    selectedTaskType = 0;
+                    categoryError = null;
+                  });
 
-  _loadTaskSuggestions();
-},
+                  _loadTaskSuggestions();
+                },
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -750,13 +741,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 1,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-  setState(() {
-    selectedTaskType = 1;
-    categoryError = null;
-  });
+                  setState(() {
+                    selectedTaskType = 1;
+                    categoryError = null;
+                  });
 
-  _loadTaskSuggestions();
-},
+                  _loadTaskSuggestions();
+                },
               ),
             ),
           ],
@@ -773,13 +764,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 2,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-  setState(() {
-    selectedTaskType = 2;
-    categoryError = null;
-  });
+                  setState(() {
+                    selectedTaskType = 2;
+                    categoryError = null;
+                  });
 
-  _loadTaskSuggestions();
-},
+                  _loadTaskSuggestions();
+                },
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -790,13 +781,13 @@ const SizedBox(height: AppSpacing.lg),
                 isSelected: selectedTaskType == 3,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
-  setState(() {
-    selectedTaskType = 3;
-    categoryError = null;
-  });
+                  setState(() {
+                    selectedTaskType = 3;
+                    categoryError = null;
+                  });
 
-  _loadTaskSuggestions();
-},
+                  _loadTaskSuggestions();
+                },
               ),
             ),
           ],
@@ -815,164 +806,155 @@ const SizedBox(height: AppSpacing.lg),
       ],
     );
   }
+
   Widget _buildTaskSuggestionsSection() {
-  if (selectedTaskType == null) {
-    return const SizedBox.shrink();
-  }
+    if (selectedTaskType == null) {
+      return const SizedBox.shrink();
+    }
 
-  if (isLoadingSuggestions) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
+    if (isLoadingSuggestions) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-  if (suggestionsError != null) {
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.md),
-      child: Column(
-        children: [
-          Text(
-            suggestionsError!,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.red,
-              fontSize: 13,
+    if (suggestionsError != null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.md),
+        child: Column(
+          children: [
+            Text(
+              suggestionsError!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red, fontSize: 13),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            TextButton(
+              onPressed: _loadTaskSuggestions,
+              child: const Text('إعادة المحاولة'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (taskSuggestions.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            'مهام مقترحة',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          TextButton(
-            onPressed: _loadTaskSuggestions,
-            child: const Text('إعادة المحاولة'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  if (taskSuggestions.isEmpty) {
-    return const SizedBox.shrink();
-  }
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      const Align(
-        alignment: Alignment.centerRight,
-        child: Text(
-          'مهام مقترحة',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
         ),
-      ),
 
-      const SizedBox(height: AppSpacing.xs),
+        const SizedBox(height: AppSpacing.xs),
 
-      const Text(
-        'اضغط على المهمة التي تناسبك',
-        textAlign: TextAlign.right,
-        style: TextStyle(
-          fontSize: 12,
-          color: AppColors.textSecondary,
+        const Text(
+          'اضغط على المهمة التي تناسبك',
+          textAlign: TextAlign.right,
+          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
         ),
-      ),
 
-      const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.md),
 
-      ...taskSuggestions.map(
-        (suggestion) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              setState(() {
-                _applyTaskSuggestion(suggestion);
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: AppColors.card,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.border,
+        ...taskSuggestions.map(
+          (suggestion) => Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                setState(() {
+                  _applyTaskSuggestion(suggestion);
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 16,
+                      color: AppColors.primary,
+                    ),
+
+                    const SizedBox(width: AppSpacing.sm),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            suggestion.title,
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+
+                          const SizedBox(height: 4),
+
+                          Text(
+                            suggestion.description,
+                            textAlign: TextAlign.right,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+
+                          const SizedBox(height: AppSpacing.xs),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                '${suggestion.points} نقطة',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryDark,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.auto_awesome,
+                                size: 14,
+                                color: AppColors.gold,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    size: 16,
-                    color: AppColors.primary,
-                  ),
-
-                  const SizedBox(width: AppSpacing.sm),
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          suggestion.title,
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-
-                        const SizedBox(height: 4),
-
-                        Text(
-                          suggestion.description,
-                          textAlign: TextAlign.right,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-
-                        const SizedBox(height: AppSpacing.xs),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${suggestion.points} نقطة',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryDark,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            const Icon(
-                              Icons.auto_awesome,
-                              size: 14,
-                              color: AppColors.gold,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   // ---- Step 2: task details ----
 
@@ -1115,96 +1097,87 @@ const SizedBox(height: AppSpacing.lg),
 
         const SizedBox(height: AppSpacing.md),
 
-        
+        const SizedBox(height: AppSpacing.xl),
 
-const SizedBox(height: AppSpacing.xl),
-
-const Align(
-  alignment: Alignment.centerRight,
-  child: Text(
-    'تكرار المهمة',
-    style: TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.bold,
-      color: AppColors.textPrimary,
-    ),
-  ),
-),
-
-const SizedBox(height: AppSpacing.md),
-
-_buildTaskScheduleStep(),
-
-const SizedBox(height: AppSpacing.xl),
-
-Container(
-  padding: const EdgeInsets.all(AppSpacing.md),
-  decoration: BoxDecoration(
-    color: AppColors.card,
-    borderRadius: BorderRadius.circular(18),
-    border: Border.all(color: AppColors.border),
-  ),
-  child: Row(
-    children: [
-      GestureDetector(
-        onTap: () {
-          setState(() {
-            trustChild = !trustChild;
-          });
-        },
-        child: Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: trustChild ? AppColors.primary : Colors.white,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              color: AppColors.primary,
-              width: 1.5,
+        const Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            'تكرار المهمة',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
             ),
           ),
-          child: trustChild
-              ? const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 16,
-                )
-              : null,
         ),
-      ),
 
-      const SizedBox(width: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.md),
 
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          textDirection: TextDirection.ltr,
-          children: const [
-            Text(
-              'هل تثق بجدية طفلك في هذه المهمة؟',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+        _buildTaskScheduleStep(),
+
+        const SizedBox(height: AppSpacing.xl),
+
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    trustChild = !trustChild;
+                  });
+                },
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: trustChild ? AppColors.primary : Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: AppColors.primary, width: 1.5),
+                  ),
+                  child: trustChild
+                      ? const Icon(Icons.check, color: Colors.white, size: 16)
+                      : null,
+                ),
               ),
-            ),
-            SizedBox(height: 2),
-            Text(
-              'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 11,
-                color: AppColors.textSecondary,
+
+              const SizedBox(width: AppSpacing.sm),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  textDirection: TextDirection.ltr,
+                  children: const [
+                    Text(
+                      'هل تثق بجدية طفلك في هذه المهمة؟',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  ),
-),
-     ],
+      ],
     );
   }
 
@@ -1297,55 +1270,53 @@ Container(
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    
-  Center(
-  child: InkWell(
-    borderRadius: BorderRadius.circular(14),
-    onTap: _showMonthlyDayPicker,
-    child: Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.border,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.calendar_month_outlined,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
 
-          const SizedBox(width: AppSpacing.sm),
+                    Center(
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(14),
+                        onTap: _showMonthlyDayPicker,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.lg,
+                            vertical: AppSpacing.sm,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryLight,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.calendar_month_outlined,
+                                size: 18,
+                                color: AppColors.primaryDark,
+                              ),
 
-          Text(
-            '$selectedMonthlyDay',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryDark,
-            ),
-          ),
+                              const SizedBox(width: AppSpacing.sm),
 
-          const SizedBox(width: AppSpacing.xs),
+                              Text(
+                                '$selectedMonthlyDay',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryDark,
+                                ),
+                              ),
 
-          const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ],
-      ),
-    ),
-  ),
-),
+                              const SizedBox(width: AppSpacing.xs),
+
+                              const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 18,
+                                color: AppColors.primaryDark,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 )
               : null,
@@ -1421,30 +1392,28 @@ Container(
                         print("recurrenceDay = $recurrenceDay");
                         print("type = ${recurrenceDay.runtimeType}");
 
-
                         await _taskApiService.createTask({
-  "child_ids": selectedChildIds,
-  "title": taskNameController.text.trim(),
-  "description": taskDescriptionController.text.trim(),
-  "points": taskPoints,
-  "task_frequency": taskFrequency,
+                          "child_ids": selectedChildIds,
+                          "title": taskNameController.text.trim(),
+                          "description": taskDescriptionController.text.trim(),
+                          "points": taskPoints,
+                          "task_frequency": taskFrequency,
 
-  if (recurrenceDay != null)
-    "recurrence_day": recurrenceDay,
+                          if (recurrenceDay != null)
+                            "recurrence_day": recurrenceDay,
 
-  "category": category,
-  "is_auto_verified": trustChild,
-});
+                          "category": category,
+                          "is_auto_verified": trustChild,
+                        });
 
                         if (!mounted) return;
                         Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(
-    builder: (_) => const ParentMainScreen(
-      initialIndex: 2,
-    ),
-  ),
-);
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const ParentMainScreen(initialIndex: 2),
+                          ),
+                        );
                       } on DioException catch (e) {
                         final errors = e.response?.data["errors"];
 
@@ -1465,19 +1434,19 @@ Container(
                           frequencyError = mapBackendError(
                             errors?["task_frequency"]?.first,
                           );
-                          recurrenceDayError =
-                          mapBackendError(getError(errors?["recurrence_day"])
+                          recurrenceDayError = mapBackendError(
+                            getError(errors?["recurrence_day"]),
                           );
 
                           if (childError != null || categoryError != null) {
-  currentStep = 0;
-} else if (titleError != null ||
-    descriptionError != null ||
-    pointsError != null ||
-    frequencyError != null ||
-    recurrenceDayError != null) {
-  currentStep = 1;
-}
+                            currentStep = 0;
+                          } else if (titleError != null ||
+                              descriptionError != null ||
+                              pointsError != null ||
+                              frequencyError != null ||
+                              recurrenceDayError != null) {
+                            currentStep = 1;
+                          }
                         });
                       } finally {
                         if (mounted) {
@@ -1583,25 +1552,17 @@ class _ChildChip extends StatelessWidget {
           vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primaryLight
-              : AppColors.card,
+          color: isSelected ? AppColors.primaryLight : AppColors.card,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.border,
+            color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
         child: Row(
           children: [
             if (isSelected)
-              const Icon(
-                Icons.check_circle,
-                color: AppColors.primary,
-                size: 20,
-              )
+              const Icon(Icons.check_circle, color: AppColors.primary, size: 20)
             else
               const SizedBox(width: 20),
 
@@ -1614,9 +1575,7 @@ class _ChildChip extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: isSelected
-                      ? FontWeight.bold
-                      : FontWeight.w600,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -1631,11 +1590,7 @@ class _ChildChip extends StatelessWidget {
                 color: avatarColor,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.person,
-                color: iconColor,
-                size: 22,
-              ),
+              child: Icon(Icons.person, color: iconColor, size: 22),
             ),
           ],
         ),
@@ -1643,6 +1598,7 @@ class _ChildChip extends StatelessWidget {
     );
   }
 }
+
 // One "quick add" category placeholder shown on Step 0. Static only, same
 // simplification already used on the Reward Management screen: a plain
 // light border instead of a dashed one.
@@ -1676,11 +1632,7 @@ class _QuickAddCategory extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Icon(
-              icon,
-              color: AppColors.primaryDark,
-              size: 18,
-            ),
+            Icon(icon, color: AppColors.primaryDark, size: 18),
           ],
         ),
 
@@ -1692,9 +1644,7 @@ class _QuickAddCategory extends StatelessWidget {
             vertical: AppSpacing.md,
           ),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: AppColors.border,
-            ),
+            border: Border.all(color: AppColors.border),
             borderRadius: BorderRadius.circular(16),
           ),
           child: suggestions.isEmpty
@@ -1745,10 +1695,7 @@ class _QuickAddCategory extends StatelessWidget {
                       ),
 
                       if (i != suggestions.length - 1)
-                        const Divider(
-                          height: 1,
-                          color: AppColors.border,
-                        ),
+                        const Divider(height: 1, color: AppColors.border),
                     ],
                   ],
                 ),
@@ -1757,6 +1704,7 @@ class _QuickAddCategory extends StatelessWidget {
     );
   }
 }
+
 // One selectable task-type card shown on Step 1, arranged in a 2x2 grid.
 class _TaskTypeCard extends StatelessWidget {
   final IconData icon;
@@ -1778,20 +1726,16 @@ class _TaskTypeCard extends StatelessWidget {
     return GestureDetector(
       onTap: isEnabled ? onTap : null,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.lg,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
         decoration: BoxDecoration(
-          color: isEnabled
-              ? AppColors.card
-              : Colors.grey.shade200,
+          color: isEnabled ? AppColors.card : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: !isEnabled
                 ? Colors.grey.shade300
                 : isSelected
-                    ? AppColors.primary
-                    : AppColors.border,
+                ? AppColors.primary
+                : AppColors.border,
             width: isSelected && isEnabled ? 2 : 1,
           ),
         ),
@@ -1808,9 +1752,7 @@ class _TaskTypeCard extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isEnabled
-                    ? AppColors.primaryDark
-                    : Colors.grey.shade500,
+                color: isEnabled ? AppColors.primaryDark : Colors.grey.shade500,
                 size: 22,
               ),
             ),
@@ -1820,9 +1762,7 @@ class _TaskTypeCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: isEnabled
-                    ? AppColors.textPrimary
-                    : Colors.grey.shade500,
+                color: isEnabled ? AppColors.textPrimary : Colors.grey.shade500,
               ),
             ),
           ],
@@ -1831,6 +1771,7 @@ class _TaskTypeCard extends StatelessWidget {
     );
   }
 }
+
 class _TaskTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;

@@ -7,11 +7,11 @@ import '../../child/screens/child_profile_screen.dart';
 import 'add_child_screen.dart';
 import 'task_review_screen.dart';
 import '../../../models/child_model.dart';
-import '../../../services/child_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 import '../../../services/user_api_service.dart';
 import '../../../models/user_model.dart';
 import '../../../models/child_dashboard_model.dart';
-import '../../../services/dashboard_api_service.dart';
+import 'package:frontend/features/parent/services/dashboard_api_service.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
@@ -26,36 +26,33 @@ class ParentDashboardScreen extends StatefulWidget {
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   late Future<UserModel> _userFuture;
-late Future<List<ChildDashboardModel>> _dashboardFuture;
-late Future<List<ChildModel>> _childrenFuture;
-@override
-void initState() {
-  super.initState();
-  _loadData();
-}
+  late Future<List<ChildDashboardModel>> _dashboardFuture;
+  late Future<List<ChildModel>> _childrenFuture;
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-void _loadData() {
-  _userFuture = UserApiService().getCurrentUser();
-  _dashboardFuture = DashboardApiService().getDashboard();
-  _childrenFuture = ChildApiService().getChildren();
-}
-    
+  void _loadData() {
+    _userFuture = UserApiService().getCurrentUser();
+    _dashboardFuture = DashboardApiService().getDashboard();
+    _childrenFuture = ChildApiService().getChildren();
+  }
 
   Future<void> _openAddChildScreen() async {
-  final result = await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const AddChildScreen(),
-    ),
-  );
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AddChildScreen()),
+    );
 
-  if (result == true && mounted) {
-    setState(() {
-      _dashboardFuture = DashboardApiService().getDashboard();
-      _childrenFuture = ChildApiService().getChildren();
-    });
+    if (result == true && mounted) {
+      setState(() {
+        _dashboardFuture = DashboardApiService().getDashboard();
+        _childrenFuture = ChildApiService().getChildren();
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +65,6 @@ void _loadData() {
             child: FutureBuilder<UserModel>(
               future: _userFuture,
               builder: (context, snapshot) {
-                
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -110,64 +106,62 @@ void _loadData() {
                     const SizedBox(height: AppSpacing.sm),
 
                     FutureBuilder<List<ChildModel>>(
-  future: _childrenFuture,
-  builder: (context, childrenSnapshot) {
-    if (childrenSnapshot.connectionState ==
-        ConnectionState.waiting) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+                      future: _childrenFuture,
+                      builder: (context, childrenSnapshot) {
+                        if (childrenSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-    if (childrenSnapshot.hasError) {
-      return const Center(
-        child: Text('تعذر تحميل الأطفال'),
-      );
-    }
+                        if (childrenSnapshot.hasError) {
+                          return const Center(
+                            child: Text('تعذر تحميل الأطفال'),
+                          );
+                        }
 
-    final children = childrenSnapshot.data ?? [];
+                        final children = childrenSnapshot.data ?? [];
 
-    return FutureBuilder<List<ChildDashboardModel>>(
-      future: _dashboardFuture,
-      builder: (context, dashboardSnapshot) {
-        if (dashboardSnapshot.connectionState ==
-            ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+                        return FutureBuilder<List<ChildDashboardModel>>(
+                          future: _dashboardFuture,
+                          builder: (context, dashboardSnapshot) {
+                            if (dashboardSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
 
-        if (dashboardSnapshot.hasError) {
-          return Center(
-            child: Text(
-              dashboardSnapshot.error.toString(),
-            ),
-          );
-        }
+                            if (dashboardSnapshot.hasError) {
+                              return Center(
+                                child: Text(dashboardSnapshot.error.toString()),
+                              );
+                            }
 
-        final dashboards = dashboardSnapshot.data ?? [];
+                            final dashboards = dashboardSnapshot.data ?? [];
 
-        return Column(
-          children: dashboards.map((dashboard) {
-            final child = children.firstWhere(
-              (item) => item.id == dashboard.childId,
-            );
+                            return Column(
+                              children: dashboards.map((dashboard) {
+                                final child = children.firstWhere(
+                                  (item) => item.id == dashboard.childId,
+                                );
 
-            return Padding(
-              padding: const EdgeInsets.only(
-                bottom: AppSpacing.sm,
-              ),
-              child: _ChildProgressCard(
-                child: child,
-                dashboard: dashboard,
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
-  },
-),
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: AppSpacing.sm,
+                                  ),
+                                  child: _ChildProgressCard(
+                                    child: child,
+                                    dashboard: dashboard,
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        );
+                      },
+                    ),
                     const SizedBox(height: AppSpacing.sm),
 
                     _AddChildButton(onTap: _openAddChildScreen),
@@ -261,39 +255,39 @@ class _WelcomeBanner extends StatelessWidget {
       ),
       child: Row(
         textDirection: TextDirection.rtl,
-mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'مرحبًا ${user.firstName} ${user.lastName}! ♥',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryDark,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'مرحبًا ${user.firstName} ${user.lastName}! ♥',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'أنتِ تبنين جيلاً رائعًا',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          const Text(
-            'أنتِ تبنين جيلاً رائعًا',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+          const SizedBox(width: AppSpacing.md),
+          const Icon(
+            Icons.home_rounded,
+            size: 56,
+            color: AppColors.primaryDark,
           ),
         ],
       ),
-    ),
-    const SizedBox(width: AppSpacing.md),
-    const Icon(
-      Icons.home_rounded,
-      size: 56,
-      color: AppColors.primaryDark,
-    ),
-  ],
-)
     );
   }
 }
@@ -302,25 +296,20 @@ class _ChildProgressCard extends StatelessWidget {
   final ChildModel child;
   final ChildDashboardModel dashboard;
 
-  const _ChildProgressCard({
-    required this.child,
-    required this.dashboard,
-  });
+  const _ChildProgressCard({required this.child, required this.dashboard});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       // TODO: This navigation is temporary until real child/profile routing is finalized.
       onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => ChildProfileScreen(
-        child: child,
-        dashboard: dashboard,
-      ),
-    ),
-  );
-},
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                ChildProfileScreen(child: child, dashboard: dashboard),
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -339,9 +328,7 @@ class _ChildProgressCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _WeeklyProgressRing(
-  percent: dashboard.progressPercentage.round(),
-),
+            _WeeklyProgressRing(percent: dashboard.progressPercentage.round()),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),

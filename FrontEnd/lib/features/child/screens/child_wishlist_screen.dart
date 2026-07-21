@@ -5,7 +5,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../models/wish_model.dart';
 import '../../../services/wishlist_api_service.dart';
-import '../../../services/point_api_service.dart';
+import 'package:frontend/features/child/services/point_api_service.dart';
 import 'add_wishlist_screen.dart';
 
 /// Child Wishlist screen.
@@ -70,9 +70,9 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
       await _loadData();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تعذّر حذف الأمنية')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('تعذّر حذف الأمنية')));
       }
     }
   }
@@ -80,7 +80,7 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
   Future<void> _achieveWish(String wishId) async {
     try {
       await _wishlistService.achieveWish(wishId);
-await _loadData();
+      await _loadData();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -303,8 +303,7 @@ class _WishCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final status = wish.status.toUpperCase();
     final target = wish.targetPoints;
-    final hasProgress =
-        status == 'APPROVED' && target != null && target > 0;
+    final hasProgress = status == 'APPROVED' && target != null && target > 0;
 
     // Requirement #6: use actual currentPoints / targetPoints for progress
     final progressValue = hasProgress
@@ -406,8 +405,8 @@ class _WishCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             ElevatedButton(
               onPressed: target != null && currentPoints >= target
-    ? onAchieve
-    : null,
+                  ? onAchieve
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 disabledBackgroundColor: AppColors.primaryLight,
@@ -417,10 +416,10 @@ class _WishCard extends StatelessWidget {
               ),
               child: Text(
                 target == null
-    ? 'لم يتم تحديد النقاط المطلوبة'
-    : currentPoints >= target
-        ? 'لقد حققت أمنيتي! 🌟'
-        : 'اجمع المزيد من النقاط',
+                    ? 'لم يتم تحديد النقاط المطلوبة'
+                    : currentPoints >= target
+                    ? 'لقد حققت أمنيتي! 🌟'
+                    : 'اجمع المزيد من النقاط',
                 style: const TextStyle(color: Colors.white),
               ),
             ),

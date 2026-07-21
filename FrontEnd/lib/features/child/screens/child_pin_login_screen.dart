@@ -6,7 +6,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../../services/auth_api_service.dart';
+import 'package:frontend/features/auth/services/auth_api_service.dart';
 import '../widgets/child_nav.dart';
 import '../../../core/widgets/app_back_button.dart';
 import 'package:flutter/services.dart';
@@ -27,94 +27,83 @@ class ChildPinLoginScreen extends StatefulWidget {
     required this.isArabic,
     required this.onLanguageToggle,
   });
- @override
-  State<ChildPinLoginScreen> createState() =>
-      _ChildPinLoginScreenState();
+  @override
+  State<ChildPinLoginScreen> createState() => _ChildPinLoginScreenState();
 }
 
-class _ChildPinLoginScreenState
-    extends State<ChildPinLoginScreen> {
-
+class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
   String pin = '';
   bool isLoading = false;
   String? errorMessage;
   final TextEditingController _pinController = TextEditingController();
-final FocusNode _pinFocusNode = FocusNode();
+  final FocusNode _pinFocusNode = FocusNode();
 
   Future<void> _loginChild() async {
-  if (pin.length != 6) {
-    setState(() {
-      errorMessage = "أدخل رمز الدخول كاملاً";
-    });
-    return;
-  }
-
-  setState(() {
-    isLoading = true;
-    errorMessage = null;
-  });
-
-  try {
-    await AuthApiService().childLogin(
-  accessCode: pin,
-);
-    if (!mounted) return;
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChildNav(),
-      ),
-    );
-  } on DioException catch (e) {
-    setState(() {
-      errorMessage =
-          e.response?.data["error"] ?? "رمز الدخول غير صحيح";
-    });
-  } finally {
-    if (mounted) {
+    if (pin.length != 6) {
       setState(() {
-        isLoading = false;
+        errorMessage = "أدخل رمز الدخول كاملاً";
       });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      await AuthApiService().childLogin(accessCode: pin);
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => ChildNav()),
+      );
+    } on DioException catch (e) {
+      setState(() {
+        errorMessage = e.response?.data["error"] ?? "رمز الدخول غير صحيح";
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
-}
 
-  
+  @override
+  void dispose() {
+    _pinController.dispose();
+    _pinFocusNode.dispose();
+    super.dispose();
+  }
 
-  
-@override
-void dispose() {
-  _pinController.dispose();
-  _pinFocusNode.dispose();
-  super.dispose();
-}
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-      Directionality.of(context) == TextDirection.rtl;
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
-  children: [
-    Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    AppBackButton(),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppBackButton(),
 
-    LanguageToggle(
-      isArabic: isArabic,
-      onTap: widget.onLanguageToggle,
-    ),
-  ],
-),
+                    LanguageToggle(
+                      isArabic: isArabic,
+                      onTap: widget.onLanguageToggle,
+                    ),
+                  ],
+                ),
 
-    const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.lg),
 
-    Container(
+                Container(
                   width: 72,
                   height: 72,
                   decoration: const BoxDecoration(
@@ -131,16 +120,16 @@ void dispose() {
                 const SizedBox(height: AppSpacing.lg),
 
                 Text(
-  isArabic ? 'أهلاً بك!' : 'Welcome!',
-  style: AppTextStyles.arabicTitle,
-),
+                  isArabic ? 'أهلاً بك!' : 'Welcome!',
+                  style: AppTextStyles.arabicTitle,
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
                 Text(
-  isArabic
-      ? 'أدخل الرمز الذي أعطاك إياه ولي أمرك'
-      : 'Enter the code given to you by your parent',
+                  isArabic
+                      ? 'أدخل الرمز الذي أعطاك إياه ولي أمرك'
+                      : 'Enter the code given to you by your parent',
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
@@ -148,11 +137,11 @@ void dispose() {
                 const SizedBox(height: AppSpacing.xl),
 
                 Align(
-  alignment: isArabic
-      ? Alignment.centerRight
-      : Alignment.centerLeft,
-  child: Text(
-    isArabic ? 'رمز الدخول' : 'Access code',
+                  alignment: isArabic
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Text(
+                    isArabic ? 'رمز الدخول' : 'Access code',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -164,73 +153,72 @@ void dispose() {
                 const SizedBox(height: AppSpacing.sm),
 
                 Stack(
-  children: [
-    Row(
-  textDirection: TextDirection.ltr,
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    for (int i = 0; i < 6; i++)
-      _PinBox(digit: i < pin.length ? pin[i] : ''),
-  ],
-),
+                  children: [
+                    Row(
+                      textDirection: TextDirection.ltr,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for (int i = 0; i < 6; i++)
+                          _PinBox(digit: i < pin.length ? pin[i] : ''),
+                      ],
+                    ),
 
-    Positioned.fill(
-      child: Opacity(
-        opacity: 0,
-        child: TextField(
-          controller: _pinController,
-          focusNode: _pinFocusNode,
-          keyboardType: TextInputType.number,
-          textInputAction: TextInputAction.done,
-          textDirection: TextDirection.ltr,
-          textAlign: TextAlign.left,
-          maxLength: 6,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(6),
-          ],
-          onChanged: (value) {
-            setState(() {
-              pin = value;
-              errorMessage = null;
-            });
-          },
-          onSubmitted: (_) {
-            if (pin.length == 6) {
-              _loginChild();
-            }
-          },
-          decoration: const InputDecoration(
-            counterText: '',
-            border: InputBorder.none,
-          ),
-        ),
-      ),
-    ),
-  ],
-),
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 0,
+                        child: TextField(
+                          controller: _pinController,
+                          focusNode: _pinFocusNode,
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.done,
+                          textDirection: TextDirection.ltr,
+                          textAlign: TextAlign.left,
+                          maxLength: 6,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(6),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              pin = value;
+                              errorMessage = null;
+                            });
+                          },
+                          onSubmitted: (_) {
+                            if (pin.length == 6) {
+                              _loginChild();
+                            }
+                          },
+                          decoration: const InputDecoration(
+                            counterText: '',
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
 
-                if (pin.length == 6) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                ],
+                if (pin.length == 6) ...[const SizedBox(height: AppSpacing.lg)],
 
                 const SizedBox(height: AppSpacing.xl),
                 if (errorMessage != null) ...[
                   Text(
-                     errorMessage!,
-                     style: const TextStyle(
-                       color: Colors.red,
-                       fontWeight: FontWeight.bold,
-                     ),
-                   ),
-                   const SizedBox(height: AppSpacing.md),
+                    errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
                 ],
 
                 const SizedBox(height: AppSpacing.xl),
 
                 AppButton(
-                  text: isLoading ? (isArabic ? 'جاري التحقق...' : 'Verifying...')
-                  : (isArabic ? 'دخول' : 'Login'),
+                  text: isLoading
+                      ? (isArabic ? 'جاري التحقق...' : 'Verifying...')
+                      : (isArabic ? 'دخول' : 'Login'),
                   onPressed: isLoading ? null : _loginChild,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
@@ -300,7 +288,7 @@ class _RecognizedBanner extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children:[
+              children: [
                 Text(
                   'تم التعرّف عليك!',
                   style: TextStyle(

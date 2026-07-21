@@ -6,7 +6,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/storage/secure_storage.dart';
 import '../../../models/child_model.dart';
 import '../../../models/task_assignment_model.dart';
-import '../../../services/point_api_service.dart';
+import 'package:frontend/features/child/services/point_api_service.dart';
 import '../../../services/task_api_service.dart';
 import 'child_task_details_screen.dart';
 
@@ -92,9 +92,7 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تعذّر إكمال المهمة. حاول مرة أخرى.'),
-        ),
+        const SnackBar(content: Text('تعذّر إكمال المهمة. حاول مرة أخرى.')),
       );
 
       debugPrint('Complete assignment error: $error');
@@ -126,9 +124,7 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.background,
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -180,17 +176,16 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                     else
                       ..._assignments.map(
                         (assignment) => Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: AppSpacing.md,
-                          ),
+                          padding: const EdgeInsets.only(bottom: AppSpacing.md),
                           child: _AssignmentCard(
                             assignment: assignment,
-                            isUpdating:
-                                _updatingAssignments.contains(assignment.id),
+                            isUpdating: _updatingAssignments.contains(
+                              assignment.id,
+                            ),
                             onComplete:
                                 assignment.status.toLowerCase() == 'pending'
-                                    ? () => _completeAssignment(assignment.id)
-                                    : null,
+                                ? () => _completeAssignment(assignment.id)
+                                : null,
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -276,11 +271,7 @@ class _HomeHeader extends StatelessWidget {
           const Positioned(
             top: 74,
             left: 32,
-            child: Icon(
-              Icons.auto_awesome,
-              size: 18,
-              color: AppColors.gold,
-            ),
+            child: Icon(Icons.auto_awesome, size: 18, color: AppColors.gold),
           ),
           SafeArea(
             bottom: false,
@@ -337,10 +328,7 @@ class _HomeHeader extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: AppColors.pinkLight,
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 3,
-                          ),
+                          border: Border.all(color: Colors.white, width: 3),
                           boxShadow: [
                             BoxShadow(
                               color: AppColors.primaryDark.withOpacity(0.22),
@@ -393,20 +381,14 @@ class _DecorativeBubble extends StatelessWidget {
   final double size;
   final Color color;
 
-  const _DecorativeBubble({
-    required this.size,
-    required this.color,
-  });
+  const _DecorativeBubble({required this.size, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }
@@ -434,9 +416,7 @@ class _HeaderMetric extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.15),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.25),
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.25)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -456,10 +436,7 @@ class _HeaderMetric extends StatelessWidget {
               ),
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 10,
-                ),
+                style: const TextStyle(color: Colors.white70, fontSize: 10),
               ),
             ],
           ),
@@ -483,8 +460,9 @@ class _DailyGoalCard extends StatelessWidget {
     final progress = totalTasks == 0
         ? 0.0
         : (completedTasks / totalTasks).clamp(0.0, 1.0).toDouble();
-    final remainingTasks =
-        (totalTasks - completedTasks).clamp(0, totalTasks).toInt();
+    final remainingTasks = (totalTasks - completedTasks)
+        .clamp(0, totalTasks)
+        .toInt();
 
     String message;
 
@@ -504,15 +482,10 @@ class _DailyGoalCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [
-            AppColors.goldLight,
-            Color(0xFFFFF9E7),
-          ],
+          colors: [AppColors.goldLight, Color(0xFFFFF9E7)],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.gold.withOpacity(0.35),
-        ),
+        border: Border.all(color: AppColors.gold.withOpacity(0.35)),
         boxShadow: [
           BoxShadow(
             color: AppColors.gold.withOpacity(0.12),
@@ -587,20 +560,14 @@ class _SectionHeader extends StatelessWidget {
   final String title;
   final String count;
 
-  const _SectionHeader({
-    required this.title,
-    required this.count,
-  });
+  const _SectionHeader({required this.title, required this.count});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 6,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: AppColors.primaryLight,
             borderRadius: BorderRadius.circular(16),
@@ -615,10 +582,7 @@ class _SectionHeader extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        Text(
-          title,
-          style: AppTextStyles.sectionTitle,
-        ),
+        Text(title, style: AppTextStyles.sectionTitle),
       ],
     );
   }
@@ -675,11 +639,7 @@ class _AssignmentCard extends StatelessWidget {
                   color: category.background,
                   borderRadius: BorderRadius.circular(17),
                 ),
-                child: Icon(
-                  category.icon,
-                  color: category.color,
-                  size: 25,
-                ),
+                child: Icon(category.icon, color: category.color, size: 25),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -806,10 +766,7 @@ class _SmallBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 5,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(14),
@@ -843,9 +800,7 @@ class _EmptyTasksCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.skyLight,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(
-          color: AppColors.sky.withOpacity(0.25),
-        ),
+        border: Border.all(color: AppColors.sky.withOpacity(0.25)),
       ),
       child: Column(
         children: [
@@ -863,10 +818,7 @@ class _EmptyTasksCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(
-            'لا توجد مهام اليوم',
-            style: AppTextStyles.sectionTitle,
-          ),
+          Text('لا توجد مهام اليوم', style: AppTextStyles.sectionTitle),
           const SizedBox(height: 4),
           Text(
             'استمتع بوقتك، وعد لاحقًا لرؤية مهام جديدة.',
@@ -892,11 +844,7 @@ class _EncouragementCard extends StatelessWidget {
       ),
       child: const Row(
         children: [
-          Icon(
-            Icons.emoji_events_rounded,
-            color: AppColors.mint,
-            size: 30,
-          ),
+          Icon(Icons.emoji_events_rounded, color: AppColors.mint, size: 30),
           SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
@@ -920,10 +868,7 @@ class _ErrorState extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
 
-  const _ErrorState({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {

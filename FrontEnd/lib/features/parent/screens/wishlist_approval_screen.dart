@@ -5,7 +5,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../models/wish_model.dart';
-import '../../../services/child_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 import '../../../services/wishlist_api_service.dart';
 import 'parent_dashboard_screen.dart';
 
@@ -19,8 +19,7 @@ class WishlistApprovalScreen extends StatefulWidget {
   const WishlistApprovalScreen({super.key});
 
   @override
-  State<WishlistApprovalScreen> createState() =>
-      _WishlistApprovalScreenState();
+  State<WishlistApprovalScreen> createState() => _WishlistApprovalScreenState();
 }
 
 // Pairs a wish with its child's name so the cards below don't need to
