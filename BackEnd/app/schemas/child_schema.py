@@ -19,7 +19,7 @@ def validate_child_name(value):
         raise ValidationError("Child name must be at least 2 characters long.")
     if len(value) > 100:
         raise ValidationError("Child name must not exceed 100 characters.")
-    if not re.fullmatch(r"[A-Za-z\u0600-\u06FF ]+", value):
+    if not re.fullmatch(r"[A-Za-z\u0621-\u063A\u0641-\u064A ]+", value):
         raise ValidationError("Child name must contain letters only.")
 
 class ChildResponseSchema(Schema):
@@ -50,8 +50,12 @@ class ChildCreateSchema(Schema):
     phone = fields.String(required=False, allow_none=True, validate=phone_validator)
     @pre_load
     def clean_name(self, data, **kwargs):
+        if not isinstance(data, dict):
+            return data
         if isinstance(data.get("name"), str):
             data["name"] = " ".join(data["name"].split())
+        if isinstance(data.get("phone"), str):
+            data["phone"] = data["phone"].strip()
         return data
 
 
@@ -62,6 +66,8 @@ class ChildUpdateSchema(Schema):
     phone = fields.String(required=False, allow_none=True, validate=phone_validator)
     @pre_load
     def clean_name(self, data, **kwargs):
+        if not isinstance(data, dict):
+            return data
         if isinstance(data.get("name"), str):
             data["name"] = " ".join(data["name"].split())
         return data

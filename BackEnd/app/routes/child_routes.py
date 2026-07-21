@@ -24,7 +24,7 @@ def require_parent():
 class ChildListResource(Resource):
     @jwt_required()
     @api.doc(security="JWT")
-    @api.expect(child_model, validate=True)
+    @api.expect(child_model)
     @api.response(201, "Child created successfully", child_with_access_code_model)
     @api.response(400, "Invalid input")
     @api.response(401, "Missing or invalid access token")
