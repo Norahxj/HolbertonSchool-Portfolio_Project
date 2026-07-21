@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/task_api_service.dart';
+import 'package:frontend/services/task_assignment_api_service.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -29,7 +30,31 @@ class ParentDashboardScreen extends StatefulWidget {
 }
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
-  Future<void> _openAddChildScreen() async {
+  final TaskAssignmentApiService _taskAssignmentApiService =
+      TaskAssignmentApiService();
+
+      int pendingCount = 0;
+
+   @override
+  void initState() {
+    super.initState();
+    _loadPendingCount();
+  }
+
+  Future<void> _loadPendingCount() async {
+    try {
+      pendingCount =
+          await _taskAssignmentApiService.getPendingReviewCount();
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+    Future<void> _openAddChildScreen() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const AddChildScreen()),
@@ -128,7 +153,9 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 
                     const SizedBox(height: AppSpacing.lg),
 
-                    _TaskReviewPreviewCard(),
+                    _TaskReviewPreviewCard(
+                      pendingCount: pendingCount,
+                    ),
 
                     const SizedBox(height: AppSpacing.lg),
                   ],
@@ -426,7 +453,12 @@ class _AddChildButton extends StatelessWidget {
 // Simple preview card that reminds the parent that some tasks are
 // waiting for review. Tapping it opens the full Task Review screen.
 class _TaskReviewPreviewCard extends StatelessWidget {
-  const _TaskReviewPreviewCard();
+  final int pendingCount;
+
+
+  const _TaskReviewPreviewCard({
+    required this.pendingCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -434,7 +466,9 @@ class _TaskReviewPreviewCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const TaskReviewScreen()),
+          MaterialPageRoute(
+            builder: (_) => const TaskReviewScreen(),
+          ),
         );
       },
       child: Container(
@@ -470,7 +504,8 @@ class _TaskReviewPreviewCard extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
@@ -485,7 +520,9 @@ class _TaskReviewPreviewCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'لديك ٢ مهمة بانتظار المراجعة',
+                      pendingCount == 0
+                          ? 'لا توجد مهام بانتظار المراجعة'
+                          : 'لديك $pendingCount مهمة بانتظار المراجعة',
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
@@ -495,30 +532,33 @@ class _TaskReviewPreviewCard extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              width: 28,
-              height: 28,
-              decoration: const BoxDecoration(
-                color: AppColors.error,
-                shape: BoxShape.circle,
-              ),
-              child: const Center(
-                child: Text(
-                  '٢',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+
+            if (pendingCount > 0)
+              Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  color: AppColors.error,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '$pendingCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
     );
   }
 }
+
 
 // Draws a simple dashed rounded-rect border around its child, since Flutter
 // has no built-in dashed border. This walks the border path in short

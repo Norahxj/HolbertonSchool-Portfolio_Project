@@ -65,14 +65,40 @@ abstract class ApiService {
   Future<HttpResponse<List<TaskAssignmentModel>>> getAssignmentsByTask(
   @Path('taskId') String taskId,
 );
-  @GET('/task-assignments/my')
-  Future<HttpResponse<List<TaskAssignmentModel>>> getMyAssignments();
 
   @POST('/task-bank/suggestions')
   Future<HttpResponse<TaskSuggestionsResponse>> getTaskSuggestions(
   @Body() Map<String, dynamic> body,
 );  
+  @GET('/task-assignments/my')
+  Future<HttpResponse<List<TaskAssignmentModel>>> getMyAssignments();
+  
 
+  @GET('/task-assignments/child/{child_id}')
+  Future<HttpResponse<List<TaskAssignmentModel>>>
+    getChildAssignments(
+  @Path('child_id') String childId,
+);
+
+  @PUT('/task-assignments/{assignment_id}/complete')
+  Future<HttpResponse<TaskAssignmentModel>>
+    completeAssignment(
+  @Path('assignment_id') String assignmentId,
+);
+
+  @PUT('/task-assignments/{assignment_id}/approve')
+  Future<HttpResponse<TaskAssignmentModel>>
+    approveAssignment(
+  @Path('assignment_id') String assignmentId,
+);
+
+  @PUT('/task-assignments/{assignment_id}/reject')
+  Future<HttpResponse<TaskAssignmentModel>>
+    rejectAssignment(
+  @Path('assignment_id') String assignmentId,
+);
+  
+  
   /// whish
 
   @POST('/wishlists/')

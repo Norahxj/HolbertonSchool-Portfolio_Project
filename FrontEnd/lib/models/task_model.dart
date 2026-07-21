@@ -7,8 +7,8 @@ class TaskModel {
   final int? recurrenceDay;
   final String? category;
   final bool isAutoVerified;
-  final String createdBy;
-  final DateTime createdAt;
+  final String? createdBy;
+  final DateTime? createdAt;
 
   TaskModel({
     required this.id,
@@ -19,8 +19,8 @@ class TaskModel {
     this.recurrenceDay,
     this.category,
     required this.isAutoVerified,
-    required this.createdBy,
-    required this.createdAt,
+    this.createdBy,
+    this.createdAt,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
@@ -34,7 +34,7 @@ class TaskModel {
       category: json['category'],
       isAutoVerified: json['is_auto_verified'],
       createdBy: json['created_by'],
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
     );
   }
 
@@ -49,7 +49,7 @@ class TaskModel {
       'category': category,
       'is_auto_verified': isAutoVerified,
       'created_by': createdBy,
-      'created_at': createdAt.toIso8601String(),
+      'created_at': createdAt?.toIso8601String(),
     };
   }
 }

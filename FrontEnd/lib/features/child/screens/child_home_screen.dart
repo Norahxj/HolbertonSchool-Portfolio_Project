@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/child/controllers/child_controller.dart';
 import 'package:frontend/models/child_model.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import '../../../core/storage/secure_storage.dart';
 import 'child_task_details_screen.dart';
 
-// Child Home Dashboard screen (Screen 21).
-//
-// The child's information is loaded from secure storage.
-// The task information is currently static placeholder data.
 class ChildHomeScreen extends StatefulWidget {
   const ChildHomeScreen({super.key});
 
@@ -19,40 +14,43 @@ class ChildHomeScreen extends StatefulWidget {
 }
 
 class _ChildHomeScreenState extends State<ChildHomeScreen> {
-  ChildModel? child;
+  final controller = ChildController();
+  Future<void> _reload() async {
+    await controller.loadData();
+    if (mounted) setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    _loadChild();
-  }
-
-  Future<void> _loadChild() async {
-    final data = await SecureStorage.getChild();
-
-    if (!mounted) return;
-
-    setState(() {
-      child = data;
-    });
+    _reload();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (child == null) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+  final percent = controller.weeklyProgressPercent;
+  final completed = controller.completedTasks;
+  final total = controller.totalTasks;
+  if (controller.isLoading) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
 
+  if (controller.child == null) {
+    return const Scaffold(
+      body: Center(
+        child: Text('لا يوجد حساب طفل'),
+      ),
+    );
+  }
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          _HomeHeader(child: child!),
-
+          _HomeHeader(child: controller.child!),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -71,8 +69,8 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                           color: AppColors.primaryLight,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Text(
-                          '3/5',
+                        child: Text(
+                          '$completed / $total',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -80,7 +78,6 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                           ),
                         ),
                       ),
-
                       Text(
                         'مهام اليوم',
                         style: AppTextStyles.arabicTitle,
@@ -90,57 +87,58 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  const _TaskCard(
-                    title: 'الصلاة في وقتها',
-                    points: 10,
-                    statusText: 'معتمدة تلقائيًا',
-                    statusColor: AppColors.success,
-                    borderColor: Color(0xFFBFE3C6),
-                    circleColor: AppColors.success,
-                    circleIcon: Icons.check,
-                    taskIcon: Icons.mosque,
-                  ),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  _TaskCard(
-                    title: 'ترتيب السرير',
-                    points: 5,
-                    statusText: 'بانتظار المراجعة',
-                    statusColor: const Color(0xFFC08A3E),
-                    borderColor: const Color(0xFFF0DFA8),
-                    circleColor: AppColors.gold,
-                    circleIcon: Icons.access_time,
-                    taskIcon: Icons.king_bed_outlined,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ChildTaskDetailsScreen(
-                            title: 'ترتيب السرير',
-                            points: 5,
-                            description:
-                                'رتّب سريرك في الصباح قبل الذهاب للمدرسة.',
-                            frequencyLabel: 'يوميًا',
-                            icon: Icons.king_bed_outlined,
+                  if (controller.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (controller.assignments.isEmpty)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSpacing.lg),
+                        child: Text(
+                          'لا توجد مهام',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textSecondary,
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    )
+                  else
+                    ...controller.assignments.map(
+                      (assignment) => Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                        child: _TaskCard(
+                          title: assignment.task.title,
+                          points: assignment.task.points,
+                          statusText: controller.statusText(assignment.status),
+                          statusColor: controller.statusColor(assignment.status),
+                          borderColor: controller.getBorderColor(assignment.status),
+                          circleColor: controller.getCircleColor(assignment.status),
+                          circleIcon: controller.statusIcon(assignment.status),
+                          taskIcon: controller.taskIcon(assignment.task.category),
+                          onTap: () async {
+                            final updatedAssignment = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChildTaskDetailsScreen(
+                                  assignment: assignment,
+                                ),
+                              ),
+                            );
 
-                  const SizedBox(height: AppSpacing.md),
-
-                  const _TaskCard(
-                    title: 'توفير مصروفي',
-                    points: 10,
-                    statusText: 'مرفوضة',
-                    statusColor: AppColors.error,
-                    borderColor: Color(0xFFF0B8B8),
-                    circleColor: AppColors.error,
-                    circleIcon: Icons.close,
-                    taskIcon: Icons.credit_card,
-                  ),
+                            if (updatedAssignment != null) {
+                              setState(() {
+                                final index = controller.assignments.indexWhere(
+                                  (e) => e.id == updatedAssignment.id,
+                                );
+                                if (index != -1) {
+                                  controller.assignments[index] = updatedAssignment;
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -151,14 +149,10 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
   }
 }
 
-// Purple gradient header containing the greeting, avatar,
-// and the child's Noor Points balance.
 class _HomeHeader extends StatelessWidget {
   final ChildModel child;
 
-  const _HomeHeader({
-    required this.child,
-  });
+  const _HomeHeader({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -194,9 +188,7 @@ class _HomeHeader extends StatelessWidget {
                             fontSize: 14,
                           ),
                         ),
-
                         const SizedBox(height: 2),
-
                         Text(
                           '✦ ${child.name}',
                           style: const TextStyle(
@@ -208,9 +200,7 @@ class _HomeHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(width: AppSpacing.md),
-
                   Container(
                     width: 56,
                     height: 56,
@@ -238,7 +228,7 @@ class _HomeHeader extends StatelessWidget {
                     color: Colors.white.withOpacity(0.3),
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
                     Expanded(
                       child: Column(
@@ -251,11 +241,9 @@ class _HomeHeader extends StatelessWidget {
                               fontSize: 13,
                             ),
                           ),
-
                           SizedBox(height: 4),
-
                           Text(
-                            '240 نقطة',
+                            '${child.points} نقاط ✦',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -265,7 +253,6 @@ class _HomeHeader extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     Icon(
                       Icons.auto_awesome,
                       color: AppColors.gold,
@@ -282,7 +269,6 @@ class _HomeHeader extends StatelessWidget {
   }
 }
 
-// One task card used for completed, pending, and rejected tasks.
 class _TaskCard extends StatelessWidget {
   final String title;
   final int points;
@@ -333,15 +319,11 @@ class _TaskCard extends StatelessWidget {
               size: 18,
             ),
           ),
-
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     title,
@@ -351,9 +333,7 @@ class _TaskCard extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-
                   const SizedBox(height: 2),
-
                   Text(
                     '$points نقاط ✦ $statusText',
                     style: TextStyle(
@@ -366,7 +346,6 @@ class _TaskCard extends StatelessWidget {
               ),
             ),
           ),
-
           Container(
             width: 40,
             height: 40,
@@ -383,10 +362,6 @@ class _TaskCard extends StatelessWidget {
         ],
       ),
     );
-
-    if (onTap == null) {
-      return card;
-    }
 
     return GestureDetector(
       onTap: onTap,

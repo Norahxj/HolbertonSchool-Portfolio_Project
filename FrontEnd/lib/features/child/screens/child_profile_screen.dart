@@ -1,120 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/models/task_assignment_model.dart';
-import 'package:frontend/services/task_assignment_api_service.dart';
-import 'package:frontend/features/parent/services/child_api_service.dart';
+import 'package:frontend/features/child/controllers/child_controller.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../models/child_model.dart';
-// Child Profile / Tasks screen (Screen 6).
-//
-// This first pass is static/placeholder only: the child's name, age,
-// progress, join code, and tasks are all hardcoded. No backend calls here.
+
 class ChildProfileScreen extends StatefulWidget {
   final ChildModel child;
-  
+
   const ChildProfileScreen({
     super.key,
     required this.child,
-    });
+  });
 
   @override
   State<ChildProfileScreen> createState() => _ChildProfileScreenState();
 }
 
 class _ChildProfileScreenState extends State<ChildProfileScreen> {
-  late Future<ChildModel> _childFuture;
-  late Future<List<TaskAssignmentModel>> _assignmentsFuture;
+
+  final controller = ChildController();
+  Future<void> _reload() async {
+    await controller.load(widget.child.id);
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-
-    _childFuture =
-        ChildApiService().getChildById(widget.child.id);
-    _assignmentsFuture =
-        TaskAssignmentApiService().getMyAssignments();
+    _reload();
   }
-  
+
   @override
   Widget build(BuildContext context) {
+    if (controller.isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (!controller.hasData) {
+      return const Scaffold(
+        body: Center(
+          child: Text('حدث خطأ أثناء تحميل بيانات الطفل'),
+        ),
+      );
+    }
+
+    final child = controller.child!;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FutureBuilder<ChildModel>(
-        future: _childFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-            child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(
-              child: Text('Error loading child'),
-            );
-          }
-          
-          final child = snapshot.data!;
-          
-          return Column(
-            children: [
+      body: Column(
+        children: [
           _ProfileHeader(child: child),
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 children: [
-                  const _WeeklyProgressCard(),
-                  const SizedBox(height: AppSpacing.lg),
-                  _JoinCodeCard(child: child),
-                  const SizedBox(height: AppSpacing.lg),
-                  const _TasksHeader(),
-                  const SizedBox(height: AppSpacing.md),
-                  FutureBuilder<List<TaskAssignmentModel>>(
-                    future:_assignmentsFuture,
-                    builder: (context, taskSnapshot) {
-                     if (taskSnapshot.connectionState == ConnectionState.waiting) {
-                       return const Center(child: CircularProgressIndicator());
-                     }
-                 
-                     if (taskSnapshot.hasError) {
-                       return const Text('حدث خطأ أثناء تحميل المهام');
-                     }
-                 
-                     final tasks = taskSnapshot.data ?? [];
-                 
-                     if (tasks.isEmpty) {
-                       return const Text('لا توجد مهام');
-                     }
-                     final assignments = taskSnapshot.data ?? [];
-
-                     return Column(
-                       children: assignments.map((assignment) {
-                        print(assignment.status);
-                         return _TaskItem(
-                           label: assignment.task.title,
-                           icon: Icons.task_alt,
-                           isDone: assignment.status == "COMPLETED",
-                         );
-                       }).toList(),
-                     );
-                   },
+                  _WeeklyProgressCard(
+                    percent: controller.weeklyProgressPercent,
+                    progress: controller.weeklyProgress,
                   ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  _JoinCodeCard(child: child),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                _TasksHeader(
+                    completed: controller.completedTasks,
+                    total: controller.totalTasks,
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  if (controller.assignments.isEmpty)
+                    const Text('لا توجد مهام')
+                  else
+                    Column(
+                      children: controller.assignments.map((assignment) {
+                        return _TaskItem(
+                          label: assignment.task.title,
+                          icon: controller.statusIcon(assignment.status),
+                          isDone: controller.isCompleted(assignment),
+                        );
+                      }).toList(),
+                    ),
                 ],
               ),
             ),
           ),
         ],
-          );
-        },
       ),
     );
   }
 }
 
-
+  
 class _ProfileHeader extends StatelessWidget {
   final ChildModel child;
 
@@ -260,9 +253,14 @@ class _HeaderIconButton extends StatelessWidget {
     );
   }
 }
+  class _WeeklyProgressCard extends StatelessWidget {
+  final int percent;
+  final double progress;
 
-class _WeeklyProgressCard extends StatelessWidget {
-  const _WeeklyProgressCard();
+  const _WeeklyProgressCard({
+    required this.percent,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -283,8 +281,8 @@ class _WeeklyProgressCard extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'التقدم الأسبوعي',
                 style: TextStyle(
                   fontSize: 16,
@@ -292,7 +290,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              _WeeklyRing(percent: 72),
+              _WeeklyRing(percent: percent),
             ],
           ),
 
@@ -300,18 +298,18 @@ class _WeeklyProgressCard extends StatelessWidget {
 
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: const LinearProgressIndicator(
-              value: 0.72,
+            child: LinearProgressIndicator(
+              value: progress,
               minHeight: 8,
               backgroundColor: AppColors.primaryLight,
-              valueColor: AlwaysStoppedAnimation(AppColors.primary),
+              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
             ),
           ),
         ],
       ),
     );
   }
-}
+  }
 
 class _WeeklyRing extends StatelessWidget {
   final int percent;
@@ -467,8 +465,16 @@ class _CopyButton extends StatelessWidget {
   }
 }
 
+
 class _TasksHeader extends StatelessWidget {
-  const _TasksHeader();
+  final int completed;
+  final int total;
+
+  const _TasksHeader({
+    super.key,
+    required this.completed,
+    required this.total,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -476,23 +482,29 @@ class _TasksHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 6,
+          ),
           decoration: BoxDecoration(
             color: AppColors.primaryLight,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: const Text(
-            '3/5 مكتملة',
-            style: TextStyle(
+          child: Text(
+            '$completed/$total مكتملة',
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               color: AppColors.primaryDark,
             ),
           ),
         ),
+
         Text(
           'مهام اليوم',
-          style: AppTextStyles.arabicTitle.copyWith(fontSize: 18),
+          style: AppTextStyles.arabicTitle.copyWith(
+            fontSize: 18,
+          ),
         ),
       ],
     );

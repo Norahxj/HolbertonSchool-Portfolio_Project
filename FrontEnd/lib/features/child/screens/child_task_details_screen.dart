@@ -1,33 +1,52 @@
 import 'package:flutter/material.dart';
-
+import 'package:frontend/features/child/controllers/child_controller.dart';
+import 'package:frontend/models/task_assignment_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 
-// Child Task Details screen (Screen 22).
-//
-// This first pass is static/placeholder only: the task shown depends on
-// the constructor parameters below (with defaults matching the mockup),
-// and the "أنجزت المهمة" button doesn't do anything real yet (see the
-// TODO comment). No backend calls happen here.
-class ChildTaskDetailsScreen extends StatelessWidget {
-  final String title;
-  final int points;
-  final String description;
-  final String frequencyLabel;
-  final IconData icon;
+class ChildTaskDetailsScreen extends StatefulWidget {
+  final TaskAssignmentModel assignment;
 
   const ChildTaskDetailsScreen({
     super.key,
-    this.title = 'ترتيب السرير',
-    this.points = 5,
-    this.description = 'رتّب سريرك في الصباح قبل الذهاب للمدرسة.',
-    this.frequencyLabel = 'يوميًا',
-    this.icon = Icons.king_bed_outlined,
+    required this.assignment,
   });
 
   @override
+  State<ChildTaskDetailsScreen> createState() =>
+      _ChildTaskDetailsScreenState();
+}
+
+class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
+  final controller = ChildController();
+
+  Future<void> _completeTask() async {
+    if (controller.isCompleting) return;
+
+    final updatedAssignment =
+        await controller.completeTask(widget.assignment.id);
+
+    if (!mounted) return;
+
+    if (updatedAssignment != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تحديث حالة المهمة')),
+      );
+      Navigator.pop(context, updatedAssignment);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تعذر تحديث المهمة')),
+      );
+    }
+
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isLoading = controller.isCompleting;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -38,11 +57,11 @@ class ChildTaskDetailsScreen extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.centerRight,
-                child: _RoundBackButton(onTap: () => Navigator.pop(context)),
+                child: _RoundBackButton(
+                  onTap: () => Navigator.pop(context),
+                ),
               ),
-
               const SizedBox(height: AppSpacing.lg),
-
               Center(
                 child: Container(
                   width: 120,
@@ -51,25 +70,25 @@ class ChildTaskDetailsScreen extends StatelessWidget {
                     color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(28),
                   ),
-                  child: Icon(icon, color: AppColors.primaryDark, size: 56),
+                  child: Icon(
+                    controller.taskIcon(widget.assignment.task.category),
+                    color: AppColors.primaryDark,
+                    size: 56,
+                  ),
                 ),
               ),
-
               const SizedBox(height: AppSpacing.lg),
-
               Text(
-                title,
+                widget.assignment.task.title,
                 style: AppTextStyles.arabicTitle,
                 textAlign: TextAlign.center,
               ),
-
               const SizedBox(height: AppSpacing.sm),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '$points نقاط نور',
+                    '${widget.assignment.task.points} نقاط نور',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -84,9 +103,7 @@ class ChildTaskDetailsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: AppSpacing.xl),
-
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
@@ -116,7 +133,7 @@ class ChildTaskDetailsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      description,
+                      widget.assignment.task.description,
                       textAlign: TextAlign.right,
                       style: const TextStyle(
                         fontSize: 14,
@@ -133,7 +150,9 @@ class ChildTaskDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          frequencyLabel,
+                          controller.frequencyLabel(
+                            widget.assignment.task.taskFrequency,
+                          ),
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textSecondary,
@@ -144,73 +163,75 @@ class ChildTaskDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.auto_awesome,
-                      color: AppColors.primary,
-                      size: 18,
-                    ),
-                    SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        'عند إتمامك المهمة سيراجعها ولي أمرك، وبعد الاعتماد '
-                        'تُضاف النقاط إلى رصيدك.',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               const SizedBox(height: AppSpacing.xl),
-
-              GestureDetector(
-                onTap: () {
-                  // TODO: Mark this task as completed once backend
-                  // integration is ready.
-                },
-                child: Container(
+              if (controller.isPending(widget.assignment.status)) ...[
+                Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(18),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(18),
+                    onTap: isLoading ? null : _completeTask,
+                    child: Ink(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: AppColors.primaryGradient,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: isLoading
+                          ? const Center(
+                              child: SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'أنجزت المهمة',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(width: AppSpacing.sm),
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                )
+              ] else ...[
+                Container(
                   height: 56,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: AppColors.primaryGradient,
-                    ),
+                    color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'أنجزت المهمة',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                  child: Center(
+                    child: Text(
+                      controller.statusText(widget.assignment.status),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
                       ),
-                      SizedBox(width: AppSpacing.sm),
-                      Icon(Icons.check, color: Colors.white, size: 20),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-
+              ],
               const SizedBox(height: AppSpacing.lg),
             ],
           ),
@@ -220,7 +241,6 @@ class ChildTaskDetailsScreen extends StatelessWidget {
   }
 }
 
-// Round back button in the top-right corner, same style as other screens.
 class _RoundBackButton extends StatelessWidget {
   final VoidCallback onTap;
 
