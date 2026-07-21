@@ -7,14 +7,7 @@ import '../../../core/widgets/screen_background.dart';
 import '../../../models/wish_model.dart';
 import '../services/child_api_service.dart';
 import '../../../services/wishlist_api_service.dart';
-import 'parent_dashboard_screen.dart';
 
-// Wishlist Approval screen (Screen 14).
-//
-// Loads every child's wishes from the backend and splits them into
-// pending (needs approve/reject) and approved (already decided) groups.
-// ChildApiService().getChildren() is only used internally to resolve a
-// child's name for the card header — it is not shown as its own list.
 class WishlistApprovalScreen extends StatefulWidget {
   const WishlistApprovalScreen({super.key});
 
@@ -22,8 +15,6 @@ class WishlistApprovalScreen extends StatefulWidget {
   State<WishlistApprovalScreen> createState() => _WishlistApprovalScreenState();
 }
 
-// Pairs a wish with its child's name so the cards below don't need to
-// look the child up themselves.
 class _WishEntry {
   final WishModel wish;
   final String childName;
@@ -88,6 +79,11 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
     try {
       await _wishlistService.approveWish(wishId, targetPoints);
       _loadWishes();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تمت الموافقة على الأمنية ✓')),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -101,11 +97,16 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
     try {
       await _wishlistService.rejectWish(wishId);
       _loadWishes();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم رفض الأمنية')),
+        );
+      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('تعذّر رفض الأمنية')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تعذّر رفض الأمنية')),
+        );
       }
     }
   }
@@ -132,12 +133,7 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
                     ),
                     _RoundBackButton(
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
+                        Navigator.pop(context);
                       },
                     ),
                   ],
@@ -245,7 +241,6 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
   }
 }
 
-// Round back button in the top-right corner, same style as other screens.
 class _RoundBackButton extends StatelessWidget {
   final VoidCallback onTap;
 
@@ -273,7 +268,6 @@ class _RoundBackButton extends StatelessWidget {
   }
 }
 
-// A small pill used for both the "بانتظار الموافقة" and "معتمدة" tags.
 class _StatusTag extends StatelessWidget {
   final String label;
   final Color backgroundColor;
@@ -305,9 +299,6 @@ class _StatusTag extends StatelessWidget {
   }
 }
 
-// The top row shared by both cards: child name + wish title on the right,
-// avatar circle on the left... wait, avatar on the far side, name next to
-// it. Used by both the pending and approved cards.
 class _WishHeader extends StatelessWidget {
   final String childName;
   final String wishTitle;
@@ -348,9 +339,6 @@ class _WishHeader extends StatelessWidget {
   }
 }
 
-// A wish that is still waiting for the parent's decision. This is a
-// StatefulWidget only because the "نقاط نور المطلوبة" value can be
-// increased or decreased with the + / - buttons.
 class _PendingWishCard extends StatefulWidget {
   final String childName;
   final String wishTitle;
@@ -378,9 +366,6 @@ class _PendingWishCard extends StatefulWidget {
 }
 
 class _PendingWishCardState extends State<_PendingWishCard> {
-  // The current "نقاط نور المطلوبة" (Noor points required) value. This
-  // starts at whatever was passed in, and only changes when the parent
-  // taps the + or - button below.
   late int requiredPoints;
 
   @override
@@ -470,7 +455,6 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                   icon: Icons.remove,
                   isFilled: false,
                   onTap: () {
-                    // Do not let the required points go below zero.
                     if (requiredPoints > 0) {
                       setState(() {
                         requiredPoints = requiredPoints - 10;
@@ -499,7 +483,6 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                 flex: 2,
                 child: GestureDetector(
                   onTap: () {
-                    // Don't allow approving with 0 or negative points.
                     if (requiredPoints <= 0) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -579,7 +562,6 @@ class _PendingWishCardState extends State<_PendingWishCard> {
   }
 }
 
-// The small round + / - buttons next to the points value.
 class _StepperButton extends StatelessWidget {
   final IconData icon;
   final bool isFilled;
@@ -600,20 +582,18 @@ class _StepperButton extends StatelessWidget {
         height: 32,
         decoration: BoxDecoration(
           color: isFilled ? AppColors.primary : AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
+          color: isFilled ? Colors.white : AppColors.primary,
           size: 16,
-          color: isFilled ? Colors.white : AppColors.primaryDark,
         ),
       ),
     );
   }
 }
 
-// A wish that has already been approved. No buttons or stepper here,
-// just the result: how many points were deducted from the child.
 class _ApprovedWishCard extends StatelessWidget {
   final String childName;
   final String wishTitle;
@@ -636,9 +616,9 @@ class _ApprovedWishCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8F5EA),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFBFE3C6)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -655,9 +635,9 @@ class _ApprovedWishCard extends StatelessWidget {
           Row(
             children: [
               const _StatusTag(
-                label: 'معتمدة',
-                backgroundColor: AppColors.success,
-                textColor: Colors.white,
+                label: 'معتمدة ✓',
+                backgroundColor: Color(0xFFDCEBFB),
+                textColor: Color(0xFF4A90D9),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
@@ -676,32 +656,38 @@ class _ApprovedWishCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
 
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
+            padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '$points',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.success,
-                  ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.auto_awesome,
+                      color: AppColors.gold,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$points',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 4),
-                const Icon(Icons.auto_awesome, color: AppColors.gold, size: 16),
-                const Spacer(),
                 const Text(
-                  'تم خصمها من رصيده',
+                  'نقاط نور المطلوبة',
                   style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
