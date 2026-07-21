@@ -81,13 +81,13 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
       _loadWishes();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تمت الموافقة على الأمنية ✓')),
+          const SnackBar(content: Text('تمت الموافقة على الأمنية')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تعذّرت الموافقة على الأمنية')),
+          const SnackBar(content: Text('تعذرت الموافقة على الأمنية')),
         );
       }
     }
@@ -105,7 +105,7 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تعذّر رفض الأمنية')),
+          const SnackBar(content: Text('تعذر رفض الأمنية')),
         );
       }
     }
@@ -635,7 +635,7 @@ class _ApprovedWishCard extends StatelessWidget {
           Row(
             children: [
               const _StatusTag(
-                label: 'معتمدة ✓',
+                label: 'معتمدة',
                 backgroundColor: Color(0xFFDCEBFB),
                 textColor: Color(0xFF4A90D9),
               ),
