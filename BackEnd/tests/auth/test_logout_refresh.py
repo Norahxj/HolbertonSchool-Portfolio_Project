@@ -461,15 +461,29 @@ def test_logout_refresh_rejects_tampered_refresh_token(client):
 
     original_token = parent_data["refresh_token"]
 
+    token_parts = original_token.split(".")
+
+    assert len(token_parts) == 3
+
+    signature = token_parts[2]
+
     replacement_character = (
         "a"
-        if original_token[-1] != "a"
+        if signature[0] != "a"
         else "b"
     )
 
-    tampered_token = (
-        original_token[:-1]
-        + replacement_character
+    tampered_signature = (
+        replacement_character
+        + signature[1:]
+    )
+
+    tampered_token = ".".join(
+        [
+            token_parts[0],
+            token_parts[1],
+            tampered_signature,
+        ]
     )
 
     response = logout_refresh(
@@ -479,11 +493,10 @@ def test_logout_refresh_rejects_tampered_refresh_token(client):
 
     response_data = response.get_json()
 
-    assert response.status_code in (401, 422), response_data
-    assert (
-        response_data.get("message")
-        != "Refresh token logged out successfully"
-    )
+    assert response.status_code in (
+        401,
+        422,
+    ), response_data
 
 
 def test_logout_refresh_rejects_expired_refresh_token(
