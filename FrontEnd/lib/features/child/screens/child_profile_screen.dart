@@ -1,119 +1,157 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/models/task_assignment_model.dart';
-import 'package:frontend/services/task_assignment_api_service.dart';
-import 'package:frontend/features/parent/services/child_api_service.dart';
-
+import '../../../models/child_dashboard_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../models/child_model.dart';
+import '../../../models/task_assignment_model.dart';
+import '../../../services/task_api_service.dart';
 // Child Profile / Tasks screen (Screen 6).
 //
 // This first pass is static/placeholder only: the child's name, age,
 // progress, join code, and tasks are all hardcoded. No backend calls here.
-class ChildProfileScreen extends StatefulWidget {
+class ChildProfileScreen  extends StatefulWidget {
   final ChildModel child;
-  
+  final ChildDashboardModel dashboard;
+
   const ChildProfileScreen({
     super.key,
     required this.child,
-    });
+    required this.dashboard,
+  });
 
   @override
-  State<ChildProfileScreen> createState() => _ChildProfileScreenState();
+State<ChildProfileScreen> createState() =>
+    _ChildProfileScreenState();
 }
-
-class _ChildProfileScreenState extends State<ChildProfileScreen> {
-  late Future<ChildModel> _childFuture;
+class _ChildProfileScreenState
+    extends State<ChildProfileScreen> {
   late Future<List<TaskAssignmentModel>> _assignmentsFuture;
 
   @override
   void initState() {
     super.initState();
 
-    _childFuture =
-        ChildApiService().getChildById(widget.child.id);
     _assignmentsFuture =
-        TaskAssignmentApiService().getMyAssignments();
+        TaskApiService().getAssignmentsForChild(
+      widget.child.id,
+    );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FutureBuilder<ChildModel>(
-        future: _childFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-            child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(
-              child: Text('Error loading child'),
-            );
-          }
-          
-          final child = snapshot.data!;
-          
-          return Column(
-            children: [
-          _ProfileHeader(child: child),
+      body: Column(
+        children: [
+          _ProfileHeader(child: widget.child),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 children: [
-                  const _WeeklyProgressCard(),
+                  _WeeklyProgressCard(
+                    progress: widget.dashboard.progressPercentage,
+approvedTasks: widget.dashboard.approvedTasks,
+totalTasks: widget.dashboard.totalTasks,
+                  ),
                   const SizedBox(height: AppSpacing.lg),
-                  _JoinCodeCard(child: child),
+                  _JoinCodeCard(child: widget.child),
                   const SizedBox(height: AppSpacing.lg),
                   const _TasksHeader(),
                   const SizedBox(height: AppSpacing.md),
                   FutureBuilder<List<TaskAssignmentModel>>(
-                    future:_assignmentsFuture,
-                    builder: (context, taskSnapshot) {
-                     if (taskSnapshot.connectionState == ConnectionState.waiting) {
-                       return const Center(child: CircularProgressIndicator());
-                     }
-                 
-                     if (taskSnapshot.hasError) {
-                       return const Text('حدث خطأ أثناء تحميل المهام');
-                     }
-                 
-                     final tasks = taskSnapshot.data ?? [];
-                 
-                     if (tasks.isEmpty) {
-                       return const Text('لا توجد مهام');
-                     }
-                     final assignments = taskSnapshot.data ?? [];
+  future: _assignmentsFuture,
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Padding(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
-                     return Column(
-                       children: assignments.map((assignment) {
-                        print(assignment.status);
-                         return _TaskItem(
-                           label: assignment.task.title,
-                           icon: Icons.task_alt,
-                           isDone: assignment.status == "COMPLETED",
-                         );
-                       }).toList(),
-                     );
-                   },
-                  ),
+    if (snapshot.hasError) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'تعذر تحميل المهام',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textSecondary,
+          ),
+        ),
+      );
+    }
+
+    final assignments = snapshot.data ?? [];
+
+    if (assignments.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'لا توجد مهام لهذا الطفل',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textSecondary,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: assignments.map((assignment) {
+        return _TaskItem(
+          label: assignment.task.title,
+          icon: _getTaskIcon(assignment.task.category),
+          isDone: assignment.status.toUpperCase() == 'APPROVED',
+        );
+      }).toList(),
+    );
+  },
+),
                 ],
               ),
             ),
           ),
         ],
-          );
-        },
       ),
     );
   }
-}
 
+  
+
+  IconData _getTaskIcon(String? category) {
+    switch (category?.toUpperCase()) {
+      case 'RELIGIOUS':
+        return Icons.mosque_outlined;
+
+      case 'FINANCIAL':
+        return Icons.credit_card_outlined;
+
+      case 'MORAL':
+        return Icons.favorite_border;
+
+      case 'SOCIAL':
+        return Icons.groups_outlined;
+
+      default:
+        return Icons.task_alt_outlined;
+    }
+  }
+}
 
 class _ProfileHeader extends StatelessWidget {
   final ChildModel child;
@@ -262,10 +300,21 @@ class _HeaderIconButton extends StatelessWidget {
 }
 
 class _WeeklyProgressCard extends StatelessWidget {
-  const _WeeklyProgressCard();
+  final double progress;
+  final int approvedTasks;
+  final int totalTasks;
+
+  const _WeeklyProgressCard({
+    required this.progress,
+    required this.approvedTasks,
+    required this.totalTasks,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final safeProgress = progress.clamp(0, 100).toDouble();
+    final percent = safeProgress.round();
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -283,8 +332,8 @@ class _WeeklyProgressCard extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'التقدم الأسبوعي',
                 style: TextStyle(
                   fontSize: 16,
@@ -292,19 +341,30 @@ class _WeeklyProgressCard extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              _WeeklyRing(percent: 72),
+              _WeeklyRing(percent: percent),
             ],
           ),
-
           const SizedBox(height: AppSpacing.sm),
-
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: const LinearProgressIndicator(
-              value: 0.72,
+            child: LinearProgressIndicator(
+              value: safeProgress / 100,
               minHeight: 8,
               backgroundColor: AppColors.primaryLight,
-              valueColor: AlwaysStoppedAnimation(AppColors.primary),
+              valueColor: const AlwaysStoppedAnimation(
+                AppColors.primary,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '$approvedTasks من $totalTasks مهام مكتملة',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
         ],

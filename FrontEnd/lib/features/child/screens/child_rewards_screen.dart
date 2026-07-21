@@ -3,252 +3,309 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../models/reward_model.dart';
+import '../../../services/reward_api_service.dart';
 
-// Child Rewards screen (Screen 25).
-//
-// This first pass is static/placeholder only: the weekly progress and
-// this week's reward are all hardcoded. No backend calls happen here yet.
-class ChildRewardsScreen extends StatelessWidget {
+/// Child Rewards screen.
+///
+/// Requirement #8: All data is loaded from live API calls.
+/// - GET /rewards/my  → list this child's rewards
+/// - PUT /rewards/{id}/claim → claim an unlocked reward
+class ChildRewardsScreen extends StatefulWidget {
   const ChildRewardsScreen({super.key});
+
+  @override
+  State<ChildRewardsScreen> createState() => _ChildRewardsScreenState();
+}
+
+class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
+  final RewardApiService _rewardService = RewardApiService();
+
+  List<RewardModel> _rewards = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRewards();
+  }
+
+  Future<void> _loadRewards() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final rewards = await _rewardService.getMyRewards();
+      if (mounted) {
+        setState(() {
+          _rewards = rewards;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'تعذّر تحميل المكافآت';
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _claimReward(String rewardId) async {
+    try {
+      await _rewardService.claimReward(rewardId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم استلام المكافأة! 🎉'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        await _loadRewards();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تعذّر استلام المكافأة'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'المكافآت',
-                      style: AppTextStyles.arabicTitle,
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: AppSpacing.sm),
-
-                    Text(
-                      'مكافأة واحدة أسبوعيًا ترتبط بتقدّمك',
-                      style: AppTextStyles.body,
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: AppSpacing.lg),
-
-                    const _WeeklyProgressCard(percent: 72),
-
-                    const SizedBox(height: AppSpacing.lg),
-
-                    const Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'مكافأة هذا الأسبوع',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _error != null
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: AppColors.error),
                         ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: _loadRewards,
+                          child: const Text('إعادة المحاولة'),
+                        ),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadRewards,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'المكافآت',
+                            style: AppTextStyles.arabicTitle,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Text(
+                            'مكافأة أسبوعية ترتبط بتقدّمك',
+                            style: AppTextStyles.body,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+
+                          if (_rewards.isEmpty)
+                            Container(
+                              padding: const EdgeInsets.all(AppSpacing.xl),
+                              decoration: BoxDecoration(
+                                color: AppColors.card,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                'لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            )
+                          else
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: _rewards.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: AppSpacing.md),
+                              itemBuilder: (context, index) {
+                                final reward = _rewards[index];
+                                return _RewardCard(
+                                  reward: reward,
+                                  onClaim: reward.status == 'unlocked'
+                                      ? () => _claimReward(reward.id)
+                                      : null,
+                                );
+                              },
+                            ),
+                        ],
                       ),
                     ),
-
-                    const SizedBox(height: AppSpacing.sm),
-
-                    const _RewardCard(
-                      title: 'وقت شاشة إضافي',
-                      subtitle: 'ساري حتى الجمعة',
-                      statusText: 'متاحة – وصلت 72% من تقدّم الأسبوع',
-                      icon: Icons.access_time,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+                  ),
       ),
     );
   }
 }
 
-// Purple gradient card showing the weekly progress ring.
-class _WeeklyProgressCard extends StatelessWidget {
-  final int percent;
+// ─── Reward Card ──────────────────────────────────────────────────────────────
 
-  const _WeeklyProgressCard({required this.percent});
+class _RewardCard extends StatelessWidget {
+  final RewardModel reward;
+  final VoidCallback? onClaim;
+
+  const _RewardCard({required this.reward, this.onClaim});
 
   @override
   Widget build(BuildContext context) {
+    final status = reward.status.toLowerCase();
+
+    final isUnlocked = status == 'unlocked';
+    final isClaimed = status == 'claimed';
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: AppColors.primaryGradient,
-        ),
-        borderRadius: BorderRadius.circular(24),
+        gradient: isUnlocked
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: AppColors.primaryGradient,
+              )
+            : null,
+        color: isUnlocked ? null : AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
+          // Claim button (only for unlocked)
+          if (isUnlocked)
+            ElevatedButton(
+              onPressed: onClaim,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+              child: const Text(
+                'استلام',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+            ),
+          if (isClaimed)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.gold.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                '🎉 تم',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: AppColors.gold,
+                ),
+              ),
+            ),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: const [
+              children: [
                 Text(
-                  'تقدّمك الأسبوعي',
+                  reward.rewardName,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: isUnlocked ? Colors.white : AppColors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 4),
+                if (reward.description != null &&
+                    reward.description!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    reward.description!,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isUnlocked
+                          ? Colors.white70
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 4),
                 Text(
-                  'استمر لتحصل على مكافآت أكثر',
-                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                  _statusLabel(reward),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isUnlocked
+                        ? Colors.white70
+                        : AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.md),
-          SizedBox(
-            width: 56,
-            height: 56,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: CircularProgressIndicator(
-                    value: percent / 100,
-                    strokeWidth: 5,
-                    backgroundColor: Colors.white24,
-                    valueColor: const AlwaysStoppedAnimation(AppColors.gold),
-                  ),
-                ),
-                Text(
-                  '$percent%',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+          const SizedBox(width: AppSpacing.sm),
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isUnlocked
+                  ? Colors.white.withOpacity(0.2)
+                  : AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              Icons.card_giftcard_outlined,
+              color: isUnlocked ? Colors.white : AppColors.primaryDark,
+              size: 22,
             ),
           ),
         ],
       ),
     );
   }
-}
 
-// The card for this week's reward: title, subtitle, icon, and a green
-// status pill below.
-class _RewardCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String statusText;
-  final IconData icon;
-
-  const _RewardCard({
-    required this.title,
-    required this.subtitle,
-    required this.statusText,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(20),
-        border: const Border.fromBorderSide(
-          BorderSide(color: Color(0xFFBFE3C6), width: 1.5),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(icon, color: AppColors.primary, size: 22),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: AppSpacing.md),
-
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE8F5EA),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.check, color: AppColors.success, size: 16),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    statusText,
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.success,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+  String _statusLabel(RewardModel reward) {
+    switch (reward.status.toLowerCase()) {
+      case 'unlocked':
+        return 'متاحة الآن! اضغط للاستلام ✓';
+      case 'claimed':
+        return 'تم الاستلام 🎉';
+      default:
+        return 'تُفتح يوم ${reward.unlockDayLabel}';
+    }
   }
 }
