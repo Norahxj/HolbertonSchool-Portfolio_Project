@@ -5,13 +5,9 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
-import 'add_task_screen.dart';
 import 'family_settings_screen.dart';
-import 'parent_dashboard_screen.dart';
 import 'profile_screen.dart';
-import 'reward_management_screen.dart';
-import 'wishlist_approval_screen.dart';
-import '../../auth/services/auth_api_service.dart';
+import '../../../services/auth_api_service.dart';
 import '../../../app.dart';
 
 // More / Settings screen (Screen 17).
@@ -19,8 +15,27 @@ import '../../../app.dart';
 // This first pass is static/placeholder only: the parent name and every
 // row action are hardcoded. No backend calls happen here yet, and none of
 // the rows navigate anywhere yet (see the TODO comments below).
-class MoreSettingsScreen extends StatelessWidget {
-  const MoreSettingsScreen({super.key});
+class MoreSettingsScreen extends StatefulWidget  {
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
+
+  const MoreSettingsScreen({
+    super.key,
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
+  @override
+  State<MoreSettingsScreen> createState() => _MoreSettingsScreenState();
+}
+class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
+  late Future<UserModel> _userFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userFuture = UserApiService().getCurrentUser();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +44,7 @@ class MoreSettingsScreen extends StatelessWidget {
         child: SafeArea(
           bottom: false,
           child: FutureBuilder<UserModel>(
-            future: UserApiService().getCurrentUser(),
+  future: _userFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -51,7 +66,10 @@ class MoreSettingsScreen extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.lg),
 
-                  const _SettingsCard(),
+                  _SettingsCard(
+  isArabic: widget.isArabic,
+  onLanguageToggle: widget.onLanguageToggle,
+),
 
                   const SizedBox(height: AppSpacing.xl),
 
@@ -64,7 +82,6 @@ class MoreSettingsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
@@ -129,7 +146,13 @@ class _ProfileBanner extends StatelessWidget {
 
 // White rounded card holding every settings row.
 class _SettingsCard extends StatelessWidget {
-  const _SettingsCard();
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
+
+  const _SettingsCard({
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +192,10 @@ class _SettingsCard extends StatelessWidget {
             },
           ),
           const Divider(height: 1, color: AppColors.border),
-          const _LanguageRow(),
+          _LanguageRow(
+  isArabic: isArabic,
+  onTap: onLanguageToggle,
+),
           const Divider(height: 1, color: AppColors.border),
           _SettingsRow(
             icon: Icons.notifications_none,
@@ -288,85 +314,97 @@ class _ComingSoonTag extends StatelessWidget {
 // switch the app language yet. Real language switching already exists in
 // the language_toggle widget used on other screens.
 class _LanguageRow extends StatelessWidget {
-  const _LanguageRow();
+  final bool isArabic;
+  final VoidCallback? onTap;
+
+  const _LanguageRow({
+    required this.isArabic,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.md,
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 22,
-                  height: 22,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'ع',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 22,
+                    height: 22,
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        isArabic ? 'ع' : 'EN',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                const Text(
-                  'EN',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
+                  const SizedBox(width: 6),
+                  Text(
+                    isArabic ? 'EN' : 'ع',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryDark,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'اللغة',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    isArabic ? 'اللغة' : 'Language',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(12),
+            const SizedBox(width: AppSpacing.md),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.language,
+                color: AppColors.primaryDark,
+                size: 20,
+              ),
             ),
-            child: const Icon(
-              Icons.language,
-              color: AppColors.primaryDark,
-              size: 20,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -413,149 +451,7 @@ class _LogoutButton extends StatelessWidget {
 // as the active tab. Every item (including the floating home button)
 // switches screens with Navigator.pushReplacement, so tapping between
 // tabs never stacks pages.
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: SizedBox(
-        height: 88,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                height: 66,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 12,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const _NavItem(
-                      icon: Icons.more_horiz,
-                      label: 'المزيد',
-                      isActive: true,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const WishlistApprovalScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.favorite_border,
-                        label: 'الأمنيات',
-                      ),
-                    ),
-                    const SizedBox(width: 56),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RewardManagementScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.card_giftcard_outlined,
-                        label: 'المكافآت',
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const AddTaskScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.list_alt,
-                        label: 'المهام',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ParentDashboardScreen(),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.4),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.home_rounded,
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      const Text(
-                        'الرئيسية',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// One icon + label pair inside the bottom navigation bar. Set isActive to
-// true to draw it in the highlighted color (used for "المزيد" here).
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;

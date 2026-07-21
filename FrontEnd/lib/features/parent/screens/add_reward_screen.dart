@@ -5,6 +5,10 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
+import 'package:frontend/models/reward_suggestion_model.dart';
+import '../../../core/widgets/app_back_button.dart';
+import 'package:dio/dio.dart';
+import '../../../services/reward_api_service.dart';
 
 // Add New Reward screen (Screen 16).
 //
@@ -12,13 +16,24 @@ import '../../../core/widgets/screen_background.dart';
 // choice, and weekly-renew switch are simple local state. Save just pops
 // back for now. No backend calls happen here yet.
 class AddRewardScreen extends StatefulWidget {
-  const AddRewardScreen({super.key});
+  final String childId;
+  final RewardSuggestionModel? suggestion;
+
+  const AddRewardScreen({
+    super.key,
+    required this.childId,
+    this.suggestion,
+  });
 
   @override
   State<AddRewardScreen> createState() => _AddRewardScreenState();
 }
 
 class _AddRewardScreenState extends State<AddRewardScreen> {
+  final RewardApiService _rewardApiService =
+    RewardApiService();
+
+bool isSaving = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
@@ -26,13 +41,73 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
   int selectedIconIndex = 3;
 
   // Whether the "تتجدد أسبوعيًا" (renews weekly) switch is on.
-  bool renewsWeekly = true;
+  int selectedUnlockDay = 3;
 
+final List<String> weekDays = const [
+    'الأحد',
+    'الإثنين',
+    'الثلاثاء',
+    'الأربعاء',
+    'الخميس',
+    'الجمعة',
+    'السبت',
+  ];
+@override
+void initState() {
+  super.initState();
+
+  final suggestion = widget.suggestion;
+
+  if (suggestion != null) {
+    nameController.text = suggestion.rewardName;
+    descriptionController.text = suggestion.description;
+    selectedUnlockDay = suggestion.unlockDay;
+  }
+}
   @override
   void dispose() {
     nameController.dispose();
     descriptionController.dispose();
     super.dispose();
+  }
+
+
+  Future<void> _saveReward() async {
+    final rewardName = nameController.text.trim();
+    final description = descriptionController.text.trim();
+
+    if (rewardName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('اكتب اسم المكافأة أولًا')),
+      );
+      return;
+    }
+
+    setState(() => isSaving = true);
+
+    try {
+      await _rewardApiService.createReward(
+        childId: widget.childId,
+        rewardName: rewardName,
+        description: description.isEmpty ? null : description,
+        unlockDay: selectedUnlockDay,
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } on DioException catch (e) {
+      if (!mounted) return;
+      debugPrint('خطأ حفظ المكافأة: ${e.response?.data ?? e.message}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.response?.data?['error']?.toString() ?? 'تعذر حفظ المكافأة',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isSaving = false);
+    }
   }
 
   @override
@@ -46,6 +121,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
+                  textDirection: TextDirection.ltr,
                   children: [
                     Expanded(
                       child: Center(
@@ -55,7 +131,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                         ),
                       ),
                     ),
-                    _RoundBackButton(onTap: () => Navigator.pop(context)),
+                    const AppBackButton(),
                   ],
                 ),
 
@@ -136,24 +212,67 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                _WeeklyRenewToggle(
-                  value: renewsWeekly,
-                  onChanged: (value) {
-                    setState(() {
-                      renewsWeekly = value;
-                    });
-                  },
-                ),
+                const Align(
+  alignment: Alignment.centerRight,
+  child: Text(
+    'تفتح المكافأة كل',
+    style: TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+  ),
+),
+
+const SizedBox(height: AppSpacing.sm),
+
+Wrap(
+  spacing: AppSpacing.sm,
+  runSpacing: AppSpacing.sm,
+  alignment: WrapAlignment.end,
+  children: [
+    for (int index = 0; index < weekDays.length; index++)
+      GestureDetector(
+        onTap: () {
+          setState(() {
+            selectedUnlockDay = index;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 8,
+          ),
+          decoration: BoxDecoration(
+            color: selectedUnlockDay == index
+                ? AppColors.primary
+                : AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            weekDays[index],
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: selectedUnlockDay == index
+                  ? Colors.white
+                  : AppColors.primaryDark,
+            ),
+          ),
+        ),
+      ),
+  ],
+),
 
                 const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
-                  text: 'حفظ المكافأة',
-                  onPressed: () {
-                    // TODO: Save the new reward once backend integration is
-                    // ready.
-                    Navigator.pop(context);
-                  },
+  text: isSaving
+      ? 'جارٍ الحفظ...'
+      : 'حفظ المكافأة',
+  onPressed: isSaving
+      ? null
+      : _saveReward,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -173,32 +292,6 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
 // Round back button in the top-right corner, same style as the one used
 // on the Add Child screen.
-class _RoundBackButton extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _RoundBackButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // A bold label shown above a field, right-aligned to match the Arabic
 // layout used across the app.
@@ -296,56 +389,3 @@ class _IconOption extends StatelessWidget {
 }
 
 // The "تتجدد أسبوعيًا" (renews weekly) row with its on/off switch.
-class _WeeklyRenewToggle extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  const _WeeklyRenewToggle({required this.value, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: AppColors.primary,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Text(
-                  'تتجدد أسبوعيًا',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                const Text(
-                  'تعود المكافأة كل يوم اثنين',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
