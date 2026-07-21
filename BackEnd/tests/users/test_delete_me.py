@@ -721,9 +721,19 @@ def test_delete_rejects_tampered_access_token(client):
 
     token = parent_data["access_token"]
 
+    header, payload, signature = token.split(".")
+
+    index = len(signature) // 2
+    replacement = "a" if signature[index] != "a" else "b"
+
+    tampered_signature = (
+        signature[:index]
+        + replacement
+        + signature[index + 1:]
+    )
+
     tampered_token = (
-        token[:-1]
-        + ("a" if token[-1] != "a" else "b")
+        f"{header}.{payload}.{tampered_signature}"
     )
 
     response = delete_me(
@@ -737,8 +747,7 @@ def test_delete_rejects_tampered_access_token(client):
         401,
         422,
     ), response_data
-
-
+    
 def test_delete_rejects_expired_access_token(
     client,
     app,
