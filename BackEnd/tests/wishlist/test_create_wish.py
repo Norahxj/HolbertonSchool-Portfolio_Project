@@ -223,6 +223,98 @@ def test_create_wish_rejects_name_longer_than_255_characters(
 # Route behavior
 # ---------------------------------------------------------------------------
 
+
+def test_child_can_have_five_pending_wishes_excluding_approved_and_rejected(
+    client,
+    app,
+):
+    parent = register_parent(client)
+    child = create_child(
+        client,
+        parent["access_token"],
+    )
+    child_login = login_child(
+        client,
+        child["access_code"],
+    )
+    child_token = child_login["access_token"]
+
+    approved_response = create_wish_request(
+        client,
+        child_token,
+        {"name": "Approved bicycle"},
+    )
+    assert approved_response.status_code == 201
+
+    rejected_response = create_wish_request(
+        client,
+        child_token,
+        {"name": "Rejected tablet"},
+    )
+    assert rejected_response.status_code == 201
+
+    with app.app_context():
+        approved_wish = (
+            wishlist_repository_module.Wishlist.query.filter_by(
+                child_id=child["id"],
+                name="Approved bicycle",
+            ).first()
+        )
+        rejected_wish = (
+            wishlist_repository_module.Wishlist.query.filter_by(
+                child_id=child["id"],
+                name="Rejected tablet",
+            ).first()
+        )
+
+        assert approved_wish is not None
+        assert rejected_wish is not None
+        approved_wish.target_points = 100
+        approved_wish.status = "APPROVED"
+        rejected_wish.status = "REJECTED"
+
+        wishlist_repository_module.db.session.commit()
+
+    for number in range(1, 6):
+        response = create_wish_request(
+            client,
+            child_token,
+            {"name": f"Pending wish {number}"},
+        )
+
+        assert response.status_code == 201, response.get_json()
+        assert response.get_json()["status"] == "PENDING"
+
+    with app.app_context():
+        total_count = (
+            wishlist_repository_module.Wishlist.query.filter_by(
+                child_id=child["id"],
+            ).count()
+        )
+        pending_count = (
+            wishlist_repository_module.Wishlist.query.filter_by(
+                child_id=child["id"],
+                status="PENDING",
+            ).count()
+        )
+
+        assert total_count == 7
+        assert pending_count == 5
+
+    sixth_response = create_wish_request(
+        client,
+        child_token,
+        {"name": "Sixth pending wish"},
+    )
+
+    assert sixth_response.status_code == 400
+    assert sixth_response.get_json() == {
+        "error": (
+            "Wishlist limit reached. "
+            "Maximum 5 pending wishes allowed."
+        )
+    }
+
 def test_route_passes_child_id_and_validated_data_to_service(
     client,
     app,
