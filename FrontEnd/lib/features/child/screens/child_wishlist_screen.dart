@@ -6,9 +6,6 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../models/wish_model.dart';
 import '../../../services/wishlist_api_service.dart';
 import 'add_wishlist_screen.dart';
-import 'child_home_screen.dart';
-import 'child_progress_screen.dart';
-import 'child_rewards_screen.dart';
 
 class ChildWishlistScreen extends StatefulWidget {
   const ChildWishlistScreen({super.key});
@@ -53,24 +50,33 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
   Future<void> _deleteWish(String wishId) async {
     try {
       await _wishlistService.deleteWish(wishId);
-      _loadWishes(); // Refresh the list
+      _loadWishes();
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('تعذّر حذف الأمنية')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تعذّر حذف الأمنية')),
+        );
+      }
     }
   }
 
   Future<void> _achieveWish(String wishId) async {
     try {
       await _wishlistService.achieveWish(wishId);
-      _loadWishes(); // Refresh the list
+      _loadWishes();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم تحقيق الأمنية بنجاح')),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تعذّر تحقيق الأمنية — تحقق من رصيد نقاطك'),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تعذّر تحقيق الأمنية — تحقق من رصيد نقاطك'),
+          ),
+        );
+      }
     }
   }
 
@@ -87,11 +93,9 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // ── Header ──────────────────────────────────────────────
+                    // Header
                     Row(
                       children: [
-                        // Points badge (static for now — wire to points API
-                        // in a separate step if needed)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -142,7 +146,7 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
 
                     const SizedBox(height: AppSpacing.lg),
 
-                    // ── Body: loading / error / list ─────────────────────
+                    // Body: loading / error / list
                     if (_isLoading)
                       const Center(
                         child: Padding(
@@ -200,7 +204,7 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
 
                     const SizedBox(height: AppSpacing.xl),
 
-                    // ── Add wish button ──────────────────────────────────
+                    // Add wish button
                     GestureDetector(
                       onTap: () async {
                         await Navigator.push(
@@ -209,7 +213,6 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
                             builder: (_) => const AddWishlistScreen(),
                           ),
                         );
-                        // Reload after returning from add screen
                         _loadWishes();
                       },
                       child: Container(
@@ -243,13 +246,11 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
 
-// ── Wish Card ─────────────────────────────────────────────────────────────────
-
+// Wish Card Widget
 class _WishCard extends StatelessWidget {
   final WishModel wish;
   final VoidCallback onDelete;
@@ -264,11 +265,11 @@ class _WishCard extends StatelessWidget {
   String get _statusLabel {
     switch (wish.status.toUpperCase()) {
       case 'APPROVED':
-        return ' مقبولة  ✓';
+        return 'مقبولة';
       case 'REJECTED':
-        return 'مرفوضة ✗';
+        return 'مرفوضة';
       case 'ACHIEVED':
-        return 'تحققت! 🌟';
+        return 'تحققت!';
       default:
         return 'في الانتظار...';
     }
@@ -289,7 +290,6 @@ class _WishCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Progress is only meaningful when the wish is approved and has a target
     final status = wish.status.toUpperCase();
     final hasProgress =
         status == 'APPROVED' &&
@@ -312,7 +312,7 @@ class _WishCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Title + status + icon row
+          // Title and status
           Row(
             children: [
               Expanded(
@@ -358,12 +358,7 @@ class _WishCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
-                value: (wish.targetPoints! > 0)
-                    ? (0.0).clamp(
-                        0.0,
-                        1.0,
-                      ) // Replace 0.0 with current points / target
-                    : 0.0,
+                value: 0.0,
                 minHeight: 8,
                 backgroundColor: AppColors.primaryLight,
                 valueColor: const AlwaysStoppedAnimation(AppColors.primary),
@@ -392,7 +387,7 @@ class _WishCard extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                'لقد حققت أمنيتي! 🌟',
+                'لقد حققت أمنيتي!',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -412,97 +407,6 @@ class _WishCard extends StatelessWidget {
           ],
         ],
       ),
-    );
-  }
-}
-
-// ── Bottom Nav Bar ─────────────────────────────────────────────────────────────
-
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            GestureDetector(
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const ChildProgressScreen()),
-              ),
-              child: const _NavItem(
-                icon: Icons.bar_chart_rounded,
-                label: 'تقدّمي',
-              ),
-            ),
-            GestureDetector(
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const ChildRewardsScreen()),
-              ),
-              child: const _NavItem(
-                icon: Icons.card_giftcard_outlined,
-                label: 'المكافآت',
-              ),
-            ),
-            const _NavItem(
-              icon: Icons.favorite_border,
-              label: 'أمنياتي',
-              isActive: true,
-            ),
-            GestureDetector(
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const ChildHomeScreen()),
-              ),
-              child: const _NavItem(
-                icon: Icons.home_rounded,
-                label: 'الرئيسية',
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isActive ? AppColors.primary : AppColors.textSecondary;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 11, color: color)),
-      ],
     );
   }
 }
