@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/user_model.dart';
-import '../../../services/user_api_service.dart';
+
+import '../../../app.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
+import '../../auth/services/auth_api_service.dart';
 import 'family_settings_screen.dart';
 import 'profile_screen.dart';
-import '../../auth/services/auth_api_service.dart';
-import '../../../app.dart';
 
 // More / Settings screen (Screen 17).
 //
-// This first pass is static/placeholder only: the parent name and every
-// row action are hardcoded. No backend calls happen here yet, and none of
-// the rows navigate anywhere yet (see the TODO comments below).
+// The user request is created inside ParentNav and passed into this
+// StatelessWidget. This prevents it from restarting when switching tabs.
 class MoreSettingsScreen extends StatelessWidget {
-  const MoreSettingsScreen({super.key});
+  final Future<UserModel> userFuture;
+
+  const MoreSettingsScreen({
+    super.key,
+    required this.userFuture,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,36 +29,49 @@ class MoreSettingsScreen extends StatelessWidget {
         child: SafeArea(
           bottom: false,
           child: FutureBuilder<UserModel>(
-            future: UserApiService().getCurrentUser(),
+            future: userFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+              if (snapshot.connectionState ==
+                  ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               }
 
               if (snapshot.hasError || !snapshot.hasData) {
-                return const Center(child: Text('Error loading user'));
+                return const Center(
+                  child: Text('Error loading user'),
+                );
               }
 
               final user = snapshot.data!;
 
-              return Column(
-                children: [
-                  Text('المزيد', style: AppTextStyles.arabicTitle),
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  children: [
+                    Text(
+                      'المزيد',
+                      style: AppTextStyles.arabicTitle,
+                    ),
 
-                  const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.lg),
 
-                  _ProfileBanner(user: user),
+                    _ProfileBanner(
+                      user: user,
+                    ),
 
-                  const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.lg),
 
-                  const _SettingsCard(),
+                    const _SettingsCard(),
 
-                  const SizedBox(height: AppSpacing.xl),
+                    const SizedBox(height: AppSpacing.xl),
 
-                  const _LogoutButton(),
+                    const _LogoutButton(),
 
-                  const SizedBox(height: AppSpacing.md),
-                ],
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                ),
               );
             },
           ),
@@ -67,7 +84,10 @@ class MoreSettingsScreen extends StatelessWidget {
 // Purple banner showing the signed-in parent's name and role.
 class _ProfileBanner extends StatelessWidget {
   final UserModel user;
-  const _ProfileBanner({super.key, required this.user});
+
+  const _ProfileBanner({
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -92,21 +112,28 @@ class _ProfileBanner extends StatelessWidget {
               children: [
                 Text(
                   '${user.firstName} ${user.lastName}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
+
+                const SizedBox(height: 4),
+
+                const Text(
                   'ولي الأمر',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
           ),
+
           const SizedBox(width: AppSpacing.md),
+
           Container(
             width: 56,
             height: 56,
@@ -114,7 +141,11 @@ class _ProfileBanner extends StatelessWidget {
               color: Colors.white.withOpacity(0.25),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person, color: Colors.white, size: 28),
+            child: const Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 28,
+            ),
           ),
         ],
       ),
@@ -122,7 +153,7 @@ class _ProfileBanner extends StatelessWidget {
   }
 }
 
-// White rounded card holding every settings row.
+// White card containing the settings rows.
 class _SettingsCard extends StatelessWidget {
   const _SettingsCard();
 
@@ -148,39 +179,63 @@ class _SettingsCard extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const ProfileScreen(),
+                ),
               );
             },
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           _SettingsRow(
             icon: Icons.home_outlined,
             label: 'إعدادات العائلة',
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const FamilySettingsScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const FamilySettingsScreen(),
+                ),
               );
             },
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           const _LanguageRow(),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           _SettingsRow(
             icon: Icons.notifications_none,
             label: 'الإشعارات',
             showComingSoon: true,
             onTap: () {
-              // TODO: Notifications settings are not built yet.
+              // TODO: Build notification settings later.
             },
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           _SettingsRow(
             icon: Icons.help_outline,
             label: 'المساعدة والدعم',
             showComingSoon: true,
             onTap: () {
-              // TODO: Help & support screen is not built yet.
+              // TODO: Build help and support later.
             },
           ),
         ],
@@ -189,7 +244,7 @@ class _SettingsCard extends StatelessWidget {
   }
 }
 
-// One tappable row inside the settings card, e.g. "Personal profile".
+// One tappable setting row.
 class _SettingsRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -219,6 +274,7 @@ class _SettingsRow extends StatelessWidget {
               color: AppColors.textSecondary,
               size: 20,
             ),
+
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -227,6 +283,7 @@ class _SettingsRow extends StatelessWidget {
                     const _ComingSoonTag(),
                     const SizedBox(width: AppSpacing.sm),
                   ],
+
                   Text(
                     label,
                     style: const TextStyle(
@@ -238,7 +295,9 @@ class _SettingsRow extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(width: AppSpacing.md),
+
             Container(
               width: 40,
               height: 40,
@@ -246,7 +305,11 @@ class _SettingsRow extends StatelessWidget {
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: AppColors.primaryDark, size: 20),
+              child: Icon(
+                icon,
+                color: AppColors.primaryDark,
+                size: 20,
+              ),
             ),
           ],
         ),
@@ -255,14 +318,17 @@ class _SettingsRow extends StatelessWidget {
   }
 }
 
-// Small "قريبًا" (Coming soon) tag shown next to a couple of rows.
+// Small "قريبًا" label.
 class _ComingSoonTag extends StatelessWidget {
   const _ComingSoonTag();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(12),
@@ -279,9 +345,7 @@ class _ComingSoonTag extends StatelessWidget {
   }
 }
 
-// The "Language" row. This is a visual toggle only for now — it does not
-// switch the app language yet. Real language switching already exists in
-// the language_toggle widget used on other screens.
+// Language row. It is currently visual only.
 class _LanguageRow extends StatelessWidget {
   const _LanguageRow();
 
@@ -295,7 +359,10 @@ class _LanguageRow extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 6,
+            ),
             decoration: BoxDecoration(
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(20),
@@ -320,7 +387,9 @@ class _LanguageRow extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 const SizedBox(width: 6),
+
                 const Text(
                   'EN',
                   style: TextStyle(
@@ -332,6 +401,7 @@ class _LanguageRow extends StatelessWidget {
               ],
             ),
           ),
+
           const Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -347,7 +417,9 @@ class _LanguageRow extends StatelessWidget {
               ],
             ),
           ),
+
           const SizedBox(width: AppSpacing.md),
+
           Container(
             width: 40,
             height: 40,
@@ -367,7 +439,7 @@ class _LanguageRow extends StatelessWidget {
   }
 }
 
-// Plain red "Log out" text link below the settings card.
+// Log out button.
 class _LogoutButton extends StatelessWidget {
   const _LogoutButton();
 
@@ -381,15 +453,23 @@ class _LogoutButton extends StatelessWidget {
 
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const AsalahApp()),
+          MaterialPageRoute(
+            builder: (_) => const AsalahApp(),
+          ),
           (route) => false,
         );
       },
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.logout, color: AppColors.error, size: 18),
+          Icon(
+            Icons.logout,
+            color: AppColors.error,
+            size: 18,
+          ),
+
           SizedBox(width: AppSpacing.sm),
+
           Text(
             'تسجيل الخروج',
             style: TextStyle(

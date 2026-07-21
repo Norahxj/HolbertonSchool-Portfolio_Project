@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../models/child_model.dart';
+import '../../../models/user_model.dart';
+import '../../../services/user_api_service.dart';
 import '../screens/add_task_screen.dart';
 import '../screens/more_settings_screen.dart';
 import '../screens/parent_dashboard_screen.dart';
 import '../screens/reward_management_screen.dart';
 import '../screens/wishlist_approval_screen.dart';
+import '../services/child_api_service.dart';
 
 class ParentNav extends StatefulWidget {
   const ParentNav({super.key});
@@ -15,73 +19,134 @@ class ParentNav extends StatefulWidget {
 }
 
 class _ParentNavState extends State<ParentNav> {
-  int currentPageIndex = 0;
+  // Home is index 2 because it is in the middle.
+  int currentPageIndex = 2;
 
-  final List<Widget> screens = const [
-    ParentDashboardScreen(),
-    AddTaskScreen(),
-    RewardManagementScreen(),
-    WishlistApprovalScreen(),
-    MoreSettingsScreen(),
-  ];
+  late Future<UserModel> userFuture;
+  late Future<List<ChildModel>> childrenFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    userFuture = UserApiService().getCurrentUser();
+    childrenFuture = ChildApiService().getChildren();
+  }
+
+  void refreshChildren() {
+    setState(() {
+      childrenFuture = ChildApiService().getChildren();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      // Index 0
+      const AddTaskScreen(),
+
+      // Index 1
+      const RewardManagementScreen(),
+
+      // Index 2
+      ParentDashboardScreen(
+        userFuture: userFuture,
+        childrenFuture: childrenFuture,
+        onRefreshChildren: refreshChildren,
+      ),
+
+      // Index 3
+      const WishlistApprovalScreen(),
+
+      // Index 4
+      MoreSettingsScreen(
+        userFuture: userFuture,
+      ),
+    ];
+
     return Scaffold(
-      body: screens[currentPageIndex],
+      body: IndexedStack(
+        index: currentPageIndex,
+        children: screens,
+      ),
 
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentPageIndex,
-        indicatorColor: AppColors.primaryLight,
+      bottomNavigationBar: Directionality(
+        // Keeps the visual order from left to right
+        // exactly as written below.
+        textDirection: TextDirection.ltr,
+        child: NavigationBar(
+          selectedIndex: currentPageIndex,
+          backgroundColor: AppColors.card,
+          indicatorColor: AppColors.primaryLight,
 
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
+          onDestinationSelected: (int index) {
+            setState(() {
+              currentPageIndex = index;
+            });
+          },
 
-        destinations: const [
-          NavigationDestination(
-            selectedIcon: Icon(
-              Icons.home,
-              color: AppColors.primary,
+          destinations: const [
+            NavigationDestination(
+              selectedIcon: Icon(
+                Icons.list_alt,
+                color: AppColors.primary,
+              ),
+              icon: Icon(
+                Icons.list_alt_outlined,
+                color: AppColors.textSecondary,
+              ),
+              label: 'المهام',
             ),
-            icon: Icon(Icons.home_outlined),
-            label: 'الرئيسية',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(
-              Icons.list_alt,
-              color: AppColors.primary,
+
+            NavigationDestination(
+              selectedIcon: Icon(
+                Icons.card_giftcard,
+                color: AppColors.primary,
+              ),
+              icon: Icon(
+                Icons.card_giftcard_outlined,
+                color: AppColors.textSecondary,
+              ),
+              label: 'المكافآت',
             ),
-            icon: Icon(Icons.list_alt_outlined),
-            label: 'المهام',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(
-              Icons.card_giftcard,
-              color: AppColors.primary,
+
+            NavigationDestination(
+              selectedIcon: Icon(
+                Icons.home,
+                color: AppColors.primary,
+              ),
+              icon: Icon(
+                Icons.home_outlined,
+                color: AppColors.textSecondary,
+              ),
+              label: 'الرئيسية',
             ),
-            icon: Icon(Icons.card_giftcard_outlined),
-            label: 'المكافآت',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(
-              Icons.favorite,
-              color: AppColors.primary,
+
+            NavigationDestination(
+              selectedIcon: Icon(
+                Icons.favorite,
+                color: AppColors.primary,
+              ),
+              icon: Icon(
+                Icons.favorite_border,
+                color: AppColors.textSecondary,
+              ),
+              label: 'الأمنيات',
             ),
-            icon: Icon(Icons.favorite_border),
-            label: 'الأمنيات',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(
-              Icons.more_horiz,
-              color: AppColors.primary,
+
+            NavigationDestination(
+              selectedIcon: Icon(
+                Icons.more_horiz,
+                color: AppColors.primary,
+              ),
+              icon: Icon(
+                Icons.more_horiz,
+                color: AppColors.textSecondary,
+              ),
+              label: 'المزيد',
             ),
-            icon: Icon(Icons.more_horiz),
-            label: 'المزيد',
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

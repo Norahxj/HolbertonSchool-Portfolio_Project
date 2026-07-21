@@ -1,40 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/services/task_api_service.dart';
+import 'package:frontend/features/parent/screens/add_child_screen.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../child/screens/child_profile_screen.dart';
-import 'package:frontend/features/parent/screens/add_child_screen.dart';
-import 'task_review_screen.dart';
 import '../../../models/child_model.dart';
-import '../services/child_api_service.dart';
-import '../../../services/user_api_service.dart';
 import '../../../models/user_model.dart';
+import '../../child/screens/child_profile_screen.dart';
+import 'task_review_screen.dart';
 
 // Parent Home Dashboard screen (Screen 4).
 //
-// This first pass uses simple hardcoded placeholder data (parent name,
-// one child, weekly progress). No backend calls are made here yet.
-class ParentDashboardScreen extends StatefulWidget {
-  const ParentDashboardScreen({super.key});
+// The user and children requests are created inside ParentNav and passed
+// into this screen. This prevents the requests from restarting whenever
+// the parent switches between navigation tabs.
+class ParentDashboardScreen extends StatelessWidget {
+  final Future<UserModel> userFuture;
+  final Future<List<ChildModel>> childrenFuture;
+  final VoidCallback onRefreshChildren;
 
-  @override
-  State<ParentDashboardScreen> createState() => _ParentDashboardScreenState();
-}
+  const ParentDashboardScreen({
+    super.key,
+    required this.userFuture,
+    required this.childrenFuture,
+    required this.onRefreshChildren,
+  });
 
-class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
-  Future<void> _openAddChildScreen() async {
+  Future<void> _openAddChildScreen(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const AddChildScreen()),
+      MaterialPageRoute(
+        builder: (_) => const AddChildScreen(),
+      ),
     );
 
-    print(result);
+    if (!context.mounted) return;
 
+    // Refresh the children list only when a child was successfully added.
     if (result == true) {
-      setState(() {});
+      onRefreshChildren();
     }
   }
 
@@ -47,35 +52,39 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: FutureBuilder<UserModel>(
-              future: UserApiService().getCurrentUser(),
-              builder: (context, snapshot) {
-                print('state = ${snapshot.connectionState}');
-                print('error = ${snapshot.error}');
-                print('hasData = ${snapshot.hasData}');
-                print('data = ${snapshot.data}');
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+              future: userFuture,
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
 
-                if (snapshot.hasError || !snapshot.hasData) {
-                  return const Center(child: Text('Error loading user data'));
+                if (userSnapshot.hasError || !userSnapshot.hasData) {
+                  return const Center(
+                    child: Text('Error loading user data'),
+                  );
                 }
 
-                final UserModel user = snapshot.data!;
+                final user = userSnapshot.data!;
 
                 return Column(
                   children: [
                     Row(
                       children: [
                         const _NotificationBell(),
+
                         Expanded(
                           child: Center(
                             child: Text(
                               'منزل ${user.firstName} ${user.lastName}',
                               style: AppTextStyles.arabicTitle,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
+
                         const _ProfileAvatar(),
                       ],
                     ),
@@ -88,22 +97,52 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Text('أطفالك', style: AppTextStyles.arabicTitle),
+                      child: Text(
+                        'أطفالك',
+                        style: AppTextStyles.arabicTitle,
+                      ),
                     ),
 
                     const SizedBox(height: AppSpacing.sm),
 
                     FutureBuilder<List<ChildModel>>(
-                      future: ChildApiService().getChildren(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return Center(child: Text(snapshot.error.toString()));
+                      future: childrenFuture,
+                      builder: (context, childrenSnapshot) {
+                        if (childrenSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.all(AppSpacing.md),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
                         }
-                        if (!snapshot.hasData) {
-                          return const Center(child: Text('No data'));
+
+                        if (childrenSnapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              childrenSnapshot.error.toString(),
+                              textAlign: TextAlign.center,
+                            ),
+                          );
                         }
-                        final children = snapshot.data!;
+
+                        final children =
+                            childrenSnapshot.data ?? <ChildModel>[];
+
+                        if (children.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.all(AppSpacing.md),
+                            child: Text(
+                              'لا يوجد أطفال بعد',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        }
+
                         return Column(
                           children: children
                               .map(
@@ -111,20 +150,27 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                                   padding: const EdgeInsets.only(
                                     bottom: AppSpacing.sm,
                                   ),
-                                  child: _ChildProgressCard(child: child),
+                                  child: _ChildProgressCard(
+                                    child: child,
+                                  ),
                                 ),
                               )
                               .toList(),
                         );
                       },
                     ),
+
                     const SizedBox(height: AppSpacing.sm),
 
-                    _AddChildButton(onTap: _openAddChildScreen),
+                    _AddChildButton(
+                      onTap: () {
+                        _openAddChildScreen(context);
+                      },
+                    ),
 
                     const SizedBox(height: AppSpacing.lg),
 
-                    _TaskReviewPreviewCard(),
+                    const _TaskReviewPreviewCard(),
 
                     const SizedBox(height: AppSpacing.lg),
                   ],
@@ -138,6 +184,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   }
 }
 
+// Parent profile icon shown in the dashboard header.
 class _ProfileAvatar extends StatelessWidget {
   const _ProfileAvatar();
 
@@ -150,11 +197,16 @@ class _ProfileAvatar extends StatelessWidget {
         color: AppColors.primaryLight,
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.person, color: AppColors.primaryDark, size: 24),
+      child: const Icon(
+        Icons.person,
+        color: AppColors.primaryDark,
+        size: 24,
+      ),
     );
   }
 }
 
+// Notification icon shown in the dashboard header.
 class _NotificationBell extends StatelessWidget {
   const _NotificationBell();
 
@@ -194,9 +246,13 @@ class _NotificationBell extends StatelessWidget {
   }
 }
 
+// Welcome message containing the signed-in parent's name.
 class _WelcomeBanner extends StatelessWidget {
   final UserModel user;
-  const _WelcomeBanner({required this.user});
+
+  const _WelcomeBanner({
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +272,9 @@ class _WelcomeBanner extends StatelessWidget {
             size: 56,
             color: AppColors.primaryDark,
           ),
+
           const SizedBox(width: AppSpacing.md),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -229,7 +287,9 @@ class _WelcomeBanner extends StatelessWidget {
                     color: AppColors.primaryDark,
                   ),
                 ),
+
                 const SizedBox(height: 4),
+
                 const Text(
                   'أنتِ تبنين جيلاً رائعًا',
                   style: TextStyle(
@@ -246,21 +306,25 @@ class _WelcomeBanner extends StatelessWidget {
   }
 }
 
+// Card showing one child and their weekly progress.
 class _ChildProgressCard extends StatelessWidget {
   final ChildModel child;
 
-  const _ChildProgressCard({required this.child});
+  const _ChildProgressCard({
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // TODO: This navigation is temporary until real child/profile routing is finalized.
       onTap: () {
-        print("inside child card");
-        print(TaskApiService().getTasksByChild(child.id));
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => ChildProfileScreen(child: child)),
+          MaterialPageRoute(
+            builder: (_) => ChildProfileScreen(
+              child: child,
+            ),
+          ),
         );
       },
       child: Container(
@@ -281,10 +345,15 @@ class _ChildProgressCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _WeeklyProgressRing(percent: child.weeklyProgress),
+            _WeeklyProgressRing(
+              percent: child.weeklyProgress,
+            ),
+
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -296,7 +365,9 @@ class _ChildProgressCard extends StatelessWidget {
                         color: AppColors.textPrimary,
                       ),
                     ),
+
                     const SizedBox(height: 2),
+
                     Text(
                       '${child.age} سنوات',
                       style: const TextStyle(
@@ -308,6 +379,7 @@ class _ChildProgressCard extends StatelessWidget {
                 ),
               ),
             ),
+
             Container(
               width: 44,
               height: 44,
@@ -315,7 +387,11 @@ class _ChildProgressCard extends StatelessWidget {
                 color: Color(0xFFFBE3EA),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.girl, color: Color(0xFFD1637F), size: 22),
+              child: const Icon(
+                Icons.girl,
+                color: Color(0xFFD1637F),
+                size: 22,
+              ),
             ),
           ],
         ),
@@ -324,10 +400,13 @@ class _ChildProgressCard extends StatelessWidget {
   }
 }
 
+// Circular weekly progress indicator.
 class _WeeklyProgressRing extends StatelessWidget {
   final int percent;
 
-  const _WeeklyProgressRing({required this.percent});
+  const _WeeklyProgressRing({
+    required this.percent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -344,9 +423,12 @@ class _WeeklyProgressRing extends StatelessWidget {
               value: percent / 100,
               strokeWidth: 5,
               backgroundColor: AppColors.primaryLight,
-              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+              valueColor: const AlwaysStoppedAnimation(
+                AppColors.primary,
+              ),
             ),
           ),
+
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -358,9 +440,13 @@ class _WeeklyProgressRing extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
+
               const Text(
                 'أسبوعي',
-                style: TextStyle(fontSize: 7, color: AppColors.textSecondary),
+                style: TextStyle(
+                  fontSize: 7,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
@@ -370,10 +456,13 @@ class _WeeklyProgressRing extends StatelessWidget {
   }
 }
 
+// Dashed Add Child button.
 class _AddChildButton extends StatelessWidget {
-  final void Function()? onTap;
+  final VoidCallback? onTap;
 
-  const _AddChildButton({required this.onTap});
+  const _AddChildButton({
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -386,14 +475,16 @@ class _AddChildButton extends StatelessWidget {
         ),
         child: Container(
           height: 60,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+          ),
           child: Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Center(
                   child: Text(
                     'إضافة طفل',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primaryDark,
@@ -401,6 +492,7 @@ class _AddChildButton extends StatelessWidget {
                   ),
                 ),
               ),
+
               Container(
                 width: 44,
                 height: 44,
@@ -408,7 +500,11 @@ class _AddChildButton extends StatelessWidget {
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.add, color: Colors.white, size: 22),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 22,
+                ),
               ),
             ],
           ),
@@ -418,8 +514,7 @@ class _AddChildButton extends StatelessWidget {
   }
 }
 
-// Simple preview card that reminds the parent that some tasks are
-// waiting for review. Tapping it opens the full Task Review screen.
+// Preview card that opens the Task Review screen.
 class _TaskReviewPreviewCard extends StatelessWidget {
   const _TaskReviewPreviewCard();
 
@@ -429,7 +524,9 @@ class _TaskReviewPreviewCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const TaskReviewScreen()),
+          MaterialPageRoute(
+            builder: (_) => const TaskReviewScreen(),
+          ),
         );
       },
       child: Container(
@@ -463,14 +560,17 @@ class _TaskReviewPreviewCard extends StatelessWidget {
                 size: 22,
               ),
             ),
-            Expanded(
+
+            const Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       'مراجعة المهام',
                       style: TextStyle(
                         fontSize: 16,
@@ -478,10 +578,12 @@ class _TaskReviewPreviewCard extends StatelessWidget {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 2),
+
+                    SizedBox(height: 2),
+
                     Text(
                       'لديك ٢ مهمة بانتظار المراجعة',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
@@ -490,6 +592,7 @@ class _TaskReviewPreviewCard extends StatelessWidget {
                 ),
               ),
             ),
+
             Container(
               width: 28,
               height: 28,
@@ -515,14 +618,15 @@ class _TaskReviewPreviewCard extends StatelessWidget {
   }
 }
 
-// Draws a simple dashed rounded-rect border around its child, since Flutter
-// has no built-in dashed border. This walks the border path in short
-// segments, drawing a dash then skipping a gap, all the way around.
+// Draws the dashed border around the Add Child button.
 class _DashedBorderPainter extends CustomPainter {
   final Color color;
   final double radius;
 
-  _DashedBorderPainter({required this.color, this.radius = 16});
+  _DashedBorderPainter({
+    required this.color,
+    this.radius = 16,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -530,11 +634,19 @@ class _DashedBorderPainter extends CustomPainter {
     const dashWidth = 6.0;
     const gapWidth = 4.0;
 
-    final rrect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
+    final roundedRectangle = RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        0,
+        0,
+        size.width,
+        size.height,
+      ),
       Radius.circular(radius),
     );
-    final path = Path()..addRRect(rrect);
+
+    final path = Path()
+      ..addRRect(roundedRectangle);
+
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
@@ -542,16 +654,28 @@ class _DashedBorderPainter extends CustomPainter {
 
     for (final metric in path.computeMetrics()) {
       double distance = 0;
+
       while (distance < metric.length) {
-        final end = (distance + dashWidth).clamp(0.0, metric.length);
-        canvas.drawPath(metric.extractPath(distance, end), paint);
+        final end = (distance + dashWidth).clamp(
+          0.0,
+          metric.length,
+        );
+
+        canvas.drawPath(
+          metric.extractPath(distance, end),
+          paint,
+        );
+
         distance += dashWidth + gapWidth;
       }
     }
   }
 
   @override
-  bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) {
-    return oldDelegate.color != color || oldDelegate.radius != radius;
+  bool shouldRepaint(
+    covariant _DashedBorderPainter oldDelegate,
+  ) {
+    return oldDelegate.color != color ||
+        oldDelegate.radius != radius;
   }
 }
