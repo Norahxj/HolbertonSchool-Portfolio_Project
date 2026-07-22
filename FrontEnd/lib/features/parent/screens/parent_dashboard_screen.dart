@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/child/services/point_api_service.dart';
 import 'package:frontend/features/parent/services/child_api_service.dart';
 import 'package:frontend/features/parent/services/dashboard_api_service.dart';
 
@@ -9,25 +10,33 @@ import '../../../core/widgets/screen_background.dart';
 import '../../../models/child_dashboard_model.dart';
 import '../../../models/child_model.dart';
 import '../../../models/user_model.dart';
+import '../../../services/task_api_service.dart';
 import '../../../services/user_api_service.dart';
 import '../../child/screens/child_profile_screen.dart';
 import 'add_child_screen.dart';
+import 'task_review_screen.dart';
 
-// Parent Home Dashboard screen (Screen 4).
 class ParentDashboardScreen extends StatefulWidget {
-  const ParentDashboardScreen({
-    super.key,
-  });
+  const ParentDashboardScreen({super.key});
 
   @override
-  State<ParentDashboardScreen> createState() =>
-      _ParentDashboardScreenState();
+  State<ParentDashboardScreen> createState() => _ParentDashboardScreenState();
 }
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
+  final TaskApiService _taskApiService = TaskApiService();
+
+  final PointApiService _pointApiService = PointApiService();
+
   late Future<UserModel> _userFuture;
-  late Future<List<ChildDashboardModel>> _dashboardFuture;
+
   late Future<List<ChildModel>> _childrenFuture;
+
+  late Future<List<ChildDashboardModel>> _dashboardFuture;
+
+  late Future<int> _pendingReviewCountFuture;
+
+  late Future<Map<String, int?>> _pointsFuture;
 
   @override
   void initState() {
@@ -37,26 +46,94 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 
   void _loadData() {
     _userFuture = UserApiService().getCurrentUser();
-    _dashboardFuture = DashboardApiService().getDashboard();
+
     _childrenFuture = ChildApiService().getChildren();
+
+    _dashboardFuture = DashboardApiService().getDashboard();
+
+    _pendingReviewCountFuture = _getPendingReviewCount(_childrenFuture);
+
+    _pointsFuture = _getChildrenPoints(_childrenFuture);
+  }
+
+  Future<int> _getPendingReviewCount(
+    Future<List<ChildModel>> childrenFuture,
+  ) async {
+    final children = await childrenFuture;
+
+    int count = 0;
+
+    for (final child in children) {
+      final assignments = await _taskApiService.getAssignmentsForChild(
+        child.id,
+      );
+
+      count += assignments.where((assignment) {
+        return assignment.needsParentApproval;
+      }).length;
+    }
+
+    return count;
+  }
+
+  Future<Map<String, int?>> _getChildrenPoints(
+    Future<List<ChildModel>> childrenFuture,
+  ) async {
+    final children = await childrenFuture;
+
+    final entries = await Future.wait(
+      children.map((child) async {
+        try {
+          final points = await _pointApiService.getChildPoints(child.id);
+
+          return MapEntry<String, int?>(child.id, points);
+        } catch (error) {
+          debugPrint(
+            'Could not load points for '
+            '${child.name}: $error',
+          );
+
+          return MapEntry<String, int?>(child.id, null);
+        }
+      }),
+    );
+
+    return Map<String, int?>.fromEntries(entries);
   }
 
   Future<void> _openAddChildScreen() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const AddChildScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const AddChildScreen()),
     );
 
     if (!mounted) return;
 
     if (result == true) {
-      setState(() {
-        _dashboardFuture = DashboardApiService().getDashboard();
-        _childrenFuture = ChildApiService().getChildren();
-      });
+      setState(_loadData);
     }
+  }
+
+  Future<void> _openTaskReviewScreen() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const TaskReviewScreen()),
+    );
+
+    if (!mounted) return;
+
+    // Refresh the progress, points and review count.
+    setState(_loadData);
+  }
+
+  ChildModel? _findChild(List<ChildModel> children, String childId) {
+    for (final child in children) {
+      if (child.id == childId) {
+        return child;
+      }
+    }
+
+    return null;
   }
 
   @override
@@ -70,11 +147,8 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
             child: FutureBuilder<UserModel>(
               future: _userFuture,
               builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (userSnapshot.hasError || !userSnapshot.hasData) {
@@ -87,20 +161,13 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 
                 return Column(
                   children: [
-                    // The duplicated black parent name was removed.
-                    // The parent name now appears only inside this banner.
-                    _WelcomeBanner(
-                      user: user,
-                    ),
+                    _WelcomeBanner(user: user),
 
                     const SizedBox(height: AppSpacing.lg),
 
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Text(
-                        'أطفالك',
-                        style: AppTextStyles.arabicTitle,
-                      ),
+                      child: Text('أطفالك', style: AppTextStyles.arabicTitle),
                     ),
 
                     const SizedBox(height: AppSpacing.sm),
@@ -110,11 +177,8 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                       builder: (context, childrenSnapshot) {
                         if (childrenSnapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.all(AppSpacing.md),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
+                          return const Center(
+                            child: CircularProgressIndicator(),
                           );
                         }
 
@@ -128,16 +192,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                             childrenSnapshot.data ?? <ChildModel>[];
 
                         if (children.isEmpty) {
-                          return const Padding(
-                            padding: EdgeInsets.all(AppSpacing.md),
-                            child: Text(
-                              'لا يوجد أطفال بعد',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          );
+                          return const Center(child: Text('لا يوجد أطفال بعد'));
                         }
 
                         return FutureBuilder<List<ChildDashboardModel>>(
@@ -145,20 +200,14 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                           builder: (context, dashboardSnapshot) {
                             if (dashboardSnapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const Padding(
-                                padding: EdgeInsets.all(AppSpacing.md),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
+                              return const Center(
+                                child: CircularProgressIndicator(),
                               );
                             }
 
                             if (dashboardSnapshot.hasError) {
-                              return Center(
-                                child: Text(
-                                  dashboardSnapshot.error.toString(),
-                                  textAlign: TextAlign.center,
-                                ),
+                              return const Center(
+                                child: Text('تعذر تحميل تقدم الأطفال'),
                               );
                             }
 
@@ -166,35 +215,41 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                                 dashboardSnapshot.data ??
                                 <ChildDashboardModel>[];
 
-                            if (dashboards.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.all(AppSpacing.md),
-                                child: Text(
-                                  'لا توجد بيانات تقدّم بعد',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 136, 120, 159),
-                                  ),
-                                ),
-                              );
-                            }
+                            return FutureBuilder<Map<String, int?>>(
+                              future: _pointsFuture,
+                              builder: (context, pointsSnapshot) {
+                                final pointsByChild =
+                                    pointsSnapshot.data ?? <String, int?>{};
 
-                            return Column(
-                              children: dashboards.map((dashboard) {
-                                final child = children.firstWhere(
-                                  (item) => item.id == dashboard.childId,
-                                );
+                                final pointsAreLoading =
+                                    pointsSnapshot.connectionState ==
+                                    ConnectionState.waiting;
 
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: AppSpacing.sm,
-                                  ),
-                                  child: _ChildProgressCard(
-                                    child: child,
-                                    dashboard: dashboard,
-                                  ),
+                                return Column(
+                                  children: dashboards.map((dashboard) {
+                                    final child = _findChild(
+                                      children,
+                                      dashboard.childId,
+                                    );
+
+                                    if (child == null) {
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: AppSpacing.sm,
+                                      ),
+                                      child: _ChildProgressCard(
+                                        child: child,
+                                        dashboard: dashboard,
+                                        points: pointsByChild[child.id],
+                                        pointsAreLoading: pointsAreLoading,
+                                      ),
+                                    );
+                                  }).toList(),
                                 );
-                              }).toList(),
+                              },
                             );
                           },
                         );
@@ -203,16 +258,19 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 
                     const SizedBox(height: AppSpacing.sm),
 
-                    _AddChildButton(
-                      onTap: _openAddChildScreen,
+                    _AddChildButton(onTap: _openAddChildScreen),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    FutureBuilder<int>(
+                      future: _pendingReviewCountFuture,
+                      builder: (context, snapshot) {
+                        return _TaskReviewButton(
+                          count: snapshot.data ?? 0,
+                          onTap: _openTaskReviewScreen,
+                        );
+                      },
                     ),
-
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // TODO: Add the "مراجعة المهام" section later
-                    // when the task-review feature is ready.
-                    //
-                    // const _TaskReviewPreviewCard(),
 
                     const SizedBox(height: AppSpacing.lg),
                   ],
@@ -226,22 +284,16 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   }
 }
 
-// Welcome banner containing the parent's name.
 class _WelcomeBanner extends StatelessWidget {
   final UserModel user;
 
-  const _WelcomeBanner({
-    required this.user,
-  });
+  const _WelcomeBanner({required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.lg,
-      ),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFFE4D9F7),
         borderRadius: BorderRadius.circular(24),
@@ -250,31 +302,27 @@ class _WelcomeBanner extends StatelessWidget {
         children: [
           const Icon(
             Icons.home_rounded,
-            size: 60,
             color: AppColors.primaryDark,
+            size: 48,
           ),
 
           const SizedBox(height: AppSpacing.sm),
 
           Text(
-            'مرحبًا ${user.firstName} ${user.lastName}!',
+            'مرحبًا ${user.firstName} '
+            '${user.lastName}!',
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 40, 15, 104),
+              color: AppColors.primaryDark,
             ),
           ),
-
-          const SizedBox(height: 4),
 
           const Text(
             'أنتِ تبنين جيلاً رائعًا',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              color: Color.fromARGB(255, 87, 56, 129),
-            ),
+            style: TextStyle(color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -282,88 +330,69 @@ class _WelcomeBanner extends StatelessWidget {
   }
 }
 
-// Card showing one child's information and weekly progress.
 class _ChildProgressCard extends StatelessWidget {
   final ChildModel child;
   final ChildDashboardModel dashboard;
+  final int? points;
+  final bool pointsAreLoading;
 
   const _ChildProgressCard({
     required this.child,
     required this.dashboard,
+    required this.points,
+    required this.pointsAreLoading,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => ChildProfileScreen(
-              child: child,
-              dashboard: dashboard,
-            ),
+            builder: (_) =>
+                ChildProfileScreen(child: child, dashboard: dashboard),
           ),
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
-        ),
+        padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
         ),
         child: Row(
+          textDirection: TextDirection.ltr,
           children: [
-            _ChildAvatar(
-              avatarIndex: child.avatarIndex,
-            ),
+            // The old child avatar was replaced
+            // with the child's current points.
+            _ChildPointsBadge(points: points, isLoading: pointsAreLoading),
 
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      dashboard.childName,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+              child: Column(
+                children: [
+                  Text(
+                    dashboard.childName,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.textPrimary,
                     ),
+                  ),
 
-                    const SizedBox(height: 2),
+                  const SizedBox(height: 2),
 
-                    Text(
-                      '${dashboard.childAge} سنوات',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
+                  Text(
+                    '${dashboard.childAge} سنوات',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.textSecondary),
+                  ),
+                ],
               ),
             ),
 
-            _WeeklyProgressRing(
-              percent: dashboard.progressPercentage.round(),
-            ),
+            _ProgressRing(percent: dashboard.progressPercentage.round()),
           ],
         ),
       ),
@@ -371,61 +400,65 @@ class _ChildProgressCard extends StatelessWidget {
   }
 }
 
-// Displays the avatar selected when the child was added.
-class _ChildAvatar extends StatelessWidget {
-  final int avatarIndex;
+class _ChildPointsBadge extends StatelessWidget {
+  final int? points;
+  final bool isLoading;
 
-  const _ChildAvatar({
-    required this.avatarIndex,
-  });
+  const _ChildPointsBadge({required this.points, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
-    IconData icon;
-    Color backgroundColor;
-    Color iconColor;
-
-    if (avatarIndex == 0) {
-      icon = Icons.boy;
-      backgroundColor = const Color(0xFFD9F0DD);
-      iconColor = const Color(0xFF3E8E5A);
-    } else if (avatarIndex == 1) {
-      icon = Icons.boy;
-      backgroundColor = const Color(0xFFD7E9F7);
-      iconColor = const Color(0xFF2B6CA3);
-    } else if (avatarIndex == 2) {
-      icon = Icons.girl;
-      backgroundColor = AppColors.primaryLight;
-      iconColor = AppColors.primary;
-   } else {
-     icon = Icons.girl;//
-     backgroundColor = const Color(0xFFFBE3EA);
-      iconColor = const Color(0xFFD1637F);
-    }
-
     return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        color: backgroundColor,
+      width: 64,
+      height: 64,
+      decoration: const BoxDecoration(
+        color: AppColors.goldLight,
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        icon,
-        color: iconColor,
-        size: 28,
-      ),
+      child: isLoading
+          ? const Center(
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.gold,
+                ),
+              ),
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.auto_awesome, color: AppColors.gold, size: 14),
+
+                const SizedBox(height: 1),
+
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    points?.toString() ?? '—',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+
+                const Text(
+                  'نقطة',
+                  style: TextStyle(fontSize: 8, color: AppColors.textSecondary),
+                ),
+              ],
+            ),
     );
   }
 }
 
-// Circular weekly progress indicator.
-class _WeeklyProgressRing extends StatelessWidget {
+class _ProgressRing extends StatelessWidget {
   final int percent;
 
-  const _WeeklyProgressRing({
-    required this.percent,
-  });
+  const _ProgressRing({required this.percent});
 
   @override
   Widget build(BuildContext context) {
@@ -444,32 +477,16 @@ class _WeeklyProgressRing extends StatelessWidget {
               value: safePercent / 100,
               strokeWidth: 5,
               backgroundColor: AppColors.primaryLight,
-              valueColor: const AlwaysStoppedAnimation(
-                AppColors.primary,
-              ),
+              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
             ),
           ),
 
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$safePercent%',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-
-              const Text(
-                'أسبوعي',
-                style: TextStyle(
-                  fontSize: 7,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
+          Text(
+            '$safePercent%',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
           ),
         ],
       ),
@@ -477,127 +494,97 @@ class _WeeklyProgressRing extends StatelessWidget {
   }
 }
 
-// Button that opens the Add Child screen.
 class _AddChildButton extends StatelessWidget {
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
-  const _AddChildButton({
-    required this.onTap,
-  });
+  const _AddChildButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: CustomPaint(
-        painter: _DashedBorderPainter(
-          color: AppColors.primary.withOpacity(0.4),
-          radius: 20,
-        ),
-        child: Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
+    return OutlinedButton(
+      onPressed: onTap,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(60),
+        side: const BorderSide(color: AppColors.primary),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      child: const Row(
+        textDirection: TextDirection.ltr,
+        children: [
+          CircleAvatar(
+            backgroundColor: AppColors.primary,
+            child: Icon(Icons.add, color: Colors.white),
           ),
-          child: Row(
-            // Keeps the plus button on the left.
-            textDirection: TextDirection.ltr,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: const BoxDecoration(
+
+          Expanded(
+            child: Center(
+              child: Text(
+                'إضافة طفل',
+                style: TextStyle(
                   color: AppColors.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 22,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    'إضافة طفل',
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryDark,
-                    ),
-                  ),
-                ),
-              ),
-
-              // Balances the plus button and keeps the text centered.
-              const SizedBox(width: 44),
-            ],
+            ),
           ),
-        ),
+
+          SizedBox(width: 40),
+        ],
       ),
     );
   }
 }
 
-// Draws the dashed border around the Add Child button.
-class _DashedBorderPainter extends CustomPainter {
-  final Color color;
-  final double radius;
+class _TaskReviewButton extends StatelessWidget {
+  final int count;
+  final VoidCallback onTap;
 
-  _DashedBorderPainter({
-    required this.color,
-    this.radius = 16,
-  });
+  const _TaskReviewButton({required this.count, required this.onTap});
 
   @override
-  void paint(Canvas canvas, Size size) {
-    const strokeWidth = 1.5;
-    const dashWidth = 6.0;
-    const gapWidth = 4.0;
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.card,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Row(
+            textDirection: TextDirection.rtl,
+            children: [
+              const Icon(Icons.fact_check_outlined, color: AppColors.primary),
 
-    final roundedRectangle = RRect.fromRectAndRadius(
-      Rect.fromLTWH(
-        0,
-        0,
-        size.width,
-        size.height,
+              const SizedBox(width: AppSpacing.md),
+
+              const Expanded(
+                child: Text(
+                  'مراجعة المهام',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+
+              if (count > 0)
+                CircleAvatar(
+                  radius: 14,
+                  backgroundColor: AppColors.error,
+                  child: Text(
+                    '$count',
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                )
+              else
+                const Icon(Icons.chevron_left, color: AppColors.textSecondary),
+            ],
+          ),
+        ),
       ),
-      Radius.circular(radius),
     );
-
-    final path = Path()..addRRect(roundedRectangle);
-
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    for (final metric in path.computeMetrics()) {
-      double distance = 0;
-
-      while (distance < metric.length) {
-        final end = (distance + dashWidth).clamp(
-          0.0,
-          metric.length,
-        );
-
-        canvas.drawPath(
-          metric.extractPath(distance, end),
-          paint,
-        );
-
-        distance += dashWidth + gapWidth;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(
-    covariant _DashedBorderPainter oldDelegate,
-  ) {
-    return oldDelegate.color != color ||
-        oldDelegate.radius != radius;
   }
 }
