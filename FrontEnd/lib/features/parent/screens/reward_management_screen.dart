@@ -91,8 +91,16 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   }
 
   Future<void> _loadSelectedChildData() async {
-    await Future.wait([_loadCurrentRewards(), _loadRewardSuggestions()]);
+  final requests = <Future<void>>[
+    _loadCurrentRewards(),
+  ];
+
+  if (rewardSuggestions.isEmpty) {
+    requests.add(_loadRewardSuggestions());
   }
+
+  await Future.wait(requests);
+}
 
   Future<void> _selectChild(String childId) async {
     if (selectedChildId == childId) {
@@ -102,7 +110,6 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
     setState(() {
       selectedChildId = childId;
       currentRewards = [];
-      rewardSuggestions = [];
     });
 
     await _loadSelectedChildData();

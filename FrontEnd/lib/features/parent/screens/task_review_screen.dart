@@ -52,17 +52,30 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
 
       final reviewTasks = <_ReviewTask>[];
 
-      for (final child in children) {
-        final assignments = await _taskApiService.getAssignmentsForChild(
-          child.id,
-        );
+      final assignmentsByChild = await Future.wait(
+  children.map((child) async {
+    final assignments =
+        await _taskApiService.getAssignmentsForChild(child.id);
 
-        for (final assignment in assignments) {
-          if (assignment.needsParentApproval) {
-            reviewTasks.add(_ReviewTask(child: child, assignment: assignment));
-          }
-        }
-      }
+    return MapEntry(child, assignments);
+  }),
+);
+
+for (final entry in assignmentsByChild) {
+  final child = entry.key;
+  final assignments = entry.value;
+
+  for (final assignment in assignments) {
+    if (assignment.needsParentApproval) {
+      reviewTasks.add(
+        _ReviewTask(
+          child: child,
+          assignment: assignment,
+        ),
+      );
+    }
+  }
+}
 
       reviewTasks.sort((first, second) {
         final firstDate = first.assignment.completedAt;

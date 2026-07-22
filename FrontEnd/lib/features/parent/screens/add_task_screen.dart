@@ -198,19 +198,23 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   Future<void> _loadChildren() async {
-    try {
-      final data = await _childApiService.getChildren();
+  try {
+    final data = await _childApiService.getChildren();
 
-      setState(() {
-        children = data;
-        isLoadingChildren = false;
-      });
-    } on DioException {
-      setState(() {
-        isLoadingChildren = false;
-      });
-    }
+    if (!mounted) return;
+
+    setState(() {
+      children = data;
+      isLoadingChildren = false;
+    });
+  } on DioException {
+    if (!mounted) return;
+
+    setState(() {
+      isLoadingChildren = false;
+    });
   }
+}
 
   Future<void> _loadTaskSuggestions() async {
     if (selectedChildIds.isEmpty || selectedTaskType == null) {

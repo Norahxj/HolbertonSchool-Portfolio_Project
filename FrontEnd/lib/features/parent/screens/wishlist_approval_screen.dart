@@ -57,18 +57,33 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
       final pending = <_WishEntry>[];
       final approved = <_WishEntry>[];
 
-      for (final child in children) {
-        final wishes = await _wishlistService.getChildWishes(child.id);
-        for (final wish in wishes) {
-          final entry = _WishEntry(wish: wish, childName: child.name);
-          final status = wish.status.toUpperCase();
-          if (status == 'PENDING') {
-            pending.add(entry);
-          } else if (status == 'APPROVED') {
-            approved.add(entry);
-          }
-        }
-      }
+      final wishesByChild = await Future.wait(
+  children.map((child) async {
+    final wishes = await _wishlistService.getChildWishes(child.id);
+
+    return MapEntry(child, wishes);
+  }),
+);
+
+for (final entry in wishesByChild) {
+  final child = entry.key;
+  final wishes = entry.value;
+
+  for (final wish in wishes) {
+    final wishEntry = _WishEntry(
+      wish: wish,
+      childName: child.name,
+    );
+
+    final status = wish.status.toUpperCase();
+
+    if (status == 'PENDING') {
+      pending.add(wishEntry);
+    } else if (status == 'APPROVED') {
+      approved.add(wishEntry);
+    }
+  }
+}
 
       setState(() {
         _pendingWishes = pending;
