@@ -186,22 +186,22 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                                 assignment.status.toLowerCase() == 'pending'
                                 ? () => _completeAssignment(assignment.id)
                                 : null,
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => ChildTaskDetailsScreen(
-                                    title: assignment.task.title,
-                                    points: assignment.task.points,
-                                    description: assignment.task.description,
-                                    frequencyLabel:
-                                        assignment.task.taskFrequency,
+                                    assignment: assignment,
                                     icon: _categoryStyle(
                                       assignment.task.category,
                                     ).icon,
                                   ),
                                 ),
                               );
+
+                              if (!mounted) return;
+
+                              await _loadData(showPageLoader: false);
                             },
                           ),
                         ),
