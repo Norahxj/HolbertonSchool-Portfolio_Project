@@ -84,18 +84,20 @@ for (final entry in wishesByChild) {
     }
   }
 }
-
+    if (!mounted) return;
       setState(() {
         _pendingWishes = pending;
         _approvedWishes = approved;
         _isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _errorMessage = 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
-        _isLoading = false;
-      });
-    }
+  if (!mounted) return;
+
+  setState(() {
+    _errorMessage = 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
+    _isLoading = false;
+  });
+}
   }
 
   Future<void> _approveWish(String wishId, int targetPoints) async {
