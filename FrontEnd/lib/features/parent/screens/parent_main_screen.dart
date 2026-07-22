@@ -25,51 +25,78 @@ class ParentMainScreen extends StatefulWidget {
 
 class _ParentMainScreenState extends State<ParentMainScreen> {
   late int _currentIndex;
-int _tasksResetVersion = 0;
-  
+  late bool _isArabic;
+
+  int _tasksResetVersion = 0;
+
   @override
   void initState() {
     super.initState();
+
     _currentIndex = widget.initialIndex;
+    _isArabic = widget.isArabic;
+  }
+
+  @override
+  void didUpdateWidget(covariant ParentMainScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Keep this screen synchronized if the language is changed
+    // from another part of the app.
+    if (oldWidget.isArabic != widget.isArabic) {
+      setState(() {
+        _isArabic = widget.isArabic;
+      });
+    }
   }
 
   void _changePage(int index) {
-  if (_currentIndex == index) {
-    if (index == 0) {
-      setState(() {
-        _tasksResetVersion++;
-      });
+    // Pressing the Tasks tab again resets the Add Task form.
+    if (_currentIndex == index) {
+      if (index == 0) {
+        setState(() {
+          _tasksResetVersion++;
+        });
+      }
+
+      return;
     }
 
-    return;
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
-  setState(() {
-    _currentIndex = index;
-  });
-}
+  void _toggleLanguage() {
+    setState(() {
+      _isArabic = !_isArabic;
+    });
+
+    // Also notify the main app so the selected language can be
+    // shared with other screens.
+    widget.onLanguageToggle?.call();
+  }
+
+  List<Widget> get _pages {
+    return [
+      AddTaskScreen(resetVersion: _tasksResetVersion),
+      const RewardManagementScreen(),
+      const ParentDashboardScreen(),
+      const WishlistApprovalScreen(),
+      MoreSettingsScreen(
+        isArabic: _isArabic,
+        onLanguageToggle: _toggleLanguage,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final pages = [
-  AddTaskScreen(
-    resetVersion: _tasksResetVersion,
-  ),
-  const RewardManagementScreen(),
-  const ParentDashboardScreen(),
-  const WishlistApprovalScreen(),
-  MoreSettingsScreen(
-    isArabic: widget.isArabic,
-    onLanguageToggle: widget.onLanguageToggle,
-  ),
-];
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: _ParentBottomNavBar(
         currentIndex: _currentIndex,
+        isArabic: _isArabic,
         onTap: _changePage,
       ),
     );
@@ -78,17 +105,17 @@ int _tasksResetVersion = 0;
 
 class _ParentBottomNavBar extends StatelessWidget {
   final int currentIndex;
+  final bool isArabic;
   final ValueChanged<int> onTap;
 
   const _ParentBottomNavBar({
     required this.currentIndex,
+    required this.isArabic,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-    Directionality.of(context) == TextDirection.rtl;
     return SafeArea(
       top: false,
       child: SizedBox(
@@ -106,34 +133,46 @@ class _ParentBottomNavBar extends StatelessWidget {
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Colors.black.withValues(alpha: 0.06),
                       blurRadius: 12,
                       offset: const Offset(0, -2),
                     ),
                   ],
                 ),
                 child: Row(
+                  // Arabic navigation starts from the right.
+                  // English navigation starts from the left.
+                  textDirection: isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    // Appears on the far right when Arabic is selected.
                     _NavItem(
                       icon: Icons.list_alt,
                       label: isArabic ? 'المهام' : 'Tasks',
                       isSelected: currentIndex == 0,
                       onTap: () => onTap(0),
                     ),
-                    _NavItem(
-                      icon: Icons.card_giftcard_outlined,
-                      label: isArabic ? 'المكافآت' : 'Rewards',
-                      isSelected: currentIndex == 1,
-                      onTap: () => onTap(1),
-                    ),
-                    const SizedBox(width: 56),
+
                     _NavItem(
                       icon: Icons.favorite_border,
                       label: isArabic ? 'الأمنيات' : 'Wishes',
                       isSelected: currentIndex == 3,
                       onTap: () => onTap(3),
                     ),
+
+                    // Reserved space for the raised Home button.
+                    const SizedBox(width: 56),
+
+                    _NavItem(
+                      icon: Icons.card_giftcard_outlined,
+                      label: isArabic ? 'المكافآت' : 'Rewards',
+                      isSelected: currentIndex == 1,
+                      onTap: () => onTap(1),
+                    ),
+
+                    // Appears on the far left when Arabic is selected.
                     _NavItem(
                       icon: Icons.more_horiz,
                       label: isArabic ? 'المزيد' : 'More',
@@ -144,6 +183,7 @@ class _ParentBottomNavBar extends StatelessWidget {
                 ),
               ),
             ),
+
             Positioned(
               top: 0,
               left: 0,
@@ -165,7 +205,7 @@ class _ParentBottomNavBar extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primary.withOpacity(0.25),
+                              color: AppColors.primary.withValues(alpha: 0.25),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -179,9 +219,12 @@ class _ParentBottomNavBar extends StatelessWidget {
                           size: 26,
                         ),
                       ),
+
                       const SizedBox(height: 2),
+
                       Text(
                         isArabic ? 'الرئيسية' : 'Home',
+                        maxLines: 1,
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -228,21 +271,20 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.textSecondary,
+              color: isSelected ? AppColors.primary : AppColors.textSecondary,
               size: 22,
             ),
+
             const SizedBox(height: 4),
+
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 10,
-                fontWeight:
-                    isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected
-                    ? AppColors.primary
-                    : AppColors.textSecondary,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
               ),
             ),
           ],
