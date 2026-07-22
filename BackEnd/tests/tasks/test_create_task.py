@@ -771,18 +771,21 @@ def test_service_returns_child_not_found(
     service = task_routes.task_service
     captured = []
 
-    def fake_get_child_for_guardian(child_id, parent_id):
-        captured.append((child_id, parent_id))
-        if child_id == "missing-child":
-            return None
-        return object()
+
+    def fake_get_children_for_guardian(child_ids, parent_id):
+        captured.append((child_ids, parent_id))
+
+        return [
+        object()
+        for child_id in child_ids
+        if child_id != "missing-child"
+        ]
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        fake_get_child_for_guardian,
+        "get_children_for_guardian",
+        fake_get_children_for_guardian,
     )
-
     task, error = service.create_task(
         "parent-id",
         {
@@ -796,9 +799,11 @@ def test_service_returns_child_not_found(
     assert task is None
     assert error == "child_not_found"
     assert captured == [
-        ("existing-child", "parent-id"),
-        ("missing-child", "parent-id"),
-    ]
+    (
+        ["existing-child", "missing-child"],
+        "parent-id",
+    )
+]
 
 
 def test_service_rolls_back_when_task_creation_fails(
@@ -810,8 +815,8 @@ def test_service_rolls_back_when_task_creation_fails(
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: fake_child,
+        "get_children_for_guardian",
+        lambda child_id, parent_id: [fake_child],
     )
 
     monkeypatch.setattr(
@@ -868,8 +873,11 @@ def test_service_creates_task_child_for_each_child(
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: children[child_id],
+        "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        children[child_id]
+        for child_id in child_ids
+    ],
     )
 
     monkeypatch.setattr(
@@ -945,8 +953,8 @@ def test_service_creates_assignment_for_once_task(
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(),
+        "get_children_for_guardian",
+        lambda child_id, parent_id: [FakeChild()],
     )
 
     monkeypatch.setattr(
@@ -1016,8 +1024,8 @@ def test_service_does_not_create_assignment_when_not_due(
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(),
+        "get_children_for_guardian",
+        lambda child_id, parent_id: [FakeChild()],
     )
 
     monkeypatch.setattr(
@@ -1090,8 +1098,8 @@ def test_service_rolls_back_when_task_child_creation_fails(
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(),
+        "get_children_for_guardian",
+        lambda child_id, parent_id: [FakeChild()],
     )
 
     monkeypatch.setattr(
@@ -1148,8 +1156,10 @@ def test_service_rolls_back_when_assignment_creation_fails(
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(),
+        "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild()
+    ],
     )
 
     monkeypatch.setattr(
@@ -1215,8 +1225,8 @@ def test_service_commits_once_after_success(
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(),
+        "get_children_for_guardian",
+        lambda child_id, parent_id: [FakeChild()],
     )
 
     monkeypatch.setattr(
