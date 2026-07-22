@@ -590,10 +590,12 @@ def test_service_category_is_case_insensitive(
         {"FINANCIAL": []},
     )
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(10),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(10)
+    ],
+)
 
     suggestions, error = (
         service.get_random_suggestions(
@@ -728,10 +730,12 @@ def test_service_language_is_case_insensitive(
         {"FINANCIAL": [task]},
     )
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(10),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(10)
+    ],
+)
     monkeypatch.setattr(
         service_module.random,
         "sample",
@@ -757,11 +761,11 @@ def test_service_language_is_case_insensitive(
     assert suggestions[0]["title"] == "English title"
 
 
-def test_service_checks_every_child_for_guardian(
+def test_service_checks_all_children_for_guardian(
     monkeypatch,
 ):
     service = task_bank_routes.task_bank_service
-    captured = []
+    captured = {}
 
     monkeypatch.setattr(
         service_module,
@@ -769,17 +773,21 @@ def test_service_checks_every_child_for_guardian(
         {"SOCIAL": []},
     )
 
-    def fake_get_child_for_guardian(
-        child_id,
+    def fake_get_children_for_guardian(
+        child_ids,
         parent_id,
     ):
-        captured.append((child_id, parent_id))
-        return FakeChild(10)
+        captured["child_ids"] = child_ids
+        captured["parent_id"] = parent_id
+        return [
+            FakeChild(10),
+            FakeChild(10),
+        ]
 
     monkeypatch.setattr(
         service.child_repository,
-        "get_child_for_guardian",
-        fake_get_child_for_guardian,
+        "get_children_for_guardian",
+        fake_get_children_for_guardian,
     )
 
     suggestions, error = (
@@ -794,10 +802,10 @@ def test_service_checks_every_child_for_guardian(
 
     assert error is None
     assert suggestions == []
-    assert captured == [
-        ("child-1", "parent-123"),
-        ("child-2", "parent-123"),
-    ]
+    assert captured == {
+        "child_ids": ["child-1", "child-2"],
+        "parent_id": "parent-123",
+    }
 
 
 def test_service_returns_child_not_found_when_any_child_is_missing(
@@ -811,18 +819,13 @@ def test_service_returns_child_not_found_when_any_child_is_missing(
         {"SOCIAL": []},
     )
 
-    children = {
-        "child-1": FakeChild(10),
-        "child-2": None,
-    }
-
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: (
-            children[child_id]
-        ),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(10)
+    ],
+)
 
     result = service.get_random_suggestions(
         parent_id="parent-123",
@@ -871,18 +874,14 @@ def test_service_filters_tasks_for_all_children_age_range(
         },
     )
 
-    children = {
-        "child-1": FakeChild(10),
-        "child-2": FakeChild(14),
-    }
-
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: (
-            children[child_id]
-        ),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(10),
+        FakeChild(14),
+    ],
+)
 
     captured = {}
 
@@ -935,10 +934,12 @@ def test_service_samples_at_most_available_tasks(
         {"RELIGIOUS": tasks},
     )
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(10),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(10)
+    ],
+)
 
     captured = {}
 
@@ -991,10 +992,12 @@ def test_service_builds_english_suggestion(
         {"FINANCIAL": [task]},
     )
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(12),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(12)
+    ],
+)
     monkeypatch.setattr(
         service_module.random,
         "sample",
@@ -1049,10 +1052,12 @@ def test_service_builds_arabic_suggestion(
         {"SOCIAL": [task]},
     )
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(12),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(12)
+    ],
+)
     monkeypatch.setattr(
         service_module.random,
         "sample",
@@ -1103,10 +1108,12 @@ def test_service_uses_once_when_frequency_missing(
         {"MORAL": [task]},
     )
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(10),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(10)
+    ],
+)
     monkeypatch.setattr(
         service_module.random,
         "sample",
@@ -1160,10 +1167,12 @@ def test_service_returns_empty_list_when_no_tasks_are_suitable(
         },
     )
     monkeypatch.setattr(
-        service.child_repository,
-        "get_child_for_guardian",
-        lambda child_id, parent_id: FakeChild(10),
-    )
+    service.child_repository,
+    "get_children_for_guardian",
+    lambda child_ids, parent_id: [
+        FakeChild(10)
+    ],
+)
 
     captured = {}
 
