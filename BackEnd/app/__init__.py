@@ -39,7 +39,7 @@ def create_app(test_config=None):
     
     CORS(
         app,
-        resources={r"/api/*": {"origins": "*"}},
+        resources={r"/api/*": {"origins": "https://asalah-26b7d.web.app"}},
         supports_credentials=True,
     )
     app.config.from_object(Config)
