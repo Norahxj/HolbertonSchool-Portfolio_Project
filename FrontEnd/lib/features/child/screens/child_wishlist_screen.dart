@@ -218,13 +218,18 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
               // ── Add wish button ────────────────────────────────────────────
               GestureDetector(
                 onTap: () async {
-                  await Navigator.push(
+                  final wasAdded = await Navigator.push<bool>(
                     context,
                     MaterialPageRoute(
                       builder: (_) => const AddWishlistScreen(),
                     ),
                   );
-                  await _loadData();
+
+                  if (!mounted) return;
+
+                  if (wasAdded == true) {
+                    await _loadData();
+                  }
                 },
                 child: Container(
                   height: 56,
