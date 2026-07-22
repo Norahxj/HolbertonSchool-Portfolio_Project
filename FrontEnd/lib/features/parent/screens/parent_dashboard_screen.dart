@@ -57,24 +57,28 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   }
 
   Future<int> _getPendingReviewCount(
-    Future<List<ChildModel>> childrenFuture,
-  ) async {
-    final children = await childrenFuture;
+  Future<List<ChildModel>> childrenFuture,
+) async {
+  final children = await childrenFuture;
 
-    int count = 0;
-
-    for (final child in children) {
-      final assignments = await _taskApiService.getAssignmentsForChild(
+  final assignmentLists = await Future.wait(
+    children.map(
+      (child) => _taskApiService.getAssignmentsForChild(
         child.id,
-      );
+      ),
+    ),
+  );
 
-      count += assignments.where((assignment) {
-        return assignment.needsParentApproval;
-      }).length;
-    }
+  int count = 0;
 
-    return count;
+  for (final assignments in assignmentLists) {
+    count += assignments.where((assignment) {
+      return assignment.needsParentApproval;
+    }).length;
   }
+
+  return count;
+}
 
   Future<Map<String, int?>> _getChildrenPoints(
     Future<List<ChildModel>> childrenFuture,
