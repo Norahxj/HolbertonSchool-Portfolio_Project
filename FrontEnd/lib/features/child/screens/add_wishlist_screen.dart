@@ -154,18 +154,6 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
               const SizedBox(height: AppSpacing.lg),
 
-              const _FieldLabel('وعدي لأهلي'),
-              const SizedBox(height: AppSpacing.sm),
-              _WishTextField(
-                controller: promiseController,
-                hint:
-                    'مثال: سأرتب سريري كل يوم وأساعد أمي في المنزل حتى '
-                    'أستحق أمنيتي',
-                maxLines: 3,
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(

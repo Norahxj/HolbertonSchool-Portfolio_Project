@@ -173,7 +173,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                                   'لا توجد بيانات تقدّم بعد',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: AppColors.textSecondary,
+                                    color: Color.fromARGB(255, 136, 120, 159),
                                   ),
                                 ),
                               );
@@ -250,7 +250,7 @@ class _WelcomeBanner extends StatelessWidget {
         children: [
           const Icon(
             Icons.home_rounded,
-            size: 48,
+            size: 60,
             color: AppColors.primaryDark,
           ),
 
@@ -260,9 +260,9 @@ class _WelcomeBanner extends StatelessWidget {
             'مرحبًا ${user.firstName} ${user.lastName}!',
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppColors.primaryDark,
+              color: Color.fromARGB(255, 40, 15, 104),
             ),
           ),
 
@@ -272,8 +272,8 @@ class _WelcomeBanner extends StatelessWidget {
             'أنتِ تبنين جيلاً رائعًا',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
+              fontSize: 20,
+              color: Color.fromARGB(255, 87, 56, 129),
             ),
           ),
         ],
@@ -397,9 +397,9 @@ class _ChildAvatar extends StatelessWidget {
       icon = Icons.girl;
       backgroundColor = AppColors.primaryLight;
       iconColor = AppColors.primary;
-    } else {
-      icon = Icons.girl;
-      backgroundColor = const Color(0xFFFBE3EA);
+   } else {
+     icon = Icons.girl;//
+     backgroundColor = const Color(0xFFFBE3EA);
       iconColor = const Color(0xFFD1637F);
     }
 
@@ -500,6 +500,8 @@ class _AddChildButton extends StatelessWidget {
             horizontal: AppSpacing.md,
           ),
           child: Row(
+            // Keeps the plus button on the left.
+            textDirection: TextDirection.ltr,
             children: [
               Container(
                 width: 44,
@@ -519,6 +521,7 @@ class _AddChildButton extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'إضافة طفل',
+                    textDirection: TextDirection.rtl,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -528,7 +531,7 @@ class _AddChildButton extends StatelessWidget {
                 ),
               ),
 
-              // Empty space keeps the text visually centered.
+              // Balances the plus button and keeps the text centered.
               const SizedBox(width: 44),
             ],
           ),
