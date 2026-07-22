@@ -29,20 +29,24 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
 
   int _tasksResetVersion = 0;
 
+  late final Set<int> _loadedIndexes;
+
   @override
   void initState() {
     super.initState();
 
     _currentIndex = widget.initialIndex;
     _isArabic = widget.isArabic;
+
+    _loadedIndexes = {
+      widget.initialIndex,
+    };
   }
 
   @override
   void didUpdateWidget(covariant ParentMainScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Keep this screen synchronized if the language is changed
-    // from another part of the app.
     if (oldWidget.isArabic != widget.isArabic) {
       setState(() {
         _isArabic = widget.isArabic;
@@ -63,6 +67,7 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
     }
 
     setState(() {
+      _loadedIndexes.add(index);
       _currentIndex = index;
     });
   }
@@ -72,28 +77,45 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
       _isArabic = !_isArabic;
     });
 
-    // Also notify the main app so the selected language can be
-    // shared with other screens.
     widget.onLanguageToggle?.call();
   }
 
   List<Widget> get _pages {
     return [
-      AddTaskScreen(resetVersion: _tasksResetVersion),
-      const RewardManagementScreen(),
-      const ParentDashboardScreen(),
-      const WishlistApprovalScreen(),
-      MoreSettingsScreen(
-        isArabic: _isArabic,
-        onLanguageToggle: _toggleLanguage,
-      ),
+      _loadedIndexes.contains(0)
+          ? AddTaskScreen(
+              resetVersion: _tasksResetVersion,
+            )
+          : const SizedBox.shrink(),
+
+      _loadedIndexes.contains(1)
+          ? const RewardManagementScreen()
+          : const SizedBox.shrink(),
+
+      _loadedIndexes.contains(2)
+          ? const ParentDashboardScreen()
+          : const SizedBox.shrink(),
+
+      _loadedIndexes.contains(3)
+          ? const WishlistApprovalScreen()
+          : const SizedBox.shrink(),
+
+      _loadedIndexes.contains(4)
+          ? MoreSettingsScreen(
+              isArabic: _isArabic,
+              onLanguageToggle: _toggleLanguage,
+            )
+          : const SizedBox.shrink(),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
+      ),
       bottomNavigationBar: _ParentBottomNavBar(
         currentIndex: _currentIndex,
         isArabic: _isArabic,
