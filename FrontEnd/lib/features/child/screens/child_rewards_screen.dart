@@ -87,79 +87,77 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _error != null
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _error!,
-                          style: const TextStyle(color: AppColors.error),
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: _loadRewards,
-                          child: const Text('إعادة المحاولة'),
-                        ),
-                      ],
+            ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _error!,
+                      style: const TextStyle(color: AppColors.error),
                     ),
-                  )
-                : RefreshIndicator(
-                    onRefresh: _loadRewards,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            'المكافآت',
-                            style: AppTextStyles.arabicTitle,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Text(
-                            'مكافأة أسبوعية ترتبط بتقدّمك',
-                            style: AppTextStyles.body,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-
-                          if (_rewards.isEmpty)
-                            Container(
-                              padding: const EdgeInsets.all(AppSpacing.xl),
-                              decoration: BoxDecoration(
-                                color: AppColors.card,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Text(
-                                'لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            )
-                          else
-                            ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: _rewards.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: AppSpacing.md),
-                              itemBuilder: (context, index) {
-                                final reward = _rewards[index];
-                                return _RewardCard(
-                                  reward: reward,
-                                  onClaim: reward.status == 'unlocked'
-                                      ? () => _claimReward(reward.id)
-                                      : null,
-                                );
-                              },
-                            ),
-                        ],
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: _loadRewards,
+                      child: const Text('إعادة المحاولة'),
+                    ),
+                  ],
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: _loadRewards,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'المكافآت',
+                        style: AppTextStyles.arabicTitle,
+                        textAlign: TextAlign.center,
                       ),
-                    ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        'مكافأة أسبوعية ترتبط بتقدّمك',
+                        style: AppTextStyles.body,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+
+                      if (_rewards.isEmpty)
+                        Container(
+                          padding: const EdgeInsets.all(AppSpacing.xl),
+                          decoration: BoxDecoration(
+                            color: AppColors.card,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.textSecondary),
+                          ),
+                        )
+                      else
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _rewards.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: AppSpacing.md),
+                          itemBuilder: (context, index) {
+                            final reward = _rewards[index];
+                            return _RewardCard(
+                              reward: reward,
+                              onClaim: reward.status == 'unlocked'
+                                  ? () => _claimReward(reward.id)
+                                  : null,
+                            );
+                          },
+                        ),
+                    ],
                   ),
+                ),
+              ),
       ),
     );
   }
