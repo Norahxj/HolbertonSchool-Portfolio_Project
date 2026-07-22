@@ -10,7 +10,6 @@ import '../../../core/widgets/screen_background.dart';
 import '../../../models/child_dashboard_model.dart';
 import '../../../models/child_model.dart';
 import '../../../models/user_model.dart';
-import '../../../services/task_api_service.dart';
 import '../../../services/user_api_service.dart';
 import '../../child/screens/child_profile_screen.dart';
 import 'add_child_screen.dart';
@@ -24,7 +23,6 @@ class ParentDashboardScreen extends StatefulWidget {
 }
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
-  final TaskApiService _taskApiService = TaskApiService();
 
   final PointApiService _pointApiService = PointApiService();
 
@@ -51,33 +49,21 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 
     _dashboardFuture = DashboardApiService().getDashboard();
 
-    _pendingReviewCountFuture = _getPendingReviewCount(_childrenFuture);
+    _pendingReviewCountFuture = _getPendingReviewCount(_dashboardFuture);
 
     _pointsFuture = _getChildrenPoints(_childrenFuture);
   }
 
   Future<int> _getPendingReviewCount(
-  Future<List<ChildModel>> childrenFuture,
+  Future<List<ChildDashboardModel>> dashboardFuture,
 ) async {
-  final children = await childrenFuture;
+  final dashboards = await dashboardFuture;
 
-  final assignmentLists = await Future.wait(
-    children.map(
-      (child) => _taskApiService.getAssignmentsForChild(
-        child.id,
-      ),
-    ),
+  return dashboards.fold<int>(
+    0,
+    (total, dashboard) =>
+        total + dashboard.pendingReviewTasks,
   );
-
-  int count = 0;
-
-  for (final assignments in assignmentLists) {
-    count += assignments.where((assignment) {
-      return assignment.needsParentApproval;
-    }).length;
-  }
-
-  return count;
 }
 
   Future<Map<String, int?>> _getChildrenPoints(
