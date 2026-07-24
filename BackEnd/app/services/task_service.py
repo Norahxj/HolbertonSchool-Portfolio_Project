@@ -52,11 +52,9 @@ class TaskService:
             return None, "child_ids_required"
         if len(child_ids) != len(set(child_ids)):
             return None, "duplicate_child_ids"
-        children = [
-            self.child_repository.get_child_for_guardian(child_id, parent_id)
-            for child_id in child_ids
-        ]
-        if any(child is None for child in children):
+        children = self.child_repository.get_children_for_guardian(child_ids, parent_id,)
+
+        if len(children) != len(child_ids):
             return None, "child_not_found"
         try:
             task = self._build_task(parent_id, task_data)

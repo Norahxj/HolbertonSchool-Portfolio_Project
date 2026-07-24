@@ -1,125 +1,329 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/user_model.dart';
-import '../../../services/user_api_service.dart';
+
+import '../../../app.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
-import 'add_task_screen.dart';
-import 'family_settings_screen.dart';
-import 'parent_dashboard_screen.dart';
-import 'profile_screen.dart';
-import 'reward_management_screen.dart';
-import 'wishlist_approval_screen.dart';
+import '../../../models/user_model.dart';
+import '../../../services/user_api_service.dart';
 import '../../auth/services/auth_api_service.dart';
-import '../../../app.dart';
+import 'family_settings_screen.dart';
+import 'profile_screen.dart';
 
-// More / Settings screen (Screen 17).
-//
-// This first pass is static/placeholder only: the parent name and every
-// row action are hardcoded. No backend calls happen here yet, and none of
-// the rows navigate anywhere yet (see the TODO comments below).
-class MoreSettingsScreen extends StatelessWidget {
-  const MoreSettingsScreen({super.key});
+class MoreSettingsScreen extends StatefulWidget {
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
+
+  const MoreSettingsScreen({
+    super.key,
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
+
+  @override
+  State<MoreSettingsScreen> createState() =>
+      _MoreSettingsScreenState();
+}
+
+class _MoreSettingsScreenState
+    extends State<MoreSettingsScreen> {
+  late Future<UserModel> _userFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _userFuture =
+        UserApiService().getCurrentUser();
+  }
+
+  Future<void> _reloadUser() async {
+    final future =
+        UserApiService().getCurrentUser();
+
+    setState(() {
+      _userFuture = future;
+    });
+
+    try {
+      await future;
+    } catch (_) {
+      // FutureBuilder displays the error state.
+    }
+  }
+
+  Future<void> _openProfileScreen() async {
+    final updatedUser =
+        await Navigator.push<UserModel>(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const ProfileScreen(),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (updatedUser != null) {
+      setState(() {
+        _userFuture =
+            Future.value(updatedUser);
+      });
+    } else {
+      await _reloadUser();
+    }
+  }
+
+  void _showComingSoon() {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+      SnackBar(
+        content: Text(
+          widget.isArabic
+              ? 'هذه الميزة ستكون متاحة قريبًا.'
+              : 'This feature is coming soon.',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = widget.isArabic;
+
     return Scaffold(
-      body: ScreenBackground(
-        child: SafeArea(
-          bottom: false,
-          child: FutureBuilder<UserModel>(
-            future: UserApiService().getCurrentUser(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
+      body: Directionality(
+        textDirection: isArabic
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        child: ScreenBackground(
+          child: SafeArea(
+            bottom: false,
+            child: RefreshIndicator(
+              onRefresh: _reloadUser,
+              child: SingleChildScrollView(
+                physics:
+                    const AlwaysScrollableScrollPhysics(),
+                padding:
+                    const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.md,
+                  AppSpacing.lg,
+                  AppSpacing.xxl,
+                ),
+                child:
+                    FutureBuilder<UserModel>(
+                  future: _userFuture,
+                  builder: (
+                    context,
+                    snapshot,
+                  ) {
+                    if (snapshot
+                            .connectionState ==
+                        ConnectionState.waiting) {
+                      return SizedBox(
+                        height:
+                            MediaQuery.sizeOf(
+                                  context,
+                                ).height *
+                                0.65,
+                        child: const Center(
+                          child:
+                              CircularProgressIndicator(),
+                        ),
+                      );
+                    }
 
-              if (snapshot.hasError || !snapshot.hasData) {
-                return const Center(child: Text('Error loading user'));
-              }
+                    if (snapshot.hasError ||
+                        !snapshot.hasData) {
+                      return _SettingsErrorState(
+                        isArabic: isArabic,
+                        onRetry: _reloadUser,
+                      );
+                    }
 
-              final user = snapshot.data!;
+                    final user =
+                        snapshot.data!;
 
-              return Column(
-                children: [
-                  Text('المزيد', style: AppTextStyles.arabicTitle),
+                    return Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment
+                              .stretch,
+                      children: [
+                        Text(
+                          isArabic
+                              ? 'المزيد'
+                              : 'More',
+                          textAlign:
+                              TextAlign.center,
+                          style:
+                              AppTextStyles
+                                  .arabicTitle,
+                        ),
 
-                  const SizedBox(height: AppSpacing.lg),
+                        const SizedBox(
+                          height:
+                              AppSpacing.lg,
+                        ),
 
-                  _ProfileBanner(user: user),
+                        _ProfileBanner(
+                          user: user,
+                          isArabic:
+                              isArabic,
+                        ),
 
-                  const SizedBox(height: AppSpacing.lg),
+                        const SizedBox(
+                          height:
+                              AppSpacing.lg,
+                        ),
 
-                  const _SettingsCard(),
+                        _SettingsCard(
+                          isArabic:
+                              isArabic,
+                          onLanguageToggle:
+                              widget
+                                  .onLanguageToggle,
+                          onProfileTap:
+                              _openProfileScreen,
+                          onComingSoon:
+                              _showComingSoon,
+                        ),
 
-                  const SizedBox(height: AppSpacing.xl),
+                        const SizedBox(
+                          height:
+                              AppSpacing.xl,
+                        ),
 
-                  const _LogoutButton(),
+                        _LogoutButton(
+                          isArabic:
+                              isArabic,
+                        ),
 
-                  const SizedBox(height: AppSpacing.md),
-                ],
-              );
-            },
+                        const SizedBox(
+                          height:
+                              AppSpacing.md,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(),
     );
   }
 }
 
-// Purple banner showing the signed-in parent's name and role.
 class _ProfileBanner extends StatelessWidget {
   final UserModel user;
-  const _ProfileBanner({super.key, required this.user});
+  final bool isArabic;
+
+  const _ProfileBanner({
+    required this.user,
+    required this.isArabic,
+  });
+
+  String get _roleLabel {
+    switch (
+        user.guardianType.toUpperCase()) {
+      case 'MOTHER':
+        return isArabic
+            ? 'أم'
+            : 'Mother';
+
+      case 'FATHER':
+        return isArabic
+            ? 'أب'
+            : 'Father';
+
+      default:
+        return isArabic
+            ? 'ولي الأمر'
+            : 'Guardian';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
+      width: double.infinity,
+      padding:
+          const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.md,
       ),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: AppColors.primaryGradient,
+          colors:
+              AppColors.primaryGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius:
+            BorderRadius.circular(24),
       ),
       child: Row(
+        textDirection: isArabic
+            ? TextDirection.rtl
+            : TextDirection.ltr,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${user.firstName} ${user.lastName}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'ولي الأمر',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
           Container(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(
+                alpha: 0.25,
+              ),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person, color: Colors.white, size: 28),
+            child: const Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+
+          const SizedBox(
+            width: AppSpacing.md,
+          ),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: isArabic
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${user.firstName} '
+                  '${user.lastName}',
+                  textAlign: isArabic
+                      ? TextAlign.right
+                      : TextAlign.left,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight:
+                        FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                Text(
+                  _roleLabel,
+                  textAlign: isArabic
+                      ? TextAlign.right
+                      : TextAlign.left,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -127,19 +331,30 @@ class _ProfileBanner extends StatelessWidget {
   }
 }
 
-// White rounded card holding every settings row.
 class _SettingsCard extends StatelessWidget {
-  const _SettingsCard();
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
+  final VoidCallback onProfileTap;
+  final VoidCallback onComingSoon;
+
+  const _SettingsCard({
+    required this.isArabic,
+    required this.onLanguageToggle,
+    required this.onProfileTap,
+    required this.onComingSoon,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius:
+            BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.08),
+            color: AppColors.primary
+                .withValues(alpha: 0.08),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -149,44 +364,74 @@ class _SettingsCard extends StatelessWidget {
         children: [
           _SettingsRow(
             icon: Icons.person_outline,
-            label: 'الملف الشخصي',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
-              );
-            },
+            label: isArabic
+                ? 'الملف الشخصي'
+                : 'Personal profile',
+            isArabic: isArabic,
+            onTap: onProfileTap,
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           _SettingsRow(
             icon: Icons.home_outlined,
-            label: 'إعدادات العائلة',
+            label: isArabic
+                ? 'إعدادات العائلة'
+                : 'Family settings',
+            isArabic: isArabic,
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const FamilySettingsScreen()),
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const FamilySettingsScreen(),
+                ),
               );
             },
           ),
-          const Divider(height: 1, color: AppColors.border),
-          const _LanguageRow(),
-          const Divider(height: 1, color: AppColors.border),
-          _SettingsRow(
-            icon: Icons.notifications_none,
-            label: 'الإشعارات',
-            showComingSoon: true,
-            onTap: () {
-              // TODO: Notifications settings are not built yet.
-            },
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          _LanguageRow(
+            isArabic: isArabic,
+            onTap: onLanguageToggle,
+          ),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
+          _SettingsRow(
+            icon:
+                Icons.notifications_none,
+            label: isArabic
+                ? 'الإشعارات'
+                : 'Notifications',
+            isArabic: isArabic,
+            showComingSoon: true,
+            onTap: onComingSoon,
+          ),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           _SettingsRow(
             icon: Icons.help_outline,
-            label: 'المساعدة والدعم',
+            label: isArabic
+                ? 'المساعدة والدعم'
+                : 'Help and support',
+            isArabic: isArabic,
             showComingSoon: true,
-            onTap: () {
-              // TODO: Help & support screen is not built yet.
-            },
+            onTap: onComingSoon,
           ),
         ],
       ),
@@ -194,17 +439,18 @@ class _SettingsCard extends StatelessWidget {
   }
 }
 
-// One tappable row inside the settings card, e.g. "Personal profile".
 class _SettingsRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
   final bool showComingSoon;
+  final bool isArabic;
 
   const _SettingsRow({
     required this.icon,
     required this.label,
     required this.onTap,
+    required this.isArabic,
     this.showComingSoon = false,
   });
 
@@ -213,45 +459,84 @@ class _SettingsRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding:
+            const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.md,
         ),
         child: Row(
+          textDirection: isArabic
+              ? TextDirection.rtl
+              : TextDirection.ltr,
           children: [
-            const Icon(
-              Icons.chevron_left,
-              color: AppColors.textSecondary,
-              size: 20,
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (showComingSoon) ...[
-                    const _ComingSoonTag(),
-                    const SizedBox(width: AppSpacing.sm),
-                  ],
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
             Container(
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(12),
+                color:
+                    AppColors.primaryLight,
+                borderRadius:
+                    BorderRadius.circular(
+                  12,
+                ),
               ),
-              child: Icon(icon, color: AppColors.primaryDark, size: 20),
+              child: Icon(
+                icon,
+                color:
+                    AppColors.primaryDark,
+                size: 20,
+              ),
+            ),
+
+            const SizedBox(
+              width: AppSpacing.md,
+            ),
+
+            Expanded(
+              child: Row(
+                textDirection: isArabic
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+                children: [
+                  Flexible(
+                    child: Text(
+                      label,
+                      textAlign: isArabic
+                          ? TextAlign.right
+                          : TextAlign.left,
+                      style:
+                          const TextStyle(
+                        fontSize: 15,
+                        fontWeight:
+                            FontWeight.w600,
+                        color: AppColors
+                            .textPrimary,
+                      ),
+                    ),
+                  ),
+
+                  if (showComingSoon) ...[
+                    const SizedBox(
+                      width:
+                          AppSpacing.sm,
+                    ),
+
+                    _ComingSoonTag(
+                      isArabic:
+                          isArabic,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            Icon(
+              isArabic
+                  ? Icons.chevron_left
+                  : Icons.chevron_right,
+              color:
+                  AppColors.textSecondary,
+              size: 20,
             ),
           ],
         ),
@@ -260,21 +545,29 @@ class _SettingsRow extends StatelessWidget {
   }
 }
 
-// Small "قريبًا" (Coming soon) tag shown next to a couple of rows.
 class _ComingSoonTag extends StatelessWidget {
-  const _ComingSoonTag();
+  final bool isArabic;
+
+  const _ComingSoonTag({
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius:
+            BorderRadius.circular(12),
       ),
-      child: const Text(
-        'قريبًا',
-        style: TextStyle(
+      child: Text(
+        isArabic ? 'قريبًا' : 'Soon',
+        style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
           color: AppColors.primaryDark,
@@ -284,87 +577,135 @@ class _ComingSoonTag extends StatelessWidget {
   }
 }
 
-// The "Language" row. This is a visual toggle only for now — it does not
-// switch the app language yet. Real language switching already exists in
-// the language_toggle widget used on other screens.
 class _LanguageRow extends StatelessWidget {
-  const _LanguageRow();
+  final bool isArabic;
+  final VoidCallback? onTap;
+
+  const _LanguageRow({
+    required this.isArabic,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.md,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding:
+            const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        child: Row(
+          textDirection: isArabic
+              ? TextDirection.rtl
+              : TextDirection.ltr,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color:
+                    AppColors.primaryLight,
+                borderRadius:
+                    BorderRadius.circular(
+                  12,
+                ),
+              ),
+              child: const Icon(
+                Icons.language,
+                color:
+                    AppColors.primaryDark,
+                size: 20,
+              ),
+            ),
+
+            const SizedBox(
+              width: AppSpacing.md,
+            ),
+
+            Expanded(
+              child: Text(
+                isArabic
+                    ? 'اللغة'
+                    : 'Language',
+                textAlign: isArabic
+                    ? TextAlign.right
+                    : TextAlign.left,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight:
+                      FontWeight.w600,
+                  color:
+                      AppColors.textPrimary,
+                ),
+              ),
+            ),
+
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(
+                horizontal: 7,
+                vertical: 5,
+              ),
+              decoration: BoxDecoration(
+                color:
+                    AppColors.primaryLight,
+                borderRadius:
+                    BorderRadius.circular(
+                  20,
+                ),
+              ),
+              child: const Row(
+                textDirection:
+                    TextDirection.ltr,
+                children: [],
+              ),
+            ),
+
+            _LanguageToggle(
+              isArabic: isArabic,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageToggle extends StatelessWidget {
+  final bool isArabic;
+
+  const _LanguageToggle({
+    required this.isArabic,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 6,
+        vertical: 5,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius:
+            BorderRadius.circular(20),
       ),
       child: Row(
+        textDirection: TextDirection.ltr,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 22,
-                  height: 22,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'ع',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const Text(
-                  'EN',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-              ],
-            ),
+          _LanguageChoice(
+            text: 'ع',
+            isSelected: isArabic,
           ),
-          const Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'اللغة',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.language,
-              color: AppColors.primaryDark,
-              size: 20,
-            ),
+
+          const SizedBox(width: 5),
+
+          _LanguageChoice(
+            text: 'EN',
+            isSelected: !isArabic,
           ),
         ],
       ),
@@ -372,9 +713,55 @@ class _LanguageRow extends StatelessWidget {
   }
 }
 
-// Plain red "Log out" text link below the settings card.
+class _LanguageChoice
+    extends StatelessWidget {
+  final String text;
+  final bool isSelected;
+
+  const _LanguageChoice({
+    required this.text,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(
+        minWidth: 26,
+        minHeight: 26,
+      ),
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 5,
+      ),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? AppColors.primary
+            : Colors.transparent,
+        borderRadius:
+            BorderRadius.circular(14),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: isSelected
+              ? Colors.white
+              : AppColors.primaryDark,
+        ),
+      ),
+    );
+  }
+}
+
 class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
+  final bool isArabic;
+
+  const _LogoutButton({
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -386,18 +773,35 @@ class _LogoutButton extends StatelessWidget {
 
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const AsalahApp()),
+          MaterialPageRoute(
+            builder: (_) =>
+                const AsalahApp(),
+          ),
           (route) => false,
         );
       },
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
+        textDirection: isArabic
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        mainAxisAlignment:
+            MainAxisAlignment.center,
         children: [
-          Icon(Icons.logout, color: AppColors.error, size: 18),
-          SizedBox(width: AppSpacing.sm),
+          const Icon(
+            Icons.logout,
+            color: AppColors.error,
+            size: 18,
+          ),
+
+          const SizedBox(
+            width: AppSpacing.sm,
+          ),
+
           Text(
-            'تسجيل الخروج',
-            style: TextStyle(
+            isArabic
+                ? 'تسجيل الخروج'
+                : 'Log out',
+            style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: AppColors.error,
@@ -409,215 +813,53 @@ class _LogoutButton extends StatelessWidget {
   }
 }
 
-// Bottom navigation bar shown on this screen, with "المزيد" highlighted
-// as the active tab. Every item (including the floating home button)
-// switches screens with Navigator.pushReplacement, so tapping between
-// tabs never stacks pages.
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
+class _SettingsErrorState
+    extends StatelessWidget {
+  final bool isArabic;
+  final Future<void> Function() onRetry;
+
+  const _SettingsErrorState({
+    required this.isArabic,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: SizedBox(
-        height: 88,
-        child: Stack(
-          clipBehavior: Clip.none,
+    return SizedBox(
+      height:
+          MediaQuery.sizeOf(context)
+                  .height *
+              0.65,
+      child: Center(
+        child: Column(
+          mainAxisSize:
+              MainAxisSize.min,
           children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                height: 66,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 12,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const _NavItem(
-                      icon: Icons.more_horiz,
-                      label: 'المزيد',
-                      isActive: true,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const WishlistApprovalScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.favorite_border,
-                        label: 'الأمنيات',
-                      ),
-                    ),
-                    const SizedBox(width: 56),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RewardManagementScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.card_giftcard_outlined,
-                        label: 'المكافآت',
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const AddTaskScreen(),
-                          ),
-                        );
-                      },
-                      child: const _NavItem(
-                        icon: Icons.list_alt,
-                        label: 'المهام',
-                      ),
-                    ),
-                  ],
-                ),
+            Text(
+              isArabic
+                  ? 'تعذّر تحميل بيانات المستخدم.'
+                  : 'Could not load user information.',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.error,
               ),
             ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ParentDashboardScreen(),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.4),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.home_rounded,
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      const Text(
-                        'الرئيسية',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+
+            const SizedBox(
+              height: AppSpacing.sm,
+            ),
+
+            ElevatedButton(
+              onPressed: onRetry,
+              child: Text(
+                isArabic
+                    ? 'إعادة المحاولة'
+                    : 'Try again',
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-// One icon + label pair inside the bottom navigation bar. Set isActive to
-// true to draw it in the highlighted color (used for "المزيد" here).
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-  final int? badgeCount;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.isActive = false,
-    this.badgeCount,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final itemColor = isActive ? AppColors.primary : AppColors.textSecondary;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Icon(icon, color: itemColor, size: 22),
-            if (badgeCount != null)
-              Positioned(
-                top: -4,
-                right: -6,
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$badgeCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: itemColor,
-          ),
-        ),
-      ],
     );
   }
 }

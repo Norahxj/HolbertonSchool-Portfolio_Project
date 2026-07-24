@@ -12,6 +12,9 @@ class TaskAssignment(BaseModel):
             "status IN " "('PENDING', 'PENDING_REVIEW', 'APPROVED', 'REJECTED')",
             name="ck_task_assignments_status"
         ),
+        db.Index(
+        "ix_task_assignments_child_date", "child_id", "assigned_date",
+    ),
     )
     task_id = db.Column(db.String(36), db.ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False)
     child_id = db.Column(db.String(36), db.ForeignKey("children.id", ondelete="CASCADE"), nullable=False)

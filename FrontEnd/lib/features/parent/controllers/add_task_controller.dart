@@ -50,15 +50,7 @@ class AddTaskController {
     'السبت',
   ];
 
-  final monthlyDays = const [
-    1,
-    5,
-    10,
-    15,
-    20,
-    25,
-    30,
-  ];
+  final monthlyDays = const [1, 5, 10, 15, 20, 25, 30];
 
   Future<void> loadChildren() async {
     try {
@@ -79,7 +71,7 @@ class AddTaskController {
       await loadSuggestions(selectedCategory!);
     }
   }
-  
+
   Future<void> loadSuggestions(String category) async {
     selectedCategory = category;
     if (selectedChildIds.isEmpty) {
@@ -90,13 +82,10 @@ class AddTaskController {
     isLoadingSuggestions = true;
 
     try {
-      final response =
-          await taskApiService.getTaskSuggestions(
-        selectedChildIds,
-        category,
-      );
-
-      suggestions = response.data.suggestions;
+      suggestions = await taskApiService.getTaskSuggestions({
+        'child_ids': selectedChildIds,
+        'category': category,
+      });
       isLoadingSuggestions = false;
     } on DioException {
       suggestions = [];
@@ -105,9 +94,7 @@ class AddTaskController {
     }
   }
 
-  void useSuggestion(
-    TaskSuggestionModel suggestion,
-  ) {
+  void useSuggestion(TaskSuggestionModel suggestion) {
     taskNameController.text = suggestion.title;
     taskDescriptionController.text = suggestion.description;
     taskPoints = suggestion.points;
@@ -116,13 +103,11 @@ class AddTaskController {
 
     if (suggestion.recurrenceDay != null) {
       if (suggestion.taskFrequency == 'WEEKLY') {
-        selectedWeeklyDay =
-            weekDays[suggestion.recurrenceDay!];
+        selectedWeeklyDay = weekDays[suggestion.recurrenceDay!];
       }
 
       if (suggestion.taskFrequency == 'MONTHLY') {
-        selectedMonthlyDay =
-            suggestion.recurrenceDay!;
+        selectedMonthlyDay = suggestion.recurrenceDay!;
       }
     }
   }
@@ -145,9 +130,7 @@ class AddTaskController {
 
   int? get recurrenceDay {
     if (selectedFrequency == 1) {
-      return weekDays.indexOf(
-        selectedWeeklyDay,
-      );
+      return weekDays.indexOf(selectedWeeklyDay);
     }
 
     if (selectedFrequency == 2) {
@@ -174,33 +157,29 @@ class AddTaskController {
   }
 
   bool validateChildren() {
-  childError = TaskValidation.validateChildren(selectedChildIds);
-  return childError == null;
-}
+    childError = TaskValidation.validateChildren(selectedChildIds);
+    return childError == null;
+  }
+
   bool validateDetails() {
-  titleError = TaskValidation.validateTitle(
-    taskNameController.text,
-  );
+    titleError = TaskValidation.validateTitle(taskNameController.text);
 
-  descriptionError = TaskValidation.validateDescription(
-    taskDescriptionController.text,
-  );
+    descriptionError = TaskValidation.validateDescription(
+      taskDescriptionController.text,
+    );
 
-  pointsError = TaskValidation.validatePoints(
-    taskPoints,
-  );
+    pointsError = TaskValidation.validatePoints(taskPoints);
 
-  return titleError == null &&
-      descriptionError == null &&
-      pointsError == null;
-}
+    return titleError == null &&
+        descriptionError == null &&
+        pointsError == null;
+  }
 
   Future<void> saveTask() async {
     await taskApiService.createTask({
       'child_ids': selectedChildIds,
       'title': taskNameController.text.trim(),
-      'description':
-          taskDescriptionController.text.trim(),
+      'description': taskDescriptionController.text.trim(),
       'points': taskPoints,
       'task_frequency': taskFrequency,
       'recurrence_day': recurrenceDay,
@@ -209,9 +188,7 @@ class AddTaskController {
     });
   }
 
-  void handleBackendErrors(
-    DioException error,
-  ) {
+  void handleBackendErrors(DioException error) {
     final errors = error.response?.data['errors'];
 
     titleError = backendError(errors?['title']);
@@ -221,21 +198,19 @@ class AddTaskController {
     frequencyError = backendError(errors?['task_frequency']);
     recurrenceDayError = backendError(errors?['recurrence_day']);
   }
-  bool validateCategory() {
-  categoryError = TaskValidation.validateCategory(
-    selectedCategory,
-  );
 
-  return categoryError == null;
-}
+  bool validateCategory() {
+    categoryError = TaskValidation.validateCategory(selectedCategory);
+
+    return categoryError == null;
+  }
 
   String? backendError(dynamic error) {
     if (error == null) {
       return null;
     }
 
-    final message = error is List &&
-            error.isNotEmpty
+    final message = error is List && error.isNotEmpty
         ? error.first.toString()
         : error.toString();
 

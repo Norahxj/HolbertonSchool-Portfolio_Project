@@ -41,11 +41,12 @@ class TaskBankService:
         lang = lang.lower()
         if lang not in {"ar", "en"}:
             return None, "invalid_language"
-        children = [
-            self.child_repository.get_child_for_guardian(child_id, parent_id)
-            for child_id in child_ids
-        ]
-        if any(child is None for child in children):
+        children = self.child_repository.get_children_for_guardian(
+            child_ids,
+            parent_id,
+        )
+
+        if len(children) != len(child_ids):
             return None, "child_not_found"
         ages = [child.age for child in children]
         youngest_age = min(ages)

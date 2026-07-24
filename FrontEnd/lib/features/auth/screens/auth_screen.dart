@@ -1,19 +1,20 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/features/auth/services/auth_api_service.dart';
+import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/widgets/app_back_button.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
-import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
-import '../services/auth_api_service.dart';
-import '../../parent/screens/parent_dashboard_screen.dart';
-import 'package:dio/dio.dart';
+import '../../parent/screens/parent_main_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
-  final bool isLoading = false;
   final VoidCallback onLanguageToggle;
 
   const AuthScreen({
@@ -29,16 +30,25 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   bool isSignInSelected = true;
   bool isLoading = false;
+  bool _isArabic = true;
+
   String guardianType = 'mother';
 
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
   final TextEditingController firstNameController = TextEditingController();
+
   final TextEditingController familyNameController = TextEditingController();
+
   final TextEditingController registerEmailController = TextEditingController();
+
   final TextEditingController phoneController = TextEditingController();
+
   final TextEditingController registerPasswordController =
       TextEditingController();
+
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
@@ -57,6 +67,25 @@ class _AuthScreenState extends State<AuthScreen> {
   final AuthApiService _authApiService = AuthApiService();
 
   @override
+  void initState() {
+    super.initState();
+
+    // Start with the language received from the previous screen.
+    _isArabic = widget.isArabic;
+  }
+
+  @override
+  void didUpdateWidget(covariant AuthScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Keep this screen synchronized if the language
+    // is changed by another parent widget.
+    if (oldWidget.isArabic != widget.isArabic) {
+      _isArabic = widget.isArabic;
+    }
+  }
+
+  @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
@@ -66,10 +95,20 @@ class _AuthScreenState extends State<AuthScreen> {
     phoneController.dispose();
     registerPasswordController.dispose();
     confirmPasswordController.dispose();
+
     super.dispose();
   }
 
-  Future<void> _handleMainButton() async {
+  void _toggleLanguage() {
+    setState(() {
+      _isArabic = !_isArabic;
+    });
+
+    // Also update the language state in the main app.
+    widget.onLanguageToggle();
+  }
+
+  void _clearErrors() {
     setState(() {
       firstNameErrorText = null;
       familyNameErrorText = null;
@@ -80,6 +119,10 @@ class _AuthScreenState extends State<AuthScreen> {
       loginPasswordErrorText = null;
       confirmPasswordErrorText = null;
     });
+  }
+
+  Future<void> _handleMainButton() async {
+    _clearErrors();
 
     if (isSignInSelected) {
       await _login();
@@ -99,50 +142,84 @@ class _AuthScreenState extends State<AuthScreen> {
         password: passwordController.text,
       );
 
+      if (!mounted) return;
+
       if (response.response.statusCode == 200) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Login Success")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _isArabic ? 'تم تسجيل الدخول بنجاح' : 'Login successful',
+            ),
+          ),
+        );
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const ParentDashboardScreen()),
+          MaterialPageRoute(
+            builder: (_) => ParentMainScreen(
+              isArabic: _isArabic,
+              onLanguageToggle: widget.onLanguageToggle,
+            ),
+          ),
         );
       }
-    } on DioException catch (e) {
-      // Handle login errors
-      if (e.response?.statusCode == 400) {
-        final errors = e.response?.data["errors"] as Map<String, dynamic>?;
+    } on DioException catch (error) {
+      if (!mounted) return;
+
+      if (error.response?.statusCode == 400) {
+        final errors = error.response?.data['errors'] as Map<String, dynamic>?;
 
         if (errors != null) {
           setState(() {
-            loginEmailErrorText = (errors["email"] as List?)?.join("\n");
-            loginPasswordErrorText = (errors["password"] as List?)?.join("\n");
+            loginEmailErrorText = (errors['email'] as List?)?.join('\n');
+
+            loginPasswordErrorText = (errors['password'] as List?)?.join('\n');
           });
+
           return;
         }
       }
 
-      if (e.response?.statusCode == 401) {
-        final String? message = e.response?.data["error"]?.toString();
+      if (error.response?.statusCode == 401) {
+        final message = error.response?.data['error']?.toString();
 
         setState(() {
           loginEmailErrorText = message;
           loginPasswordErrorText = message;
         });
+
         return;
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_isArabic ? 'حدث خطأ في الخادم' : 'Server error'),
+        ),
+      );
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> _register() async {
+    if (registerPasswordController.text != confirmPasswordController.text) {
+      setState(() {
+        confirmPasswordErrorText = _isArabic
+            ? 'كلمتا المرور غير متطابقتين'
+            : 'Passwords do not match';
+      });
+
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });
+
     try {
       final response = await _authApiService.register(
         firstName: firstNameController.text.trim(),
@@ -153,69 +230,80 @@ class _AuthScreenState extends State<AuthScreen> {
         guardianType: guardianType,
       );
 
+      if (!mounted) return;
+
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
-        if (registerPasswordController.text != confirmPasswordController.text) {
-          setState(() {
-            confirmPasswordErrorText = "Passwords do not match";
-          });
-          return;
-        }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Register Success")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _isArabic
+                  ? 'تم إنشاء الحساب بنجاح'
+                  : 'Account created successfully',
+            ),
+          ),
+        );
 
         setState(() {
           isSignInSelected = true;
         });
       }
-    } on DioException catch (e) {
-      // Handle register errors
-      if (e.response?.statusCode == 400) {
-        final errors = e.response?.data["errors"] as Map<String, dynamic>?;
+    } on DioException catch (error) {
+      if (!mounted) return;
+
+      if (error.response?.statusCode == 400) {
+        final errors = error.response?.data['errors'] as Map<String, dynamic>?;
 
         if (errors != null) {
           setState(() {
-            firstNameErrorText = errors["first_name"]?.first;
-            familyNameErrorText = errors["last_name"]?.first;
-            registerEmailErrorText = (errors["email"] as List?)?.join("\n");
-            phoneErrorText = (errors["phone"] as List?)?.join("\n");
-            registerPasswordErrorText = errors["password"]?.first;
+            firstNameErrorText = errors['first_name']?.first?.toString();
 
-            if (errors["password"] != null &&
-                registerPasswordController.text !=
-                    confirmPasswordController.text) {
-              confirmPasswordErrorText = "Passwords do not match";
-            }
+            familyNameErrorText = errors['last_name']?.first?.toString();
+
+            registerEmailErrorText = (errors['email'] as List?)?.join('\n');
+
+            phoneErrorText = (errors['phone'] as List?)?.join('\n');
+
+            registerPasswordErrorText = errors['password']?.first?.toString();
           });
 
           return;
         }
       }
 
-      if (e.response?.statusCode == 409) {
-        final message = e.response?.data["error"]?.toString();
+      if (error.response?.statusCode == 409) {
+        final message = error.response?.data['error']?.toString();
 
-        debugPrint(message);
         setState(() {
-          if (message == "Email already registered") {
-            registerEmailErrorText = message;
-          } else if (message == "Phone number already used") {
-            phoneErrorText = message;
-          } else if (message == "Email or phone number already registered") {
-            registerEmailErrorText = message;
-            phoneErrorText = message;
+          if (message == 'Email already registered') {
+            registerEmailErrorText = _isArabic
+                ? 'البريد الإلكتروني مسجل مسبقًا'
+                : message;
+          } else if (message == 'Phone number already used') {
+            phoneErrorText = _isArabic ? 'رقم الجوال مستخدم مسبقًا' : message;
+          } else if (message == 'Email or phone number already registered') {
+            registerEmailErrorText = _isArabic
+                ? 'البريد الإلكتروني أو رقم الجوال مسجل مسبقًا'
+                : message;
+
+            phoneErrorText = registerEmailErrorText;
           }
         });
+
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Server Error")));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_isArabic ? 'حدث خطأ في الخادم' : 'Server error'),
+        ),
+      );
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -231,25 +319,22 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic = widget.isArabic;
+    final isArabic = _isArabic;
 
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               children: [
                 Row(
                   children: [
-                    _RoundIconButton(
-                      icon: isArabic ? Icons.arrow_forward : Icons.arrow_back,
-                      onTap: _handleBack,
-                    ),
+                    AppBackButton(onTap: _handleBack),
+
                     const Spacer(),
-                    LanguageToggle(
-                      isArabic: isArabic,
-                      onTap: widget.onLanguageToggle,
-                    ),
+
+                    LanguageToggle(isArabic: isArabic, onTap: _toggleLanguage),
                   ],
                 ),
 
@@ -355,6 +440,7 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           errorText: loginEmailErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -366,6 +452,7 @@ class _AuthScreenState extends State<AuthScreen> {
           isPassword: true,
           controller: passwordController,
           errorText: loginPasswordErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -390,27 +477,33 @@ class _AuthScreenState extends State<AuthScreen> {
         ParentGenderToggle(
           selectedType: guardianType,
           isArabic: isArabic,
-          onTypeSelected: (type) => setState(() => guardianType = type),
+          onTypeSelected: (type) {
+            setState(() {
+              guardianType = type;
+            });
+          },
         ),
 
         const SizedBox(height: AppSpacing.lg),
 
         AppTextField(
           label: isArabic ? 'الاسم الأول' : 'First name',
-          hint: isArabic ? 'الاسم الأول' : 'Enter your first name',
+          hint: isArabic ? 'أدخل الاسم الأول' : 'Enter your first name',
           icon: Icons.person_outline,
           controller: firstNameController,
           errorText: firstNameErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
 
         AppTextField(
           label: isArabic ? 'اسم العائلة' : 'Family name',
-          hint: isArabic ? 'اسم العائلة' : 'Enter your family name',
+          hint: isArabic ? 'أدخل اسم العائلة' : 'Enter your family name',
           icon: Icons.person_outline,
           controller: familyNameController,
           errorText: familyNameErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -422,6 +515,7 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: registerEmailController,
           keyboardType: TextInputType.emailAddress,
           errorText: registerEmailErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -433,6 +527,7 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: phoneController,
           keyboardType: TextInputType.phone,
           errorText: phoneErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -444,6 +539,7 @@ class _AuthScreenState extends State<AuthScreen> {
           isPassword: true,
           controller: registerPasswordController,
           errorText: registerPasswordErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -455,6 +551,7 @@ class _AuthScreenState extends State<AuthScreen> {
           isPassword: true,
           controller: confirmPasswordController,
           errorText: confirmPasswordErrorText,
+          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.lg),
@@ -470,30 +567,6 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _RoundIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _RoundIconButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(icon, size: 18, color: AppColors.primaryDark),
-        ),
-      ),
     );
   }
 }

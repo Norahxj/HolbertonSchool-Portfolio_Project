@@ -3,9 +3,9 @@ import 'package:frontend/features/auth/services/auth_api_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/constants/app_colors.dart';
 import 'features/onboarding/screens/welcome_screen.dart';
-import 'features/parent/screens/parent_dashboard_screen.dart';
 import 'features/child/widgets/child_nav.dart';
 import 'core/storage/secure_storage.dart';
+import 'features/parent/screens/parent_main_screen.dart';
 
 class AsalahApp extends StatefulWidget {
   const AsalahApp({super.key});
@@ -97,13 +97,16 @@ class _AsalahAppState extends State<AsalahApp> {
       home: _isLoading
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : _isLoggedIn
-              ? (_isChild
-                  ? const ChildNav()
-                  : const ParentDashboardScreen())
-              : WelcomeScreen(
-                  isArabic: isArabic,
-                  onLanguageToggle: _toggleLanguage,
-                ),
+          ? (_isChild
+                ? const ChildNav()
+                : ParentMainScreen(
+                    isArabic: isArabic,
+                    onLanguageToggle: _toggleLanguage,
+                  ))
+          : WelcomeScreen(
+              isArabic: isArabic,
+              onLanguageToggle: _toggleLanguage,
+            ),
     );
   }
 }

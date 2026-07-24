@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.task_assignment_model import TaskAssignment
 from app.models.task_model import Task
-
+from sqlalchemy.orm import joinedload
 
 class TaskAssignmentRepository:
 
@@ -36,11 +36,27 @@ class TaskAssignmentRepository:
         return TaskAssignment.query.filter_by(id=assignment_id, child_id=child_id).first()
 
     def get_assignments_by_task_id(self, task_id):
-        return (TaskAssignment.query.filter_by(task_id=task_id).order_by(TaskAssignment.assigned_date.desc()).all())
-
+        return (
+            TaskAssignment.query
+            .options(
+                joinedload(TaskAssignment.task),
+                joinedload(TaskAssignment.child),
+            )
+            .filter_by(task_id=task_id)
+            .order_by(TaskAssignment.assigned_date.desc())
+            .all()
+        )
     def get_assignments_by_child_id(self, child_id):
-        return TaskAssignment.query.filter_by(child_id=child_id).order_by(TaskAssignment.assigned_date.desc()).all()
-
+        return (
+            TaskAssignment.query
+            .options(
+                joinedload(TaskAssignment.task),
+                joinedload(TaskAssignment.child),
+            )
+            .filter_by(child_id=child_id)
+            .order_by(TaskAssignment.assigned_date.desc())
+            .all()
+        )
     def get_assignment_for_parent(self, assignment_id, parent_id):
         return (
             TaskAssignment.query.join(TaskAssignment.task)
@@ -52,11 +68,18 @@ class TaskAssignmentRepository:
     def get_assignment_for_date(self, task_id, child_id, assigned_date):
         return TaskAssignment.query.filter_by(task_id=task_id, child_id=child_id, assigned_date=assigned_date).first()
     
-    def get_child_assignments_between_dates(self, child_id, start_date, end_date):
+    def get_child_assignments_between_dates(self, child_id, start_date, end_date,):
         return (
-            TaskAssignment.query.filter(
+            TaskAssignment.query
+            .options(
+                joinedload(TaskAssignment.task),
+                joinedload(TaskAssignment.child),
+            )
+            .filter(
                 TaskAssignment.child_id == child_id,
                 TaskAssignment.assigned_date >= start_date,
-                TaskAssignment.assigned_date <= end_date
-            ).order_by(TaskAssignment.assigned_date.desc()).all()
+                TaskAssignment.assigned_date <= end_date,
+            )
+            .order_by(TaskAssignment.assigned_date.desc())
+            .all()
         )

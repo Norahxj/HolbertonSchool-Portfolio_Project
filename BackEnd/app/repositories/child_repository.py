@@ -7,6 +7,20 @@ class ChildRepository:
     def get_child_by_id(self, child_id):
         return db.session.get(Child, child_id)
     
+    def get_children_for_guardian(self, child_ids, guardian_id):
+        if not child_ids:
+            return []
+
+        return (
+            Child.query
+            .join(Child.guardians)
+            .filter(
+                Child.id.in_(child_ids),
+                User.id == guardian_id,
+            )
+            .all()
+        )
+    
     def get_child_by_id_for_update(self, child_id):
         return (Child.query.filter_by(id=child_id).with_for_update().first())
     

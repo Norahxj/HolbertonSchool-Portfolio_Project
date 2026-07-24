@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -5,11 +6,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../services/wishlist_api_service.dart';
 
-// Add Wishlist Item screen (Screen 24).
-//
-// This first pass is static/placeholder only: the text fields and icon
-// choice are simple local state, and Save doesn't do anything real yet
-// (see the TODO comment). No backend calls happen here.
+// شاشة إضافة أمنية جديدة للطفل.
 class AddWishlistScreen extends StatefulWidget {
   const AddWishlistScreen({super.key});
 
@@ -18,18 +15,181 @@ class AddWishlistScreen extends StatefulWidget {
 }
 
 class _AddWishlistScreenState extends State<AddWishlistScreen> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController promiseController = TextEditingController();
+  final WishlistApiService _wishlistService = WishlistApiService();
 
-  // Which icon in the "الأيقونة" row is currently selected. 3 is the
-  // star, selected by default to match the mockup.
-  int selectedIconIndex = 3;
+  final TextEditingController _nameController = TextEditingController();
+
+  bool _isLoading = true;
+  bool _isSaving = false;
+
+  int _pendingWishesCount = 0;
+
+  String? _nameError;
+  String? _pageError;
+
+  static const int _maximumPendingWishes = 5;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadCurrentWishes();
+  }
 
   @override
   void dispose() {
-    nameController.dispose();
-    promiseController.dispose();
+    _nameController.dispose();
+
     super.dispose();
+  }
+
+  Future<void> _loadCurrentWishes() async {
+    setState(() {
+      _isLoading = true;
+      _pageError = null;
+    });
+
+    try {
+      final wishes = await _wishlistService.getMyWishes();
+
+      final pendingCount = wishes.where((wish) {
+        return wish.status.toUpperCase() == 'PENDING';
+      }).length;
+
+      if (!mounted) return;
+
+      setState(() {
+        _pendingWishesCount = pendingCount;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        _pageError = 'تعذّر تحميل قائمة الأمنيات.';
+        _isLoading = false;
+      });
+
+      debugPrint('Loading wishes failed: $error');
+    }
+  }
+
+  Future<void> _saveWish() async {
+    if (_isSaving) return;
+
+    final name = _nameController.text.trim();
+
+    setState(() {
+      _nameError = null;
+    });
+
+    if (name.length < 2) {
+      setState(() {
+        _nameError = 'يجب أن يتكون اسم الأمنية من حرفين على الأقل.';
+      });
+
+      return;
+    }
+
+    if (name.length > 255) {
+      setState(() {
+        _nameError = 'اسم الأمنية طويل جدًا.';
+      });
+
+      return;
+    }
+
+    if (_hasReachedLimit) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('وصلتِ إلى الحد الأقصى للأمنيات بانتظار المراجعة.'),
+        ),
+      );
+
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      await _wishlistService.createWish(name);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تمت إضافة الأمنية بنجاح ✓')),
+      );
+
+      Navigator.pop(context, true);
+    } on DioException catch (error) {
+      if (!mounted) return;
+
+      final message = _readBackendMessage(error);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message ?? 'تعذّرت إضافة الأمنية. حاولي مرة أخرى.'),
+        ),
+      );
+
+      debugPrint(
+        'Creating wish failed: '
+        'status=${error.response?.statusCode}, '
+        'data=${error.response?.data}',
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('حدث خطأ أثناء إضافة الأمنية.')),
+      );
+
+      debugPrint('Creating wish failed: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  String? _readBackendMessage(DioException error) {
+    final data = error.response?.data;
+
+    if (data is Map) {
+      final backendMessage = data['error']?.toString();
+
+      if (backendMessage?.contains('Wishlist limit reached') == true) {
+        return 'وصلتِ إلى الحد الأقصى: '
+            '5 أمنيات بانتظار المراجعة.';
+      }
+
+      if (data['errors'] is Map) {
+        final errors = data['errors'] as Map;
+
+        final nameErrors = errors['name'];
+
+        if (nameErrors is List && nameErrors.isNotEmpty) {
+          return nameErrors.first.toString();
+        }
+      }
+
+      return backendMessage ?? data['message']?.toString();
+    }
+
+    return null;
+  }
+
+  bool get _hasReachedLimit {
+    return _pendingWishesCount >= _maximumPendingWishes;
+  }
+
+  String get _countText {
+    return 'لديك $_pendingWishesCount من أصل '
+        '$_maximumPendingWishes أمنيات بانتظار المراجعة';
   }
 
   @override
@@ -44,6 +204,8 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
             children: [
               Row(
                 children: [
+                  const SizedBox(width: 44),
+
                   Expanded(
                     child: Center(
                       child: Text(
@@ -52,7 +214,12 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                       ),
                     ),
                   ),
-                  _RoundBackButton(onTap: () => Navigator.pop(context)),
+
+                  _RoundBackButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                 ],
               ),
 
@@ -66,102 +233,68 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
               const SizedBox(height: AppSpacing.md),
 
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: 6,
+              if (_isLoading)
+                const Center(
+                  child: SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Text(
-                    'لديك أمنيتان من أصل 3',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryDark,
+                )
+              else
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _hasReachedLimit
+                          ? const Color(0xFFF9DEDE)
+                          : AppColors.primaryLight,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Text(
+                      _countText,
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: _hasReachedLimit
+                            ? AppColors.error
+                            : AppColors.primaryDark,
+                      ),
                     ),
                   ),
                 ),
-              ),
+
+              if (_pageError != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+
+                Text(
+                  _pageError!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.error, fontSize: 12),
+                ),
+
+                TextButton(
+                  onPressed: _loadCurrentWishes,
+                  child: const Text('إعادة المحاولة'),
+                ),
+              ],
 
               const SizedBox(height: AppSpacing.xl),
 
               const _FieldLabel('اسم الأمنية'),
+
               const SizedBox(height: AppSpacing.sm),
+
               _WishTextField(
-                controller: nameController,
+                controller: _nameController,
                 hint: 'مثال: دراجة هوائية',
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              const _FieldLabel('الأيقونة'),
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  _IconOption(
-                    icon: Icons.emoji_events,
-                    backgroundColor: const Color(0xFFDFF3E4),
-                    iconColor: const Color(0xFF4CAF50),
-                    isSelected: selectedIconIndex == 0,
-                    onTap: () {
-                      setState(() {
-                        selectedIconIndex = 0;
-                      });
-                    },
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  _IconOption(
-                    icon: Icons.card_giftcard,
-                    backgroundColor: AppColors.primaryLight,
-                    iconColor: AppColors.primary,
-                    isSelected: selectedIconIndex == 1,
-                    onTap: () {
-                      setState(() {
-                        selectedIconIndex = 1;
-                      });
-                    },
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  _IconOption(
-                    icon: Icons.favorite,
-                    backgroundColor: const Color(0xFFFBE3EA),
-                    iconColor: const Color(0xFFD1637F),
-                    isSelected: selectedIconIndex == 2,
-                    onTap: () {
-                      setState(() {
-                        selectedIconIndex = 2;
-                      });
-                    },
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  _IconOption(
-                    icon: Icons.star,
-                    backgroundColor: const Color(0xFFFCE7D2),
-                    iconColor: const Color(0xFFDE9A3E),
-                    isSelected: selectedIconIndex == 3,
-                    onTap: () {
-                      setState(() {
-                        selectedIconIndex = 3;
-                      });
-                    },
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              const _FieldLabel('وعدي لأهلي'),
-              const SizedBox(height: AppSpacing.sm),
-              _WishTextField(
-                controller: promiseController,
-                hint:
-                    'مثال: سأرتب سريري كل يوم وأساعد أمي في المنزل حتى '
-                    'أستحق أمنيتي',
-                maxLines: 3,
+                errorText: _nameError,
+                enabled: !_hasReachedLimit,
               ),
 
               const SizedBox(height: AppSpacing.lg),
@@ -179,14 +312,20 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                       color: AppColors.primary,
                       size: 18,
                     ),
+
                     SizedBox(width: AppSpacing.sm),
+
                     Expanded(
                       child: Text(
-                        'اختر أمنياتك بعناية – يمكنك إضافة 3 أمنيات كحد '
-                        'أقصى في قائمتك.',
+                        'يمكنك إضافة حتى 5 أمنيات '
+                        'بانتظار مراجعة ولي أمرك. '
+                        'بعد قبول الأمنية سيحدد ولي '
+                        'أمرك عدد النقاط المطلوبة لتحقيقها.',
                         textAlign: TextAlign.right,
+                        textDirection: TextDirection.rtl,
                         style: TextStyle(
                           fontSize: 13,
+                          height: 1.5,
                           color: AppColors.textPrimary,
                         ),
                       ),
@@ -197,59 +336,39 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
               const SizedBox(height: AppSpacing.xl),
 
-              GestureDetector(
-                onTap: () async {
-                  final name = nameController.text.trim();
-
-                  if (name.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('يرجى كتابة اسم الأمنية')),
-                    );
-                    return;
-                  }
-                  try {
-                    await WishlistApiService().createWish(name);
-
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('تمت إضافة الأمنية بنجاح ✓'),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'حدث خطأ. تحقق من الاتصال وحاول مرة أخرى.',
+              SizedBox(
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _isSaving || _isLoading || _hasReachedLimit
+                      ? null
+                      : _saveWish,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    disabledBackgroundColor: AppColors.primaryLight,
+                    foregroundColor: Colors.white,
+                    disabledForegroundColor: AppColors.primaryDark,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          _hasReachedLimit
+                              ? 'وصلتِ إلى الحد الأقصى'
+                              : 'حفظ الأمنية',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      );
-                    }
-                  }
-                },
-                child: Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: AppColors.primaryGradient,
-                    ),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'حفظ الأمنية',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
                 ),
               ),
 
@@ -262,7 +381,6 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
   }
 }
 
-// Round back button in the top-right corner, same style as other screens.
 class _RoundBackButton extends StatelessWidget {
   final VoidCallback onTap;
 
@@ -290,8 +408,6 @@ class _RoundBackButton extends StatelessWidget {
   }
 }
 
-// A bold label shown above a field, right-aligned to match the Arabic
-// layout used across the app.
 class _FieldLabel extends StatelessWidget {
   final String text;
 
@@ -303,6 +419,7 @@ class _FieldLabel extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Text(
         text,
+        textDirection: TextDirection.rtl,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -313,27 +430,29 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-// A simple rounded text field used for the wish name and the promise.
 class _WishTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
-  final int maxLines;
+  final String? errorText;
+  final bool enabled;
 
   const _WishTextField({
     required this.controller,
     required this.hint,
-    this.maxLines = 1,
+    required this.errorText,
+    required this.enabled,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      maxLines: maxLines,
+      enabled: enabled,
       textAlign: TextAlign.right,
       textDirection: TextDirection.rtl,
       decoration: InputDecoration(
         hintText: hint,
+        errorText: errorText,
         filled: true,
         fillColor: AppColors.inputBackground,
         contentPadding: const EdgeInsets.all(AppSpacing.md),
@@ -341,45 +460,22 @@ class _WishTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: AppColors.border),
         ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
-      ),
-    );
-  }
-}
-
-// One icon choice inside the "الأيقونة" row. Tapping it selects that icon,
-// shown with a colored border matching the icon's own color.
-class _IconOption extends StatelessWidget {
-  final IconData icon;
-  final Color backgroundColor;
-  final Color iconColor;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _IconOption({
-    required this.icon,
-    required this.backgroundColor,
-    required this.iconColor,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 56,
-        height: 56,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(16),
-          border: isSelected ? Border.all(color: iconColor, width: 2) : null,
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.error),
         ),
-        child: Icon(icon, color: iconColor, size: 22),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        ),
       ),
     );
   }

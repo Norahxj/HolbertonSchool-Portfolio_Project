@@ -5,9 +5,8 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../models/wish_model.dart';
-import '../services/child_api_service.dart';
+import 'package:frontend/features/parent/services/child_api_service.dart';
 import '../../../services/wishlist_api_service.dart';
-import 'parent_dashboard_screen.dart';
 
 // Wishlist Approval screen (Screen 14).
 //
@@ -58,30 +57,47 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
       final pending = <_WishEntry>[];
       final approved = <_WishEntry>[];
 
-      for (final child in children) {
-        final wishes = await _wishlistService.getChildWishes(child.id);
-        for (final wish in wishes) {
-          final entry = _WishEntry(wish: wish, childName: child.name);
-          final status = wish.status.toUpperCase();
-          if (status == 'PENDING') {
-            pending.add(entry);
-          } else if (status == 'APPROVED') {
-            approved.add(entry);
-          }
-        }
-      }
+      final wishesByChild = await Future.wait(
+  children.map((child) async {
+    final wishes = await _wishlistService.getChildWishes(child.id);
 
+    return MapEntry(child, wishes);
+  }),
+);
+
+for (final entry in wishesByChild) {
+  final child = entry.key;
+  final wishes = entry.value;
+
+  for (final wish in wishes) {
+    final wishEntry = _WishEntry(
+      wish: wish,
+      childName: child.name,
+    );
+
+    final status = wish.status.toUpperCase();
+
+    if (status == 'PENDING') {
+      pending.add(wishEntry);
+    } else if (status == 'APPROVED') {
+      approved.add(wishEntry);
+    }
+  }
+}
+    if (!mounted) return;
       setState(() {
         _pendingWishes = pending;
         _approvedWishes = approved;
         _isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _errorMessage = 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
-        _isLoading = false;
-      });
-    }
+  if (!mounted) return;
+
+  setState(() {
+    _errorMessage = 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
+    _isLoading = false;
+  });
+}
   }
 
   Future<void> _approveWish(String wishId, int targetPoints) async {
@@ -129,16 +145,6 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
                           style: AppTextStyles.arabicTitle,
                         ),
                       ),
-                    ),
-                    _RoundBackButton(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ParentDashboardScreen(),
-                          ),
-                        );
-                      },
                     ),
                   ],
                 ),

@@ -1,18 +1,23 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/features/child/controllers/child_controller.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../models/child_dashboard_model.dart';
 import '../../../models/child_model.dart';
+import '../../../models/task_assignment_model.dart';
+import '../../../services/task_api_service.dart';
 
 class ChildProfileScreen extends StatefulWidget {
   final ChildModel child;
+  final ChildDashboardModel dashboard;
 
   const ChildProfileScreen({
     super.key,
     required this.child,
+    required this.dashboard,
   });
 
   @override
@@ -20,84 +25,239 @@ class ChildProfileScreen extends StatefulWidget {
 }
 
 class _ChildProfileScreenState extends State<ChildProfileScreen> {
+  final TaskApiService _taskApiService = TaskApiService();
 
-  final controller = ChildController();
-  Future<void> _reload() async {
-    await controller.load(widget.child.id);
+  List<TaskAssignmentModel> assignments = [];
 
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  bool isLoading = true;
+  String? errorMessage;
+  String? approvingAssignmentId;
 
   @override
   void initState() {
     super.initState();
-    _reload();
+    _loadAssignments();
+  }
+
+  Future<void> _loadAssignments() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final result = await _taskApiService.getAssignmentsForChild(
+        widget.child.id,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        assignments = result;
+        isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      debugPrint('Child assignments error: $error');
+
+      setState(() {
+        errorMessage = 'تعذر تحميل المهام';
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _approveAssignment(TaskAssignmentModel assignment) async {
+    if (!assignment.needsParentApproval || approvingAssignmentId != null) {
+      return;
+    }
+
+    setState(() {
+      approvingAssignmentId = assignment.id;
+    });
+
+    try {
+      await _taskApiService.approveAssignment(assignment.id);
+
+      await _loadAssignments();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('تم اعتماد المهمة')));
+    } on DioException catch (error) {
+      if (!mounted) return;
+
+      final data = error.response?.data;
+
+      String? message;
+
+      if (data is Map) {
+        message = data['error']?.toString();
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message ?? 'تعذر اعتماد المهمة')));
+    } finally {
+      if (mounted) {
+        setState(() {
+          approvingAssignmentId = null;
+        });
+      }
+    }
+  }
+
+  int get completedTasks {
+    return assignments.where((assignment) {
+      return assignment.countsTowardProgress;
+    }).length;
+  }
+
+  int get totalTasks {
+    return assignments.length;
+  }
+
+  double get progress {
+    if (totalTasks == 0) {
+      return 0;
+    }
+
+    return completedTasks / totalTasks * 100;
+  }
+
+  IconData _getTaskIcon(String? category) {
+    switch (category?.toUpperCase()) {
+      case 'RELIGIOUS':
+        return Icons.mosque_outlined;
+
+      case 'FINANCIAL':
+        return Icons.credit_card_outlined;
+
+      case 'MORAL':
+        return Icons.favorite_border;
+
+      case 'SOCIAL':
+        return Icons.groups_outlined;
+
+      default:
+        return Icons.task_alt_outlined;
+    }
+  }
+
+  String? _getStatusText(TaskAssignmentModel assignment) {
+    if (assignment.isApproved) {
+      return 'مكتملة';
+    }
+
+    if (assignment.needsParentApproval) {
+      return 'بانتظار اعتماد ولي الأمر';
+    }
+
+    if (assignment.isRejected) {
+      return 'مرفوضة';
+    }
+
+    // No text is displayed for unfinished tasks.
+    return null;
+  }
+
+  Color _getStatusColor(TaskAssignmentModel assignment) {
+    if (assignment.isApproved) {
+      return AppColors.success;
+    }
+
+    if (assignment.needsParentApproval) {
+      return const Color(0xFFC08A3E);
+    }
+
+    if (assignment.isRejected) {
+      return AppColors.error;
+    }
+
+    return AppColors.textSecondary;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (controller.isLoading) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    final useDashboardFallback = isLoading || errorMessage != null;
 
-    if (!controller.hasData) {
-      return const Scaffold(
-        body: Center(
-          child: Text('حدث خطأ أثناء تحميل بيانات الطفل'),
-        ),
-      );
-    }
+    final displayedProgress = useDashboardFallback
+        ? widget.dashboard.progressPercentage
+        : progress;
 
-    final child = controller.child!;
+    final displayedCompleted = useDashboardFallback
+        ? widget.dashboard.approvedTasks
+        : completedTasks;
+
+    final displayedTotal = useDashboardFallback
+        ? widget.dashboard.totalTasks
+        : totalTasks;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          _ProfileHeader(child: child),
+          _ProfileHeader(child: widget.child),
 
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                children: [
-                  _WeeklyProgressCard(
-                    percent: controller.weeklyProgressPercent,
-                    progress: controller.weeklyProgress,
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                  _JoinCodeCard(child: child),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                _TasksHeader(
-                    completed: controller.completedTasks,
-                    total: controller.totalTasks,
-                  ),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  if (controller.assignments.isEmpty)
-                    const Text('لا توجد مهام')
-                  else
-                    Column(
-                      children: controller.assignments.map((assignment) {
-                        return _TaskItem(
-                          label: assignment.task.title,
-                          icon: controller.statusIcon(assignment.status),
-                          isDone: controller.isCompleted(assignment),
-                        );
-                      }).toList(),
+            child: RefreshIndicator(
+              onRefresh: _loadAssignments,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  children: [
+                    _WeeklyProgressCard(
+                      progress: displayedProgress,
+                      completedTasks: displayedCompleted,
+                      totalTasks: displayedTotal,
                     ),
-                ],
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    _JoinCodeCard(child: widget.child),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    _TasksHeader(
+                      completedTasks: completedTasks,
+                      totalTasks: totalTasks,
+                    ),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    if (isLoading)
+                      const Padding(
+                        padding: EdgeInsets.all(AppSpacing.lg),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (errorMessage != null)
+                      _MessageCard(
+                        message: errorMessage!,
+                        onRetry: _loadAssignments,
+                      )
+                    else if (assignments.isEmpty)
+                      const _MessageCard(message: 'لا توجد مهام لهذا الطفل')
+                    else
+                      Column(
+                        children: assignments.map((assignment) {
+                          return _TaskItem(
+                            assignment: assignment,
+                            icon: _getTaskIcon(assignment.task.category),
+                            statusText: _getStatusText(assignment),
+                            statusColor: _getStatusColor(assignment),
+                            isApproving: approvingAssignmentId == assignment.id,
+                            onApprove: () {
+                              _approveAssignment(assignment);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -107,13 +267,10 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
   }
 }
 
-  
 class _ProfileHeader extends StatelessWidget {
   final ChildModel child;
 
-  const _ProfileHeader({
-    required this.child,
-  });
+  const _ProfileHeader({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -136,11 +293,10 @@ class _ProfileHeader extends StatelessWidget {
           child: Column(
             children: [
               Row(
+                textDirection: TextDirection.ltr,
                 children: [
-                  const _HeaderIconButton(
-                    icon: Icons.settings_outlined,
-                    showDot: true,
-                  ),
+                  const SizedBox(width: 44),
+
                   Expanded(
                     child: Center(
                       child: Text(
@@ -151,51 +307,24 @@ class _ProfileHeader extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _HeaderIconButton(
-                    icon: Icons.arrow_forward_rounded,
-                    onTap: () => Navigator.pop(context),
+
+                  _HeaderBackButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                   ),
                 ],
               ),
 
               const SizedBox(height: AppSpacing.lg),
 
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 130,
-                    height: 130,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFBE3EA),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.girl,
-                      color: Color(0xFFD1637F),
-                      size: 64,
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: -4,
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF7FDDB0),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _LargeChildAvatar(avatarIndex: child.avatarIndex),
 
               const SizedBox(height: AppSpacing.sm),
 
-               Text(
+              Text(
                 '${child.age} سنوات',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
 
               const SizedBox(height: AppSpacing.md),
@@ -207,63 +336,84 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-class _HeaderIconButton extends StatelessWidget {
-  final IconData icon;
-  final bool showDot;
-  final VoidCallback? onTap;
+class _HeaderBackButton extends StatelessWidget {
+  final VoidCallback onTap;
 
-  const _HeaderIconButton({
-    required this.icon,
-    this.showDot = false,
-    this.onTap,
-  });
+  const _HeaderBackButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.18),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Icon(icon, color: Colors.white, size: 20),
-            if (showDot)
-              Positioned(
-                bottom: -2,
-                right: -2,
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE8A2A2),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-          ],
+    return Material(
+      color: Colors.white.withOpacity(0.18),
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: const SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(Icons.arrow_forward_rounded, color: Colors.white),
         ),
       ),
     );
   }
 }
-  class _WeeklyProgressCard extends StatelessWidget {
-  final int percent;
+
+class _LargeChildAvatar extends StatelessWidget {
+  final int avatarIndex;
+
+  const _LargeChildAvatar({required this.avatarIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    IconData icon;
+    Color backgroundColor;
+    Color iconColor;
+
+    if (avatarIndex == 0) {
+      icon = Icons.boy;
+      backgroundColor = const Color(0xFFD9F0DD);
+      iconColor = const Color(0xFF3E8E5A);
+    } else if (avatarIndex == 1) {
+      icon = Icons.boy;
+      backgroundColor = const Color(0xFFD7E9F7);
+      iconColor = const Color(0xFF2B6CA3);
+    } else if (avatarIndex == 2) {
+      icon = Icons.girl;
+      backgroundColor = AppColors.primaryLight;
+      iconColor = AppColors.primary;
+    } else {
+      icon = Icons.girl;
+      backgroundColor = const Color(0xFFFBE3EA);
+      iconColor = const Color(0xFFD1637F);
+    }
+
+    return Container(
+      width: 130,
+      height: 130,
+      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
+      child: Icon(icon, color: iconColor, size: 64),
+    );
+  }
+}
+
+class _WeeklyProgressCard extends StatelessWidget {
   final double progress;
+  final int completedTasks;
+  final int totalTasks;
 
   const _WeeklyProgressCard({
-    required this.percent,
     required this.progress,
+    required this.completedTasks,
+    required this.totalTasks,
   });
 
   @override
   Widget build(BuildContext context) {
+    final safeProgress = progress.clamp(0, 100).toDouble();
+
+    final percent = safeProgress.round();
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -280,17 +430,20 @@ class _HeaderIconButton extends StatelessWidget {
       child: Column(
         children: [
           Row(
+            textDirection: TextDirection.ltr,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              _WeeklyRing(percent: percent),
+
               const Text(
                 'التقدم الأسبوعي',
+                textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
-              _WeeklyRing(percent: percent),
             ],
           ),
 
@@ -299,17 +452,31 @@ class _HeaderIconButton extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
-              value: progress,
+              value: safeProgress / 100,
               minHeight: 8,
               backgroundColor: AppColors.primaryLight,
               valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+            ),
+          ),
+
+          const SizedBox(height: AppSpacing.sm),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '$completedTasks من $totalTasks مهام مكتملة',
+              textDirection: TextDirection.rtl,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
         ],
       ),
     );
   }
-  }
+}
 
 class _WeeklyRing extends StatelessWidget {
   final int percent;
@@ -334,10 +501,10 @@ class _WeeklyRing extends StatelessWidget {
               valueColor: const AlwaysStoppedAnimation(AppColors.primary),
             ),
           ),
+
           Text(
             '$percent%',
             style: const TextStyle(
-              fontSize: 13,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
@@ -350,7 +517,7 @@ class _WeeklyRing extends StatelessWidget {
 
 class _JoinCodeCard extends StatelessWidget {
   final ChildModel child;
-  
+
   const _JoinCodeCard({required this.child});
 
   @override
@@ -368,30 +535,32 @@ class _JoinCodeCard extends StatelessWidget {
             border: Border.all(color: AppColors.primary.withOpacity(0.3)),
           ),
           child: Row(
+            textDirection: TextDirection.ltr,
             children: [
               _CopyButton(
                 onTap: () {
-                  Clipboard.setData(
-                    ClipboardData(text: child.accessCode),);
+                  Clipboard.setData(ClipboardData(text: child.accessCode));
+
                   ScaffoldMessenger.of(
                     context,
                   ).showSnackBar(const SnackBar(content: Text('تم نسخ الرمز')));
                 },
               ),
+
               Expanded(
                 child: Column(
                   children: [
                     Text(
                       'رمز انضمام ${child.name}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    SizedBox(height: 2),
+
                     Text(
-                      '${child.accessCode}',
-                      style: TextStyle(
+                      child.accessCode,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
@@ -401,6 +570,7 @@ class _JoinCodeCard extends StatelessWidget {
                   ],
                 ),
               ),
+
               Container(
                 width: 40,
                 height: 40,
@@ -408,11 +578,7 @@ class _JoinCodeCard extends StatelessWidget {
                   color: AppColors.primaryDark,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.vpn_key_outlined,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                child: const Icon(Icons.vpn_key_outlined, color: Colors.white),
               ),
             ],
           ),
@@ -422,8 +588,8 @@ class _JoinCodeCard extends StatelessWidget {
 
         const Text(
           'شارك هذا الرمز مع طفلك لينشئ حسابه',
-          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -437,74 +603,47 @@ class _CopyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primary,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'نسخ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(width: 6),
-              Icon(Icons.copy_rounded, color: Colors.white, size: 16),
-            ],
-          ),
-        ),
-      ),
+    return ElevatedButton.icon(
+      onPressed: onTap,
+      icon: const Icon(Icons.copy_rounded, size: 16),
+      label: const Text('نسخ'),
     );
   }
 }
 
-
 class _TasksHeader extends StatelessWidget {
-  final int completed;
-  final int total;
+  final int completedTasks;
+  final int totalTasks;
 
-  const _TasksHeader({
-    super.key,
-    required this.completed,
-    required this.total,
-  });
+  const _TasksHeader({required this.completedTasks, required this.totalTasks});
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      textDirection: TextDirection.ltr,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 6,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Text(
-            '$completed/$total مكتملة',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryDark,
+        if (totalTasks > 0)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              '$completedTasks/$totalTasks مكتملة',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryDark,
+              ),
             ),
           ),
-        ),
 
         Text(
           'مهام اليوم',
-          style: AppTextStyles.arabicTitle.copyWith(
-            fontSize: 18,
-          ),
+          textDirection: TextDirection.rtl,
+          style: AppTextStyles.arabicTitle.copyWith(fontSize: 18),
         ),
       ],
     );
@@ -512,14 +651,20 @@ class _TasksHeader extends StatelessWidget {
 }
 
 class _TaskItem extends StatelessWidget {
-  final String label;
+  final TaskAssignmentModel assignment;
   final IconData icon;
-  final bool isDone;
+  final String? statusText;
+  final Color statusColor;
+  final bool isApproving;
+  final VoidCallback onApprove;
 
   const _TaskItem({
-    required this.label,
+    required this.assignment,
     required this.icon,
-    required this.isDone,
+    required this.statusText,
+    required this.statusColor,
+    required this.isApproving,
+    required this.onApprove,
   });
 
   @override
@@ -542,32 +687,83 @@ class _TaskItem extends StatelessWidget {
         ],
       ),
       child: Row(
+        // Keeps the status circle on the left
+        // and the category icon on the right.
+        textDirection: TextDirection.ltr,
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: isDone ? AppColors.success : Colors.transparent,
-              shape: BoxShape.circle,
-              border: isDone
-                  ? null
-                  : Border.all(color: AppColors.border, width: 2),
-            ),
-            child: isDone
-                ? const Icon(Icons.check, color: Colors.white, size: 18)
-                : null,
+          _TaskCircle(
+            assignment: assignment,
+            isApproving: isApproving,
+            onApprove: onApprove,
           ),
+
+          const SizedBox(width: AppSpacing.md),
+
           Expanded(
-            child: Center(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Column(
+                // Makes all text use the full available width.
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    assignment.task.title,
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    textDirection: TextDirection.rtl,
+                    children: [
+                      Text(
+                        '${assignment.task.points} نقاط',
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.gold,
+                        ),
+                      ),
+
+                      const SizedBox(width: 4),
+
+                      const Icon(
+                        Icons.auto_awesome,
+                        color: AppColors.gold,
+                        size: 14,
+                      ),
+                    ],
+                  ),
+
+                  if (statusText != null) ...[
+                    const SizedBox(height: 3),
+
+                    Text(
+                      statusText!,
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: statusColor,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ),
+
+          const SizedBox(width: AppSpacing.md),
+
           Container(
             width: 40,
             height: 40,
@@ -583,105 +779,104 @@ class _TaskItem extends StatelessWidget {
   }
 }
 
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
+class _TaskCircle extends StatelessWidget {
+  final TaskAssignmentModel assignment;
+  final bool isApproving;
+  final VoidCallback onApprove;
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
-            _NavItem(icon: Icons.more_horiz, label: 'المزيد'),
-            _NavItem(icon: Icons.card_giftcard_outlined, label: 'المكافآت'),
-            _NavItem(icon: Icons.list_alt, label: 'المهام', badgeCount: 2),
-            _NavItem(
-              icon: Icons.home_rounded,
-              label: 'الرئيسية',
-              isActive: true,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final int? badgeCount;
-  final bool isActive;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.badgeCount,
-    this.isActive = false,
+  const _TaskCircle({
+    required this.assignment,
+    required this.isApproving,
+    required this.onApprove,
   });
 
   @override
   Widget build(BuildContext context) {
-    final color = isActive ? AppColors.primary : AppColors.textSecondary;
+    if (assignment.isApproved) {
+      return const _Circle(color: AppColors.success, icon: Icons.check);
+    }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Icon(icon, color: color, size: 22),
-            if (badgeCount != null)
-              Positioned(
-                top: -4,
-                right: -6,
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$badgeCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
+    if (assignment.isRejected) {
+      return const _Circle(color: AppColors.error, icon: Icons.close);
+    }
+
+    if (assignment.needsParentApproval) {
+      return GestureDetector(
+        onTap: isApproving ? null : onApprove,
+        child: _Circle(
+          color: AppColors.primaryLight,
+          borderColor: AppColors.primary,
+          child: isApproving
+              ? const Padding(
+                  padding: EdgeInsets.all(7),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.check, color: AppColors.primary, size: 18),
         ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: color,
+      );
+    }
+
+    return const _Circle(
+      color: Colors.transparent,
+      borderColor: AppColors.border,
+    );
+  }
+}
+
+class _Circle extends StatelessWidget {
+  final Color color;
+  final Color? borderColor;
+  final IconData? icon;
+  final Widget? child;
+
+  const _Circle({required this.color, this.borderColor, this.icon, this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: borderColor == null
+            ? null
+            : Border.all(color: borderColor!, width: 2),
+      ),
+      child:
+          child ??
+          (icon == null ? null : Icon(icon, color: Colors.white, size: 18)),
+    );
+  }
+}
+
+class _MessageCard extends StatelessWidget {
+  final String message;
+  final Future<void> Function()? onRetry;
+
+  const _MessageCard({required this.message, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
-        ),
-      ],
+
+          if (onRetry != null)
+            TextButton(onPressed: onRetry, child: const Text('إعادة المحاولة')),
+        ],
+      ),
     );
   }
 }
