@@ -50,7 +50,6 @@ dependencies:
 
   # Freezed annotations
   freezed_annotation: ^3.1.0
-  shared_preferences: ^2.5.5
 
 # Development dependencies
 dev_dependencies:
