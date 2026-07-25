@@ -1,188 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/navigation/app_bottom_navigation.dart';
+import '../../../core/navigation/app_navigation_controller.dart';
 import '../screens/child_home_screen.dart';
 import '../screens/child_progress_screen.dart';
 import '../screens/child_rewards_screen.dart';
 import '../screens/child_wishlist_screen.dart';
 
-// The single shared navigation container for all four child tabs.
-class ChildNav extends StatefulWidget {
-  const ChildNav({super.key});
+class ChildNav extends StatelessWidget {
+  final bool isArabic;
+
+  const ChildNav({super.key, this.isArabic = true});
 
   @override
-  State<ChildNav> createState() => _ChildNavState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AppNavigationController(initialIndex: 0),
+      child: _ChildNavigationView(isArabic: isArabic),
+    );
+  }
 }
 
-class _ChildNavState extends State<ChildNav> {
-  int _currentIndex = 0;
+class _ChildNavigationView extends StatelessWidget {
+  final bool isArabic;
 
-  final List<Widget> _screens = const [
-    ChildHomeScreen(),
-    ChildWishlistScreen(),
-    ChildRewardsScreen(),
-    ChildProgressScreen(),
+  const _ChildNavigationView({required this.isArabic});
+
+  static const List<AppNavigationItem> _navigationItems = [
+    AppNavigationItem(
+      index: 0,
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home_rounded,
+      arabicLabel: 'الرئيسية',
+      englishLabel: 'Home',
+    ),
+    AppNavigationItem(
+      index: 1,
+      icon: Icons.favorite_border_rounded,
+      selectedIcon: Icons.favorite_rounded,
+      arabicLabel: 'أمنياتي',
+      englishLabel: 'Wishes',
+    ),
+    AppNavigationItem(
+      index: 2,
+      icon: Icons.card_giftcard_outlined,
+      selectedIcon: Icons.card_giftcard_rounded,
+      arabicLabel: 'المكافآت',
+      englishLabel: 'Rewards',
+    ),
+    AppNavigationItem(
+      index: 3,
+      icon: Icons.bar_chart_outlined,
+      selectedIcon: Icons.bar_chart_rounded,
+      arabicLabel: 'تقدّمي',
+      englishLabel: 'Progress',
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: _ChildBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
-    );
-  }
-}
+    final navigation = context.watch<AppNavigationController>();
 
-class _ChildBottomNavigationBar extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
+    final pages = <Widget>[
+      navigation.isLoaded(0)
+          ? const ChildHomeScreen()
+          : const SizedBox.shrink(),
 
-  const _ChildBottomNavigationBar({
-    required this.currentIndex,
-    required this.onTap,
-  });
+      navigation.isLoaded(1)
+          ? const ChildWishlistScreen()
+          : const SizedBox.shrink(),
 
-  @override
-  Widget build(BuildContext context) {
-    const items = [
-      _ChildNavDestination(
-        icon: Icons.home_outlined,
-        selectedIcon: Icons.home_rounded,
-        label: 'الرئيسية',
-      ),
-      _ChildNavDestination(
-        icon: Icons.favorite_border_rounded,
-        selectedIcon: Icons.favorite_rounded,
-        label: 'أمنياتي',
-      ),
-      _ChildNavDestination(
-        icon: Icons.card_giftcard_outlined,
-        selectedIcon: Icons.card_giftcard_rounded,
-        label: 'المكافآت',
-      ),
-      _ChildNavDestination(
-        icon: Icons.bar_chart_outlined,
-        selectedIcon: Icons.bar_chart_rounded,
-        label: 'تقدّمي',
-      ),
+      navigation.isLoaded(2)
+          ? const ChildRewardsScreen()
+          : const SizedBox.shrink(),
+
+      navigation.isLoaded(3)
+          ? const ChildProgressScreen()
+          : const SizedBox.shrink(),
     ];
 
-    return SafeArea(
-      top: false,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(8, 9, 8, 8),
-        decoration: BoxDecoration(
-          color: AppColors.navBackground,
-          border: const Border(
-            top: BorderSide(color: AppColors.border),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryDark.withOpacity(0.10),
-              blurRadius: 18,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: Row(
-          textDirection: TextDirection.rtl,
-          children: List.generate(items.length, (index) {
-            final item = items[index];
-
-            return Expanded(
-              child: _ChildNavItem(
-                destination: item,
-                isSelected: currentIndex == index,
-                onTap: () => onTap(index),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
-}
-
-class _ChildNavDestination {
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
-
-  const _ChildNavDestination({
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-  });
-}
-
-class _ChildNavItem extends StatelessWidget {
-  final _ChildNavDestination destination;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _ChildNavItem({
-    required this.destination,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color =
-        isSelected ? AppColors.primaryDark : AppColors.textSecondary;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(22),
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryLight : Colors.transparent,
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedScale(
-                duration: const Duration(milliseconds: 220),
-                scale: isSelected ? 1.12 : 1,
-                child: Icon(
-                  isSelected
-                      ? destination.selectedIcon
-                      : destination.icon,
-                  size: 23,
-                  color: color,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                destination.label,
-                maxLines: 1,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: IndexedStack(index: navigation.currentIndex, children: pages),
+      bottomNavigationBar: AppBottomNavigation(
+        items: _navigationItems,
+        currentIndex: navigation.currentIndex,
+        isArabic: isArabic,
+        onTap: navigation.selectTab,
       ),
     );
   }
