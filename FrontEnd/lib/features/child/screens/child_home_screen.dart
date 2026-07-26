@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import '../../../app.dart';
+import '../../auth/services/auth_api_service.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -104,7 +105,52 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       }
     }
   }
+    Future<void> _logout() async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('تسجيل الخروج'),
+          content: const Text(
+            'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('إلغاء'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              child: const Text(
+                'تسجيل الخروج',
+                style: TextStyle(
+                  color: AppColors.error,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
 
+    if (shouldLogout != true) return;
+
+    await AuthApiService().logout();
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AsalahApp(),
+      ),
+      (route) => false,
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -146,11 +192,12 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          _HomeHeader(
+                    _HomeHeader(
             childName: _child!.name,
             points: _points,
             completedTasks: completedCount,
             totalTasks: _assignments.length,
+            onLogout: _logout,
           ),
           Expanded(
             child: RefreshIndicator(
@@ -227,12 +274,14 @@ class _HomeHeader extends StatelessWidget {
   final int points;
   final int completedTasks;
   final int totalTasks;
+    final VoidCallback onLogout;
 
-  const _HomeHeader({
+    const _HomeHeader({
     required this.childName,
     required this.points,
     required this.completedTasks,
     required this.totalTasks,
+    required this.onLogout,
   });
 
   @override
@@ -321,7 +370,20 @@ class _HomeHeader extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.md),
+                      const SizedBox(width: AppSpacing.sm),
+
+                      IconButton(
+                        tooltip: 'تسجيل الخروج',
+                        onPressed: onLogout,
+                        icon: const Icon(
+                          Icons.logout_rounded,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                      ),
+
+                      const SizedBox(width: AppSpacing.sm),
+
                       Container(
                         width: 66,
                         height: 66,
