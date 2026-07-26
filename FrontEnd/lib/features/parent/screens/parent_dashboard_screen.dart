@@ -1,273 +1,203 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/features/child/services/point_api_service.dart';
-import 'package:frontend/features/parent/services/child_api_service.dart';
-import 'package:frontend/features/parent/services/dashboard_api_service.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../../models/child_dashboard_model.dart';
-import '../../../models/child_model.dart';
-import '../../../models/user_model.dart';
-import '../../../services/user_api_service.dart';
 import '../../child/screens/child_profile_screen.dart';
+import '../controllers/parent_dashboard_controller.dart';
+import '../models/parent_dashboard_data.dart';
+import '../repositories/parent_dashboard_repository.dart';
 import 'add_child_screen.dart';
 import 'task_review_screen.dart';
 
-class ParentDashboardScreen extends StatefulWidget {
-  const ParentDashboardScreen({super.key});
+class ParentDashboardScreen extends StatelessWidget {
+  final bool isArabic;
+
+  const ParentDashboardScreen({super.key, required this.isArabic});
 
   @override
-  State<ParentDashboardScreen> createState() => _ParentDashboardScreenState();
-}
-
-class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
-
-  final PointApiService _pointApiService = PointApiService();
-
-  late Future<UserModel> _userFuture;
-
-  late Future<List<ChildModel>> _childrenFuture;
-
-  late Future<List<ChildDashboardModel>> _dashboardFuture;
-
-  late Future<int> _pendingReviewCountFuture;
-
-  late Future<Map<String, int?>> _pointsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  void _loadData() {
-    _userFuture = UserApiService().getCurrentUser();
-
-    _childrenFuture = ChildApiService().getChildren();
-
-    _dashboardFuture = DashboardApiService().getDashboard();
-
-    _pendingReviewCountFuture = _getPendingReviewCount(_dashboardFuture);
-
-    _pointsFuture = _getChildrenPoints(_childrenFuture);
-  }
-
-  Future<int> _getPendingReviewCount(
-  Future<List<ChildDashboardModel>> dashboardFuture,
-) async {
-  final dashboards = await dashboardFuture;
-
-  return dashboards.fold<int>(
-    0,
-    (total, dashboard) =>
-        total + dashboard.pendingReviewTasks,
-  );
-}
-
-  Future<Map<String, int?>> _getChildrenPoints(
-    Future<List<ChildModel>> childrenFuture,
-  ) async {
-    final children = await childrenFuture;
-
-    final entries = await Future.wait(
-      children.map((child) async {
-        try {
-          final points = await _pointApiService.getChildPoints(child.id);
-
-          return MapEntry<String, int?>(child.id, points);
-        } catch (error) {
-          debugPrint(
-            'Could not load points for '
-            '${child.name}: $error',
-          );
-
-          return MapEntry<String, int?>(child.id, null);
-        }
-      }),
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) =>
+          ParentDashboardController(ParentDashboardRepository())
+            ..loadDashboard(),
+      child: _ParentDashboardView(isArabic: isArabic),
     );
-
-    return Map<String, int?>.fromEntries(entries);
   }
+}
 
-  Future<void> _openAddChildScreen() async {
-    final result = await Navigator.push(
+class _ParentDashboardView extends StatelessWidget {
+  final bool isArabic;
+
+  const _ParentDashboardView({required this.isArabic});
+
+  Future<void> _openAddChild(BuildContext context) async {
+    final controller = context.read<ParentDashboardController>();
+
+    final wasAdded = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => const AddChildScreen()),
     );
 
-    if (!mounted) return;
+    if (!context.mounted) return;
 
-    if (result == true) {
-      setState(_loadData);
+    if (wasAdded == true) {
+      await controller.refresh();
     }
   }
 
-  Future<void> _openTaskReviewScreen() async {
+  Future<void> _openTaskReview(BuildContext context) async {
+    final controller = context.read<ParentDashboardController>();
+
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const TaskReviewScreen()),
     );
 
-    if (!mounted) return;
+    if (!context.mounted) return;
 
-    // Refresh the progress, points and review count.
-    setState(_loadData);
+    await controller.refresh();
   }
 
-  ChildModel? _findChild(List<ChildModel> children, String childId) {
-    for (final child in children) {
-      if (child.id == childId) {
-        return child;
-      }
-    }
+  Future<void> _openChildProfile(
+    BuildContext context,
+    ParentDashboardChildItem item,
+  ) async {
+    final controller = context.read<ParentDashboardController>();
 
-    return null;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            ChildProfileScreen(child: item.child, dashboard: item.dashboard),
+      ),
+    );
+
+    if (!context.mounted) return;
+
+    await controller.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ScreenBackground(
-        child: SafeArea(
-          bottom: false,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: FutureBuilder<UserModel>(
-              future: _userFuture,
-              builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+    final controller = context.watch<ParentDashboardController>();
 
-                if (userSnapshot.hasError || !userSnapshot.hasData) {
-                  return const Center(
-                    child: Text('تعذر تحميل بيانات المستخدم'),
-                  );
-                }
+    final data = controller.data;
 
-                final user = userSnapshot.data!;
-
-                return Column(
-                  children: [
-                    _WelcomeBanner(user: user),
-
-                    const SizedBox(height: AppSpacing.lg),
-
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('أطفالك', style: AppTextStyles.arabicTitle),
-                    ),
-
-                    const SizedBox(height: AppSpacing.sm),
-
-                    FutureBuilder<List<ChildModel>>(
-                      future: _childrenFuture,
-                      builder: (context, childrenSnapshot) {
-                        if (childrenSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        if (childrenSnapshot.hasError) {
-                          return const Center(
-                            child: Text('تعذر تحميل الأطفال'),
-                          );
-                        }
-
-                        final children =
-                            childrenSnapshot.data ?? <ChildModel>[];
-
-                        if (children.isEmpty) {
-                          return const Center(child: Text('لا يوجد أطفال بعد'));
-                        }
-
-                        return FutureBuilder<List<ChildDashboardModel>>(
-                          future: _dashboardFuture,
-                          builder: (context, dashboardSnapshot) {
-                            if (dashboardSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-
-                            if (dashboardSnapshot.hasError) {
-                              return const Center(
-                                child: Text('تعذر تحميل تقدم الأطفال'),
-                              );
-                            }
-
-                            final dashboards =
-                                dashboardSnapshot.data ??
-                                <ChildDashboardModel>[];
-
-                            return FutureBuilder<Map<String, int?>>(
-                              future: _pointsFuture,
-                              builder: (context, pointsSnapshot) {
-                                final pointsByChild =
-                                    pointsSnapshot.data ?? <String, int?>{};
-
-                                final pointsAreLoading =
-                                    pointsSnapshot.connectionState ==
-                                    ConnectionState.waiting;
-
-                                return Column(
-                                  children: dashboards.map((dashboard) {
-                                    final child = _findChild(
-                                      children,
-                                      dashboard.childId,
-                                    );
-
-                                    if (child == null) {
-                                      return const SizedBox.shrink();
-                                    }
-
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: AppSpacing.sm,
-                                      ),
-                                      child: _ChildProgressCard(
-                                        child: child,
-                                        dashboard: dashboard,
-                                        points: pointsByChild[child.id],
-                                        pointsAreLoading: pointsAreLoading,
-                                      ),
-                                    );
-                                  }).toList(),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: AppSpacing.sm),
-
-                    _AddChildButton(onTap: _openAddChildScreen),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    FutureBuilder<int>(
-                      future: _pendingReviewCountFuture,
-                      builder: (context, snapshot) {
-                        return _TaskReviewButton(
-                          count: snapshot.data ?? 0,
-                          onTap: _openTaskReviewScreen,
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: AppSpacing.lg),
-                  ],
-                );
-              },
+    return Directionality(
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: ScreenBackground(
+          child: SafeArea(
+            bottom: false,
+            child: _buildContent(
+              context: context,
+              controller: controller,
+              data: data,
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent({
+    required BuildContext context,
+    required ParentDashboardController controller,
+    required ParentDashboardData? data,
+  }) {
+    if (controller.isLoading && data == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (data == null) {
+      return _DashboardErrorState(
+        message:
+            controller.errorMessage ??
+            (isArabic
+                ? 'تعذّر تحميل الصفحة الرئيسية.'
+                : 'Could not load the home screen.'),
+        isArabic: isArabic,
+        onRetry: controller.loadDashboard,
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: controller.refresh,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          100,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _WelcomeBanner(
+              parentName: '${data.user.firstName} ${data.user.lastName}',
+              isArabic: isArabic,
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+
+            if (controller.errorMessage != null)
+              _DashboardErrorBanner(
+                message: controller.errorMessage!,
+                onClose: controller.clearError,
+              ),
+
+            _SectionHeader(title: isArabic ? 'أطفالك' : 'Your children'),
+
+            const SizedBox(height: AppSpacing.md),
+
+            if (data.children.isEmpty)
+              _NoChildrenState(
+                isArabic: isArabic,
+                onAddChild: () {
+                  _openAddChild(context);
+                },
+              )
+            else ...[
+              ...data.children.map((item) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: _SimpleChildCard(
+                    item: item,
+                    isArabic: isArabic,
+                    onTap: () {
+                      _openChildProfile(context, item);
+                    },
+                  ),
+                );
+              }),
+
+              const SizedBox(height: AppSpacing.sm),
+
+              _AddChildButton(
+                isArabic: isArabic,
+                onTap: () {
+                  _openAddChild(context);
+                },
+              ),
+            ],
+
+            const SizedBox(height: AppSpacing.md),
+
+            _TaskReviewButton(
+              count: data.pendingReviewCount,
+              isArabic: isArabic,
+              onTap: () {
+                _openTaskReview(context);
+              },
+            ),
+
+            const SizedBox(height: AppSpacing.lg),
+          ],
         ),
       ),
     );
@@ -275,9 +205,10 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 }
 
 class _WelcomeBanner extends StatelessWidget {
-  final UserModel user;
+  final String parentName;
+  final bool isArabic;
 
-  const _WelcomeBanner({required this.user});
+  const _WelcomeBanner({required this.parentName, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +217,7 @@ class _WelcomeBanner extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFFE4D9F7),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
         children: [
@@ -299,20 +230,26 @@ class _WelcomeBanner extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           Text(
-            'مرحبًا ${user.firstName} '
-            '${user.lastName}!',
+            isArabic ? 'مرحبًا $parentName!' : 'Welcome, $parentName!',
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 19,
               fontWeight: FontWeight.bold,
               color: AppColors.primaryDark,
             ),
           ),
 
-          const Text(
-            'أنتِ تبنين جيلاً رائعًا',
+          const SizedBox(height: 3),
+
+          Text(
+            isArabic
+                ? 'أنتِ تبنين جيلاً رائعًا'
+                : 'You are building a wonderful generation',
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.textSecondary),
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
@@ -320,70 +257,93 @@ class _WelcomeBanner extends StatelessWidget {
   }
 }
 
-class _ChildProgressCard extends StatelessWidget {
-  final ChildModel child;
-  final ChildDashboardModel dashboard;
-  final int? points;
-  final bool pointsAreLoading;
+class _SectionHeader extends StatelessWidget {
+  final String title;
 
-  const _ChildProgressCard({
-    required this.child,
-    required this.dashboard,
-    required this.points,
-    required this.pointsAreLoading,
+  const _SectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      textAlign: TextAlign.start,
+      style: AppTextStyles.arabicTitle,
+    );
+  }
+}
+
+class _SimpleChildCard extends StatelessWidget {
+  final ParentDashboardChildItem item;
+  final bool isArabic;
+  final VoidCallback onTap;
+
+  const _SimpleChildCard({
+    required this.item,
+    required this.isArabic,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                ChildProfileScreen(child: child, dashboard: dashboard),
+    final dashboard = item.dashboard;
+
+    final progress = dashboard.progressPercentage.clamp(0, 100).round();
+
+    return Material(
+      color: AppColors.card,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.border),
           ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          textDirection: TextDirection.ltr,
-          children: [
-            // The old child avatar was replaced
-            // with the child's current points.
-            _ChildPointsBadge(points: points, isLoading: pointsAreLoading),
+          child: Row(
+            // Keep points on the left and progress on the right,
+            // matching the previous dashboard design.
+            textDirection: TextDirection.ltr,
+            children: [
+              _ChildPointsBadge(points: item.points, isArabic: isArabic),
 
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    dashboard.childName,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: AppColors.textPrimary,
+              const SizedBox(width: AppSpacing.sm),
+
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      dashboard.childName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 2),
+                    const SizedBox(height: 3),
 
-                  Text(
-                    '${dashboard.childAge} سنوات',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
-                ],
+                    Text(
+                      isArabic
+                          ? '${dashboard.childAge} سنوات'
+                          : '${dashboard.childAge} years old',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            _ProgressRing(percent: dashboard.progressPercentage.round()),
-          ],
+              const SizedBox(width: AppSpacing.sm),
+
+              _ProgressRing(percent: progress),
+            ],
+          ),
         ),
       ),
     );
@@ -392,55 +352,44 @@ class _ChildProgressCard extends StatelessWidget {
 
 class _ChildPointsBadge extends StatelessWidget {
   final int? points;
-  final bool isLoading;
+  final bool isArabic;
 
-  const _ChildPointsBadge({required this.points, required this.isLoading});
+  const _ChildPointsBadge({required this.points, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 64,
-      height: 64,
+      width: 66,
+      height: 66,
       decoration: const BoxDecoration(
         color: AppColors.goldLight,
         shape: BoxShape.circle,
       ),
-      child: isLoading
-          ? const Center(
-              child: SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.gold,
-                ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.auto_awesome, color: AppColors.gold, size: 15),
+
+          const SizedBox(height: 1),
+
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              points?.toString() ?? '—',
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.auto_awesome, color: AppColors.gold, size: 14),
-
-                const SizedBox(height: 1),
-
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    points?.toString() ?? '—',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-
-                const Text(
-                  'نقطة',
-                  style: TextStyle(fontSize: 8, color: AppColors.textSecondary),
-                ),
-              ],
             ),
+          ),
+
+          Text(
+            isArabic ? 'نقطة' : 'Points',
+            style: const TextStyle(fontSize: 8, color: AppColors.textSecondary),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -455,14 +404,14 @@ class _ProgressRing extends StatelessWidget {
     final safePercent = percent.clamp(0, 100);
 
     return SizedBox(
-      width: 56,
-      height: 56,
+      width: 58,
+      height: 58,
       child: Stack(
         alignment: Alignment.center,
         children: [
           SizedBox(
-            width: 56,
-            height: 56,
+            width: 58,
+            height: 58,
             child: CircularProgressIndicator(
               value: safePercent / 100,
               strokeWidth: 5,
@@ -474,6 +423,7 @@ class _ProgressRing extends StatelessWidget {
           Text(
             '$safePercent%',
             style: const TextStyle(
+              fontSize: 13,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
@@ -485,9 +435,10 @@ class _ProgressRing extends StatelessWidget {
 }
 
 class _AddChildButton extends StatelessWidget {
+  final bool isArabic;
   final VoidCallback onTap;
 
-  const _AddChildButton({required this.onTap});
+  const _AddChildButton({required this.isArabic, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -498,10 +449,11 @@ class _AddChildButton extends StatelessWidget {
         side: const BorderSide(color: AppColors.primary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
-      child: const Row(
+      child: Row(
+        // Keeps the plus button on the left.
         textDirection: TextDirection.ltr,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             backgroundColor: AppColors.primary,
             child: Icon(Icons.add, color: Colors.white),
           ),
@@ -509,8 +461,8 @@ class _AddChildButton extends StatelessWidget {
           Expanded(
             child: Center(
               child: Text(
-                'إضافة طفل',
-                style: TextStyle(
+                isArabic ? 'إضافة طفل' : 'Add child',
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -518,7 +470,7 @@ class _AddChildButton extends StatelessWidget {
             ),
           ),
 
-          SizedBox(width: 40),
+          const SizedBox(width: 40),
         ],
       ),
     );
@@ -527,9 +479,14 @@ class _AddChildButton extends StatelessWidget {
 
 class _TaskReviewButton extends StatelessWidget {
   final int count;
+  final bool isArabic;
   final VoidCallback onTap;
 
-  const _TaskReviewButton({required this.count, required this.onTap});
+  const _TaskReviewButton({
+    required this.count,
+    required this.isArabic,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -542,19 +499,19 @@ class _TaskReviewButton extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
-            textDirection: TextDirection.rtl,
+            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
               const Icon(Icons.fact_check_outlined, color: AppColors.primary),
 
               const SizedBox(width: AppSpacing.md),
 
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'مراجعة المهام',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                  isArabic ? 'مراجعة المهام' : 'Review tasks',
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(
                     fontSize: 16,
+                    fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -566,15 +523,146 @@ class _TaskReviewButton extends StatelessWidget {
                   backgroundColor: AppColors.error,
                   child: Text(
                     '$count',
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 )
               else
-                const Icon(Icons.chevron_left, color: AppColors.textSecondary),
+                Icon(
+                  isArabic ? Icons.chevron_left : Icons.chevron_right,
+                  color: AppColors.textSecondary,
+                ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _NoChildrenState extends StatelessWidget {
+  final bool isArabic;
+  final VoidCallback onAddChild;
+
+  const _NoChildrenState({required this.isArabic, required this.onAddChild});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.family_restroom_rounded,
+            size: 48,
+            color: AppColors.primary,
+          ),
+
+          const SizedBox(height: AppSpacing.md),
+
+          Text(
+            isArabic ? 'لا يوجد أطفال بعد' : 'No children added yet',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+
+          const SizedBox(height: AppSpacing.md),
+
+          ElevatedButton.icon(
+            onPressed: onAddChild,
+            icon: const Icon(Icons.add),
+            label: Text(isArabic ? 'إضافة طفل' : 'Add child'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardErrorBanner extends StatelessWidget {
+  final String message;
+  final VoidCallback onClose;
+
+  const _DashboardErrorBanner({required this.message, required this.onClose});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9DEDE),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: onClose,
+            icon: const Icon(Icons.close, size: 18, color: AppColors.error),
+          ),
+
+          Expanded(
+            child: Text(
+              message,
+              textAlign: TextAlign.start,
+              style: const TextStyle(fontSize: 12, color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardErrorState extends StatelessWidget {
+  final String message;
+  final bool isArabic;
+  final Future<void> Function() onRetry;
+
+  const _DashboardErrorState({
+    required this.message,
+    required this.isArabic,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      children: [
+        const SizedBox(height: 140),
+
+        const Icon(
+          Icons.dashboard_outlined,
+          size: 52,
+          color: AppColors.primary,
+        ),
+
+        const SizedBox(height: AppSpacing.md),
+
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: AppColors.error),
+        ),
+
+        const SizedBox(height: AppSpacing.md),
+
+        Center(
+          child: ElevatedButton(
+            onPressed: onRetry,
+            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
+          ),
+        ),
+      ],
     );
   }
 }
