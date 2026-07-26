@@ -5,11 +5,11 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../child/screens/child_profile_screen.dart';
 import '../controllers/parent_dashboard_controller.dart';
 import '../models/parent_dashboard_data.dart';
 import '../repositories/parent_dashboard_repository.dart';
 import 'add_child_screen.dart';
+import 'parent_child_details_screen.dart';
 import 'task_review_screen.dart';
 
 class ParentDashboardScreen extends StatelessWidget {
@@ -61,23 +61,25 @@ class _ParentDashboardView extends StatelessWidget {
     await controller.refresh();
   }
 
-  Future<void> _openChildProfile(
+  Future<void> _openChildDetails(
     BuildContext context,
     ParentDashboardChildItem item,
   ) async {
     final controller = context.read<ParentDashboardController>();
 
-    await Navigator.push(
+    await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            ChildProfileScreen(child: item.child, dashboard: item.dashboard),
+        builder: (_) => ChangeNotifierProvider.value(
+          value: controller,
+          child: ParentChildDetailsScreen(item: item, isArabic: isArabic),
+        ),
       ),
     );
 
-    if (!context.mounted) return;
-
-    await controller.refresh();
+    // The controller removes the child from the local dashboard
+    // immediately after successful deletion.
+    // Therefore, no additional refresh is required here.
   }
 
   @override
@@ -139,7 +141,9 @@ class _ParentDashboardView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _WelcomeBanner(
-              parentName: '${data.user.firstName} ${data.user.lastName}',
+              parentName:
+                  '${data.user.firstName} '
+                  '${data.user.lastName}',
               isArabic: isArabic,
             ),
 
@@ -170,7 +174,7 @@ class _ParentDashboardView extends StatelessWidget {
                     item: item,
                     isArabic: isArabic,
                     onTap: () {
-                      _openChildProfile(context, item);
+                      _openChildDetails(context, item);
                     },
                   ),
                 );
@@ -302,8 +306,8 @@ class _SimpleChildCard extends StatelessWidget {
             border: Border.all(color: AppColors.border),
           ),
           child: Row(
-            // Keep points on the left and progress on the right,
-            // matching the previous dashboard design.
+            // Keep the points badge on the left
+            // and progress ring on the right.
             textDirection: TextDirection.ltr,
             children: [
               _ChildPointsBadge(points: item.points, isArabic: isArabic),
@@ -450,7 +454,7 @@ class _AddChildButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       child: Row(
-        // Keeps the plus button on the left.
+        // Keep the plus button on the left.
         textDirection: TextDirection.ltr,
         children: [
           const CircleAvatar(

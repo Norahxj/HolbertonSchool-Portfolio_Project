@@ -4,8 +4,7 @@ import 'package:frontend/models/child_model.dart';
 
 // Handles parent requests related to children.
 class ChildApiService {
-  final ApiService _apiService =
-      ApiService(DioFactory.getDio());
+  final ApiService _apiService = ApiService(DioFactory.getDio());
 
   // Gets all children.
   Future<List<ChildModel>> getChildren() async {
@@ -25,8 +24,7 @@ class ChildApiService {
       'name': name,
       'birth_date': birthDate,
       'avatar_index': avatarIndex,
-      if (phone != null && phone.isNotEmpty)
-        'phone': phone,
+      if (phone != null && phone.isNotEmpty) 'phone': phone,
     };
 
     final response = await _apiService.addChild(body);
@@ -35,12 +33,14 @@ class ChildApiService {
   }
 
   // Gets information about one child.
-  Future<ChildModel> getChildById(
-    String childId,
-  ) async {
-    final response =
-        await _apiService.getChild(childId);
+  Future<ChildModel> getChildById(String childId) async {
+    final response = await _apiService.getChild(childId);
 
     return response.data;
+  }
+
+  // Deletes a child and their related data.
+  Future<void> deleteChild(String childId) async {
+    await _apiService.deleteChild(childId);
   }
 }

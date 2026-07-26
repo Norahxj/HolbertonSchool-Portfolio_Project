@@ -72,6 +72,10 @@ class ParentDashboardRepository {
     return ParentDashboardData(user: user, children: childItems);
   }
 
+  Future<void> deleteChild(String childId) async {
+    await _childApiService.deleteChild(childId);
+  }
+
   ChildDashboardModel _emptyDashboard(ChildModel child) {
     return ChildDashboardModel(
       childId: child.id,
