@@ -59,7 +59,9 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
       if (!mounted) return;
 
       setState(() {
-        _errorMessage = 'تعذّر تحميل بيانات التقدم.';
+        _errorMessage = widget.isArabic
+    ? 'تعذّر تحميل بيانات التقدم.'
+    : 'Could not load progress data.';
         _isLoading = false;
       });
 
@@ -238,17 +240,24 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
   }
 
   String get _progressMessage {
-    if (_weeklyAssignments.isEmpty) {
-      return 'لا توجد مهام مسندة هذا الأسبوع';
-    }
-
-    if (_weeklyCompleted == _weeklyAssignments.length) {
-      return 'رائع! أنجزت جميع مهام هذا الأسبوع';
-    }
-
-    return 'أحسنت! أنجزت $_weeklyCompleted '
-        'من ${_weeklyAssignments.length} مهام هذا الأسبوع';
+  if (_weeklyAssignments.isEmpty) {
+    return widget.isArabic
+        ? 'لا توجد مهام مسندة هذا الأسبوع'
+        : 'No tasks assigned this week';
   }
+
+  if (_weeklyCompleted == _weeklyAssignments.length) {
+    return widget.isArabic
+        ? 'رائع! أنجزت جميع مهام هذا الأسبوع'
+        : 'Great! You completed all tasks this week';
+  }
+
+  return widget.isArabic
+      ? 'أحسنت! أنجزت $_weeklyCompleted '
+          'من ${_weeklyAssignments.length} مهام هذا الأسبوع'
+      : 'Well done! You completed $_weeklyCompleted '
+          'of ${_weeklyAssignments.length} tasks this week';
+}
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +271,11 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
     if (_errorMessage != null) {
       return Scaffold(
         backgroundColor: AppColors.background,
-        body: _ProgressErrorState(message: _errorMessage!, onRetry: _loadData),
+        body: _ProgressErrorState(
+  message: _errorMessage!,
+  onRetry: _loadData,
+  isArabic: widget.isArabic,
+),
       );
     }
 
@@ -278,17 +291,20 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'تقدّمي',
-                  style: AppTextStyles.arabicTitle,
-                  textAlign: TextAlign.center,
-                ),
+  widget.isArabic ? 'تقدّمي' : 'My Progress',
+  style: AppTextStyles.arabicTitle,
+  textAlign: TextAlign.center,
+  textDirection:
+      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+),
 
                 const SizedBox(height: AppSpacing.lg),
 
                 _ProgressSummaryCard(
-                  percent: _weeklyPercent,
-                  message: _progressMessage,
-                ),
+  percent: _weeklyPercent,
+  message: _progressMessage,
+  isArabic: widget.isArabic,
+),
 
                 const SizedBox(height: AppSpacing.lg),
 
@@ -299,7 +315,7 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
                         icon: Icons.water_drop,
                         iconColor: const Color(0xFFDE9A3E),
                         value: '$_currentStreak',
-                        label: 'أيام متتالية',
+                        label: widget.isArabic ? 'أيام متتالية' : 'Day streak',
                       ),
                     ),
 
@@ -310,7 +326,7 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
                         icon: Icons.check_circle_outline,
                         iconColor: AppColors.success,
                         value: '$_totalCompleted',
-                        label: 'مهمة مكتملة',
+                        label: widget.isArabic ? 'مهمة مكتملة' : 'Completed tasks',
                       ),
                     ),
 
@@ -321,7 +337,7 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
                         icon: Icons.auto_awesome,
                         iconColor: AppColors.gold,
                         value: '$_points',
-                        label: 'رصيد النقاط',
+                        label: widget.isArabic ? 'رصيد النقاط' : 'Points balance',
                       ),
                     ),
                   ],
@@ -329,14 +345,19 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
 
                 const SizedBox(height: AppSpacing.xl),
 
-                _TrophiesSection(completedByCategory: _completedByCategory),
+               _TrophiesSection(
+  completedByCategory: _completedByCategory,
+  isArabic: widget.isArabic,
+),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                const Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    'نشاط الأسبوع',
+                Align(
+  alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
+  child: Text(
+    widget.isArabic ? 'نشاط الأسبوع' : 'Weekly Activity',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -347,7 +368,10 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                _WeeklyBarChart(activity: _weeklyActivity),
+                _WeeklyBarChart(
+  activity: _weeklyActivity,
+  isArabic: widget.isArabic,
+),
 
                 const SizedBox(height: AppSpacing.lg),
               ],
@@ -362,8 +386,13 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
 class _ProgressSummaryCard extends StatelessWidget {
   final int percent;
   final String message;
+  final bool isArabic;
 
-  const _ProgressSummaryCard({required this.percent, required this.message});
+  const _ProgressSummaryCard({
+  required this.percent,
+  required this.message,
+  required this.isArabic,
+});
 
   @override
   Widget build(BuildContext context) {
@@ -413,8 +442,8 @@ class _ProgressSummaryCard extends StatelessWidget {
 
                       const SizedBox(height: 2),
 
-                      const Text(
-                        'هذا الأسبوع',
+                      Text(
+  isArabic ? 'هذا الأسبوع' : 'This week',
                         style: TextStyle(fontSize: 12, color: Colors.white70),
                       ),
                     ],
@@ -438,7 +467,10 @@ class _ProgressSummaryCard extends StatelessWidget {
               ),
             ),
             child: Text(
+
               message,
+              textDirection:
+    isArabic ? TextDirection.rtl : TextDirection.ltr,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
@@ -519,20 +551,27 @@ enum _TrophyKind { daily, cultural, financial, religious }
 
 class _TrophiesSection extends StatelessWidget {
   final Map<_TrophyKind, int> completedByCategory;
+  
+  final bool isArabic;
 
-  const _TrophiesSection({required this.completedByCategory});
+  const _TrophiesSection({
+  required this.completedByCategory,
+  required this.isArabic,
+});
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection:
+    isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              'أوسمتي',
+          Align(
+  alignment:
+      isArabic ? Alignment.centerRight : Alignment.centerLeft,
+  child: Text(
+    isArabic ? 'أوسمتي' : 'My Badges',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -549,6 +588,7 @@ class _TrophiesSection extends StatelessWidget {
                 child: _TrophyBadge(
                   kind: _TrophyKind.daily,
                   completedTasks: completedByCategory[_TrophyKind.daily] ?? 0,
+                   isArabic: isArabic,
                 ),
               ),
 
@@ -559,6 +599,7 @@ class _TrophiesSection extends StatelessWidget {
                   kind: _TrophyKind.cultural,
                   completedTasks:
                       completedByCategory[_TrophyKind.cultural] ?? 0,
+                       isArabic: isArabic,
                 ),
               ),
 
@@ -569,6 +610,7 @@ class _TrophiesSection extends StatelessWidget {
                   kind: _TrophyKind.financial,
                   completedTasks:
                       completedByCategory[_TrophyKind.financial] ?? 0,
+                       isArabic: isArabic,
                 ),
               ),
 
@@ -579,6 +621,7 @@ class _TrophiesSection extends StatelessWidget {
                   kind: _TrophyKind.religious,
                   completedTasks:
                       completedByCategory[_TrophyKind.religious] ?? 0,
+                       isArabic: isArabic,
                 ),
               ),
             ],
@@ -586,8 +629,10 @@ class _TrophiesSection extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.md),
 
-          const Text(
-            'يفتح كل وسام بعد إنجاز 5 مهام من فئته',
+          Text(
+  isArabic
+      ? 'يفتح كل وسام بعد إنجاز 5 مهام من فئته'
+      : 'Each badge unlocks after completing 5 tasks in its category',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
@@ -600,9 +645,13 @@ class _TrophiesSection extends StatelessWidget {
 class _TrophyBadge extends StatelessWidget {
   final _TrophyKind kind;
   final int completedTasks;
+  final bool isArabic;
 
-  const _TrophyBadge({required this.kind, required this.completedTasks});
-
+const _TrophyBadge({
+  required this.kind,
+  required this.completedTasks,
+  required this.isArabic,
+});
   bool get unlocked {
     return completedTasks >= 5;
   }
@@ -612,20 +661,20 @@ class _TrophyBadge extends StatelessWidget {
   }
 
   String get title {
-    switch (kind) {
-      case _TrophyKind.daily:
-        return 'المهام\nاليومية';
+  switch (kind) {
+    case _TrophyKind.daily:
+      return isArabic ? 'المهام\nاليومية' : 'Daily\nTasks';
 
-      case _TrophyKind.cultural:
-        return 'المهام\nالثقافية';
+    case _TrophyKind.cultural:
+      return isArabic ? 'المهام\nالثقافية' : 'Cultural\nTasks';
 
-      case _TrophyKind.financial:
-        return 'المهام\nالمالية';
+    case _TrophyKind.financial:
+      return isArabic ? 'المهام\nالمالية' : 'Financial\nTasks';
 
-      case _TrophyKind.religious:
-        return 'المهام\nالدينية';
-    }
+    case _TrophyKind.religious:
+      return isArabic ? 'المهام\nالدينية' : 'Religious\nTasks';
   }
+}
 
   IconData get categoryIcon {
     switch (kind) {
@@ -771,8 +820,12 @@ class _TrophyBadge extends StatelessWidget {
             ),
             child: Text(
               unlocked
-                  ? 'مكتمل ٥/٥'
-                  : '${_convertToArabicNumbers(displayedTasks)}/٥',
+    ? isArabic
+        ? 'مكتمل ٥/٥'
+        : 'Completed 5/5'
+    : isArabic
+        ? '${_convertToArabicNumbers(displayedTasks)}/٥'
+        : '$displayedTasks/5',
               maxLines: 1,
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -805,13 +858,17 @@ String _convertToArabicNumbers(int number) {
 
 class _WeeklyBarChart extends StatelessWidget {
   final List<int> activity;
+  final bool isArabic;
 
-  const _WeeklyBarChart({required this.activity});
-
+const _WeeklyBarChart({
+  required this.activity,
+  required this.isArabic,
+});
   @override
   Widget build(BuildContext context) {
-    const labels = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
-
+final labels = isArabic
+    ? ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     int maximum = 0;
 
     for (final value in activity) {
@@ -834,7 +891,8 @@ class _WeeklyBarChart extends StatelessWidget {
         ],
       ),
       child: Directionality(
-        textDirection: TextDirection.rtl,
+  textDirection:
+      isArabic ? TextDirection.rtl : TextDirection.ltr,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -908,9 +966,13 @@ class _DayBar extends StatelessWidget {
 class _ProgressErrorState extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
+  final bool isArabic;
 
-  const _ProgressErrorState({required this.message, required this.onRetry});
-
+const _ProgressErrorState({
+  required this.message,
+  required this.onRetry,
+  required this.isArabic,
+});
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -938,7 +1000,9 @@ class _ProgressErrorState extends StatelessWidget {
 
               ElevatedButton(
                 onPressed: onRetry,
-                child: const Text('إعادة المحاولة'),
+                child: Text(
+  isArabic ? 'إعادة المحاولة' : 'Try again',
+),
               ),
             ],
           ),
