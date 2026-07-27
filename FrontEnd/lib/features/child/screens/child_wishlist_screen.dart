@@ -21,8 +21,10 @@ class ChildWishlistScreen extends StatefulWidget {
     super.key,
     required this.isArabic,
   });
+
   @override
-  State<ChildWishlistScreen> createState() => _ChildWishlistScreenState();
+  State<ChildWishlistScreen> createState() =>
+      _ChildWishlistScreenState();
 }
 
 class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
@@ -51,6 +53,7 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
         _wishlistService.getMyWishes(),
         _pointService.getMyPoints(),
       ]);
+
       if (mounted) {
         setState(() {
           _wishes = results[0] as List<WishModel>;
@@ -61,7 +64,9 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.';
+          _errorMessage = widget.isArabic
+              ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.'
+              : 'An error occurred while loading the data. Please try again.';
           _isLoading = false;
         });
       }
@@ -73,11 +78,17 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
       await _wishlistService.deleteWish(wishId);
       await _loadData();
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('تعذّر حذف الأمنية')));
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.isArabic
+                ? 'تعذّر حذف الأمنية'
+                : 'Could not delete the wish',
+          ),
+        ),
+      );
     }
   }
 
@@ -88,8 +99,12 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تعذّر تحقيق الأمنية — تحقق من رصيد نقاطك'),
+          SnackBar(
+            content: Text(
+              widget.isArabic
+                  ? 'تعذّر تحقيق الأمنية — تحقق من رصيد نقاطك'
+                  : 'Could not achieve the wish. Check your points balance.',
+            ),
           ),
         );
       }
@@ -141,8 +156,13 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'قائمة أمنياتي',
+                      widget.isArabic
+                          ? 'قائمة أمنياتي'
+                          : 'My Wishlist',
                       textAlign: TextAlign.center,
+                      textDirection: widget.isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                       style: AppTextStyles.arabicTitle,
                     ),
                   ),
@@ -153,9 +173,14 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
               const SizedBox(height: AppSpacing.sm),
 
               Text(
-                'اجمع نقاط نور لتحقيق أمنياتك',
+                widget.isArabic
+                    ? 'اجمع نقاط نور لتحقيق أمنياتك'
+                    : 'Collect Noor Points to achieve your wishes',
                 style: AppTextStyles.body,
                 textAlign: TextAlign.center,
+                textDirection: widget.isArabic
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
               ),
 
               const SizedBox(height: AppSpacing.lg),
@@ -176,23 +201,35 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
                         _errorMessage!,
                         style: const TextStyle(color: Colors.red),
                         textAlign: TextAlign.center,
+                        textDirection: widget.isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(
                         onPressed: _loadData,
-                        child: const Text('إعادة المحاولة'),
+                        child: Text(
+                          widget.isArabic
+                              ? 'إعادة المحاولة'
+                              : 'Try again',
+                        ),
                       ),
                     ],
                   ),
                 )
               else if (_wishes.isEmpty)
-                const Center(
+                Center(
                   child: Padding(
-                    padding: EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(32),
                     child: Text(
-                      'لا توجد أمنيات بعد.\nأضف أمنيتك الأولى!',
+                      widget.isArabic
+                          ? 'لا توجد أمنيات بعد.\nأضف أمنيتك الأولى!'
+                          : 'There are no wishes yet.\nAdd your first wish!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      textDirection: widget.isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      style: const TextStyle(
                         fontSize: 16,
                         color: AppColors.textSecondary,
                       ),
@@ -204,13 +241,15 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _wishes.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: AppSpacing.md),
                   itemBuilder: (context, index) {
                     final wish = _wishes[index];
+
                     return _WishCard(
                       wish: wish,
                       currentPoints: _points,
+                      isArabic: widget.isArabic,
                       onDelete: () => _deleteWish(wish.id),
                       onAchieve: () => _achieveWish(wish.id),
                     );
@@ -219,13 +258,13 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
 
               const SizedBox(height: AppSpacing.xl),
 
-              // ── Add wish button ────────────────────────────────────────────
+              // ── Add wish button ───────────────────────────────────────────
               GestureDetector(
                 onTap: () async {
                   final wasAdded = await Navigator.push<bool>(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const AddWishlistScreen(),
+                      builder: (_) =>  AddWishlistScreen( isArabic: widget.isArabic,),
                     ),
                   );
 
@@ -242,19 +281,31 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: AppColors.border),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    textDirection: widget.isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
                     children: [
                       Text(
-                        'إضافة أمنية',
-                        style: TextStyle(
+                        widget.isArabic
+                            ? 'إضافة أمنية'
+                            : 'Add a wish',
+                        textDirection: widget.isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
                         ),
                       ),
-                      SizedBox(width: AppSpacing.sm),
-                      Icon(Icons.add, color: AppColors.primary, size: 20),
+                      const SizedBox(width: AppSpacing.sm),
+                      const Icon(
+                        Icons.add,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
                     ],
                   ),
                 ),
@@ -272,12 +323,14 @@ class _ChildWishlistScreenState extends State<ChildWishlistScreen> {
 class _WishCard extends StatelessWidget {
   final WishModel wish;
   final int currentPoints;
+  final bool isArabic;
   final VoidCallback onDelete;
   final VoidCallback onAchieve;
 
   const _WishCard({
     required this.wish,
     required this.currentPoints,
+    required this.isArabic,
     required this.onDelete,
     required this.onAchieve,
   });
@@ -285,13 +338,13 @@ class _WishCard extends StatelessWidget {
   String get _statusLabel {
     switch (wish.status.toUpperCase()) {
       case 'APPROVED':
-        return 'مقبولة ✓';
+        return isArabic ? 'مقبولة ✓' : 'Approved ✓';
       case 'REJECTED':
-        return 'مرفوضة ✗';
+        return isArabic ? 'مرفوضة ✗' : 'Rejected ✗';
       case 'ACHIEVED':
-        return 'تحققت! 🌟';
+        return isArabic ? 'تحققت! 🌟' : 'Achieved! 🌟';
       default:
-        return 'في الانتظار...';
+        return isArabic ? 'في الانتظار...' : 'Pending...';
     }
   }
 
@@ -312,7 +365,8 @@ class _WishCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final status = wish.status.toUpperCase();
     final target = wish.targetPoints;
-    final hasProgress = status == 'APPROVED' && target != null && target > 0;
+    final hasProgress =
+        status == 'APPROVED' && target != null && target > 0;
 
     // Requirement #6: use actual currentPoints / targetPoints for progress
     final progressValue = hasProgress
@@ -344,6 +398,10 @@ class _WishCard extends StatelessWidget {
                   children: [
                     Text(
                       wish.name,
+                      textAlign:
+                          isArabic ? TextAlign.right : TextAlign.left,
+                      textDirection:
+                          isArabic ? TextDirection.rtl : TextDirection.ltr,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -353,7 +411,14 @@ class _WishCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       _statusLabel,
-                      style: TextStyle(fontSize: 12, color: _statusColor),
+                      textAlign:
+                          isArabic ? TextAlign.right : TextAlign.left,
+                      textDirection:
+                          isArabic ? TextDirection.rtl : TextDirection.ltr,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: _statusColor,
+                      ),
                     ),
                   ],
                 ),
@@ -384,7 +449,8 @@ class _WishCard extends StatelessWidget {
                 value: progressValue,
                 minHeight: 8,
                 backgroundColor: AppColors.primaryLight,
-                valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+                valueColor:
+                    const AlwaysStoppedAnimation(AppColors.primary),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -392,14 +458,22 @@ class _WishCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'الهدف: $target نقطة',
+                  isArabic
+                      ? 'الهدف: $target نقطة'
+                      : 'Target: $target points',
+                  textDirection:
+                      isArabic ? TextDirection.rtl : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 Text(
-                  'لديك: $currentPoints نقطة',
+                  isArabic
+                      ? 'لديك: $currentPoints نقطة'
+                      : 'You have: $currentPoints points',
+                  textDirection:
+                      isArabic ? TextDirection.rtl : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -425,10 +499,18 @@ class _WishCard extends StatelessWidget {
               ),
               child: Text(
                 target == null
-                    ? 'لم يتم تحديد النقاط المطلوبة'
+                    ? isArabic
+                        ? 'لم يتم تحديد النقاط المطلوبة'
+                        : 'Required points were not specified'
                     : currentPoints >= target
-                    ? 'لقد حققت أمنيتي! 🌟'
-                    : 'اجمع المزيد من النقاط',
+                        ? isArabic
+                            ? 'لقد حققت أمنيتي! 🌟'
+                            : 'I achieved my wish! 🌟'
+                        : isArabic
+                            ? 'اجمع المزيد من النقاط'
+                            : 'Collect more points',
+                textDirection:
+                    isArabic ? TextDirection.rtl : TextDirection.ltr,
                 style: const TextStyle(color: Colors.white),
               ),
             ),
@@ -443,7 +525,10 @@ class _WishCard extends StatelessWidget {
                 color: Colors.red,
                 size: 18,
               ),
-              label: const Text('حذف', style: TextStyle(color: Colors.red)),
+              label: Text(
+                isArabic ? 'حذف' : 'Delete',
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ],
