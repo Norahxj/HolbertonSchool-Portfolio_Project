@@ -11,22 +11,34 @@ import '../screens/child_wishlist_screen.dart';
 
 class ChildNav extends StatelessWidget {
   final bool isArabic;
+  final VoidCallback onLanguageToggle;
 
-  const ChildNav({super.key, this.isArabic = true});
+  const ChildNav({
+    super.key,
+    this.isArabic = true,
+    required this.onLanguageToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => AppNavigationController(initialIndex: 0),
-      child: _ChildNavigationView(isArabic: isArabic),
+      child: _ChildNavigationView(
+  isArabic: isArabic,
+  onLanguageToggle: onLanguageToggle,
+),
     );
   }
 }
 
 class _ChildNavigationView extends StatelessWidget {
   final bool isArabic;
+  final VoidCallback onLanguageToggle;
 
-  const _ChildNavigationView({required this.isArabic});
+  const _ChildNavigationView({
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
 
   static const List<AppNavigationItem> _navigationItems = [
     AppNavigationItem(
@@ -65,8 +77,11 @@ class _ChildNavigationView extends StatelessWidget {
 
     final pages = <Widget>[
       navigation.isLoaded(0)
-          ? const ChildHomeScreen()
-          : const SizedBox.shrink(),
+    ? ChildHomeScreen(
+        isArabic: isArabic,
+        onLanguageToggle: onLanguageToggle,
+      )
+    : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
           ? const ChildWishlistScreen()

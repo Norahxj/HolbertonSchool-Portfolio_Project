@@ -56,9 +56,14 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
       if (!mounted) return;
 
       Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => ChildNav()),
-      );
+  context,
+  MaterialPageRoute(
+    builder: (_) => ChildNav(
+      isArabic: widget.isArabic,
+      onLanguageToggle: widget.onLanguageToggle,
+    ),
+  ),
+);
     } on DioException catch (e) {
       setState(() {
         errorMessage = e.response?.data["error"] ?? "رمز الدخول غير صحيح";

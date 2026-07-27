@@ -10,13 +10,21 @@ import '../../../models/task_assignment_model.dart';
 import 'package:frontend/features/child/services/point_api_service.dart';
 import '../../../services/task_api_service.dart';
 import 'child_task_details_screen.dart';
+import 'child_settings_screen.dart';
 
 // The child's home tab.
 //
 // This screen loads the signed-in child, today's task assignments, and the
 // current Noor Points balance. Navigation is handled by ChildNav.
 class ChildHomeScreen extends StatefulWidget {
-  const ChildHomeScreen({super.key});
+  final bool isArabic;
+  final VoidCallback onLanguageToggle;
+
+  const ChildHomeScreen({
+    super.key,
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
 
   @override
   State<ChildHomeScreen> createState() => _ChildHomeScreenState();
@@ -193,12 +201,25 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       body: Column(
         children: [
                     _HomeHeader(
-            childName: _child!.name,
-            points: _points,
-            completedTasks: completedCount,
-            totalTasks: _assignments.length,
-            onLogout: _logout,
-          ),
+  childName: _child!.name,
+  points: _points,
+  completedTasks: completedCount,
+  totalTasks: _assignments.length,
+  isArabic: widget.isArabic,
+  onSettingsPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ChildSettingsScreen(
+        childName: _child!.name,
+        isArabic: widget.isArabic,
+        onLanguageToggle: widget.onLanguageToggle,
+        onLogout: _logout,
+      ),
+    ),
+  );
+},
+),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () => _loadData(showPageLoader: false),
@@ -274,171 +295,204 @@ class _HomeHeader extends StatelessWidget {
   final int points;
   final int completedTasks;
   final int totalTasks;
-    final VoidCallback onLogout;
+  final bool isArabic;
+  final VoidCallback onSettingsPressed;
 
-    const _HomeHeader({
+  const _HomeHeader({
     required this.childName,
     required this.points,
     required this.completedTasks,
     required this.totalTasks,
-    required this.onLogout,
+    required this.isArabic,
+    required this.onSettingsPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: AppColors.primaryGradient,
+    final greeting = isArabic ? 'أهلًا يا بطل! 👋' : 'Hello, champion! 👋';
+
+    final subtitle = isArabic
+        ? 'يوم جديد وإنجازات جديدة بانتظارك'
+        : 'A new day and new achievements await you';
+
+    final pointsLabel = isArabic ? 'نقاط نور' : 'Noor Points';
+    final tasksLabel = isArabic ? 'مهام اليوم' : 'Today\'s tasks';
+    final settingsLabel = isArabic ? 'الإعدادات' : 'Settings';
+
+    return Directionality(
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: AppColors.primaryGradient,
+          ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(36),
+            bottomRight: Radius.circular(36),
+          ),
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(36),
-          bottomRight: Radius.circular(36),
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: -35,
-            left: -20,
-            child: _DecorativeBubble(
-              size: 110,
-              color: Colors.white.withOpacity(0.10),
-            ),
-          ),
-          Positioned(
-            bottom: -30,
-            right: -15,
-            child: _DecorativeBubble(
-              size: 90,
-              color: AppColors.gold.withOpacity(0.16),
-            ),
-          ),
-          const Positioned(
-            top: 74,
-            left: 32,
-            child: Icon(Icons.auto_awesome, size: 18, color: AppColors.gold),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.md,
-                AppSpacing.lg,
-                AppSpacing.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const Text(
-                              'أهلًا يا بطل! 👋',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              childName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.childTitle.copyWith(
-                                color: Colors.white,
-                                fontSize: 28,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'يوم جديد وإنجازات جديدة بانتظارك',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-
-                      IconButton(
-                        tooltip: 'تسجيل الخروج',
-                        onPressed: onLogout,
-                        icon: const Icon(
-                          Icons.logout_rounded,
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                      ),
-
-                      const SizedBox(width: AppSpacing.sm),
-
-                      Container(
-                        width: 66,
-                        height: 66,
-                        decoration: BoxDecoration(
-                          color: AppColors.pinkLight,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primaryDark.withOpacity(0.22),
-                              blurRadius: 12,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.child_care_rounded,
-                          color: AppColors.pink,
-                          size: 34,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _HeaderMetric(
-                          icon: Icons.auto_awesome_rounded,
-                          iconColor: AppColors.gold,
-                          value: '$points',
-                          label: 'نقاط نور',
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: _HeaderMetric(
-                          icon: Icons.task_alt_rounded,
-                          iconColor: AppColors.mint,
-                          value: '$completedTasks/$totalTasks',
-                          label: 'مهام اليوم',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+        child: Stack(
+          children: [
+            PositionedDirectional(
+              top: -35,
+              start: -20,
+              child: _DecorativeBubble(
+                size: 110,
+                color: Colors.white.withOpacity(0.10),
               ),
             ),
-          ),
-        ],
+            PositionedDirectional(
+              bottom: -30,
+              end: -15,
+              child: _DecorativeBubble(
+                size: 90,
+                color: AppColors.gold.withOpacity(0.16),
+              ),
+            ),
+            const PositionedDirectional(
+              top: 74,
+              start: 32,
+              child: Icon(
+                Icons.auto_awesome,
+                size: 18,
+                color: AppColors.gold,
+              ),
+            ),
+            SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.md,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 66,
+                          height: 66,
+                          decoration: BoxDecoration(
+                            color: AppColors.pinkLight,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 3,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryDark.withOpacity(0.22),
+                                blurRadius: 12,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.child_care_rounded,
+                            color: AppColors.pink,
+                            size: 34,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: isArabic
+                                ? CrossAxisAlignment.start
+                                : CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                greeting,
+                                textAlign: isArabic
+                                    ? TextAlign.right
+                                    : TextAlign.left,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                childName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: isArabic
+                                    ? TextAlign.right
+                                    : TextAlign.left,
+                                style: AppTextStyles.childTitle.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                subtitle,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: isArabic
+                                    ? TextAlign.right
+                                    : TextAlign.left,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        IconButton(
+                          tooltip: settingsLabel,
+                          onPressed: onSettingsPressed,
+                          icon: const Icon(
+                            Icons.settings_rounded,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _HeaderMetric(
+                            icon: Icons.auto_awesome_rounded,
+                            iconColor: AppColors.gold,
+                            value: '$points',
+                            label: pointsLabel,
+                            isArabic: isArabic,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _HeaderMetric(
+                            icon: Icons.task_alt_rounded,
+                            iconColor: AppColors.mint,
+                            value: '$completedTasks/$totalTasks',
+                            label: tasksLabel,
+                            isArabic: isArabic,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
 class _DecorativeBubble extends StatelessWidget {
   final double size;
   final Color color;
@@ -460,12 +514,14 @@ class _HeaderMetric extends StatelessWidget {
   final Color iconColor;
   final String value;
   final String label;
+  final bool isArabic;
 
   const _HeaderMetric({
     required this.icon,
     required this.iconColor,
     required this.value,
     required this.label,
+     required this.isArabic,
   });
 
   @override
@@ -486,7 +542,9 @@ class _HeaderMetric extends StatelessWidget {
           Icon(icon, color: iconColor, size: 22),
           const SizedBox(width: AppSpacing.sm),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: isArabic
+    ? CrossAxisAlignment.end
+    : CrossAxisAlignment.start,
             children: [
               Text(
                 value,
