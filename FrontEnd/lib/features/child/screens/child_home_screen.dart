@@ -280,9 +280,10 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                               assignment.id,
                             ),
                             onComplete:
-                                assignment.status.toLowerCase() == 'pending'
-                                ? () => _completeAssignment(assignment.id)
-                                : null,
+    assignment.status.toLowerCase() == 'pending' ||
+            assignment.status.toLowerCase() == 'rejected'
+        ? () => _completeAssignment(assignment.id)
+        : null,
                             onTap: () async {
                               await Navigator.push(
                                 context,
@@ -833,8 +834,11 @@ final status = _statusStyle(
   assignment.status,
   isArabic,
 );
-    final canComplete =
-        assignment.status.toLowerCase() == 'pending' && onComplete != null;
+    final normalizedStatus = assignment.status.toLowerCase();
+
+final canComplete =
+    (normalizedStatus == 'pending' || normalizedStatus == 'rejected') &&
+    onComplete != null;
 
     return Material(
       color: Colors.transparent,

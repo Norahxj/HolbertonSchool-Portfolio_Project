@@ -38,7 +38,7 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
   }
 
   bool get _canComplete {
-    return _status == 'PENDING';
+    return _status == 'PENDING' || _status == 'REJECTED';;
   }
 
   bool get _isPendingReview {
@@ -233,8 +233,8 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
   }
 
   if (_isRejected) {
-    return widget.isArabic ? 'تم رفض المهمة' : 'Task rejected';
-  }
+  return widget.isArabic ? 'حاول مرة أخرى' : 'Try again';
+}
 
   return widget.isArabic ? 'أنجزت المهمة' : 'I completed the task';
 }
@@ -249,7 +249,7 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
     }
 
     if (_isRejected) {
-      return Icons.close_rounded;
+      return Icons.refresh_rounded;
     }
 
     return Icons.check_rounded;
