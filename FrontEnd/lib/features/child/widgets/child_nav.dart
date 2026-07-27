@@ -72,15 +72,18 @@ class _ChildNavigationView extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    final navigation = context.watch<AppNavigationController>();
+Widget build(BuildContext context) {
+  final navigation = context.watch<AppNavigationController>();
 
-    final pages = <Widget>[
+  final currentIsArabic =
+      Directionality.of(context) == TextDirection.rtl;
+
+  final pages = <Widget>[
       navigation.isLoaded(0)
     ? ChildHomeScreen(
-        isArabic: isArabic,
-        onLanguageToggle: onLanguageToggle,
-      )
+  isArabic: currentIsArabic,
+  onLanguageToggle: onLanguageToggle,
+)
     : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
@@ -102,7 +105,7 @@ class _ChildNavigationView extends StatelessWidget {
       bottomNavigationBar: AppBottomNavigation(
         items: _navigationItems,
         currentIndex: navigation.currentIndex,
-        isArabic: isArabic,
+        isArabic: currentIsArabic,
         onTap: navigation.selectTab,
       ),
     );
