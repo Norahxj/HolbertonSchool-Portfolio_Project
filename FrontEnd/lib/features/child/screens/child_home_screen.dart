@@ -353,14 +353,34 @@ class _HomeHeader extends StatelessWidget {
               ),
             ),
             const PositionedDirectional(
-              top: 74,
-              start: 32,
+              top: 88,
+              start: 34,
               child: Icon(
                 Icons.auto_awesome,
                 size: 18,
                 color: AppColors.gold,
               ),
             ),
+            Positioned(
+  top: 8,
+  left: isArabic ? 12 : null,
+  right: isArabic ? null : 12,
+  child: SafeArea(
+    bottom: false,
+    child: IconButton(
+      tooltip: settingsLabel,
+      onPressed: onSettingsPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: Colors.white.withOpacity(0.16),
+      ),
+      icon: const Icon(
+        Icons.settings_rounded,
+        color: Colors.white,
+        size: 25,
+      ),
+    ),
+  ),
+),
             SafeArea(
               bottom: false,
               child: Padding(
@@ -447,18 +467,10 @@ class _HomeHeader extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.sm),
-                        IconButton(
-                          tooltip: settingsLabel,
-                          onPressed: onSettingsPressed,
-                          icon: const Icon(
-                            Icons.settings_rounded,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                        ),
-                      ],
-                    ),
+                        
+],
+),
+                        
                     const SizedBox(height: AppSpacing.lg),
                     Row(
                       children: [
