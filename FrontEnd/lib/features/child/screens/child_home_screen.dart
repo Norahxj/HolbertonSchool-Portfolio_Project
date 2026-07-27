@@ -48,9 +48,19 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
     }
 
     try {
-      final child = await SecureStorage.getChild();
-      final assignments = await TaskApiService().getMyAssignments();
-      final points = await PointApiService().getMyPoints();
+      final childFuture = SecureStorage.getChild();
+final assignmentsFuture = TaskApiService().getMyAssignments();
+final pointsFuture = PointApiService().getMyPoints();
+
+final results = await Future.wait([
+  childFuture,
+  assignmentsFuture,
+  pointsFuture,
+]);
+
+final child = results[0] as ChildModel?;
+final assignments = results[1] as List<TaskAssignmentModel>;
+final points = results[2] as int;
 
       if (!mounted) return;
 

@@ -44,9 +44,13 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
     });
 
     try {
-      final assignments = await _taskApiService.getMyAssignments();
+      final results = await Future.wait([
+  _taskApiService.getMyAssignments(),
+  _pointApiService.getMyPoints(),
+]);
 
-      final points = await _pointApiService.getMyPoints();
+final assignments = results[0] as List<TaskAssignmentModel>;
+final points = results[1] as int;
 
       if (!mounted) return;
 
