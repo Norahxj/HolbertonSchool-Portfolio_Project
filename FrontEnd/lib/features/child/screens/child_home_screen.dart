@@ -352,15 +352,7 @@ class _HomeHeader extends StatelessWidget {
                 color: AppColors.gold.withOpacity(0.16),
               ),
             ),
-            const PositionedDirectional(
-              top: 88,
-              start: 34,
-              child: Icon(
-                Icons.auto_awesome,
-                size: 18,
-                color: AppColors.gold,
-              ),
-            ),
+            
             Positioned(
   top: 8,
   left: isArabic ? 12 : null,
@@ -452,18 +444,32 @@ class _HomeHeader extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              Text(
-                                subtitle,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: isArabic
-                                    ? TextAlign.right
-                                    : TextAlign.left,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
+                              Row(
+  mainAxisSize: MainAxisSize.min,
+  mainAxisAlignment: MainAxisAlignment.start,
+  children: [
+    Flexible(
+      child: Text(
+        subtitle,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: isArabic
+            ? TextAlign.right
+            : TextAlign.left,
+        style: const TextStyle(
+          color: Colors.white70,
+          fontSize: 12,
+        ),
+      ),
+    ),
+    const SizedBox(width: 4),
+    const Icon(
+      Icons.auto_awesome,
+      size: 15,
+      color: AppColors.gold,
+    ),
+  ],
+),
                             ],
                           ),
                         ),
