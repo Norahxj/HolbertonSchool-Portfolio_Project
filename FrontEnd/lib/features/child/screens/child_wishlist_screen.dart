@@ -391,10 +391,14 @@ class _WishCard extends StatelessWidget {
         children: [
           // Title + status + icon row
           Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+  textDirection:
+      isArabic ? TextDirection.ltr : TextDirection.rtl,
+  children: [
+    Expanded(
+      child: Column(
+        crossAxisAlignment: isArabic
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
                   children: [
                     Text(
                       wish.name,
