@@ -1,14 +1,22 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:frontend/features/child/controllers/child_controller.dart';
+import 'package:frontend/models/task_assignment_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import '../../../models/task_assignment_model.dart';
-import '../../../services/task_api_service.dart';
 
-class ChildTaskDetailsScreen extends StatefulWidget {
-  final TaskAssignmentModel assignment;
+// Child Task Details screen (Screen 22).
+//
+// This first pass is static/placeholder only: the task shown depends on
+// the constructor parameters below (with defaults matching the mockup),
+// and the "أنجزت المهمة" button doesn't do anything real yet (see the
+// TODO comment). No backend calls happen here.
+class ChildTaskDetailsScreen extends StatelessWidget {
+  final String title;
+  final int points;
+  final String description;
+  final String frequencyLabel;
   final IconData icon;
   final bool isArabic;
 
@@ -273,8 +281,6 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final task = widget.assignment.task;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -294,9 +300,7 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
   },
 ),
               ),
-
               const SizedBox(height: AppSpacing.lg),
-
               Center(
                 child: Container(
                   width: 120,
@@ -305,26 +309,18 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                     color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(28),
                   ),
-                  child: Icon(
-                    widget.icon,
-                    color: AppColors.primaryDark,
-                    size: 56,
-                  ),
+                  child: Icon(icon, color: AppColors.primaryDark, size: 56),
                 ),
               ),
-
               const SizedBox(height: AppSpacing.lg),
-
               Text(
-                task.title,
+                title,
                 style: AppTextStyles.arabicTitle,
                 textAlign: TextAlign.center,
                  textDirection:
       widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
               ),
-
               const SizedBox(height: AppSpacing.sm),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -384,9 +380,7 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: AppSpacing.xl),
-
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
@@ -507,19 +501,18 @@ textDirection:
               const SizedBox(height: AppSpacing.xl),
 
               GestureDetector(
-                onTap: _canComplete && !_isSubmitting ? _completeTask : null,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
+                onTap: () {
+                  // TODO: Mark this task as completed once backend
+                  // integration is ready.
+                },
+                child: Container(
                   height: 56,
                   decoration: BoxDecoration(
-                    gradient: _canComplete
-                        ? const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: AppColors.primaryGradient,
-                          )
-                        : null,
-                    color: _canComplete ? null : _statusBackground,
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: AppColors.primaryGradient,
+                    ),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Center(

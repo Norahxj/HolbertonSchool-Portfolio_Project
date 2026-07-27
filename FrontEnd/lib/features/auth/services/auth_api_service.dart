@@ -18,7 +18,6 @@ class AuthApiService {
   Future<bool> isLoggedIn() async {
     final token = await SecureStorage.getAccessToken();
 
-    print("loaded token = $token");
     return token != null;
   }
 

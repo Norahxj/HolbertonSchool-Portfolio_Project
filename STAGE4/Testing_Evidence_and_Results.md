@@ -2,160 +2,141 @@
 
 ## Purpose
 
-Testing was performed throughout the development process to verify that frontend and backend components worked correctly, met the documented requirements, and remained stable before merging new features.
+Testing was performed throughout all four development sprints to verify that frontend and backend components worked correctly, met the documented requirements, and remained stable before merging new features.
 
 ---
 
 # Testing Approach
 
-Multiple testing techniques were used throughout the four development sprints to ensure the quality and stability of the MVP.
-
-The project included:
+The project used multiple testing methods during development:
 
 - API testing using Swagger.
-- Manual integration testing between the Flutter application and the deployed backend.
-- Flutter Widget Testing.
-- Validation testing based on backend business rules.
-- End-to-end workflow testing.
-- Regression testing after implementing new features.
+- Manual integration testing between Flutter and the backend using Dio requests.
+- Flutter Widget Testing for UI components.
+- End-to-end workflow testing after each completed feature.
+- Validation testing based on backend documentation.
+- Regression testing before every Pull Request merge.
 
 ---
 
+# Testing Across Sprints
+
+Testing activities were integrated into every sprint to ensure continuous quality assurance.
+
+### Sprint 1
+
+- Backend API testing.
+- Authentication testing.
+- Database validation.
+- Initial API verification using Swagger.
+
+### Sprint 2
+
+- Frontend integration testing.
+- Task management testing.
+- Widget testing.
+- API communication verification using Dio logs.
+
+### Sprint 3
+
+- Parent approval workflow testing.
+- Noor Points calculation testing.
+- Authentication token validation.
+- Regression testing for completed features.
+
+### Sprint 4
+
+- Wishlist and Weekly Rewards testing.
+- End-to-end workflow testing.
+- Final integration testing.
+- Performance verification and bug fixing.
+---
 # API Testing
 
-All REST API endpoints were tested before and after frontend integration.
+All REST API endpoints were tested using Swagger before frontend integration.
 
-The following APIs were verified:
+The team verified:
 
-- Authentication APIs
+- Authentication endpoints (Login, Register, Refresh Token)
 - Child Management APIs
-- Task APIs
+- Task Management APIs
 - Task Assignment APIs
-- Parent Review APIs
 - Wishlist APIs
-- Weekly Rewards APIs
+- Reward APIs
 - Noor Points APIs
 
-The following aspects were validated during testing:
+The following aspects were verified:
 
-- Successful responses (200 / 201)
-- Validation errors (400)
-- Unauthorized requests (401)
-- Request payloads
-- Response payloads
-- Backend business rules
+- Successful requests (200/201 responses)
+- Validation errors (400 responses)
+- Unauthorized access (401 responses)
+- Correct request and response payloads
+- Business rules defined in the backend documentation
 
 ---
 
 # Validation Testing
 
-Validation rules implemented in the backend were also applied in the Flutter application.
+Validation rules were tested according to the backend API documentation.
 
-Examples included:
+Examples include:
 
 - Required fields cannot be empty.
-- Invalid email format is rejected.
-- Invalid phone numbers are rejected.
-- Password validation.
-- Child creation validation.
-- Task creation validation.
-- Wishlist limitations.
-- Parent approval workflow.
+- Invalid email and phone formats are rejected.
+- Password validation rules.
+- Children cannot create more than **5 wishlist items**.
+- Required task information must be completed before submission.
+- Parent approval flow follows the documented business rules.
 
-Providing the same validation rules in both frontend and backend ensured consistent user feedback.
+Whenever backend validation rules existed, the same rules were reflected in the Flutter UI to provide immediate feedback to users.
 
 ---
-# Frontend Testing
 
-In addition to automated widget testing, the Flutter application was manually tested throughout the development process to verify that all user interface components functioned correctly after integration with the backend APIs.
-
-The following frontend features were verified:
-
-- Parent Login screen.
-- Parent Registration screen.
-- Child Login screen.
-- Parent Dashboard.
-- Add Child screen.
-- Add Task screen.
-- Parent Review screen.
-- Completed Tasks screen.
-- Wishlist screen.
-- Weekly Rewards screen.
-
-The following aspects were tested:
-
-- Form validation.
-- Navigation between screens.
-- API integration.
-- State updates.
-- Automatic UI refresh after API operations.
-- Error message display.
-- Responsive layouts and UI consistency.
-
-Frontend testing was performed after implementing each feature and again during integration testing to ensure that the user interface behaved correctly and provided a consistent user experience across the complete MVP.
-
-
----
 # Flutter Widget Testing
 
-Widget tests were executed using Flutter's testing framework to verify frontend components.
-
-The following areas were tested:
+Widget tests were created for frontend components to verify:
 
 - Widget rendering.
 - User interaction.
-- Button functionality.
+- Button actions.
 - Form validation.
-- Navigation.
-- State updates.
-
-Example test execution:
-
-```text
-flutter test
-
-00:02 +3: All tests passed!
-```
-
-The widget tests verified that the application's core UI components rendered correctly and behaved as expected after implementation.
+- Screen navigation.
+- UI behavior after state changes.
 
 ---
 
 # Integration Testing
 
-Integration testing verified communication between the Flutter application and the deployed backend.
+Integration testing verified communication between the Flutter application and the backend APIs.
 
 The following workflows were tested:
 
-- Parent registration.
-- Parent login.
+- Parent registration and login.
 - Child login.
-- Retrieve parent profile.
-- Load children.
-- Add child.
-- Generate task suggestions.
-- Create tasks.
-- Retrieve child tasks.
-- Retrieve task assignments.
-- Parent review workflow.
-- Automatic UI refresh after API updates.
+- Authentication token handling.
+- Loading children.
+- Creating tasks.
+- Assigning tasks.
+- Completing tasks.
+- Parent approval and rejection.
+- Wishlist management.
+- Reward management.
+- Noor Points updates.
 
-During testing, Dio request and response logs were used to verify:
+HTTP requests were monitored using **Dio logs** to verify:
 
-- Request URLs.
-- Request bodies.
-- Authentication headers.
-- HTTP status codes.
-- Response payloads.
-- Error responses.
-
-This confirmed that frontend and backend communicated correctly.
+- Request URLs
+- Request bodies
+- Authentication headers
+- HTTP status codes
+- Response payloads
+- Error responses
 
 ---
 
 # Testing Evidence
 
-The following tests were executed against the deployed backend.
+The following integration tests were executed using the Flutter application connected to the deployed backend. All requests were verified using Dio logs to ensure correct communication between the frontend and backend.
 
 ## User Profile Retrieval
 
@@ -167,14 +148,14 @@ GET /api/users/me
 
 **Expected Result**
 
-The authenticated parent's profile is returned.
+The authenticated parent's profile is returned successfully.
 
 **Actual Result**
 
 - HTTP Status: **200 OK**
-- Parent profile successfully retrieved.
+- Parent profile retrieved successfully.
 
-Verified:
+Verified information:
 
 - First Name
 - Last Name
@@ -199,13 +180,13 @@ GET /api/children/
 
 **Expected Result**
 
-Return all children associated with the authenticated parent.
+The authenticated parent receives all registered children.
 
 **Actual Result**
 
 - HTTP Status: **200 OK**
-- Children retrieved successfully.
-- Newly created children appeared immediately after creation.
+- Existing children displayed successfully.
+- Newly added children appeared immediately after creation.
 
 Verified:
 
@@ -230,16 +211,23 @@ Verified:
 POST /api/children/
 ```
 
+**Test Data**
+
+```text
+Name: نوره
+Birth Date: 2011-07-09
+```
+
 **Expected Result**
 
-Create a new child account linked to the authenticated parent.
+A new child account is created and linked to the parent.
 
 **Actual Result**
 
 - HTTP Status: **201 Created**
 - Child account created successfully.
 - Access code generated automatically.
-- Child appeared immediately in the children list.
+- Child immediately appeared in the children list.
 
 **Status**
 
@@ -257,20 +245,20 @@ POST /api/task-bank/suggestions
 
 **Expected Result**
 
-Return task suggestions for the selected category.
+The backend returns task suggestions based on the selected category.
 
 **Actual Result**
 
 - HTTP Status: **200 OK**
 - Five task suggestions returned successfully.
 
-Verified:
+Verified returned fields:
 
 - Title
 - Description
 - Points
 - Category
-- Frequency
+- Task Frequency
 - Auto Verification
 
 **Status**
@@ -289,7 +277,7 @@ POST /api/tasks/
 
 **Expected Result**
 
-Create a new task successfully.
+A new task is created and assigned to the selected child.
 
 **Actual Result**
 
@@ -314,16 +302,16 @@ GET /api/tasks/child/{child_id}
 
 **Expected Result**
 
-Return all tasks assigned to the selected child.
+The selected child's tasks are retrieved successfully.
 
 **Actual Result**
 
 - HTTP Status: **200 OK**
-- Tasks retrieved successfully.
+- Newly created task returned correctly.
 
 Verified:
 
-- Title
+- Task Title
 - Description
 - Points
 - Category
@@ -346,12 +334,12 @@ GET /api/task-assignments/child/{child_id}
 
 **Expected Result**
 
-Return all task assignments for the selected child.
+Assignments belonging to the child are displayed correctly.
 
 **Actual Result**
 
 - HTTP Status: **200 OK**
-- Assignments retrieved successfully.
+- Assignment retrieved successfully.
 
 Verified:
 
@@ -368,24 +356,24 @@ Verified:
 
 ## Parent Review Workflow
 
-The complete parent review workflow was tested.
+The complete parent review workflow was verified using different assignment states.
 
-Verified assignment states:
+Verified states:
 
-- PENDING
 - APPROVED
 - REJECTED
+- PENDING
 
 Verified returned data:
 
 - Assignment Status
+- completed_at timestamp
+- approved_at timestamp
 - Task Information
 - Child Information
 - Assigned Date
-- completed_at
-- approved_at
 
-The workflow behaved according to the backend business rules.
+This confirmed that task approval and rejection behaved correctly according to the backend business rules.
 
 **Status**
 
@@ -395,13 +383,13 @@ The workflow behaved according to the backend business rules.
 
 ## Automatic UI Refresh
 
-After creating children and tasks, the application refreshed automatically.
+After successfully creating children and tasks, the application refreshed automatically and displayed updated information retrieved from the backend.
 
-Verified:
+Verified updates:
 
-- Newly created children appeared immediately.
-- Newly created tasks were displayed correctly.
-- Updated assignment data was reflected without inconsistencies.
+- Newly created child appeared immediately.
+- Newly created task appeared under the selected child.
+- Task assignment became visible without inconsistencies.
 
 **Status**
 
@@ -411,83 +399,98 @@ Verified:
 
 # End-to-End Workflow Testing
 
-Complete application workflows were tested after implementing each feature.
+Complete user workflows were tested after implementing each feature.
 
 Example workflow:
 
-1. Parent logs in.
-2. Parent adds a child.
-3. Parent creates a task.
-4. Parent assigns the task.
-5. Child logs in.
-6. Child completes the task.
-7. Parent reviews the completed task.
-8. Parent approves or rejects the task.
-9. Noor Points are updated correctly.
-10. The interface refreshes automatically.
-
-All workflow steps completed successfully.
+1. Parent logs into the application.
+2. Parent creates a task.
+3. Task is assigned to a child.
+4. Child logs in.
+5. Child completes the task.
+6. Parent reviews the completed task.
+7. Parent approves or rejects the task.
+8. Noor Points are updated correctly.
+9. Application UI refreshes with updated data.
 
 ---
 
 # Regression Testing
 
-Regression testing was performed throughout development.
-
 Before every Pull Request:
 
-- The feature owner tested the implemented functionality.
-- Team members reviewed the code.
-- Existing functionality was re-tested.
+- The feature owner tested the complete feature.
+- Team members reviewed the implementation.
+- Existing functionality was re-tested to ensure no new issues were introduced.
 - Pull Requests were merged only after successful verification.
 
 ---
 
 # Example Test Evidence
 
-## Example 1 – Child Creation
+## Successful API Request
 
 ```text
-POST /api/children/
+POST /api/tasks/
 
 Status Code: 201 Created
 
+Request:
+- Title: اقرأ صفحة من القرآن
+- Category: MORAL
+- Points: 15
+- Frequency: DAILY
+
 Result:
-- Child account created successfully.
-- Access code generated automatically.
-- Child immediately appeared in the children list.
+Task created successfully and returned a valid task ID.
 ```
 
 ---
 
-## Example 2 – Task Suggestions
+## Successful Task Completion
 
 ```text
-POST /api/task-bank/suggestions
+PUT /api/task-assignments/{assignment_id}/complete
 
 Status Code: 200 OK
 
 Result:
-- Five task suggestions returned successfully.
-
-Verified:
-- Title
-- Description
-- Points
-- Category
-- Frequency
+- Assignment status updated to APPROVED
+- completed_at timestamp returned
+- approved_at timestamp returned
 ```
+
+---
+
+## API Response Verification
+
+```text
+GET /api/task-assignments/my
+
+Status Code: 200 OK
+
+Returned:
+
+- Task information
+- Assignment status
+- Completion timestamps
+- Approval timestamps
+- Child information
+- Assigned date
+```
+
+The frontend correctly parsed and displayed the returned data.
 
 ---
 
 # Testing Results
 
 | Test Type | Status |
-| ---------- | ------ |
+|-----------|--------|
 | API Testing | ✅ Passed |
 | Authentication Testing | ✅ Passed |
 | Validation Testing | ✅ Passed |
-| Flutter Widget Testing | ✅ Passed |
+| Widget Testing | ✅ Passed |
 | Integration Testing | ✅ Passed |
 | End-to-End Workflow Testing | ✅ Passed |
 | Regression Testing | ✅ Passed |
@@ -496,4 +499,4 @@ Verified:
 
 # Conclusion
 
-Testing was performed continuously throughout the four development sprints rather than only at the end of the project. Backend APIs were validated using Swagger, frontend functionality was verified through Flutter Widget Tests and manual integration testing, and complete user workflows were executed against the deployed backend. Continuous regression testing, API verification, and end-to-end validation ensured that the MVP remained stable, fully integrated, and ready for deployment.
+Continuous testing was performed throughout development rather than only at the end of the project. API endpoints were validated using Swagger, frontend behavior was verified through Widget Tests and manual integration testing, and complete application workflows were executed after each implemented feature. Regression testing before every Pull Request ensured that newly implemented functionality did not negatively impact existing features, resulting in a stable, reliable, and fully functional application.
