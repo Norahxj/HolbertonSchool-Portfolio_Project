@@ -59,3 +59,11 @@ class RunDailyJobs(Resource):
             return response, 500
         response["message"] = ("Daily jobs completed successfully")
         return response, 200
+
+@api.route("/health")
+class HealthCheck(Resource):
+    @api.response(200, "Service is healthy")
+    def get(self):
+        return {
+            "status": "healthy"
+        }, 200

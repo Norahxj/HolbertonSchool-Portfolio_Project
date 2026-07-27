@@ -41,9 +41,6 @@ class RewardService:
         return self.reward_repository.get_rewards_by_child_id(child_id), None
 
     def get_my_rewards(self, child_id):
-        child = self.child_repository.get_child_by_id(child_id)
-        if not child:
-            return None, "child_not_found"
         return self.reward_repository.get_rewards_by_child_id(child_id), None
     
     def update_reward(self, reward_id, parent_id, reward_data):

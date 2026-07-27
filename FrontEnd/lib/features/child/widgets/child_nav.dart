@@ -11,22 +11,34 @@ import '../screens/child_wishlist_screen.dart';
 
 class ChildNav extends StatelessWidget {
   final bool isArabic;
+  final VoidCallback onLanguageToggle;
 
-  const ChildNav({super.key, this.isArabic = true});
+  const ChildNav({
+    super.key,
+    this.isArabic = true,
+    required this.onLanguageToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => AppNavigationController(initialIndex: 0),
-      child: _ChildNavigationView(isArabic: isArabic),
+      child: _ChildNavigationView(
+  isArabic: isArabic,
+  onLanguageToggle: onLanguageToggle,
+),
     );
   }
 }
 
 class _ChildNavigationView extends StatelessWidget {
   final bool isArabic;
+  final VoidCallback onLanguageToggle;
 
-  const _ChildNavigationView({required this.isArabic});
+  const _ChildNavigationView({
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
 
   static const List<AppNavigationItem> _navigationItems = [
     AppNavigationItem(
@@ -60,25 +72,37 @@ class _ChildNavigationView extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    final navigation = context.watch<AppNavigationController>();
+Widget build(BuildContext context) {
+  final navigation = context.watch<AppNavigationController>();
 
-    final pages = <Widget>[
+  final currentIsArabic =
+      Directionality.of(context) == TextDirection.rtl;
+
+  final pages = <Widget>[
       navigation.isLoaded(0)
-          ? const ChildHomeScreen()
-          : const SizedBox.shrink(),
+    ? ChildHomeScreen(
+  isArabic: currentIsArabic,
+  onLanguageToggle: onLanguageToggle,
+)
+    : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
-          ? const ChildWishlistScreen()
-          : const SizedBox.shrink(),
+    ? ChildWishlistScreen(
+        isArabic: currentIsArabic,
+      )
+    : const SizedBox.shrink(),
 
-      navigation.isLoaded(2)
-          ? const ChildRewardsScreen()
-          : const SizedBox.shrink(),
+navigation.isLoaded(2)
+    ? ChildRewardsScreen(
+        isArabic: currentIsArabic,
+      )
+    : const SizedBox.shrink(),
 
-      navigation.isLoaded(3)
-          ? const ChildProgressScreen()
-          : const SizedBox.shrink(),
+navigation.isLoaded(3)
+    ? ChildProgressScreen(
+        isArabic: currentIsArabic,
+      )
+    : const SizedBox.shrink(),
     ];
 
     return Scaffold(
@@ -87,7 +111,7 @@ class _ChildNavigationView extends StatelessWidget {
       bottomNavigationBar: AppBottomNavigation(
         items: _navigationItems,
         currentIndex: navigation.currentIndex,
-        isArabic: isArabic,
+        isArabic: currentIsArabic,
         onTap: navigation.selectTab,
       ),
     );

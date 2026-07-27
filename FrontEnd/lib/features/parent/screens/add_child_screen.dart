@@ -11,29 +11,25 @@ import '../../../core/widgets/app_text_field.dart';
 
 // Add Child screen (Screen 5).
 class AddChildScreen extends StatefulWidget {
-  const AddChildScreen({
-    super.key,
-  });
+  const AddChildScreen({super.key});
 
   @override
-  State<AddChildScreen> createState() =>
-      _AddChildScreenState();
+  State<AddChildScreen> createState() => _AddChildScreenState();
 }
 
-class _AddChildScreenState
-    extends State<AddChildScreen> {
-  final ChildApiService childApiService =
-      ChildApiService();
+class _AddChildScreenState extends State<AddChildScreen> {
+  final ChildApiService childApiService = ChildApiService();
 
+  // The avatar selection currently changes only the local interface.
+  // It is not sent to the backend because avatar_index is unsupported.
   int selectedAvatarIndex = 0;
+
   DateTime? selectedDate;
   bool isLoading = false;
 
-  final TextEditingController nameController =
-      TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
-  final TextEditingController phoneController =
-      TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
   String? nameError;
   String? birthDateError;
@@ -50,15 +46,16 @@ class _AddChildScreenState
   Future<void> _pickDate() async {
     final now = DateTime.now();
 
+    // A child must be between 6 and 18 years old.
+    final earliestBirthDate = DateTime(now.year - 18, now.month, now.day);
+
+    final latestBirthDate = DateTime(now.year - 6, now.month, now.day);
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(
-        now.year - 7,
-        now.month,
-        now.day,
-      ),
-      firstDate: DateTime(now.year - 18),
-      lastDate: now,
+      initialDate: DateTime(now.year - 7, now.month, now.day),
+      firstDate: earliestBirthDate,
+      lastDate: latestBirthDate,
     );
 
     if (picked != null) {
@@ -79,6 +76,18 @@ class _AddChildScreenState
     return '${date.day}/${date.month}/${date.year}';
   }
 
+  String? _firstError(dynamic value) {
+    if (value is List && value.isNotEmpty) {
+      return value.first.toString();
+    }
+
+    if (value is String && value.trim().isNotEmpty) {
+      return value;
+    }
+
+    return null;
+  }
+
   Future<void> _saveChild() async {
     setState(() {
       nameError = null;
@@ -86,9 +95,30 @@ class _AddChildScreenState
       birthDateError = null;
     });
 
-    if (nameController.text.trim().isEmpty) {
+    final name = nameController.text.trim();
+    final phone = phoneController.text.trim();
+
+    if (name.isEmpty) {
       setState(() {
         nameError = 'اسم الطفل مطلوب';
+      });
+
+      return;
+    }
+
+    if (name.length < 2) {
+      setState(() {
+        nameError = 'يجب أن يتكون اسم الطفل من حرفين على الأقل';
+      });
+
+      return;
+    }
+
+    final validName = RegExp(r'^[a-zA-Z\u0600-\u06FF\s]+$');
+
+    if (!validName.hasMatch(name)) {
+      setState(() {
+        nameError = 'يجب أن يحتوي الاسم على حروف عربية أو إنجليزية فقط';
       });
 
       return;
@@ -97,6 +127,14 @@ class _AddChildScreenState
     if (selectedDate == null) {
       setState(() {
         birthDateError = 'تاريخ الميلاد مطلوب';
+      });
+
+      return;
+    }
+
+    if (phone.isNotEmpty && !RegExp(r'^05\d{8}$').hasMatch(phone)) {
+      setState(() {
+        phoneError = 'أدخل رقم جوال سعودي صحيح يبدأ بـ 05';
       });
 
       return;
@@ -113,46 +151,92 @@ class _AddChildScreenState
 
     try {
       await childApiService.addChild(
-        name: nameController.text.trim(),
+        name: name,
         birthDate: birthDate,
-        avatarIndex: selectedAvatarIndex,
-        phone: phoneController.text.trim().isEmpty
-            ? null
-            : phoneController.text.trim(),
+        phone: phone.isEmpty ? null : phone,
       );
 
       if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('تمت إضافة الطفل بنجاح')));
 
       Navigator.pop(context, true);
     } on DioException catch (error) {
       if (!mounted) return;
 
-      if (error.response?.statusCode == 400) {
-        final responseData = error.response?.data;
-        final errors = responseData is Map
-            ? responseData['errors']
-            : null;
+      debugPrint(
+        'Add child failed: '
+        '${error.response?.statusCode} '
+        '${error.response?.data}',
+      );
 
-        setState(() {
-          nameError =
-              errors?['name']?.first?.toString();
+      final responseData = error.response?.data;
 
-          phoneError =
-              errors?['phone']?.first?.toString();
+      if (responseData is Map) {
+        final errors = responseData['errors'];
 
-          birthDateError =
-              errors?['birth_date']?.first?.toString();
-        });
+        if (errors is Map) {
+          setState(() {
+            nameError = _firstError(errors['name']);
 
-        return;
+            phoneError = _firstError(errors['phone']);
+
+            birthDateError = _firstError(errors['birth_date']);
+          });
+
+          if (nameError != null ||
+              phoneError != null ||
+              birthDateError != null) {
+            return;
+          }
+        }
       }
 
+      String message = 'تعذر إضافة الطفل. حاولي مرة أخرى.';
+
+      if (responseData is Map) {
+        final backendMessage = responseData['error'] ?? responseData['message'];
+
+        if (backendMessage is String && backendMessage.trim().isNotEmpty) {
+          switch (backendMessage) {
+            case 'Phone number already used':
+              message = 'رقم الجوال مستخدم بالفعل.';
+              break;
+
+            case 'Parent is not assigned to a family':
+              message = 'حساب ولي الأمر غير مرتبط بأسرة.';
+              break;
+
+            case 'Parent access required':
+              message = 'إضافة الأطفال متاحة لولي الأمر فقط.';
+              break;
+
+            case 'Parent not found':
+              message = 'تعذّر العثور على حساب ولي الأمر.';
+              break;
+
+            case 'Could not create child':
+              message = 'تعذّر إنشاء حساب الطفل.';
+              break;
+
+            default:
+              message = backendMessage;
+          }
+        }
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (error) {
+      if (!mounted) return;
+
+      debugPrint('Unexpected add child error: $error');
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'تعذر إضافة الطفل. حاولي مرة أخرى.',
-          ),
-        ),
+        const SnackBar(content: Text('حدث خطأ غير متوقع أثناء إضافة الطفل.')),
       );
     } finally {
       if (mounted) {
@@ -169,35 +253,28 @@ class _AddChildScreenState
       body: ScreenBackground(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               children: [
                 Align(
                   alignment: Alignment.centerRight,
                   child: _RoundIconButton(
-                    icon:
-                        Icons.arrow_forward_rounded,
+                    icon: Icons.arrow_forward_rounded,
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.lg,
-                ),
+                const SizedBox(height: AppSpacing.lg),
 
                 Text(
                   'إضافة طفل',
-                  style:
-                      AppTextStyles.arabicTitle,
+                  style: AppTextStyles.arabicTitle,
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.sm,
-                ),
+                const SizedBox(height: AppSpacing.sm),
 
                 Text(
                   'أضف معلومات طفلك لبدء رحلته',
@@ -205,115 +282,70 @@ class _AddChildScreenState
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.xl,
-                ),
+                const SizedBox(height: AppSpacing.xl),
 
                 const Text(
                   'اختر صورة رمزية',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color:
-                        AppColors.textPrimary,
+                    color: AppColors.textPrimary,
                   ),
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.md,
-                ),
+                const SizedBox(height: AppSpacing.md),
 
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _AvatarOption(
                       icon: Icons.boy,
-                      backgroundColor:
-                          const Color(
-                        0xFFD9F0DD,
-                      ),
-                      iconColor:
-                          const Color(
-                        0xFF3E8E5A,
-                      ),
-                      isSelected:
-                          selectedAvatarIndex ==
-                              0,
+                      backgroundColor: const Color(0xFFD9F0DD),
+                      iconColor: const Color(0xFF3E8E5A),
+                      isSelected: selectedAvatarIndex == 0,
                       onTap: () {
                         setState(() {
-                          selectedAvatarIndex =
-                              0;
+                          selectedAvatarIndex = 0;
                         });
                       },
                     ),
-
                     _AvatarOption(
                       icon: Icons.boy,
-                      backgroundColor:
-                          const Color(
-                        0xFFD7E9F7,
-                      ),
-                      iconColor:
-                          const Color(
-                        0xFF2B6CA3,
-                      ),
-                      isSelected:
-                          selectedAvatarIndex ==
-                              1,
+                      backgroundColor: const Color(0xFFD7E9F7),
+                      iconColor: const Color(0xFF2B6CA3),
+                      isSelected: selectedAvatarIndex == 1,
                       onTap: () {
                         setState(() {
-                          selectedAvatarIndex =
-                              1;
+                          selectedAvatarIndex = 1;
                         });
                       },
                     ),
-
                     _AvatarOption(
                       icon: Icons.girl,
-                      backgroundColor:
-                          AppColors
-                              .primaryLight,
-                      iconColor:
-                          AppColors.primary,
-                      isSelected:
-                          selectedAvatarIndex ==
-                              2,
+                      backgroundColor: AppColors.primaryLight,
+                      iconColor: AppColors.primary,
+                      isSelected: selectedAvatarIndex == 2,
                       onTap: () {
                         setState(() {
-                          selectedAvatarIndex =
-                              2;
+                          selectedAvatarIndex = 2;
                         });
                       },
                     ),
-
                     _AvatarOption(
                       icon: Icons.girl,
-                      backgroundColor:
-                          const Color(
-                        0xFFFBE3EA,
-                      ),
-                      iconColor:
-                          const Color(
-                        0xFFD1637F,
-                      ),
-                      isSelected:
-                          selectedAvatarIndex ==
-                              3,
+                      backgroundColor: const Color(0xFFFBE3EA),
+                      iconColor: const Color(0xFFD1637F),
+                      isSelected: selectedAvatarIndex == 3,
                       onTap: () {
                         setState(() {
-                          selectedAvatarIndex =
-                              3;
+                          selectedAvatarIndex = 3;
                         });
                       },
                     ),
                   ],
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.xl,
-                ),
+                const SizedBox(height: AppSpacing.xl),
 
                 AppTextField(
                   label: 'اسم الطفل',
@@ -324,94 +356,66 @@ class _AddChildScreenState
                   isArabic: true,
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.md,
-                ),
+                const SizedBox(height: AppSpacing.md),
 
                 _BirthDateField(
                   label: _dateLabel,
-                  hasValue:
-                      selectedDate != null,
+                  hasValue: selectedDate != null,
                   onTap: _pickDate,
                 ),
 
                 if (birthDateError != null)
                   Padding(
-                    padding:
-                        const EdgeInsets.only(
-                      top: 6,
-                    ),
+                    padding: const EdgeInsets.only(top: 6),
                     child: Align(
-                      alignment:
-                          Alignment.centerRight,
+                      alignment: Alignment.centerRight,
                       child: Text(
                         birthDateError!,
-                        textAlign:
-                            TextAlign.right,
-                        style:
-                            const TextStyle(
-                          color:
-                              AppColors.error,
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(
+                          color: AppColors.error,
                           fontSize: 12,
                         ),
                       ),
                     ),
                   ),
 
-                const SizedBox(
-                  height: AppSpacing.xs,
-                ),
+                const SizedBox(height: AppSpacing.xs),
 
                 const Text(
                   'يفتح التقويم لاختيار التاريخ',
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors
-                        .textSecondary,
+                    color: AppColors.textSecondary,
                   ),
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.md,
-                ),
+                const SizedBox(height: AppSpacing.md),
 
                 AppTextField(
                   label: 'رقم الجوال',
-                  hint:
-                      'رقم الجوال (اختياري)',
+                  hint: 'رقم الجوال (اختياري)',
                   icon: Icons.phone_outlined,
                   controller: phoneController,
-                  keyboardType:
-                      TextInputType.phone,
+                  keyboardType: TextInputType.phone,
                   errorText: phoneError,
                   isArabic: true,
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.xxl,
-                ),
+                const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
-                  text: isLoading
-                      ? 'جاري الحفظ...'
-                      : 'حفظ',
-                  onPressed:
-                      isLoading ? null : _saveChild,
-                  gradient:
-                      const LinearGradient(
-                    begin:
-                        Alignment.topLeft,
-                    end:
-                        Alignment.bottomRight,
-                    colors: AppColors
-                        .primaryGradient,
+                  text: isLoading ? 'جاري الحفظ...' : 'حفظ',
+                  onPressed: isLoading ? null : _saveChild,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: AppColors.primaryGradient,
                   ),
                 ),
 
-                const SizedBox(
-                  height: AppSpacing.lg,
-                ),
+                const SizedBox(height: AppSpacing.lg),
               ],
             ),
           ),
@@ -421,34 +425,24 @@ class _AddChildScreenState
   }
 }
 
-class _RoundIconButton
-    extends StatelessWidget {
+class _RoundIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _RoundIconButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _RoundIconButton({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.primaryLight,
-      borderRadius:
-          BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(14),
       child: InkWell(
-        borderRadius:
-            BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: SizedBox(
           width: 44,
           height: 44,
-          child: Icon(
-            icon,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
+          child: Icon(icon, size: 18, color: AppColors.primaryDark),
         ),
       ),
     );
@@ -481,24 +475,16 @@ class _AvatarOption extends StatelessWidget {
           color: backgroundColor,
           shape: BoxShape.circle,
           border: isSelected
-              ? Border.all(
-                  color: AppColors.primary,
-                  width: 3,
-                )
+              ? Border.all(color: AppColors.primary, width: 3)
               : null,
         ),
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: 30,
-        ),
+        child: Icon(icon, color: iconColor, size: 30),
       ),
     );
   }
 }
 
-class _BirthDateField
-    extends StatelessWidget {
+class _BirthDateField extends StatelessWidget {
   final String label;
   final bool hasValue;
   final VoidCallback onTap;
@@ -515,26 +501,18 @@ class _BirthDateField
       onTap: onTap,
       child: Container(
         height: 56,
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color:
-              AppColors.inputBackground,
-          borderRadius:
-              BorderRadius.circular(18),
-          border: Border.all(
-            color: AppColors.border,
-          ),
+          color: AppColors.inputBackground,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
             const Icon(
               Icons.keyboard_arrow_down,
               size: 18,
-              color:
-                  AppColors.textSecondary,
+              color: AppColors.textSecondary,
             ),
 
             Expanded(
@@ -543,20 +521,16 @@ class _BirthDateField
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: hasValue
-                      ? AppColors
-                          .textPrimary
-                      : AppColors
-                          .textSecondary,
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary,
                 ),
               ),
             ),
 
             const Icon(
-              Icons
-                  .calendar_today_outlined,
+              Icons.calendar_today_outlined,
               size: 18,
-              color:
-                  AppColors.textSecondary,
+              color: AppColors.textSecondary,
             ),
           ],
         ),

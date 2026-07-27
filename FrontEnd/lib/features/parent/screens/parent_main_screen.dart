@@ -43,11 +43,6 @@ class _ParentNavigationView extends StatelessWidget {
   });
 
   static const List<AppNavigationItem> _navigationItems = [
-    // The logical order is:
-    // Tasks, Wishes, Home, Rewards, More.
-    //
-    // In Arabic, the first item appears on the right.
-    // In English, the first item appears on the left.
     AppNavigationItem(
       index: 0,
       icon: Icons.list_alt_outlined,
@@ -90,6 +85,8 @@ class _ParentNavigationView extends StatelessWidget {
     final navigation = context.watch<AppNavigationController>();
 
     final pages = <Widget>[
+      // Tasks tab:
+      // Restore the original Add Task flow.
       navigation.isLoaded(0)
           ? AddTaskScreen(resetVersion: navigation.reselectionVersionFor(0))
           : const SizedBox.shrink(),
@@ -99,7 +96,7 @@ class _ParentNavigationView extends StatelessWidget {
           : const SizedBox.shrink(),
 
       navigation.isLoaded(2)
-          ? const ParentDashboardScreen()
+          ? ParentDashboardScreen(isArabic: isArabic)
           : const SizedBox.shrink(),
 
       navigation.isLoaded(3)
