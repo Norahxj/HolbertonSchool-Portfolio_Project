@@ -293,6 +293,7 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                                       assignment.task.category,
                                       widget.isArabic,
                                     ).icon,
+                                    isArabic: widget.isArabic,
                                   ),
                                 ),
                               );

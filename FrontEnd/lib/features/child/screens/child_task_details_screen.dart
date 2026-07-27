@@ -10,11 +10,13 @@ import '../../../services/task_api_service.dart';
 class ChildTaskDetailsScreen extends StatefulWidget {
   final TaskAssignmentModel assignment;
   final IconData icon;
+  final bool isArabic;
 
   const ChildTaskDetailsScreen({
     super.key,
     required this.assignment,
     required this.icon,
+    required this.isArabic,
   });
 
   @override
@@ -74,9 +76,12 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
       });
 
       final message = widget.assignment.task.isAutoVerified
+    ? (widget.isArabic
           ? 'أحسنت! اكتملت المهمة وأُضيفت نقاطك.'
-          : 'أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.';
-
+          : 'Well done! The task is complete and your points were added.')
+    : (widget.isArabic
+          ? 'أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.'
+          : 'Well done! The task was sent to your guardian for review.');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
@@ -87,7 +92,12 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(backendMessage ?? 'تعذّر إكمال المهمة. حاول مرة أخرى.'),
+          content: Text(
+  backendMessage ??
+      (widget.isArabic
+          ? 'تعذّر إكمال المهمة. حاول مرة أخرى.'
+          : 'Could not complete the task. Please try again.'),
+),
         ),
       );
 
@@ -99,9 +109,15 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
     } catch (error) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('حدث خطأ أثناء إكمال المهمة.')),
-      );
+     ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text(
+      widget.isArabic
+          ? 'حدث خطأ أثناء إكمال المهمة.'
+          : 'An error occurred while completing the task.',
+    ),
+  ),
+);
 
       debugPrint('Complete assignment failed: $error');
     } finally {
@@ -124,36 +140,40 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
   }
 
   String _frequencyText(String frequency) {
-    switch (frequency.toUpperCase()) {
-      case 'DAILY':
-        return 'يوميًا';
+  switch (frequency.toUpperCase()) {
+    case 'DAILY':
+      return widget.isArabic ? 'يوميًا' : 'Daily';
 
-      case 'WEEKLY':
-        return 'أسبوعيًا';
+    case 'WEEKLY':
+      return widget.isArabic ? 'أسبوعيًا' : 'Weekly';
 
-      case 'MONTHLY':
-        return 'شهريًا';
+    case 'MONTHLY':
+      return widget.isArabic ? 'شهريًا' : 'Monthly';
 
-      default:
-        return frequency.isEmpty ? 'غير محدد' : frequency;
-    }
+    default:
+      return frequency.isEmpty
+          ? (widget.isArabic ? 'غير محدد' : 'Not specified')
+          : frequency;
   }
+}
 
   String get _statusText {
-    if (_isApproved) {
-      return 'مكتملة ومعتمدة';
-    }
-
-    if (_isPendingReview) {
-      return 'بانتظار مراجعة ولي الأمر';
-    }
-
-    if (_isRejected) {
-      return 'مرفوضة';
-    }
-
-    return 'جاهزة للإنجاز';
+  if (_isApproved) {
+    return widget.isArabic ? 'مكتملة ومعتمدة' : 'Completed and approved';
   }
+
+  if (_isPendingReview) {
+    return widget.isArabic
+        ? 'بانتظار مراجعة ولي الأمر'
+        : 'Waiting for guardian review';
+  }
+
+  if (_isRejected) {
+    return widget.isArabic ? 'مرفوضة' : 'Rejected';
+  }
+
+  return widget.isArabic ? 'جاهزة للإنجاز' : 'Ready to complete';
+}
 
   Color get _statusColor {
     if (_isApproved) {
@@ -204,20 +224,20 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
   }
 
   String get _buttonText {
-    if (_isApproved) {
-      return 'تم اعتماد المهمة';
-    }
-
-    if (_isPendingReview) {
-      return 'بانتظار المراجعة';
-    }
-
-    if (_isRejected) {
-      return 'تم رفض المهمة';
-    }
-
-    return 'أنجزت المهمة';
+  if (_isApproved) {
+    return widget.isArabic ? 'تم اعتماد المهمة' : 'Task approved';
   }
+
+  if (_isPendingReview) {
+    return widget.isArabic ? 'بانتظار المراجعة' : 'Waiting for review';
+  }
+
+  if (_isRejected) {
+    return widget.isArabic ? 'تم رفض المهمة' : 'Task rejected';
+  }
+
+  return widget.isArabic ? 'أنجزت المهمة' : 'I completed the task';
+}
 
   IconData get _buttonIcon {
     if (_isApproved) {
@@ -236,14 +256,20 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
   }
 
   String get _verificationMessage {
-    if (widget.assignment.task.isAutoVerified) {
-      return 'ستُعتمد هذه المهمة تلقائيًا عند إتمامها، '
-          'وتُضاف النقاط مباشرة إلى رصيدك.';
-    }
-
-    return 'عند إتمامك المهمة سيراجعها ولي أمرك، '
-        'وبعد الاعتماد تُضاف النقاط إلى رصيدك.';
+  if (widget.assignment.task.isAutoVerified) {
+    return widget.isArabic
+        ? 'ستُعتمد هذه المهمة تلقائيًا عند إتمامها، '
+              'وتُضاف النقاط مباشرة إلى رصيدك.'
+        : 'This task will be approved automatically when completed, '
+              'and the points will be added directly to your balance.';
   }
+
+  return widget.isArabic
+      ? 'عند إتمامك المهمة سيراجعها ولي أمرك، '
+            'وبعد الاعتماد تُضاف النقاط إلى رصيدك.'
+      : 'After you complete the task, your guardian will review it. '
+            'Once approved, the points will be added to your balance.';
+}
 
   @override
   Widget build(BuildContext context) {
@@ -258,12 +284,15 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Align(
-                alignment: Alignment.centerRight,
-                child: _RoundBackButton(
-                  onTap: () {
-                    Navigator.pop(context, true);
-                  },
-                ),
+  alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
+  child: _RoundBackButton(
+  isArabic: widget.isArabic,
+  onTap: () {
+    Navigator.pop(context, true);
+  },
+),
               ),
 
               const SizedBox(height: AppSpacing.lg),
@@ -290,7 +319,8 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                 task.title,
                 style: AppTextStyles.arabicTitle,
                 textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
+                 textDirection:
+      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
               ),
 
               const SizedBox(height: AppSpacing.sm),
@@ -307,8 +337,11 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                   const SizedBox(width: 4),
 
                   Text(
-                    '${task.points} نقاط نور',
-                    textDirection: TextDirection.rtl,
+                    widget.isArabic
+    ? '${task.points} نقاط نور'
+    : '${task.points} Noor Points',
+                    textDirection:
+    widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -339,7 +372,8 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
 
                       Text(
                         _statusText,
-                        textDirection: TextDirection.rtl,
+                        textDirection:
+    widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -369,26 +403,32 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'الوصف',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
+                    Align(
+  alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
+  child: Text(
+    widget.isArabic ? 'الوصف' : 'Description',
+    style: const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+  ),
+),
 
                     const SizedBox(height: AppSpacing.sm),
 
                     Text(
                       task.description.isEmpty
-                          ? 'لا يوجد وصف لهذه المهمة.'
-                          : task.description,
-                      textAlign: TextAlign.right,
-                      textDirection: TextDirection.rtl,
+    ? (widget.isArabic
+          ? 'لا يوجد وصف لهذه المهمة.'
+          : 'There is no description for this task.')
+    : task.description,
+                      textAlign:
+    widget.isArabic ? TextAlign.right : TextAlign.left,
+textDirection:
+    widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
                       style: const TextStyle(
                         fontSize: 14,
                         height: 1.6,
@@ -399,11 +439,14 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                     const SizedBox(height: AppSpacing.md),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
+  mainAxisAlignment: widget.isArabic
+      ? MainAxisAlignment.end
+      : MainAxisAlignment.start,
+  children: [
                         Text(
                           _frequencyText(task.taskFrequency),
-                          textDirection: TextDirection.rtl,
+                          textDirection:
+    widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textSecondary,
@@ -432,29 +475,33 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome,
-                      color: AppColors.primary,
-                      size: 18,
-                    ),
+  textDirection:
+      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+  children: [
+    const Icon(
+      Icons.auto_awesome,
+      color: AppColors.primary,
+      size: 18,
+    ),
 
-                    const SizedBox(width: AppSpacing.sm),
+    const SizedBox(width: AppSpacing.sm),
 
-                    Expanded(
-                      child: Text(
-                        _verificationMessage,
-                        textAlign: TextAlign.right,
-                        textDirection: TextDirection.rtl,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          height: 1.5,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+    Expanded(
+      child: Text(
+        _verificationMessage,
+        textAlign:
+            widget.isArabic ? TextAlign.right : TextAlign.left,
+        textDirection:
+            widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+        style: const TextStyle(
+          fontSize: 13,
+          height: 1.5,
+          color: AppColors.textPrimary,
+        ),
+      ),
+    ),
+  ],
+),
               ),
 
               const SizedBox(height: AppSpacing.xl),
@@ -486,30 +533,34 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
                             ),
                           )
                         : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                _buttonText,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: _canComplete
-                                      ? Colors.white
-                                      : _statusColor,
-                                ),
-                              ),
+    mainAxisAlignment: MainAxisAlignment.center,
+    textDirection:
+        widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+    children: [
+      Text(
+        _buttonText,
+        textDirection:
+            widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: _canComplete
+              ? Colors.white
+              : _statusColor,
+        ),
+      ),
 
-                              const SizedBox(width: AppSpacing.sm),
+      const SizedBox(width: AppSpacing.sm),
 
-                              Icon(
-                                _buttonIcon,
-                                color: _canComplete
-                                    ? Colors.white
-                                    : _statusColor,
-                                size: 20,
-                              ),
-                            ],
-                          ),
+      Icon(
+        _buttonIcon,
+        color: _canComplete
+            ? Colors.white
+            : _statusColor,
+        size: 20,
+      ),
+    ],
+  ),
                   ),
                 ),
               ),
@@ -525,8 +576,12 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
 
 class _RoundBackButton extends StatelessWidget {
   final VoidCallback onTap;
+  final bool isArabic;
 
-  const _RoundBackButton({required this.onTap});
+  const _RoundBackButton({
+    required this.onTap,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -536,15 +591,17 @@ class _RoundBackButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ),
+        child: SizedBox(
+  width: 44,
+  height: 44,
+  child: Icon(
+    isArabic
+        ? Icons.arrow_forward_rounded
+        : Icons.arrow_back_rounded,
+    size: 18,
+    color: AppColors.primaryDark,
+  ),
+),
       ),
     );
   }
