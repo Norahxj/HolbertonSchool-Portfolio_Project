@@ -12,8 +12,12 @@ import '../../../services/reward_api_service.dart';
 /// - GET /rewards/my  → list this child's rewards
 /// - PUT /rewards/{id}/claim → claim an unlocked reward
 class ChildRewardsScreen extends StatefulWidget {
-  const ChildRewardsScreen({super.key});
+  final bool isArabic;
 
+  const ChildRewardsScreen({
+    super.key,
+    required this.isArabic,
+  });
   @override
   State<ChildRewardsScreen> createState() => _ChildRewardsScreenState();
 }
@@ -48,7 +52,9 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'تعذّر تحميل المكافآت';
+          _error = widget.isArabic
+    ? 'تعذّر تحميل المكافآت'
+    : 'Could not load rewards';
           _isLoading = false;
         });
       }
@@ -60,20 +66,28 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
       await _rewardService.claimReward(rewardId);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم استلام المكافأة! 🎉'),
-            backgroundColor: AppColors.success,
-          ),
+          SnackBar(
+  content: Text(
+    widget.isArabic
+        ? 'تم استلام المكافأة! 🎉'
+        : 'Reward claimed! 🎉',
+  ),
+  backgroundColor: AppColors.success,
+),
         );
         await _loadRewards();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تعذّر استلام المكافأة'),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(
+  content: Text(
+    widget.isArabic
+        ? 'تعذّر استلام المكافأة'
+        : 'Could not claim the reward',
+  ),
+  backgroundColor: AppColors.error,
+),
         );
       }
     }
@@ -98,7 +112,9 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: _loadRewards,
-                      child: const Text('إعادة المحاولة'),
+                      child: Text(
+  widget.isArabic ? 'إعادة المحاولة' : 'Try again',
+),
                     ),
                   ],
                 ),
@@ -112,16 +128,22 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'المكافآت',
-                        style: AppTextStyles.arabicTitle,
-                        textAlign: TextAlign.center,
-                      ),
+  widget.isArabic ? 'المكافآت' : 'Rewards',
+  style: AppTextStyles.arabicTitle,
+  textAlign: TextAlign.center,
+  textDirection:
+      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+),
                       const SizedBox(height: AppSpacing.sm),
                       Text(
-                        'مكافأة أسبوعية ترتبط بتقدّمك',
-                        style: AppTextStyles.body,
-                        textAlign: TextAlign.center,
-                      ),
+  widget.isArabic
+      ? 'مكافأة أسبوعية ترتبط بتقدّمك'
+      : 'A weekly reward connected to your progress',
+  style: AppTextStyles.body,
+  textAlign: TextAlign.center,
+  textDirection:
+      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+),
                       const SizedBox(height: AppSpacing.lg),
 
                       if (_rewards.isEmpty)
@@ -131,11 +153,17 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
                             color: AppColors.card,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text(
-                            'لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: AppColors.textSecondary),
-                          ),
+                          child: Text(
+  widget.isArabic
+      ? 'لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!'
+      : 'There are no rewards yet.\nAsk your parents to add a reward!',
+  textAlign: TextAlign.center,
+  textDirection:
+      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+  style: const TextStyle(
+    color: AppColors.textSecondary,
+  ),
+),
                         )
                       else
                         ListView.separated(
@@ -147,11 +175,12 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
                           itemBuilder: (context, index) {
                             final reward = _rewards[index];
                             return _RewardCard(
-                              reward: reward,
-                              onClaim: reward.status == 'unlocked'
-                                  ? () => _claimReward(reward.id)
-                                  : null,
-                            );
+  reward: reward,
+  isArabic: widget.isArabic,
+  onClaim: reward.status == 'unlocked'
+      ? () => _claimReward(reward.id)
+      : null,
+);
                           },
                         ),
                     ],
@@ -168,8 +197,9 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
 class _RewardCard extends StatelessWidget {
   final RewardModel reward;
   final VoidCallback? onClaim;
+   final bool isArabic;
 
-  const _RewardCard({required this.reward, this.onClaim});
+  const _RewardCard({required this.reward, required this.isArabic, this.onClaim});
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +229,8 @@ class _RewardCard extends StatelessWidget {
         ],
       ),
       child: Row(
+        textDirection:
+      isArabic ? TextDirection.rtl : TextDirection.ltr,
         children: [
           // Claim button (only for unlocked)
           if (isUnlocked)
@@ -215,10 +247,13 @@ class _RewardCard extends StatelessWidget {
                   vertical: 8,
                 ),
               ),
-              child: const Text(
-                'استلام',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-              ),
+              child: Text(
+  isArabic ? 'استلام' : 'Claim',
+  style: const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 13,
+  ),
+),
             ),
           if (isClaimed)
             Container(
@@ -227,22 +262,26 @@ class _RewardCard extends StatelessWidget {
                 color: AppColors.gold.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                '🎉 تم',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: AppColors.gold,
-                ),
-              ),
+              child: Text(
+  isArabic ? '🎉 تم' : '🎉 Claimed',
+  style: const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 13,
+    color: AppColors.gold,
+  ),
+),
             ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment:
+    isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Text(
                   reward.rewardName,
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+textDirection:
+    isArabic ? TextDirection.rtl : TextDirection.ltr,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -254,6 +293,9 @@ class _RewardCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     reward.description!,
+                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
+textDirection:
+    isArabic ? TextDirection.rtl : TextDirection.ltr,
                     style: TextStyle(
                       fontSize: 13,
                       color: isUnlocked
@@ -265,6 +307,9 @@ class _RewardCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   _statusLabel(reward),
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+textDirection:
+    isArabic ? TextDirection.rtl : TextDirection.ltr,
                   style: TextStyle(
                     fontSize: 12,
                     color: isUnlocked
@@ -297,13 +342,50 @@ class _RewardCard extends StatelessWidget {
   }
 
   String _statusLabel(RewardModel reward) {
-    switch (reward.status.toLowerCase()) {
-      case 'unlocked':
-        return 'متاحة الآن! اضغط للاستلام ✓';
-      case 'claimed':
-        return 'تم الاستلام 🎉';
-      default:
-        return 'تُفتح يوم ${reward.unlockDayLabel}';
-    }
+  switch (reward.status.toLowerCase()) {
+    case 'unlocked':
+      return isArabic
+          ? 'متاحة الآن! اضغط للاستلام ✓'
+          : 'Available now! Tap to claim ✓';
+
+    case 'claimed':
+      return isArabic
+          ? 'تم الاستلام 🎉'
+          : 'Claimed 🎉';
+
+    default:
+  return isArabic
+      ? 'تُفتح يوم ${_unlockDayLabel(reward.unlockDay)}'
+      : 'Unlocks on ${_unlockDayLabel(reward.unlockDay)}';
   }
+}
+String _unlockDayLabel(int unlockDay) {
+  const arabicDays = [
+    'الأحد',
+    'الاثنين',
+    'الثلاثاء',
+    'الأربعاء',
+    'الخميس',
+    'الجمعة',
+    'السبت',
+  ];
+
+  const englishDays = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+
+  if (unlockDay < 0 || unlockDay > 6) {
+    return isArabic ? 'غير محدد' : 'Not specified';
+  }
+
+  return isArabic
+      ? arabicDays[unlockDay]
+      : englishDays[unlockDay];
+}
 }

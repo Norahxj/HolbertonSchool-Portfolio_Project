@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import '../../../app.dart';
+import '../../auth/services/auth_api_service.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -9,13 +10,21 @@ import '../../../models/task_assignment_model.dart';
 import 'package:frontend/features/child/services/point_api_service.dart';
 import '../../../services/task_api_service.dart';
 import 'child_task_details_screen.dart';
+import 'child_settings_screen.dart';
 
 // The child's home tab.
 //
 // This screen loads the signed-in child, today's task assignments, and the
 // current Noor Points balance. Navigation is handled by ChildNav.
 class ChildHomeScreen extends StatefulWidget {
-  const ChildHomeScreen({super.key});
+  final bool isArabic;
+  final VoidCallback onLanguageToggle;
+
+  const ChildHomeScreen({
+    super.key,
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
 
   @override
   State<ChildHomeScreen> createState() => _ChildHomeScreenState();
@@ -39,15 +48,27 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
     }
 
     try {
-      final child = await SecureStorage.getChild();
-      final assignments = await TaskApiService().getMyAssignments();
-      final points = await PointApiService().getMyPoints();
+      final childFuture = SecureStorage.getChild();
+final assignmentsFuture = TaskApiService().getMyAssignments();
+final pointsFuture = PointApiService().getMyPoints();
+
+final results = await Future.wait([
+  childFuture,
+  assignmentsFuture,
+  pointsFuture,
+]);
+
+final child = results[0] as ChildModel?;
+final assignments = results[1] as List<TaskAssignmentModel>;
+final points = results[2] as int;
 
       if (!mounted) return;
 
       if (child == null) {
         setState(() {
-          _errorMessage = 'لم نتمكن من العثور على بيانات الطفل.';
+          _errorMessage = widget.isArabic
+    ? 'لم نتمكن من العثور على بيانات الطفل.'
+    : 'We could not find the child\'s information.';
           _isLoading = false;
         });
         return;
@@ -64,7 +85,9 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       if (!mounted) return;
 
       setState(() {
-        _errorMessage = 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.';
+        _errorMessage = widget.isArabic
+    ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.'
+    : 'An error occurred while loading the data. Please try again.';
         _isLoading = false;
       });
 
@@ -84,16 +107,26 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.'),
-        ),
-      );
+  SnackBar(
+    content: Text(
+      widget.isArabic
+          ? 'أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.'
+          : 'Well done! The task was sent to your guardian for review.',
+    ),
+  ),
+);
     } catch (error) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذّر إكمال المهمة. حاول مرة أخرى.')),
-      );
+  SnackBar(
+    content: Text(
+      widget.isArabic
+          ? 'تعذّر إكمال المهمة. حاول مرة أخرى.'
+          : 'The task could not be completed. Please try again.',
+    ),
+  ),
+);
 
       debugPrint('Complete assignment error: $error');
     } finally {
@@ -104,7 +137,58 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       }
     }
   }
+    Future<void> _logout() async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(
+  widget.isArabic ? 'تسجيل الخروج' : 'Log out',
+),
+         content: Text(
+  widget.isArabic
+      ? 'هل أنت متأكد أنك تريد تسجيل الخروج؟'
+      : 'Are you sure you want to log out?',
+),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: Text(
+  widget.isArabic ? 'إلغاء' : 'Cancel',
+),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              child: Text(
+  widget.isArabic ? 'تسجيل الخروج' : 'Log out',
+  style: const TextStyle(
+    color: AppColors.error,
+  ),
+),
+            ),
+          ],
+        );
+      },
+    );
 
+    if (shouldLogout != true) return;
+
+    await AuthApiService().logout();
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AsalahApp(),
+      ),
+      (route) => false,
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -132,8 +216,12 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       return Scaffold(
         backgroundColor: AppColors.background,
         body: _ErrorState(
-          message: _errorMessage ?? 'تعذّر تحميل الصفحة.',
+         message: _errorMessage ??
+    (widget.isArabic
+        ? 'تعذّر تحميل الصفحة.'
+        : 'The page could not be loaded.'),
           onRetry: _loadData,
+          isArabic: widget.isArabic,
         ),
       );
     }
@@ -146,12 +234,26 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          _HomeHeader(
-            childName: _child!.name,
-            points: _points,
-            completedTasks: completedCount,
-            totalTasks: _assignments.length,
-          ),
+                    _HomeHeader(
+  childName: _child!.name,
+  points: _points,
+  completedTasks: completedCount,
+  totalTasks: _assignments.length,
+  isArabic: widget.isArabic,
+  onSettingsPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ChildSettingsScreen(
+        childName: _child!.name,
+        isArabic: widget.isArabic,
+        onLanguageToggle: widget.onLanguageToggle,
+        onLogout: _logout,
+      ),
+    ),
+  );
+},
+),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () => _loadData(showPageLoader: false),
@@ -164,28 +266,34 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                     _DailyGoalCard(
                       completedTasks: completedCount,
                       totalTasks: _assignments.length,
+                      isArabic: widget.isArabic,
                     ),
                     const SizedBox(height: AppSpacing.xl),
-                    _SectionHeader(
-                      title: 'مهام اليوم',
-                      count: '${_assignments.length}',
-                    ),
+                   _SectionHeader(
+  title: widget.isArabic ? 'مهام اليوم' : 'Today\'s Tasks',
+  count: '${_assignments.length}',
+  isArabic: widget.isArabic,
+),
                     const SizedBox(height: AppSpacing.md),
                     if (_assignments.isEmpty)
-                      const _EmptyTasksCard()
+  _EmptyTasksCard(
+    isArabic: widget.isArabic,
+  )
                     else
                       ..._assignments.map(
                         (assignment) => Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.md),
                           child: _AssignmentCard(
                             assignment: assignment,
+                            isArabic: widget.isArabic,
                             isUpdating: _updatingAssignments.contains(
                               assignment.id,
                             ),
                             onComplete:
-                                assignment.status.toLowerCase() == 'pending'
-                                ? () => _completeAssignment(assignment.id)
-                                : null,
+    assignment.status.toLowerCase() == 'pending' ||
+            assignment.status.toLowerCase() == 'rejected'
+        ? () => _completeAssignment(assignment.id)
+        : null,
                             onTap: () async {
                               await Navigator.push(
                                 context,
@@ -194,7 +302,9 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                                     assignment: assignment,
                                     icon: _categoryStyle(
                                       assignment.task.category,
+                                      widget.isArabic,
                                     ).icon,
+                                    isArabic: widget.isArabic,
                                   ),
                                 ),
                               );
@@ -208,7 +318,7 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
                       ),
                     if (_assignments.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.sm),
-                      const _EncouragementCard(),
+                       _EncouragementCard(isArabic: widget.isArabic,),
                     ],
                     const SizedBox(height: AppSpacing.lg),
                   ],
@@ -227,156 +337,222 @@ class _HomeHeader extends StatelessWidget {
   final int points;
   final int completedTasks;
   final int totalTasks;
+  final bool isArabic;
+  final VoidCallback onSettingsPressed;
 
   const _HomeHeader({
     required this.childName,
     required this.points,
     required this.completedTasks,
     required this.totalTasks,
+    required this.isArabic,
+    required this.onSettingsPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: AppColors.primaryGradient,
+    final greeting = isArabic ? 'أهلًا يا بطل! 👋' : 'Hello, champion! 👋';
+
+    final subtitle = isArabic
+        ? 'يوم جديد وإنجازات جديدة بانتظارك'
+        : 'A new day and new achievements await you';
+
+    final pointsLabel = isArabic ? 'نقاط نور' : 'Noor Points';
+    final tasksLabel = isArabic ? 'مهام اليوم' : 'Today\'s tasks';
+    final settingsLabel = isArabic ? 'الإعدادات' : 'Settings';
+
+    return Directionality(
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: AppColors.primaryGradient,
+          ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(36),
+            bottomRight: Radius.circular(36),
+          ),
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(36),
-          bottomRight: Radius.circular(36),
+        child: Stack(
+          children: [
+            PositionedDirectional(
+              top: -35,
+              start: -20,
+              child: _DecorativeBubble(
+                size: 110,
+                color: Colors.white.withOpacity(0.10),
+              ),
+            ),
+            PositionedDirectional(
+              bottom: -30,
+              end: -15,
+              child: _DecorativeBubble(
+                size: 90,
+                color: AppColors.gold.withOpacity(0.16),
+              ),
+            ),
+            
+            Positioned(
+  top: 8,
+  left: isArabic ? 12 : null,
+  right: isArabic ? null : 12,
+  child: SafeArea(
+    bottom: false,
+    child: IconButton(
+      tooltip: settingsLabel,
+      onPressed: onSettingsPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: Colors.white.withOpacity(0.16),
+      ),
+      icon: const Icon(
+        Icons.settings_rounded,
+        color: Colors.white,
+        size: 25,
+      ),
+    ),
+  ),
+),
+            SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.md,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 66,
+                          height: 66,
+                          decoration: BoxDecoration(
+                            color: AppColors.pinkLight,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 3,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryDark.withOpacity(0.22),
+                                blurRadius: 12,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.child_care_rounded,
+                            color: AppColors.pink,
+                            size: 34,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: isArabic
+                                ? CrossAxisAlignment.start
+                                : CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                greeting,
+                                textAlign: isArabic
+                                    ? TextAlign.right
+                                    : TextAlign.left,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                childName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: isArabic
+                                    ? TextAlign.right
+                                    : TextAlign.left,
+                                style: AppTextStyles.childTitle.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+  mainAxisSize: MainAxisSize.min,
+  mainAxisAlignment: MainAxisAlignment.start,
+  children: [
+    Flexible(
+      child: Text(
+        subtitle,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: isArabic
+            ? TextAlign.right
+            : TextAlign.left,
+        style: const TextStyle(
+          color: Colors.white70,
+          fontSize: 12,
         ),
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: -35,
-            left: -20,
-            child: _DecorativeBubble(
-              size: 110,
-              color: Colors.white.withOpacity(0.10),
-            ),
-          ),
-          Positioned(
-            bottom: -30,
-            right: -15,
-            child: _DecorativeBubble(
-              size: 90,
-              color: AppColors.gold.withOpacity(0.16),
-            ),
-          ),
-          const Positioned(
-            top: 74,
-            left: 32,
-            child: Icon(Icons.auto_awesome, size: 18, color: AppColors.gold),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.md,
-                AppSpacing.lg,
-                AppSpacing.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const Text(
-                              'أهلًا يا بطل! 👋',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              childName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.childTitle.copyWith(
-                                color: Colors.white,
-                                fontSize: 28,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'يوم جديد وإنجازات جديدة بانتظارك',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
+    ),
+    const SizedBox(width: 4),
+    const Icon(
+      Icons.auto_awesome,
+      size: 15,
+      color: AppColors.gold,
+    ),
+  ],
+),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: AppSpacing.md),
-                      Container(
-                        width: 66,
-                        height: 66,
-                        decoration: BoxDecoration(
-                          color: AppColors.pinkLight,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primaryDark.withOpacity(0.22),
-                              blurRadius: 12,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
+                        
+],
+),
+                        
+                    const SizedBox(height: AppSpacing.lg),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _HeaderMetric(
+                            icon: Icons.auto_awesome_rounded,
+                            iconColor: AppColors.gold,
+                            value: '$points',
+                            label: pointsLabel,
+                            isArabic: isArabic,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.child_care_rounded,
-                          color: AppColors.pink,
-                          size: 34,
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _HeaderMetric(
+                            icon: Icons.task_alt_rounded,
+                            iconColor: AppColors.mint,
+                            value: '$completedTasks/$totalTasks',
+                            label: tasksLabel,
+                            isArabic: isArabic,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _HeaderMetric(
-                          icon: Icons.auto_awesome_rounded,
-                          iconColor: AppColors.gold,
-                          value: '$points',
-                          label: 'نقاط نور',
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: _HeaderMetric(
-                          icon: Icons.task_alt_rounded,
-                          iconColor: AppColors.mint,
-                          value: '$completedTasks/$totalTasks',
-                          label: 'مهام اليوم',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-
 class _DecorativeBubble extends StatelessWidget {
   final double size;
   final Color color;
@@ -398,12 +574,14 @@ class _HeaderMetric extends StatelessWidget {
   final Color iconColor;
   final String value;
   final String label;
+  final bool isArabic;
 
   const _HeaderMetric({
     required this.icon,
     required this.iconColor,
     required this.value,
     required this.label,
+     required this.isArabic,
   });
 
   @override
@@ -424,7 +602,9 @@ class _HeaderMetric extends StatelessWidget {
           Icon(icon, color: iconColor, size: 22),
           const SizedBox(width: AppSpacing.sm),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: isArabic
+    ? CrossAxisAlignment.end
+    : CrossAxisAlignment.start,
             children: [
               Text(
                 value,
@@ -449,10 +629,12 @@ class _HeaderMetric extends StatelessWidget {
 class _DailyGoalCard extends StatelessWidget {
   final int completedTasks;
   final int totalTasks;
+  final bool isArabic;
 
   const _DailyGoalCard({
     required this.completedTasks,
     required this.totalTasks,
+    required this.isArabic,
   });
 
   @override
@@ -466,15 +648,23 @@ class _DailyGoalCard extends StatelessWidget {
 
     String message;
 
-    if (totalTasks == 0) {
-      message = 'لا توجد مهام اليوم، استمتع بيومك!';
-    } else if (remainingTasks == 0) {
-      message = 'رائع! أنجزت جميع مهام اليوم 🎉';
-    } else if (remainingTasks == 1) {
-      message = 'بقيت لك مهمة واحدة لإكمال هدف اليوم!';
-    } else {
-      message = 'بقيت لك $remainingTasks مهام لإكمال هدف اليوم';
-    }
+if (totalTasks == 0) {
+  message = isArabic
+      ? 'لا توجد مهام اليوم، استمتع بيومك!'
+      : 'There are no tasks today. Enjoy your day!';
+} else if (remainingTasks == 0) {
+  message = isArabic
+      ? 'رائع! أنجزت جميع مهام اليوم 🎉'
+      : 'Great! You completed all of today\'s tasks 🎉';
+} else if (remainingTasks == 1) {
+  message = isArabic
+      ? 'بقيت لك مهمة واحدة لإكمال هدف اليوم!'
+      : 'You have one task left to complete today\'s goal!';
+} else {
+  message = isArabic
+      ? 'بقيت لك $remainingTasks مهام لإكمال هدف اليوم'
+      : 'You have $remainingTasks tasks left to complete today\'s goal';
+}
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -515,15 +705,17 @@ class _DailyGoalCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: isArabic
+    ? CrossAxisAlignment.end
+    : CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'هدف اليوم',
+  isArabic ? 'هدف اليوم' : 'Today\'s Goal',
                       style: AppTextStyles.sectionTitle.copyWith(fontSize: 17),
                     ),
                     Text(
                       message,
-                      textAlign: TextAlign.right,
+                      textAlign: isArabic ? TextAlign.right : TextAlign.left,
                       style: AppTextStyles.caption,
                     ),
                   ],
@@ -559,31 +751,68 @@ class _DailyGoalCard extends StatelessWidget {
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String count;
+  final bool isArabic;
 
-  const _SectionHeader({required this.title, required this.count});
+  const _SectionHeader({
+    required this.title,
+    required this.count,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Text(
-            count,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-              color: AppColors.primaryDark,
-            ),
-          ),
-        ),
-        const Spacer(),
-        Text(title, style: AppTextStyles.sectionTitle),
-      ],
+      children: isArabic
+          ? [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  count,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                title,
+                style: AppTextStyles.sectionTitle,
+              ),
+            ]
+          : [
+              Text(
+                title,
+                style: AppTextStyles.sectionTitle,
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  count,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+              ),
+            ],
     );
   }
 }
@@ -593,20 +822,33 @@ class _AssignmentCard extends StatelessWidget {
   final VoidCallback? onComplete;
   final VoidCallback onTap;
   final bool isUpdating;
+  final bool isArabic;
+
 
   const _AssignmentCard({
     required this.assignment,
     required this.onTap,
     required this.isUpdating,
+    required this.isArabic,
     this.onComplete,
   });
 
   @override
   Widget build(BuildContext context) {
-    final category = _categoryStyle(assignment.task.category);
-    final status = _statusStyle(assignment.status);
-    final canComplete =
-        assignment.status.toLowerCase() == 'pending' && onComplete != null;
+    final category = _categoryStyle(
+  assignment.task.category,
+  isArabic,
+);
+
+final status = _statusStyle(
+  assignment.status,
+  isArabic,
+);
+    final normalizedStatus = assignment.status.toLowerCase();
+
+final canComplete =
+    (normalizedStatus == 'pending' || normalizedStatus == 'rejected') &&
+    onComplete != null;
 
     return Material(
       color: Colors.transparent,
@@ -644,13 +886,15 @@ class _AssignmentCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: isArabic
+    ? CrossAxisAlignment.end
+    : CrossAxisAlignment.start,
                   children: [
                     Text(
                       assignment.task.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.right,
+                     textAlign: isArabic ? TextAlign.right : TextAlign.left,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -668,7 +912,9 @@ class _AssignmentCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Wrap(
-                      alignment: WrapAlignment.end,
+                      alignment: isArabic
+    ? WrapAlignment.end
+    : WrapAlignment.start,
                       spacing: 6,
                       runSpacing: 6,
                       children: [
@@ -680,7 +926,9 @@ class _AssignmentCard extends StatelessWidget {
                         ),
                         _SmallBadge(
                           icon: Icons.auto_awesome_rounded,
-                          text: '${assignment.task.points} نقاط',
+                          text: isArabic
+    ? '${assignment.task.points} نقاط'
+    : '${assignment.task.points} points',
                           foreground: const Color(0xFFB77700),
                           background: AppColors.goldLight,
                         ),
@@ -791,7 +1039,10 @@ class _SmallBadge extends StatelessWidget {
 }
 
 class _EmptyTasksCard extends StatelessWidget {
-  const _EmptyTasksCard();
+  final bool isArabic;
+  const _EmptyTasksCard({
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -818,13 +1069,18 @@ class _EmptyTasksCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('لا توجد مهام اليوم', style: AppTextStyles.sectionTitle),
+          Text(
+  isArabic ? 'لا توجد مهام اليوم' : 'No tasks today',
+  style: AppTextStyles.sectionTitle,
+),
           const SizedBox(height: 4),
           Text(
-            'استمتع بوقتك، وعد لاحقًا لرؤية مهام جديدة.',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.body,
-          ),
+  isArabic
+      ? 'استمتع بوقتك، وعد لاحقًا لرؤية مهام جديدة.'
+      : 'Enjoy your time and come back later for new tasks.',
+  textAlign: TextAlign.center,
+  style: AppTextStyles.body,
+),
         ],
       ),
     );
@@ -832,7 +1088,10 @@ class _EmptyTasksCard extends StatelessWidget {
 }
 
 class _EncouragementCard extends StatelessWidget {
-  const _EncouragementCard();
+  final bool isArabic;
+  const _EncouragementCard({
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -842,21 +1101,23 @@ class _EncouragementCard extends StatelessWidget {
         color: AppColors.mintLight,
         borderRadius: BorderRadius.circular(22),
       ),
-      child: const Row(
+      child:  Row(
         children: [
           Icon(Icons.emoji_events_rounded, color: AppColors.mint, size: 30),
           SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              'كل مهمة تنجزها تقرّبك من هدف جديد ومكافأة أجمل!',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 13,
-                height: 1.5,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-            ),
+  isArabic
+      ? 'كل مهمة تنجزها تقرّبك من هدف جديد ومكافأة أجمل!'
+      : 'Every task you complete brings you closer to a new goal and a better reward!',
+  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+  style: const TextStyle(
+    fontSize: 13,
+    height: 1.5,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+  ),
+),
           ),
         ],
       ),
@@ -867,8 +1128,9 @@ class _EncouragementCard extends StatelessWidget {
 class _ErrorState extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
+  final bool isArabic;
 
-  const _ErrorState({required this.message, required this.onRetry});
+  const _ErrorState({required this.message, required this.onRetry,  required this.isArabic,});
 
   @override
   Widget build(BuildContext context) {
@@ -902,7 +1164,9 @@ class _ErrorState extends StatelessWidget {
               FilledButton.icon(
                 onPressed: () => onRetry(),
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('إعادة المحاولة'),
+                label: Text(
+  isArabic ? 'إعادة المحاولة' : 'Try Again',
+),
               ),
             ],
           ),
@@ -926,39 +1190,39 @@ class _CategoryStyle {
   });
 }
 
-_CategoryStyle _categoryStyle(String? category) {
+_CategoryStyle _categoryStyle(String? category, bool isArabic,) {
   switch (category?.toLowerCase()) {
     case 'religious':
-      return const _CategoryStyle(
-        label: 'قيمة دينية',
+      return  _CategoryStyle(
+        label: isArabic ? 'قيمة دينية' : 'Religious Value',
         icon: Icons.mosque_rounded,
         color: AppColors.primaryDark,
         background: AppColors.primaryLight,
       );
     case 'financial':
-      return const _CategoryStyle(
-        label: 'مهارة مالية',
+      return  _CategoryStyle(
+        label: isArabic ? 'مهارة مالية' : 'Financial Skill',
         icon: Icons.monetization_on_rounded,
         color: Color(0xFFB77700),
         background: AppColors.goldLight,
       );
     case 'moral':
-      return const _CategoryStyle(
-        label: 'قيمة أخلاقية',
+      return  _CategoryStyle(
+        label: isArabic ? 'قيمة أخلاقية' : 'Moral Value',
         icon: Icons.volunteer_activism_rounded,
         color: AppColors.pink,
         background: AppColors.pinkLight,
       );
     case 'social':
-      return const _CategoryStyle(
-        label: 'مهمة اجتماعية',
+      return  _CategoryStyle(
+        label: isArabic ? 'مهمة اجتماعية' : 'Social Task',
         icon: Icons.groups_rounded,
         color: AppColors.sky,
         background: AppColors.skyLight,
       );
     default:
-      return const _CategoryStyle(
-        label: 'مهمة يومية',
+      return  _CategoryStyle(
+        label: isArabic ? 'مهمة يومية' : 'Daily Task',
         icon: Icons.task_alt_rounded,
         color: AppColors.mint,
         background: AppColors.mintLight,
@@ -980,34 +1244,35 @@ class _StatusStyle {
   });
 }
 
-_StatusStyle _statusStyle(String status) {
+_StatusStyle _statusStyle(String status,
+  bool isArabic,) {
   switch (status.toLowerCase()) {
     case 'approved':
-      return const _StatusStyle(
-        label: 'تم الاعتماد',
+      return  _StatusStyle(
+        label: isArabic ? 'تم الاعتماد' : 'Approved',
         icon: Icons.verified_rounded,
         color: AppColors.mint,
         background: AppColors.mintLight,
       );
     case 'completed':
     case 'pending_review':
-      return const _StatusStyle(
-        label: 'بانتظار المراجعة',
+      return  _StatusStyle(
+        label: isArabic ? 'بانتظار المراجعة' : 'Waiting for Review',
         icon: Icons.hourglass_top_rounded,
         color: AppColors.orange,
         background: AppColors.orangeLight,
       );
     case 'rejected':
-      return const _StatusStyle(
-        label: 'حاول مرة أخرى',
+      return  _StatusStyle(
+        label: isArabic ? 'حاول مرة أخرى' : 'Try Again',
         icon: Icons.refresh_rounded,
         color: AppColors.coral,
         background: AppColors.coralLight,
       );
     case 'pending':
     default:
-      return const _StatusStyle(
-        label: 'جاهزة للإنجاز',
+      return  _StatusStyle(
+        label: isArabic ? 'جاهزة للإنجاز' : 'Ready',
         icon: Icons.play_arrow_rounded,
         color: AppColors.sky,
         background: AppColors.skyLight,

@@ -98,7 +98,10 @@ class _AsalahAppState extends State<AsalahApp> {
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : _isLoggedIn
           ? (_isChild
-                ? const ChildNav()
+                ? ChildNav(
+              isArabic: isArabic,
+              onLanguageToggle: _toggleLanguage,
+              )
                 : ParentMainScreen(
                     isArabic: isArabic,
                     onLanguageToggle: _toggleLanguage,

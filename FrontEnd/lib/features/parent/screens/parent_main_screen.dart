@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/constants/app_colors.dart';
+import '../../../core/navigation/app_bottom_navigation.dart';
+import '../../../core/navigation/app_navigation_controller.dart';
 import 'add_task_screen.dart';
 import 'more_settings_screen.dart';
 import 'parent_dashboard_screen.dart';
 import 'reward_management_screen.dart';
 import 'wishlist_approval_screen.dart';
 
-class ParentMainScreen extends StatefulWidget {
+class ParentMainScreen extends StatelessWidget {
   final int initialIndex;
   final bool isArabic;
   final VoidCallback? onLanguageToggle;
@@ -20,297 +22,102 @@ class ParentMainScreen extends StatefulWidget {
   });
 
   @override
-  State<ParentMainScreen> createState() => _ParentMainScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AppNavigationController(initialIndex: initialIndex),
+      child: _ParentNavigationView(
+        isArabic: isArabic,
+        onLanguageToggle: onLanguageToggle,
+      ),
+    );
+  }
 }
 
-class _ParentMainScreenState extends State<ParentMainScreen> {
-  late int _currentIndex;
-  late bool _isArabic;
+class _ParentNavigationView extends StatelessWidget {
+  final bool isArabic;
+  final VoidCallback? onLanguageToggle;
 
-  int _tasksResetVersion = 0;
+  const _ParentNavigationView({
+    required this.isArabic,
+    required this.onLanguageToggle,
+  });
 
-  late final Set<int> _loadedIndexes;
+  static const List<AppNavigationItem> _navigationItems = [
+    AppNavigationItem(
+      index: 0,
+      icon: Icons.list_alt_outlined,
+      selectedIcon: Icons.list_alt,
+      arabicLabel: 'المهام',
+      englishLabel: 'Tasks',
+    ),
+    AppNavigationItem(
+      index: 3,
+      icon: Icons.favorite_border_rounded,
+      selectedIcon: Icons.favorite_rounded,
+      arabicLabel: 'الأمنيات',
+      englishLabel: 'Wishes',
+    ),
+    AppNavigationItem(
+      index: 2,
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home_rounded,
+      arabicLabel: 'الرئيسية',
+      englishLabel: 'Home',
+    ),
+    AppNavigationItem(
+      index: 1,
+      icon: Icons.card_giftcard_outlined,
+      selectedIcon: Icons.card_giftcard_rounded,
+      arabicLabel: 'المكافآت',
+      englishLabel: 'Rewards',
+    ),
+    AppNavigationItem(
+      index: 4,
+      icon: Icons.more_horiz,
+      selectedIcon: Icons.more_horiz,
+      arabicLabel: 'المزيد',
+      englishLabel: 'More',
+    ),
+  ];
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    final navigation = context.watch<AppNavigationController>();
 
-    _currentIndex = widget.initialIndex;
-    _isArabic = widget.isArabic;
-
-    _loadedIndexes = {
-      widget.initialIndex,
-    };
-  }
-
-  @override
-  void didUpdateWidget(covariant ParentMainScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.isArabic != widget.isArabic) {
-      setState(() {
-        _isArabic = widget.isArabic;
-      });
-    }
-  }
-
-  void _changePage(int index) {
-    // Pressing the Tasks tab again resets the Add Task form.
-    if (_currentIndex == index) {
-      if (index == 0) {
-        setState(() {
-          _tasksResetVersion++;
-        });
-      }
-
-      return;
-    }
-
-    setState(() {
-      _loadedIndexes.add(index);
-      _currentIndex = index;
-    });
-  }
-
-  void _toggleLanguage() {
-    setState(() {
-      _isArabic = !_isArabic;
-    });
-
-    widget.onLanguageToggle?.call();
-  }
-
-  List<Widget> get _pages {
-    return [
-      _loadedIndexes.contains(0)
-          ? AddTaskScreen(
-              resetVersion: _tasksResetVersion,
-            )
+    final pages = <Widget>[
+      // Tasks tab:
+      // Restore the original Add Task flow.
+      navigation.isLoaded(0)
+          ? AddTaskScreen(resetVersion: navigation.reselectionVersionFor(0))
           : const SizedBox.shrink(),
 
-      _loadedIndexes.contains(1)
+      navigation.isLoaded(1)
           ? const RewardManagementScreen()
           : const SizedBox.shrink(),
 
-      _loadedIndexes.contains(2)
-          ? const ParentDashboardScreen()
+      navigation.isLoaded(2)
+          ? ParentDashboardScreen(isArabic: isArabic)
           : const SizedBox.shrink(),
 
-      _loadedIndexes.contains(3)
+      navigation.isLoaded(3)
           ? const WishlistApprovalScreen()
           : const SizedBox.shrink(),
 
-      _loadedIndexes.contains(4)
+      navigation.isLoaded(4)
           ? MoreSettingsScreen(
-              isArabic: _isArabic,
-              onLanguageToggle: _toggleLanguage,
+              isArabic: isArabic,
+              onLanguageToggle: onLanguageToggle,
             )
           : const SizedBox.shrink(),
     ];
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: _ParentBottomNavBar(
-        currentIndex: _currentIndex,
-        isArabic: _isArabic,
-        onTap: _changePage,
-      ),
-    );
-  }
-}
-
-class _ParentBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  final bool isArabic;
-  final ValueChanged<int> onTap;
-
-  const _ParentBottomNavBar({
-    required this.currentIndex,
-    required this.isArabic,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: SizedBox(
-        height: 88,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                height: 66,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 12,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  // Arabic navigation starts from the right.
-                  // English navigation starts from the left.
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    // Appears on the far right when Arabic is selected.
-                    _NavItem(
-                      icon: Icons.list_alt,
-                      label: isArabic ? 'المهام' : 'Tasks',
-                      isSelected: currentIndex == 0,
-                      onTap: () => onTap(0),
-                    ),
-
-                    _NavItem(
-                      icon: Icons.favorite_border,
-                      label: isArabic ? 'الأمنيات' : 'Wishes',
-                      isSelected: currentIndex == 3,
-                      onTap: () => onTap(3),
-                    ),
-
-                    // Reserved space for the raised Home button.
-                    const SizedBox(width: 56),
-
-                    _NavItem(
-                      icon: Icons.card_giftcard_outlined,
-                      label: isArabic ? 'المكافآت' : 'Rewards',
-                      isSelected: currentIndex == 1,
-                      onTap: () => onTap(1),
-                    ),
-
-                    // Appears on the far left when Arabic is selected.
-                    _NavItem(
-                      icon: Icons.more_horiz,
-                      label: isArabic ? 'المزيد' : 'More',
-                      isSelected: currentIndex == 4,
-                      onTap: () => onTap(4),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => onTap(2),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: currentIndex == 2
-                              ? AppColors.primary
-                              : AppColors.primaryLight,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.25),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.home_rounded,
-                          color: currentIndex == 2
-                              ? Colors.white
-                              : AppColors.primaryDark,
-                          size: 26,
-                        ),
-                      ),
-
-                      const SizedBox(height: 2),
-
-                      Text(
-                        isArabic ? 'الرئيسية' : 'Home',
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: currentIndex == 2
-                              ? AppColors.primary
-                              : AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: SizedBox(
-        width: 58,
-        height: 58,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? AppColors.primary : AppColors.textSecondary,
-              size: 22,
-            ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppColors.primary : AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
+      body: IndexedStack(index: navigation.currentIndex, children: pages),
+      bottomNavigationBar: AppBottomNavigation(
+        items: _navigationItems,
+        currentIndex: navigation.currentIndex,
+        isArabic: isArabic,
+        onTap: navigation.selectTab,
       ),
     );
   }

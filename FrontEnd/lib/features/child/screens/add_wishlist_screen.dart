@@ -8,7 +8,12 @@ import '../../../services/wishlist_api_service.dart';
 
 // شاشة إضافة أمنية جديدة للطفل.
 class AddWishlistScreen extends StatefulWidget {
-  const AddWishlistScreen({super.key});
+  final bool isArabic;
+
+  const AddWishlistScreen({
+    super.key,
+    required this.isArabic,
+  });
 
   @override
   State<AddWishlistScreen> createState() => _AddWishlistScreenState();
@@ -66,7 +71,9 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
       if (!mounted) return;
 
       setState(() {
-        _pageError = 'تعذّر تحميل قائمة الأمنيات.';
+        _pageError = widget.isArabic
+            ? 'تعذّر تحميل قائمة الأمنيات.'
+            : 'Could not load the wishlist.';
         _isLoading = false;
       });
 
@@ -85,7 +92,9 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
     if (name.length < 2) {
       setState(() {
-        _nameError = 'يجب أن يتكون اسم الأمنية من حرفين على الأقل.';
+        _nameError = widget.isArabic
+            ? 'يجب أن يتكون اسم الأمنية من حرفين على الأقل.'
+            : 'The wish name must contain at least two characters.';
       });
 
       return;
@@ -93,7 +102,9 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
     if (name.length > 255) {
       setState(() {
-        _nameError = 'اسم الأمنية طويل جدًا.';
+        _nameError = widget.isArabic
+            ? 'اسم الأمنية طويل جدًا.'
+            : 'The wish name is too long.';
       });
 
       return;
@@ -101,8 +112,12 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
     if (_hasReachedLimit) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('وصلتِ إلى الحد الأقصى للأمنيات بانتظار المراجعة.'),
+        SnackBar(
+          content: Text(
+            widget.isArabic
+                ? 'وصلتِ إلى الحد الأقصى للأمنيات بانتظار المراجعة.'
+                : 'You have reached the maximum number of wishes awaiting review.',
+          ),
         ),
       );
 
@@ -119,7 +134,13 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تمت إضافة الأمنية بنجاح ✓')),
+        SnackBar(
+          content: Text(
+            widget.isArabic
+                ? 'تمت إضافة الأمنية بنجاح ✓'
+                : 'Wish added successfully ✓',
+          ),
+        ),
       );
 
       Navigator.pop(context, true);
@@ -130,7 +151,12 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(message ?? 'تعذّرت إضافة الأمنية. حاولي مرة أخرى.'),
+          content: Text(
+            message ??
+                (widget.isArabic
+                    ? 'تعذّرت إضافة الأمنية. حاولي مرة أخرى.'
+                    : 'Could not add the wish. Please try again.'),
+          ),
         ),
       );
 
@@ -143,7 +169,13 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('حدث خطأ أثناء إضافة الأمنية.')),
+        SnackBar(
+          content: Text(
+            widget.isArabic
+                ? 'حدث خطأ أثناء إضافة الأمنية.'
+                : 'An error occurred while adding the wish.',
+          ),
+        ),
       );
 
       debugPrint('Creating wish failed: $error');
@@ -163,8 +195,11 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
       final backendMessage = data['error']?.toString();
 
       if (backendMessage?.contains('Wishlist limit reached') == true) {
-        return 'وصلتِ إلى الحد الأقصى: '
-            '5 أمنيات بانتظار المراجعة.';
+        return widget.isArabic
+            ? 'وصلتِ إلى الحد الأقصى: '
+                '5 أمنيات بانتظار المراجعة.'
+            : 'You have reached the limit: '
+                '5 wishes awaiting review.';
       }
 
       if (data['errors'] is Map) {
@@ -188,8 +223,11 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
   }
 
   String get _countText {
-    return 'لديك $_pendingWishesCount من أصل '
-        '$_maximumPendingWishes أمنيات بانتظار المراجعة';
+    return widget.isArabic
+        ? 'لديك $_pendingWishesCount من أصل '
+            '$_maximumPendingWishes أمنيات بانتظار المراجعة'
+        : 'You have $_pendingWishesCount of '
+            '$_maximumPendingWishes wishes awaiting review';
   }
 
   @override
@@ -209,13 +247,19 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                   Expanded(
                     child: Center(
                       child: Text(
-                        'إضافة أمنية',
+                        widget.isArabic
+                            ? 'إضافة أمنية'
+                            : 'Add a Wish',
+                        textDirection: widget.isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         style: AppTextStyles.arabicTitle,
                       ),
                     ),
                   ),
 
                   _RoundBackButton(
+                    isArabic: widget.isArabic,
                     onTap: () {
                       Navigator.pop(context);
                     },
@@ -226,9 +270,14 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
               const SizedBox(height: AppSpacing.sm),
 
               Text(
-                'اختر أمنياتك بعناية',
+                widget.isArabic
+                    ? 'اختر أمنياتك بعناية'
+                    : 'Choose your wishes carefully',
                 style: AppTextStyles.body,
                 textAlign: TextAlign.center,
+                textDirection: widget.isArabic
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
               ),
 
               const SizedBox(height: AppSpacing.md),
@@ -257,7 +306,9 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                     child: Text(
                       _countText,
                       textAlign: TextAlign.center,
-                      textDirection: TextDirection.rtl,
+                      textDirection: widget.isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -275,26 +326,44 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                 Text(
                   _pageError!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.error, fontSize: 12),
+                  textDirection: widget.isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  style: const TextStyle(
+                    color: AppColors.error,
+                    fontSize: 12,
+                  ),
                 ),
 
                 TextButton(
                   onPressed: _loadCurrentWishes,
-                  child: const Text('إعادة المحاولة'),
+                  child: Text(
+                    widget.isArabic
+                        ? 'إعادة المحاولة'
+                        : 'Try again',
+                  ),
                 ),
               ],
 
               const SizedBox(height: AppSpacing.xl),
 
-              const _FieldLabel('اسم الأمنية'),
+              _FieldLabel(
+                widget.isArabic
+                    ? 'اسم الأمنية'
+                    : 'Wish name',
+                isArabic: widget.isArabic,
+              ),
 
               const SizedBox(height: AppSpacing.sm),
 
               _WishTextField(
                 controller: _nameController,
-                hint: 'مثال: دراجة هوائية',
+                hint: widget.isArabic
+                    ? 'مثال: دراجة هوائية'
+                    : 'Example: A bicycle',
                 errorText: _nameError,
                 enabled: !_hasReachedLimit,
+                isArabic: widget.isArabic,
               ),
 
               const SizedBox(height: AppSpacing.lg),
@@ -305,25 +374,34 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.auto_awesome,
                       color: AppColors.primary,
                       size: 18,
                     ),
 
-                    SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: AppSpacing.sm),
 
                     Expanded(
                       child: Text(
-                        'يمكنك إضافة حتى 5 أمنيات '
-                        'بانتظار مراجعة ولي أمرك. '
-                        'بعد قبول الأمنية سيحدد ولي '
-                        'أمرك عدد النقاط المطلوبة لتحقيقها.',
-                        textAlign: TextAlign.right,
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
+                        widget.isArabic
+                            ? 'يمكنك إضافة حتى 5 أمنيات '
+                                'بانتظار مراجعة ولي أمرك. '
+                                'بعد قبول الأمنية سيحدد ولي '
+                                'أمرك عدد النقاط المطلوبة لتحقيقها.'
+                            : 'You can add up to 5 wishes '
+                                'awaiting your guardian\'s review. '
+                                'After a wish is approved, your guardian '
+                                'will set the number of points required to achieve it.',
+                        textAlign: widget.isArabic
+                            ? TextAlign.right
+                            : TextAlign.left,
+                        textDirection: widget.isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
+                        style: const TextStyle(
                           fontSize: 13,
                           height: 1.5,
                           color: AppColors.textPrimary,
@@ -362,8 +440,12 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
                         )
                       : Text(
                           _hasReachedLimit
-                              ? 'وصلتِ إلى الحد الأقصى'
-                              : 'حفظ الأمنية',
+                              ? widget.isArabic
+                                  ? 'وصلتِ إلى الحد الأقصى'
+                                  : 'Maximum limit reached'
+                              : widget.isArabic
+                                  ? 'حفظ الأمنية'
+                                  : 'Save wish',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -383,8 +465,12 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
 
 class _RoundBackButton extends StatelessWidget {
   final VoidCallback onTap;
+  final bool isArabic;
 
-  const _RoundBackButton({required this.onTap});
+  const _RoundBackButton({
+    required this.onTap,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -394,11 +480,13 @@ class _RoundBackButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        child: const SizedBox(
+        child: SizedBox(
           width: 44,
           height: 44,
           child: Icon(
-            Icons.arrow_forward_rounded,
+            isArabic
+                ? Icons.arrow_forward_rounded
+                : Icons.arrow_back_rounded,
             size: 18,
             color: AppColors.primaryDark,
           ),
@@ -410,16 +498,23 @@ class _RoundBackButton extends StatelessWidget {
 
 class _FieldLabel extends StatelessWidget {
   final String text;
+  final bool isArabic;
 
-  const _FieldLabel(this.text);
+  const _FieldLabel(
+    this.text, {
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: isArabic
+          ? Alignment.centerRight
+          : Alignment.centerLeft,
       child: Text(
         text,
-        textDirection: TextDirection.rtl,
+        textDirection:
+            isArabic ? TextDirection.rtl : TextDirection.ltr,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -435,12 +530,14 @@ class _WishTextField extends StatelessWidget {
   final String hint;
   final String? errorText;
   final bool enabled;
+  final bool isArabic;
 
   const _WishTextField({
     required this.controller,
     required this.hint,
     required this.errorText,
     required this.enabled,
+    required this.isArabic,
   });
 
   @override
@@ -448,8 +545,9 @@ class _WishTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       enabled: enabled,
-      textAlign: TextAlign.right,
-      textDirection: TextDirection.rtl,
+      textAlign: isArabic ? TextAlign.right : TextAlign.left,
+      textDirection:
+          isArabic ? TextDirection.rtl : TextDirection.ltr,
       decoration: InputDecoration(
         hintText: hint,
         errorText: errorText,
@@ -466,7 +564,10 @@ class _WishTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+            width: 1.5,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -474,7 +575,10 @@ class _WishTextField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.error,
+            width: 1.5,
+          ),
         ),
       ),
     );

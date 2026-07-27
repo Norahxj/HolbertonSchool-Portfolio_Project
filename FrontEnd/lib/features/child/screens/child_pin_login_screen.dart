@@ -41,7 +41,9 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
   Future<void> _loginChild() async {
     if (pin.length != 6) {
       setState(() {
-        errorMessage = "أدخل رمز الدخول كاملاً";
+       errorMessage = widget.isArabic
+    ? 'أدخل رمز الدخول كاملًا'
+    : 'Enter the complete access code';
       });
       return;
     }
@@ -56,12 +58,20 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
       if (!mounted) return;
 
       Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => ChildNav()),
-      );
+  context,
+  MaterialPageRoute(
+    builder: (_) => ChildNav(
+      isArabic: widget.isArabic,
+      onLanguageToggle: widget.onLanguageToggle,
+    ),
+  ),
+);
     } on DioException catch (e) {
       setState(() {
-        errorMessage = e.response?.data["error"] ?? "رمز الدخول غير صحيح";
+       errorMessage = e.response?.data["error"]?.toString() ??
+    (widget.isArabic
+        ? 'رمز الدخول غير صحيح'
+        : 'The access code is incorrect');
       });
     } finally {
       if (mounted) {
