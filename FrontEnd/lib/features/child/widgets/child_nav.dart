@@ -87,16 +87,22 @@ Widget build(BuildContext context) {
     : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
-          ? const ChildWishlistScreen()
-          : const SizedBox.shrink(),
+    ? ChildWishlistScreen(
+        isArabic: currentIsArabic,
+      )
+    : const SizedBox.shrink(),
 
-      navigation.isLoaded(2)
-          ? const ChildRewardsScreen()
-          : const SizedBox.shrink(),
+navigation.isLoaded(2)
+    ? ChildRewardsScreen(
+        isArabic: currentIsArabic,
+      )
+    : const SizedBox.shrink(),
 
-      navigation.isLoaded(3)
-          ? const ChildProgressScreen()
-          : const SizedBox.shrink(),
+navigation.isLoaded(3)
+    ? ChildProgressScreen(
+        isArabic: currentIsArabic,
+      )
+    : const SizedBox.shrink(),
     ];
 
     return Scaffold(

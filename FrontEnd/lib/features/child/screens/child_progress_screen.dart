@@ -8,8 +8,12 @@ import '../../../services/task_api_service.dart';
 import '../services/point_api_service.dart';
 
 class ChildProgressScreen extends StatefulWidget {
-  const ChildProgressScreen({super.key});
+  final bool isArabic;
 
+  const ChildProgressScreen({
+    super.key,
+    required this.isArabic,
+  });
   @override
   State<ChildProgressScreen> createState() => _ChildProgressScreenState();
 }

@@ -15,8 +15,12 @@ import 'add_wishlist_screen.dart';
 /// Requirement #5: Bottom nav is handled by IndexedStack in ChildHomeScreen
 /// (this widget is now embedded as a tab, not a standalone route).
 class ChildWishlistScreen extends StatefulWidget {
-  const ChildWishlistScreen({super.key});
+  final bool isArabic;
 
+  const ChildWishlistScreen({
+    super.key,
+    required this.isArabic,
+  });
   @override
   State<ChildWishlistScreen> createState() => _ChildWishlistScreenState();
 }
