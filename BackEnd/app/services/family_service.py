@@ -62,6 +62,52 @@ class FamilyService:
             return None, "user_not_found"
         invitations = self.family_invitation_repository.get_pending_invitations_for_email(user.email)
         return invitations, None
+
+    def get_family_details(self, user_id):
+        user = self.user_repository.get_user_by_id(user_id)
+
+        if not user:
+            return None, "user_not_found"
+
+        if not user.family_id:
+            return None, "family_not_found"
+
+        family = db.session.get(Family, user.family_id)
+
+        if not family:
+            return None, "family_not_found"
+
+        pending_invitations = (
+        self.family_invitation_repository
+        .get_pending_invitations_for_family(family.id)
+        )
+
+        return {
+        "id": str(family.id),
+        "name": family.name,
+        "current_user_id": str(user.id),
+        "guardians": [
+            {
+                "id": str(guardian.id),
+                "first_name": guardian.first_name,
+                "last_name": guardian.last_name,
+                "email": guardian.email,
+                "guardian_type": guardian.guardian_type,
+            }
+            for guardian in family.guardians
+            ],
+            "pending_invitations": [
+            {
+                "id": str(invitation.id),
+                "family_id": str(invitation.family_id),
+                "invited_email": invitation.invited_email,
+                "invited_by": str(invitation.invited_by),
+                "status": invitation.status,
+                "created_at": invitation.created_at,
+            }
+            for invitation in pending_invitations
+            ],
+        }, None
     
     def update_family_name(self, user_id, family_data):
         user = self.user_repository.get_user_by_id(user_id)

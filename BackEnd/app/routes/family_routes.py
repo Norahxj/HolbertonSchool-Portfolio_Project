@@ -2,7 +2,7 @@ from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
 from app.services.family_service import FamilyService
-from app.schemas import  FamilyInviteSchema, FamilyUpdateSchema, FamilyResponseSchema, FamilyInvitationResponseSchema
+from app.schemas import  FamilyInviteSchema, FamilyUpdateSchema, FamilyResponseSchema, FamilyInvitationResponseSchema, FamilyDetailsResponseSchema
 from app.api_models.family_api import get_family_models
 
 api = Namespace("family", description="Family operations")
@@ -10,6 +10,7 @@ family_service = FamilyService()
 family_invite_schema = FamilyInviteSchema()
 family_invitation_response_schema = FamilyInvitationResponseSchema()
 family_update_schema = FamilyUpdateSchema()
+family_details_response_schema = FamilyDetailsResponseSchema()
 family_response_schema = FamilyResponseSchema()
 family_invitations_response_schema = FamilyInvitationResponseSchema(many=True)
 family_invite_model, family_update_model, family_response_model, family_invitation_response_model = get_family_models(api)
@@ -57,6 +58,33 @@ class InviteParentResource(Resource):
 
 @api.route("/me")
 class MyFamilyResource(Resource):
+    @api.response(200, "Family retrieved successfully")
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Parent access required")
+    @api.response(404, "User or family not found")
+    @api.doc(security="JWT")
+    @jwt_required()
+    def get(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "parent":
+            return {"error": "Parent access required"}, 403
+
+        user_id = get_jwt_identity()
+
+        family, error = family_service.get_family_details(user_id)
+
+        if error == "user_not_found":
+            return {"error": "User not found"}, 404
+
+        if error == "family_not_found":
+            return {"error": "Family not found"}, 404
+
+        if error:
+            return {"error": "Failed to retrieve family"}, 500
+
+        return family_details_response_schema.dump(family), 200
+
     @api.response(200, "Family name updated successfully", family_response_model)
     @api.response(400, "Invalid input")
     @api.response(401, "Missing or invalid access token")

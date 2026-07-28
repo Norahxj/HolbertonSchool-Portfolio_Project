@@ -49,3 +49,9 @@ class FamilyInvitationRepository:
         except IntegrityError:
             db.session.rollback()
             return False, "integrity_error"
+
+    def get_pending_invitations_for_family(self, family_id):
+        return FamilyInvitation.query.filter_by(
+            family_id=family_id,
+            status="PENDING",
+            ).order_by(FamilyInvitation.created_at.desc()).all()

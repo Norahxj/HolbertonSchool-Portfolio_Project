@@ -18,6 +18,27 @@ class FamilyResponseSchema(Schema):
     id = fields.String()
     name = fields.String(allow_none=True)
 
+class FamilyGuardianResponseSchema(Schema):
+    id = fields.String()
+    first_name = fields.String()
+    last_name = fields.String()
+    email = fields.Email()
+    guardian_type = fields.String()
+
+
+class FamilyDetailsResponseSchema(Schema):
+    id = fields.String()
+    name = fields.String(allow_none=True)
+    current_user_id = fields.String()
+
+    guardians = fields.List(
+        fields.Nested(FamilyGuardianResponseSchema)
+    )
+
+    pending_invitations = fields.List(
+        fields.Nested(lambda: FamilyInvitationResponseSchema())
+    )
+
 
 class FamilyInvitationResponseSchema(Schema):
     id = fields.String()
