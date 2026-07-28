@@ -17,6 +17,9 @@ class FamilySettingsScreen extends StatefulWidget {
 class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   final FamilyApiService familyApiService = FamilyApiService();
 
+  bool get isArabic =>
+      Localizations.localeOf(context).languageCode == 'ar';
+
   final TextEditingController familyNameController =
       TextEditingController();
   final TextEditingController inviteEmailController =
@@ -56,14 +59,14 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
 
     try {
       final results = await Future.wait([
-  familyApiService.getFamilyDetails(),
-  familyApiService.getIncomingInvitations(),
-]);
+        familyApiService.getFamilyDetails(),
+        familyApiService.getIncomingInvitations(),
+      ]);
 
-final familyData = results[0] as Map<String, dynamic>;
+      final familyData = results[0] as Map<String, dynamic>;
 
-final loadedIncomingInvitations =
-    results[1] as List<Map<String, dynamic>>;
+      final loadedIncomingInvitations =
+          results[1] as List<Map<String, dynamic>>;
 
       final loadedGuardians = (familyData['guardians'] as List? ?? [])
           .map(
@@ -104,49 +107,57 @@ final loadedIncomingInvitations =
   }
 
   Future<void> _acceptInvitation(String invitationId) async {
-  try {
-    await familyApiService.acceptInvitation(invitationId);
+    try {
+      await familyApiService.acceptInvitation(invitationId);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    _showMessage('تم قبول الدعوة والانضمام إلى العائلة');
+      _showMessage(
+        isArabic
+            ? 'تم قبول الدعوة والانضمام إلى العائلة'
+            : 'Invitation accepted and joined the family',
+      );
 
-    await _loadFamilyData();
-  } catch (error) {
-    if (!mounted) return;
+      await _loadFamilyData();
+    } catch (error) {
+      if (!mounted) return;
 
-    _showMessage(
-      familyApiService.readErrorMessage(error),
-      isError: true,
-    );
+      _showMessage(
+        familyApiService.readErrorMessage(error),
+        isError: true,
+      );
+    }
   }
-}
 
-Future<void> _rejectInvitation(String invitationId) async {
-  try {
-    await familyApiService.rejectInvitation(invitationId);
+  Future<void> _rejectInvitation(String invitationId) async {
+    try {
+      await familyApiService.rejectInvitation(invitationId);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    _showMessage('تم رفض الدعوة');
+      _showMessage(
+        isArabic ? 'تم رفض الدعوة' : 'Invitation rejected',
+      );
 
-    await _loadFamilyData();
-  } catch (error) {
-    if (!mounted) return;
+      await _loadFamilyData();
+    } catch (error) {
+      if (!mounted) return;
 
-    _showMessage(
-      familyApiService.readErrorMessage(error),
-      isError: true,
-    );
+      _showMessage(
+        familyApiService.readErrorMessage(error),
+        isError: true,
+      );
+    }
   }
-}
 
   Future<void> _saveFamilyName() async {
     final name = familyNameController.text.trim();
 
     if (name.length < 2) {
       _showMessage(
-        'اسم العائلة يجب أن يكون حرفين على الأقل',
+        isArabic
+            ? 'اسم العائلة يجب أن يكون حرفين على الأقل'
+            : 'Family name must be at least two characters',
         isError: true,
       );
       return;
@@ -161,7 +172,9 @@ Future<void> _rejectInvitation(String invitationId) async {
 
       if (!mounted) return;
 
-      _showMessage('تم تحديث اسم العائلة');
+      _showMessage(
+        isArabic ? 'تم تحديث اسم العائلة' : 'Family name updated',
+      );
 
       await _loadFamilyData();
     } catch (error) {
@@ -186,7 +199,9 @@ Future<void> _rejectInvitation(String invitationId) async {
 
     if (email.isEmpty || !email.contains('@')) {
       _showMessage(
-        'اكتبي بريدًا إلكترونيًا صحيحًا',
+        isArabic
+            ? 'اكتبي بريدًا إلكترونيًا صحيحًا'
+            : 'Enter a valid email address',
         isError: true,
       );
       return;
@@ -203,7 +218,11 @@ Future<void> _rejectInvitation(String invitationId) async {
 
       if (!mounted) return;
 
-      _showMessage('تم إرسال الدعوة بنجاح');
+      _showMessage(
+        isArabic
+            ? 'تم إرسال الدعوة بنجاح'
+            : 'Invitation sent successfully',
+      );
 
       await _loadFamilyData();
     } catch (error) {
@@ -238,13 +257,13 @@ Future<void> _rejectInvitation(String invitationId) async {
   String _guardianTypeLabel(String type) {
     switch (type) {
       case 'father':
-        return 'أب';
+        return isArabic ? 'أب' : 'Father';
       case 'mother':
-        return 'أم';
+        return isArabic ? 'أم' : 'Mother';
       case 'guardian':
-        return 'ولي أمر';
+        return isArabic ? 'ولي أمر' : 'Guardian';
       default:
-        return 'ولي أمر';
+        return isArabic ? 'ولي أمر' : 'Guardian';
     }
   }
 
@@ -289,7 +308,9 @@ Future<void> _rejectInvitation(String invitationId) async {
                     const SizedBox(height: AppSpacing.md),
                     ElevatedButton(
                       onPressed: _loadFamilyData,
-                      child: const Text('إعادة المحاولة'),
+                      child: Text(
+                        isArabic ? 'إعادة المحاولة' : 'Try again',
+                      ),
                     ),
                   ],
                 ),
@@ -318,7 +339,9 @@ Future<void> _rejectInvitation(String invitationId) async {
                       Expanded(
                         child: Center(
                           child: Text(
-                            'إعدادات العائلة',
+                            isArabic
+                                ? 'إعدادات العائلة'
+                                : 'Family Settings',
                             style:
                                 AppTextStyles.arabicTitle,
                           ),
@@ -331,7 +354,9 @@ Future<void> _rejectInvitation(String invitationId) async {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  const _FieldLabel('اسم العائلة'),
+                  _FieldLabel(
+                    isArabic ? 'اسم العائلة' : 'Family Name',
+                  ),
                   const SizedBox(height: AppSpacing.sm),
                   Container(
                     height: 56,
@@ -361,9 +386,12 @@ Future<void> _rejectInvitation(String invitationId) async {
                           child: TextField(
                             controller:
                                 familyNameController,
-                            textAlign: TextAlign.right,
-                            textDirection:
-                                TextDirection.rtl,
+                            textAlign: isArabic
+                                ? TextAlign.right
+                                : TextAlign.left,
+                            textDirection: isArabic
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
                             style: const TextStyle(
                               color:
                                   AppColors.textPrimary,
@@ -410,13 +438,21 @@ Future<void> _rejectInvitation(String invitationId) async {
                             ),
                       label: Text(
                         isSavingFamilyName
-                            ? 'جارٍ الحفظ...'
-                            : 'حفظ الاسم',
+                            ? (isArabic
+                                ? 'جارٍ الحفظ...'
+                                : 'Saving...')
+                            : (isArabic
+                                ? 'حفظ الاسم'
+                                : 'Save Name'),
                       ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  const _FieldLabel('أولياء الأمور'),
+                  _FieldLabel(
+                    isArabic
+                        ? 'أولياء الأمور'
+                        : 'Guardians',
+                  ),
                   const SizedBox(height: AppSpacing.sm),
                   if (guardians.isEmpty)
                     Container(
@@ -431,8 +467,10 @@ Future<void> _rejectInvitation(String invitationId) async {
                           color: AppColors.border,
                         ),
                       ),
-                      child: const Text(
-                        'لا يوجد أولياء أمور',
+                      child: Text(
+                        isArabic
+                            ? 'لا يوجد أولياء أمور'
+                            : 'No guardians',
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -469,7 +507,7 @@ Future<void> _rejectInvitation(String invitationId) async {
                               '$firstName $lastName'
                                   .trim(),
                           subtitle: isCurrentUser
-                              ? 'أنت · ${_guardianTypeLabel(guardianType)}'
+                              ? '${isArabic ? 'أنت' : 'You'} · ${_guardianTypeLabel(guardianType)}'
                               : _guardianTypeLabel(
                                   guardianType,
                                 ),
@@ -485,23 +523,27 @@ Future<void> _rejectInvitation(String invitationId) async {
                           iconColor:
                               AppColors.primary,
                           tag: isCurrentUser
-                              ? const _CurrentUserTag()
+                              ? _CurrentUserTag(
+                                  isArabic: isArabic,
+                                )
                               : const _VerifiedTag(),
                         ),
                       );
                     }),
                   const SizedBox(height: AppSpacing.xl),
                   _PendingInvitationsSection(
-  invitations: sentInvitations,
-),
+                    invitations: sentInvitations,
+                    isArabic: isArabic,
+                  ),
 
-const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: AppSpacing.xl),
 
-_IncomingInvitationsSection(
-  invitations: incomingInvitations,
-  onAccept: _acceptInvitation,
-  onReject: _rejectInvitation,
-),
+                  _IncomingInvitationsSection(
+                    invitations: incomingInvitations,
+                    onAccept: _acceptInvitation,
+                    onReject: _rejectInvitation,
+                    isArabic: isArabic,
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                   Container(
                     padding: const EdgeInsets.all(
@@ -516,23 +558,25 @@ _IncomingInvitationsSection(
                       crossAxisAlignment:
                           CrossAxisAlignment.stretch,
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.group_outlined,
                               color:
                                   AppColors.primaryDark,
                               size: 20,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: AppSpacing.sm,
                             ),
                             Expanded(
                               child: Text(
-                                'دعوة ولي أمر آخر',
+                                isArabic
+                                    ? 'دعوة ولي أمر آخر'
+                                    : 'Invite Another Guardian',
                                 textAlign:
                                     TextAlign.right,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight:
                                       FontWeight.bold,
@@ -570,14 +614,18 @@ _IncomingInvitationsSection(
                                   keyboardType:
                                       TextInputType
                                           .emailAddress,
-                                  textAlign:
-                                      TextAlign.right,
+                                  textAlign: isArabic
+                                      ? TextAlign.right
+                                      : TextAlign.left,
                                   textDirection:
-                                      TextDirection.rtl,
+                                      isArabic
+                                          ? TextDirection.rtl
+                                          : TextDirection.ltr,
                                   decoration:
-                                      const InputDecoration(
-                                    hintText:
-                                        'البريد الإلكتروني لولي الأمر',
+                                      InputDecoration(
+                                    hintText: isArabic
+                                        ? 'البريد الإلكتروني لولي الأمر'
+                                        : 'Guardian email address',
                                     border:
                                         InputBorder.none,
                                     isDense: true,
@@ -603,8 +651,12 @@ _IncomingInvitationsSection(
                         ),
                         AppButton(
                           text: isSendingInvitation
-                              ? 'جارٍ الإرسال...'
-                              : 'إرسال دعوة',
+                              ? (isArabic
+                                  ? 'جارٍ الإرسال...'
+                                  : 'Sending...')
+                              : (isArabic
+                                  ? 'إرسال دعوة'
+                                  : 'Send Invitation'),
                           onPressed:
                               isSendingInvitation
                                   ? () {}
@@ -622,10 +674,12 @@ _IncomingInvitationsSection(
                         const SizedBox(
                           height: AppSpacing.sm,
                         ),
-                        const Text(
-                          'يجب أن يكون لدى ولي الأمر حساب مسجل مسبقًا، وستظهر الدعوة داخل حسابه',
+                        Text(
+                          isArabic
+                              ? 'يجب أن يكون لدى ولي الأمر حساب مسجل مسبقًا، وستظهر الدعوة داخل حسابه'
+                              : 'The guardian must already have a registered account, and the invitation will appear in their account',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: AppColors
                                 .textSecondary,
@@ -780,7 +834,11 @@ class _GuardianCard extends StatelessWidget {
 }
 
 class _CurrentUserTag extends StatelessWidget {
-  const _CurrentUserTag();
+  final bool isArabic;
+
+  const _CurrentUserTag({
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -793,9 +851,9 @@ class _CurrentUserTag extends StatelessWidget {
         color: const Color(0xFFDDF0E1),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Text(
-        'أنت',
-        style: TextStyle(
+      child: Text(
+        isArabic ? 'أنت' : 'You',
+        style: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: AppColors.success,
@@ -829,9 +887,11 @@ class _VerifiedTag extends StatelessWidget {
 class _PendingInvitationsSection
     extends StatelessWidget {
   final List<Map<String, dynamic>> invitations;
+  final bool isArabic;
 
   const _PendingInvitationsSection({
     required this.invitations,
+    required this.isArabic,
   });
 
   @override
@@ -840,8 +900,10 @@ class _PendingInvitationsSection
       crossAxisAlignment:
           CrossAxisAlignment.stretch,
       children: [
-        const _FieldLabel(
-          'الدعوات المرسلة المعلّقة',
+        _FieldLabel(
+          isArabic
+              ? 'الدعوات المرسلة المعلّقة'
+              : 'Pending Sent Invitations',
         ),
         const SizedBox(height: AppSpacing.sm),
         if (invitations.isEmpty)
@@ -856,22 +918,26 @@ class _PendingInvitationsSection
                 color: AppColors.border,
               ),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Text(
-                  'لا توجد دعوات مرسلة معلّقة حاليًا',
+                  isArabic
+                      ? 'لا توجد دعوات مرسلة معلّقة حاليًا'
+                      : 'There are no pending sent invitations',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'ستظهر هنا الدعوات التي أرسلتها ولم تُقبل بعد',
+                  isArabic
+                      ? 'ستظهر هنا الدعوات التي أرسلتها ولم تُقبل بعد'
+                      : 'Invitations you sent that have not yet been accepted will appear here',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color:
                         AppColors.textSecondary,
@@ -926,10 +992,12 @@ class _PendingInvitationsSection
                           ),
                         ),
                         const SizedBox(height: 2),
-                        const Text(
-                          'بانتظار قبول الدعوة',
+                        Text(
+                          isArabic
+                              ? 'بانتظار قبول الدعوة'
+                              : 'Waiting for invitation acceptance',
                           textAlign: TextAlign.right,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: AppColors
                                 .textSecondary,
@@ -949,6 +1017,7 @@ class _PendingInvitationsSection
 
 class _IncomingInvitationsSection extends StatelessWidget {
   final List<Map<String, dynamic>> invitations;
+  final bool isArabic;
   final Future<void> Function(String invitationId) onAccept;
   final Future<void> Function(String invitationId) onReject;
 
@@ -956,6 +1025,7 @@ class _IncomingInvitationsSection extends StatelessWidget {
     required this.invitations,
     required this.onAccept,
     required this.onReject,
+    required this.isArabic,
   });
 
   @override
@@ -963,7 +1033,11 @@ class _IncomingInvitationsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _FieldLabel('الدعوات الواردة'),
+        _FieldLabel(
+          isArabic
+              ? 'الدعوات الواردة'
+              : 'Incoming Invitations',
+        ),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -977,22 +1051,26 @@ class _IncomingInvitationsSection extends StatelessWidget {
                 color: AppColors.border,
               ),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Text(
-                  'لا توجد دعوات واردة حاليًا',
+                  isArabic
+                      ? 'لا توجد دعوات واردة حاليًا'
+                      : 'There are no incoming invitations',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'ستظهر هنا دعوات الانضمام إلى العائلات',
+                  isArabic
+                      ? 'ستظهر هنا دعوات الانضمام إلى العائلات'
+                      : 'Family invitations will appear here',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
@@ -1006,12 +1084,13 @@ class _IncomingInvitationsSection extends StatelessWidget {
                 invitation['id']?.toString() ?? '';
 
             final familyName =
-    invitation['family_name']?.toString() ?? 'العائلة';
+                invitation['family_name']?.toString() ??
+                    (isArabic ? 'العائلة' : 'the family');
 
             final invitedByName =
                 invitation['invited_by_name']?.toString();
             final invitedByEmail =
-                  invitation['invited_by_email']?.toString();
+                invitation['invited_by_email']?.toString();
 
             return Container(
               margin: const EdgeInsets.only(
@@ -1042,7 +1121,9 @@ class _IncomingInvitationsSection extends StatelessWidget {
                               CrossAxisAlignment.end,
                           children: [
                             Text(
-                              'دعوة للانضمام إلى $familyName',
+                              isArabic
+                                  ? 'دعوة للانضمام إلى $familyName'
+                                  : 'Invitation to join $familyName',
                               textAlign: TextAlign.right,
                               style: const TextStyle(
                                 fontSize: 14,
@@ -1051,30 +1132,32 @@ class _IncomingInvitationsSection extends StatelessWidget {
                               ),
                             ),
                             if (invitedByName != null &&
-    invitedByName.isNotEmpty) ...[
-  const SizedBox(height: 4),
-  Text(
-    'مرسلة من $invitedByName',
-    textAlign: TextAlign.right,
-    style: const TextStyle(
-      fontSize: 12,
-      color: AppColors.textSecondary,
-    ),
-  ),
-],
+                                invitedByName.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                isArabic
+                                    ? 'مرسلة من $invitedByName'
+                                    : 'Sent by $invitedByName',
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
 
-if (invitedByEmail != null &&
-    invitedByEmail.isNotEmpty) ...[
-  const SizedBox(height: 2),
-  Text(
-    invitedByEmail,
-    textAlign: TextAlign.right,
-    style: const TextStyle(
-      fontSize: 11,
-      color: AppColors.textSecondary,
-    ),
-  ),
-],
+                            if (invitedByEmail != null &&
+                                invitedByEmail.isNotEmpty) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                invitedByEmail,
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -1090,7 +1173,9 @@ if (invitedByEmail != null &&
                           onPressed: invitationId.isEmpty
                               ? null
                               : () => onReject(invitationId),
-                          child: const Text('رفض'),
+                          child: Text(
+                            isArabic ? 'رفض' : 'Reject',
+                          ),
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -1099,7 +1184,9 @@ if (invitedByEmail != null &&
                           onPressed: invitationId.isEmpty
                               ? null
                               : () => onAccept(invitationId),
-                          child: const Text('قبول'),
+                          child: Text(
+                            isArabic ? 'قبول' : 'Accept',
+                          ),
                         ),
                       ),
                     ],
