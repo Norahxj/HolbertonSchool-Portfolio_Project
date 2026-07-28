@@ -229,8 +229,8 @@ InkWell(
       context,
       MaterialPageRoute(
         builder: (_) => PointsHistoryScreen(
-          childId: child.id,
-          childName: child.name,
+          childId: item.child.id,
+          childName: item.child.name,
           isArabic: isArabic,
         ),
       ),
