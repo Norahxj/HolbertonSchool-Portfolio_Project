@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -26,8 +26,13 @@ class WishlistApprovalScreen extends StatefulWidget {
 class _WishEntry {
   final WishModel wish;
   final String childName;
+  final int avatarIndex;
 
-  _WishEntry({required this.wish, required this.childName});
+  _WishEntry({
+    required this.wish,
+    required this.childName,
+    required this.avatarIndex,
+  });
 }
 
 class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
@@ -73,6 +78,7 @@ for (final entry in wishesByChild) {
     final wishEntry = _WishEntry(
       wish: wish,
       childName: child.name,
+      avatarIndex: child.avatarIndex,
     );
 
     final status = wish.status.toUpperCase();
@@ -202,11 +208,10 @@ for (final entry in wishesByChild) {
                     _PendingWishCard(
                       key: ValueKey(entry.wish.id),
                       childName: entry.childName,
+                      avatarIndex: entry.avatarIndex,
                       wishTitle: entry.wish.name,
                       subtitle: 'أضاف هذه الأمنية إلى قائمته',
                       startingPoints: entry.wish.targetPoints ?? 250,
-                      avatarColor: const Color(0xFFFBE3EA),
-                      iconColor: const Color(0xFFD1637F),
                       onApprove: (points) =>
                           _approveWish(entry.wish.id, points),
                       onReject: () => _rejectWish(entry.wish.id),
@@ -216,11 +221,10 @@ for (final entry in wishesByChild) {
                   for (final entry in _approvedWishes) ...[
                     _ApprovedWishCard(
                       childName: entry.childName,
+                      avatarIndex: entry.avatarIndex,
                       wishTitle: entry.wish.name,
                       subtitle: 'تمت الموافقة على هذه الأمنية',
                       points: entry.wish.targetPoints ?? 0,
-                      avatarColor: const Color(0xFFDCEBFB),
-                      iconColor: const Color(0xFF4A90D9),
                     ),
                     const SizedBox(height: AppSpacing.md),
                   ],
@@ -317,14 +321,12 @@ class _StatusTag extends StatelessWidget {
 class _WishHeader extends StatelessWidget {
   final String childName;
   final String wishTitle;
-  final Color avatarColor;
-  final Color iconColor;
+   final int avatarIndex;
 
   const _WishHeader({
     required this.childName,
     required this.wishTitle,
-    required this.avatarColor,
-    required this.iconColor,
+    required this.avatarIndex,
   });
 
   @override
@@ -343,12 +345,10 @@ class _WishHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(color: avatarColor, shape: BoxShape.circle),
-          child: Icon(Icons.person, color: iconColor, size: 20),
-        ),
+        ChildAvatar(
+  avatarIndex: avatarIndex,
+  size: 40,
+),
       ],
     );
   }
@@ -359,11 +359,10 @@ class _WishHeader extends StatelessWidget {
 // increased or decreased with the + / - buttons.
 class _PendingWishCard extends StatefulWidget {
   final String childName;
-  final String wishTitle;
-  final String subtitle;
-  final int startingPoints;
-  final Color avatarColor;
-  final Color iconColor;
+final int avatarIndex;
+final String wishTitle;
+final String subtitle;
+final int startingPoints;
   final ValueChanged<int> onApprove;
   final VoidCallback onReject;
 
@@ -373,8 +372,7 @@ class _PendingWishCard extends StatefulWidget {
     required this.wishTitle,
     required this.subtitle,
     required this.startingPoints,
-    required this.avatarColor,
-    required this.iconColor,
+    required this.avatarIndex,
     required this.onApprove,
     required this.onReject,
   });
@@ -410,8 +408,7 @@ class _PendingWishCardState extends State<_PendingWishCard> {
           _WishHeader(
             childName: widget.childName,
             wishTitle: widget.wishTitle,
-            avatarColor: widget.avatarColor,
-            iconColor: widget.iconColor,
+            avatarIndex: widget.avatarIndex,
           ),
 
           const SizedBox(height: AppSpacing.sm),
@@ -622,19 +619,17 @@ class _StepperButton extends StatelessWidget {
 // just the result: how many points were deducted from the child.
 class _ApprovedWishCard extends StatelessWidget {
   final String childName;
-  final String wishTitle;
-  final String subtitle;
-  final int points;
-  final Color avatarColor;
-  final Color iconColor;
+final int avatarIndex;
+final String wishTitle;
+final String subtitle;
+final int points;
 
   const _ApprovedWishCard({
     required this.childName,
-    required this.wishTitle,
-    required this.subtitle,
-    required this.points,
-    required this.avatarColor,
-    required this.iconColor,
+  required this.avatarIndex,
+  required this.wishTitle,
+  required this.subtitle,
+  required this.points,
   });
 
   @override
@@ -650,10 +645,9 @@ class _ApprovedWishCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _WishHeader(
-            childName: childName,
-            wishTitle: wishTitle,
-            avatarColor: avatarColor,
-            iconColor: iconColor,
+             childName: childName,
+  wishTitle: wishTitle,
+  avatarIndex: avatarIndex,
           ),
 
           const SizedBox(height: AppSpacing.sm),

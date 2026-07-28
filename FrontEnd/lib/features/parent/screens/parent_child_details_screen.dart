@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -146,20 +146,11 @@ class _ParentChildDetailsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Center(
-                      child: Container(
-                        width: 92,
-                        height: 92,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primaryLight,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.person,
-                          color: AppColors.primaryDark,
-                          size: 46,
-                        ),
-                      ),
-                    ),
+  child: ChildAvatar(
+    avatarIndex: item.child.avatarIndex,
+    size: 92,
+  ),
+),
 
                     const SizedBox(height: AppSpacing.md),
 
