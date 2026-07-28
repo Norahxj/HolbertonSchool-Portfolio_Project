@@ -288,6 +288,7 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
       ? Alignment.centerRight
       : Alignment.centerLeft,
   child: AppBackButton(
+    isArabic: widget.isArabic,
     onTap: () {
       Navigator.pop(context, true);
     },
