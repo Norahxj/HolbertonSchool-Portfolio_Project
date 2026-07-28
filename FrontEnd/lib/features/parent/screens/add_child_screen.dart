@@ -19,6 +19,13 @@ class AddChildScreen extends StatefulWidget {
 
 class _AddChildScreenState extends State<AddChildScreen> {
   final ChildApiService childApiService = ChildApiService();
+  bool get isArabic {
+    return Localizations.localeOf(context).languageCode == 'ar';
+  }
+
+  String tr(String arabic, String english) {
+    return isArabic ? arabic : english;
+  }
 
   int selectedAvatarIndex = 0;
 
@@ -66,7 +73,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
   String get _dateLabel {
     if (selectedDate == null) {
-      return 'تاريخ الميلاد';
+      return tr(
+        'تاريخ الميلاد',
+        'Date of birth',
+      );
     }
 
     final date = selectedDate!;
@@ -98,7 +108,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
     if (name.isEmpty) {
       setState(() {
-        nameError = 'اسم الطفل مطلوب';
+        nameError = tr(
+          'اسم الطفل مطلوب',
+          'Child name is required',
+        );
       });
 
       return;
@@ -106,7 +119,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
     if (name.length < 2) {
       setState(() {
-        nameError = 'يجب أن يتكون اسم الطفل من حرفين على الأقل';
+        nameError = tr(
+          'يجب أن يتكون اسم الطفل من حرفين على الأقل',
+          'Child name must contain at least 2 characters',
+        );
       });
 
       return;
@@ -116,7 +132,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
     if (!validName.hasMatch(name)) {
       setState(() {
-        nameError = 'يجب أن يحتوي الاسم على حروف عربية أو إنجليزية فقط';
+        nameError = tr(
+          'يجب أن يحتوي الاسم على حروف عربية أو إنجليزية فقط',
+          'The name must contain letters only',
+        );
       });
 
       return;
@@ -124,7 +143,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
     if (selectedDate == null) {
       setState(() {
-        birthDateError = 'تاريخ الميلاد مطلوب';
+        birthDateError = tr(
+          'تاريخ الميلاد مطلوب',
+          'Date of birth is required',
+        );
       });
 
       return;
@@ -132,7 +154,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
     if (phone.isNotEmpty && !RegExp(r'^05\d{8}$').hasMatch(phone)) {
       setState(() {
-        phoneError = 'أدخل رقم جوال سعودي صحيح يبدأ بـ 05';
+        phoneError = tr(
+          'أدخل رقم جوال سعودي صحيح يبدأ بـ 05',
+          'Enter a valid Saudi phone number starting with 05',
+        );
       });
 
       return;
@@ -157,9 +182,16 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('تمت إضافة الطفل بنجاح')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            tr(
+              'تمت إضافة الطفل بنجاح',
+              'Child added successfully',
+            ),
+          ),
+        ),
+      );
 
       Navigator.pop(context, true);
     } on DioException catch (error) {
@@ -193,7 +225,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
         }
       }
 
-      String message = 'تعذر إضافة الطفل. حاولي مرة أخرى.';
+      String message = tr(
+        'تعذر إضافة الطفل. حاولي مرة أخرى.',
+        'Could not add the child. Please try again.',
+      );
 
       if (responseData is Map) {
         final backendMessage = responseData['error'] ?? responseData['message'];
@@ -201,23 +236,38 @@ class _AddChildScreenState extends State<AddChildScreen> {
         if (backendMessage is String && backendMessage.trim().isNotEmpty) {
           switch (backendMessage) {
             case 'Phone number already used':
-              message = 'رقم الجوال مستخدم بالفعل.';
+              message = tr(
+                'رقم الجوال مستخدم بالفعل.',
+                'This phone number is already in use.',
+              );
               break;
 
             case 'Parent is not assigned to a family':
-              message = 'حساب ولي الأمر غير مرتبط بأسرة.';
+              message = tr(
+                'حساب ولي الأمر غير مرتبط بأسرة.',
+                'The parent account is not linked to a family.',
+              );
               break;
 
             case 'Parent access required':
-              message = 'إضافة الأطفال متاحة لولي الأمر فقط.';
+              message = tr(
+                'إضافة الأطفال متاحة لولي الأمر فقط.',
+                'Only parents can add children.',
+              );
               break;
 
             case 'Parent not found':
-              message = 'تعذّر العثور على حساب ولي الأمر.';
+              message = tr(
+                'تعذّر العثور على حساب ولي الأمر.',
+                'The parent account could not be found.',
+              );
               break;
 
             case 'Could not create child':
-              message = 'تعذّر إنشاء حساب الطفل.';
+              message = tr(
+                'تعذّر إنشاء حساب الطفل.',
+                'Could not create the child account.',
+              );
               break;
 
             default:
@@ -235,7 +285,14 @@ class _AddChildScreenState extends State<AddChildScreen> {
       debugPrint('Unexpected add child error: $error');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('حدث خطأ غير متوقع أثناء إضافة الطفل.')),
+        SnackBar(
+          content: Text(
+            tr(
+              'حدث خطأ غير متوقع أثناء إضافة الطفل.',
+              'An unexpected error occurred while adding the child.',
+            ),
+          ),
+        ),
       );
     } finally {
       if (mounted) {
@@ -256,7 +313,9 @@ class _AddChildScreenState extends State<AddChildScreen> {
             child: Column(
               children: [
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment: isArabic
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: _RoundIconButton(
                     icon: Icons.arrow_forward_rounded,
                     onTap: () {
@@ -268,7 +327,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 const SizedBox(height: AppSpacing.lg),
 
                 Text(
-                  'إضافة طفل',
+                  tr(
+                    'إضافة طفل',
+                    'Add Child',
+                  ),
                   style: AppTextStyles.arabicTitle,
                   textAlign: TextAlign.center,
                 ),
@@ -276,16 +338,22 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 const SizedBox(height: AppSpacing.sm),
 
                 Text(
-                  'أضف معلومات طفلك لبدء رحلته',
+                  tr(
+                    'أضف معلومات طفلك لبدء رحلته',
+                    'Add your child’s information to begin their journey',
+                  ),
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                const Text(
-                  'اختر صورة رمزية',
-                  style: TextStyle(
+                Text(
+                  tr(
+                    'اختر صورة رمزية',
+                    'Choose an avatar',
+                  ),
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     color: AppColors.textPrimary,
@@ -346,12 +414,18 @@ _AvatarOption(
                 const SizedBox(height: AppSpacing.xl),
 
                 AppTextField(
-                  label: 'اسم الطفل',
-                  hint: 'اسم الطفل',
+                  label: tr(
+                    'اسم الطفل',
+                    'Child name',
+                  ),
+                  hint: tr(
+                    'اسم الطفل',
+                    'Child name',
+                  ),
                   icon: Icons.person_outline,
                   controller: nameController,
                   errorText: nameError,
-                  isArabic: true,
+                  isArabic: isArabic,
                 ),
 
                 const SizedBox(height: AppSpacing.md),
@@ -366,10 +440,13 @@ _AvatarOption(
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Align(
-                      alignment: Alignment.centerRight,
+                      alignment: isArabic
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       child: Text(
                         birthDateError!,
-                        textAlign: TextAlign.right,
+                        textAlign:
+                            isArabic ? TextAlign.right : TextAlign.left,
                         style: const TextStyle(
                           color: AppColors.error,
                           fontSize: 12,
@@ -380,9 +457,12 @@ _AvatarOption(
 
                 const SizedBox(height: AppSpacing.xs),
 
-                const Text(
-                  'يفتح التقويم لاختيار التاريخ',
-                  style: TextStyle(
+                Text(
+                  tr(
+                    'يفتح التقويم لاختيار التاريخ',
+                    'Open the calendar to select a date',
+                  ),
+                  style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
@@ -392,19 +472,33 @@ _AvatarOption(
                 const SizedBox(height: AppSpacing.md),
 
                 AppTextField(
-                  label: 'رقم الجوال',
-                  hint: 'رقم الجوال (اختياري)',
+                  label: tr(
+                    'رقم الجوال',
+                    'Phone number',
+                  ),
+                  hint: tr(
+                    'رقم الجوال (اختياري)',
+                    'Phone number (optional)',
+                  ),
                   icon: Icons.phone_outlined,
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
                   errorText: phoneError,
-                  isArabic: true,
+                  isArabic: isArabic,
                 ),
 
                 const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
-                  text: isLoading ? 'جاري الحفظ...' : 'حفظ',
+                  text: isLoading
+                      ? tr(
+                          'جاري الحفظ...',
+                          'Saving...',
+                        )
+                      : tr(
+                          'حفظ',
+                          'Save',
+                        ),
                   onPressed: isLoading ? null : _saveChild,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
