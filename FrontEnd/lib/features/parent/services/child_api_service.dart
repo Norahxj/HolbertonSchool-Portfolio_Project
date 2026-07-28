@@ -14,24 +14,23 @@ class ChildApiService {
   }
 
   // Adds a new child.
-  //
-  // avatar_index is intentionally not sent because
-  // the current backend endpoint does not support it.
-  Future<ChildModel> addChild({
-    required String name,
-    required String birthDate,
-    String? phone,
-  }) async {
-    final body = <String, dynamic>{
-      'name': name,
-      'birth_date': birthDate,
-      if (phone != null && phone.isNotEmpty) 'phone': phone,
-    };
+Future<ChildModel> addChild({
+  required String name,
+  required String birthDate,
+  required int avatarIndex,
+  String? phone,
+}) async {
+  final body = <String, dynamic>{
+    'name': name,
+    'birth_date': birthDate,
+    'avatar_index': avatarIndex,
+    if (phone != null && phone.isNotEmpty) 'phone': phone,
+  };
 
-    final response = await _apiService.addChild(body);
+  final response = await _apiService.addChild(body);
 
-    return response.data;
-  }
+  return response.data;
+}
 
   // Gets information about one child.
   Future<ChildModel> getChildById(String childId) async {

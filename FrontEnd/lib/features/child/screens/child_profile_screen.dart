@@ -319,7 +319,7 @@ class _ProfileHeader extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
 
               ChildAvatar(
-  childId: child.id,
+  avatarIndex: child.avatarIndex,
   size: 130,
 ),
 

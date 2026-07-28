@@ -36,7 +36,7 @@ class ChildModel {
       // Children created before this change will use
       // the pink girl avatar as a fallback.
       avatarIndex:
-          (json['avatar_index'] as num?)?.toInt() ?? 3,
+    (json['avatar_index'] as num?)?.toInt() ?? 0,
     );
   }
 }

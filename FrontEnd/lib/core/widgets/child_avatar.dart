@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
 
 class ChildAvatar extends StatelessWidget {
-  final String childId;
+  final int avatarIndex;
   final double size;
 
   const ChildAvatar({
     super.key,
-    required this.childId,
+    required this.avatarIndex,
     this.size = 48,
   });
 
   static const List<String> _avatars = [
-    'assets/avatars/avatar_boy_1.png',
-    'assets/avatars/avatar_boy_2.png',
-    'assets/avatars/avatar_girl_1.png',
-    'assets/avatars/avatar_girl_2.png',
+    'assets/avatars/avatar_boy_1.jpg',
+    'assets/avatars/avatar_boy_2.jpg',
+    'assets/avatars/avatar_girl_1.jpg',
+    'assets/avatars/avatar_girl_2.jpg',
   ];
 
-  int _avatarIndex() {
-    if (childId.isEmpty) {
+  int get _safeAvatarIndex {
+    if (avatarIndex < 0 || avatarIndex >= _avatars.length) {
       return 0;
     }
 
-    final hash = childId.codeUnits.fold<int>(
-      0,
-      (total, value) => total + value,
-    );
-
-    return hash % _avatars.length;
+    return avatarIndex;
   }
 
   @override
@@ -42,10 +37,17 @@ class ChildAvatar extends StatelessWidget {
       ),
       child: ClipOval(
         child: Image.asset(
-          _avatars[_avatarIndex()],
+          _avatars[_safeAvatarIndex],
           width: size,
           height: size,
           fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) {
+            return Icon(
+              Icons.person_rounded,
+              size: size * 0.65,
+              color: const Color(0xFF8157A8),
+            );
+          },
         ),
       ),
     );

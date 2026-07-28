@@ -22,12 +22,17 @@ def validate_child_name(value):
     if not re.fullmatch(r"[A-Za-z\u0621-\u063A\u0641-\u064A ]+", value):
         raise ValidationError("Child name must contain letters only.")
 
+def validate_avatar_index(value):
+    if value not in range(4):
+        raise ValidationError("Avatar index must be between 0 and 3.")
+
 class ChildResponseSchema(Schema):
     id = fields.String()
     name = fields.String()
     birth_date = fields.Date()
     phone = fields.String(allow_none=True)
     age = fields.Integer(dump_only=True)
+    avatar_index = fields.Integer()
     role = fields.Method("get_role")
     def get_role(self, obj):
         return "child"
@@ -39,6 +44,7 @@ class ChildWithAccessCodeSchema(Schema):
     phone = fields.String(allow_none=True)
     age = fields.Integer(dump_only=True)
     access_code = fields.String()
+    avatar_index = fields.Integer()
     role = fields.Method("get_role")
 
     def get_role(self, obj):
@@ -48,6 +54,7 @@ class ChildCreateSchema(Schema):
     name = fields.String(required=True, validate=validate_child_name)
     birth_date = fields.Date(required=True, validate=birth_date_validator)
     phone = fields.String(required=False, allow_none=True, validate=phone_validator)
+    avatar_index = fields.Integer(required=True, validate=validate_avatar_index,)
     @pre_load
     def clean_name(self, data, **kwargs):
         if not isinstance(data, dict):
@@ -64,6 +71,7 @@ class ChildUpdateSchema(Schema):
     name = fields.String(required=False, validate=validate_child_name)
     birth_date = fields.Date(required=False, validate=birth_date_validator)
     phone = fields.String(required=False, allow_none=True, validate=phone_validator)
+    avatar_index = fields.Integer(required=False, validate=validate_avatar_index,)
     @pre_load
     def clean_name(self, data, **kwargs):
         if not isinstance(data, dict):

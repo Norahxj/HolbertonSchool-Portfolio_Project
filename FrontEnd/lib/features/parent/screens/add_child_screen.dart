@@ -20,8 +20,6 @@ class AddChildScreen extends StatefulWidget {
 class _AddChildScreenState extends State<AddChildScreen> {
   final ChildApiService childApiService = ChildApiService();
 
-  // The avatar selection currently changes only the local interface.
-  // It is not sent to the backend because avatar_index is unsupported.
   int selectedAvatarIndex = 0;
 
   DateTime? selectedDate;
@@ -153,6 +151,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
       await childApiService.addChild(
         name: name,
         birthDate: birthDate,
+        avatarIndex: selectedAvatarIndex,
         phone: phone.isEmpty ? null : phone,
       );
 
@@ -298,50 +297,49 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _AvatarOption(
-                      icon: Icons.boy,
-                      backgroundColor: const Color(0xFFD9F0DD),
-                      iconColor: const Color(0xFF3E8E5A),
-                      isSelected: selectedAvatarIndex == 0,
-                      onTap: () {
-                        setState(() {
-                          selectedAvatarIndex = 0;
-                        });
-                      },
-                    ),
-                    _AvatarOption(
-                      icon: Icons.boy,
-                      backgroundColor: const Color(0xFFD7E9F7),
-                      iconColor: const Color(0xFF2B6CA3),
-                      isSelected: selectedAvatarIndex == 1,
-                      onTap: () {
-                        setState(() {
-                          selectedAvatarIndex = 1;
-                        });
-                      },
-                    ),
-                    _AvatarOption(
-                      icon: Icons.girl,
-                      backgroundColor: AppColors.primaryLight,
-                      iconColor: AppColors.primary,
-                      isSelected: selectedAvatarIndex == 2,
-                      onTap: () {
-                        setState(() {
-                          selectedAvatarIndex = 2;
-                        });
-                      },
-                    ),
-                    _AvatarOption(
-                      icon: Icons.girl,
-                      backgroundColor: const Color(0xFFFBE3EA),
-                      iconColor: const Color(0xFFD1637F),
-                      isSelected: selectedAvatarIndex == 3,
-                      onTap: () {
-                        setState(() {
-                          selectedAvatarIndex = 3;
-                        });
-                      },
-                    ),
+                   _AvatarOption(
+  imagePath: 'assets/avatars/avatar_boy_1.jpg',
+  backgroundColor: const Color(0xFFD9F0DD),
+  isSelected: selectedAvatarIndex == 0,
+  onTap: () {
+    setState(() {
+      selectedAvatarIndex = 0;
+    });
+  },
+),
+
+_AvatarOption(
+  imagePath: 'assets/avatars/avatar_boy_2.jpg',
+  backgroundColor: const Color(0xFFD7E9F7),
+  isSelected: selectedAvatarIndex == 1,
+  onTap: () {
+    setState(() {
+      selectedAvatarIndex = 1;
+    });
+  },
+),
+
+_AvatarOption(
+  imagePath: 'assets/avatars/avatar_girl_1.jpg',
+  backgroundColor: AppColors.primaryLight,
+  isSelected: selectedAvatarIndex == 2,
+  onTap: () {
+    setState(() {
+      selectedAvatarIndex = 2;
+    });
+  },
+),
+
+_AvatarOption(
+  imagePath: 'assets/avatars/avatar_girl_2.jpg',
+  backgroundColor: const Color(0xFFFBE3EA),
+  isSelected: selectedAvatarIndex == 3,
+  onTap: () {
+    setState(() {
+      selectedAvatarIndex = 3;
+    });
+  },
+),
                   ],
                 ),
 
@@ -450,16 +448,14 @@ class _RoundIconButton extends StatelessWidget {
 }
 
 class _AvatarOption extends StatelessWidget {
-  final IconData icon;
+  final String imagePath;
   final Color backgroundColor;
-  final Color iconColor;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _AvatarOption({
-    required this.icon,
+    required this.imagePath,
     required this.backgroundColor,
-    required this.iconColor,
     required this.isSelected,
     required this.onTap,
   });
@@ -469,16 +465,37 @@ class _AvatarOption extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 64,
-        height: 64,
+        width: 68,
+        height: 68,
+        padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
           color: backgroundColor,
           shape: BoxShape.circle,
           border: isSelected
-              ? Border.all(color: AppColors.primary, width: 3)
-              : null,
+              ? Border.all(
+                  color: AppColors.primary,
+                  width: 3,
+                )
+              : Border.all(
+                  color: Colors.transparent,
+                  width: 3,
+                ),
         ),
-        child: Icon(icon, color: iconColor, size: 30),
+        child: ClipOval(
+          child: Image.asset(
+            imagePath,
+            width: 58,
+            height: 58,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(
+                Icons.person_rounded,
+                color: AppColors.primary,
+                size: 32,
+              );
+            },
+          ),
+        ),
       ),
     );
   }

@@ -32,7 +32,8 @@ class ChildService:
             birth_date=child_data["birth_date"],
             phone=phone,
             access_code=self.generate_access_code(),
-            family_id=parent.family_id
+            family_id=parent.family_id,
+            avatar_index=child_data["avatar_index"],
         )
         for guardian in parent.family.guardians:
             child.guardians.append(guardian)
@@ -58,6 +59,8 @@ class ChildService:
             child.name = child_data["name"].strip()
         if "birth_date" in child_data:
             child.birth_date = child_data["birth_date"]
+        if "avatar_index" in child_data:
+            child.avatar_index = child_data["avatar_index"]
         if "phone" in child_data:
             phone = child_data["phone"]
             if phone is not None:
