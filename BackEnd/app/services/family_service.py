@@ -58,10 +58,51 @@ class FamilyService:
 
     def get_my_invitations(self, user_id):
         user = self.user_repository.get_user_by_id(user_id)
+
         if not user:
             return None, "user_not_found"
-        invitations = self.family_invitation_repository.get_pending_invitations_for_email(user.email)
-        return invitations, None
+
+        invitations = (
+        self.family_invitation_repository
+        .get_pending_invitations_for_email(user.email)
+        )
+
+        result = []
+
+        for invitation in invitations:
+            inviter = db.session.get(
+                User,
+                invitation.invited_by,
+            )
+
+            family = db.session.get(
+                Family,
+                invitation.family_id,
+            )
+
+            inviter_name = None
+            inviter_email = None
+
+            if inviter:
+                inviter_name = (
+                    f"{inviter.first_name} {inviter.last_name}"
+                ).strip()
+
+                inviter_email = inviter.email
+
+            result.append({
+            "id": str(invitation.id),
+            "family_id": str(invitation.family_id),
+            "invited_email": invitation.invited_email,
+            "invited_by": str(invitation.invited_by),
+            "invited_by_name": inviter_name,
+            "invited_by_email": inviter_email,
+            "family_name": family.name if family else None,
+            "status": invitation.status,
+            "created_at": invitation.created_at,
+            })
+
+        return result, None
 
     def get_family_details(self, user_id):
         user = self.user_repository.get_user_by_id(user_id)

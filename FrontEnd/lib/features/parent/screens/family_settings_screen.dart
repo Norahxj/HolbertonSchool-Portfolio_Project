@@ -1006,12 +1006,12 @@ class _IncomingInvitationsSection extends StatelessWidget {
                 invitation['id']?.toString() ?? '';
 
             final familyName =
-                invitation['family_name']?.toString() ??
-                    invitation['family']?['name']?.toString() ??
-                    'عائلة';
+    invitation['family_name']?.toString() ?? 'العائلة';
 
             final invitedByName =
                 invitation['invited_by_name']?.toString();
+            final invitedByEmail =
+                  invitation['invited_by_email']?.toString();
 
             return Container(
               margin: const EdgeInsets.only(
@@ -1051,17 +1051,30 @@ class _IncomingInvitationsSection extends StatelessWidget {
                               ),
                             ),
                             if (invitedByName != null &&
-                                invitedByName.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                'مرسلة من $invitedByName',
-                                textAlign: TextAlign.right,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ],
+    invitedByName.isNotEmpty) ...[
+  const SizedBox(height: 4),
+  Text(
+    'مرسلة من $invitedByName',
+    textAlign: TextAlign.right,
+    style: const TextStyle(
+      fontSize: 12,
+      color: AppColors.textSecondary,
+    ),
+  ),
+],
+
+if (invitedByEmail != null &&
+    invitedByEmail.isNotEmpty) ...[
+  const SizedBox(height: 2),
+  Text(
+    invitedByEmail,
+    textAlign: TextAlign.right,
+    style: const TextStyle(
+      fontSize: 11,
+      color: AppColors.textSecondary,
+    ),
+  ),
+],
                           ],
                         ),
                       ),

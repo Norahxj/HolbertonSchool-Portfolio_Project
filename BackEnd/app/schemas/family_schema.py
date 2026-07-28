@@ -45,5 +45,8 @@ class FamilyInvitationResponseSchema(Schema):
     family_id = fields.String()
     invited_email = fields.Email()
     invited_by = fields.String()
+    invited_by_name = fields.String(allow_none=True)
+    invited_by_email = fields.Email(allow_none=True)
+    family_name = fields.String(allow_none=True)
     status = fields.String()
     created_at = fields.DateTime()
