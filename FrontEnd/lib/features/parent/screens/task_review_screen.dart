@@ -25,6 +25,13 @@ class _ReviewTask {
 }
 
 class _TaskReviewScreenState extends State<TaskReviewScreen> {
+  bool get isArabic =>
+      Localizations.localeOf(context).languageCode == 'ar';
+
+  String tr(String arabic, String english) {
+    return isArabic ? arabic : english;
+  }
+
   final ChildApiService _childApiService = ChildApiService();
 
   final TaskApiService _taskApiService = TaskApiService();
@@ -113,7 +120,8 @@ for (final entry in assignmentsByChild) {
       );
 
       setState(() {
-        errorMessage = _readBackendMessage(error) ?? 'تعذر تحميل المهام';
+        errorMessage = _readBackendMessage(error) ??
+            tr('تعذر تحميل المهام', 'Unable to load tasks');
         isLoading = false;
       });
     } catch (error) {
@@ -122,7 +130,7 @@ for (final entry in assignmentsByChild) {
       debugPrint('Review loading failed: $error');
 
       setState(() {
-        errorMessage = 'تعذر تحميل المهام';
+        errorMessage = tr('تعذر تحميل المهام', 'Unable to load tasks');
         isLoading = false;
       });
     }
@@ -151,7 +159,7 @@ for (final entry in assignmentsByChild) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'تم اعتماد مهمة '
+            '${tr('تم اعتماد مهمة ', 'Task approved: ')}'
             '"${item.assignment.task.title}"',
           ),
         ),
@@ -167,7 +175,8 @@ for (final entry in assignmentsByChild) {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_readBackendMessage(error) ?? 'تعذر اعتماد المهمة'),
+          content: Text(_readBackendMessage(error) ??
+              tr('تعذر اعتماد المهمة', 'Unable to approve the task')),
         ),
       );
     } finally {
@@ -202,7 +211,7 @@ for (final entry in assignmentsByChild) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'تم رفض مهمة '
+            '${tr('تم رفض مهمة ', 'Task rejected: ')}'
             '"${item.assignment.task.title}"',
           ),
         ),
@@ -218,7 +227,8 @@ for (final entry in assignmentsByChild) {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_readBackendMessage(error) ?? 'تعذر رفض المهمة'),
+          content: Text(_readBackendMessage(error) ??
+              tr('تعذر رفض المهمة', 'Unable to reject the task')),
         ),
       );
     } finally {
@@ -242,7 +252,7 @@ for (final entry in assignmentsByChild) {
 
   String _formatCompletedTime(DateTime? completedAt) {
     if (completedAt == null) {
-      return 'أُنجزت مؤخرًا';
+      return tr('أُنجزت مؤخرًا', 'Completed recently');
     }
 
     final date = completedAt.toLocal();
@@ -251,7 +261,7 @@ for (final entry in assignmentsByChild) {
 
     final minute = date.minute.toString().padLeft(2, '0');
 
-    return 'أُنجزت في $hour:$minute';
+    return tr('أُنجزت في $hour:$minute', 'Completed at $hour:$minute');
   }
 
   @override
@@ -275,13 +285,14 @@ for (final entry in assignmentsByChild) {
                       Expanded(
                         child: Center(
                           child: Text(
-                            'مراجعة المهام',
+                            tr('مراجعة المهام', 'Task Review'),
                             style: AppTextStyles.arabicTitle,
                           ),
                         ),
                       ),
 
                       _BackButton(
+                        isArabic: isArabic,
                         onTap: () {
                           Navigator.pop(context);
                         },
@@ -292,7 +303,10 @@ for (final entry in assignmentsByChild) {
                   const SizedBox(height: AppSpacing.sm),
 
                   Text(
-                    'راجع ما أنجزه أطفالك واعتمده',
+                    tr(
+                      'راجع ما أنجزه أطفالك واعتمده',
+                      'Review and approve your children’s completed tasks',
+                    ),
                     style: AppTextStyles.body,
                     textAlign: TextAlign.center,
                   ),
@@ -300,7 +314,10 @@ for (final entry in assignmentsByChild) {
                   const SizedBox(height: AppSpacing.lg),
 
                   if (!isLoading && errorMessage == null)
-                    _PendingHeader(count: pendingTasks.length),
+                    _PendingHeader(
+                      count: pendingTasks.length,
+                      isArabic: isArabic,
+                    ),
 
                   const SizedBox(height: AppSpacing.md),
 
@@ -312,16 +329,18 @@ for (final entry in assignmentsByChild) {
                   else if (errorMessage != null)
                     _ErrorCard(
                       message: errorMessage!,
+                      isArabic: isArabic,
                       onRetry: _loadPendingTasks,
                     )
                   else if (pendingTasks.isEmpty)
-                    const _EmptyCard()
+                    _EmptyCard(isArabic: isArabic)
                   else
                     ...pendingTasks.map((item) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.md),
                         child: _ReviewTaskCard(
                           item: item,
+                          isArabic: isArabic,
                           timeText: _formatCompletedTime(
                             item.assignment.completedAt,
                           ),
@@ -350,8 +369,9 @@ for (final entry in assignmentsByChild) {
 
 class _PendingHeader extends StatelessWidget {
   final int count;
+  final bool isArabic;
 
-  const _PendingHeader({required this.count});
+  const _PendingHeader({required this.count, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -369,7 +389,7 @@ class _PendingHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            '$count مهام',
+            isArabic ? '$count مهام' : '$count tasks',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -378,9 +398,9 @@ class _PendingHeader extends StatelessWidget {
           ),
         ),
 
-        const Text(
-          'بانتظار المراجعة',
-          textDirection: TextDirection.rtl,
+        Text(
+          isArabic ? 'بانتظار المراجعة' : 'Pending review',
+          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -394,6 +414,7 @@ class _PendingHeader extends StatelessWidget {
 
 class _ReviewTaskCard extends StatelessWidget {
   final _ReviewTask item;
+  final bool isArabic;
   final String timeText;
   final bool isUpdating;
   final VoidCallback onApprove;
@@ -401,6 +422,7 @@ class _ReviewTaskCard extends StatelessWidget {
 
   const _ReviewTaskCard({
     required this.item,
+    required this.isArabic,
     required this.timeText,
     required this.isUpdating,
     required this.onApprove,
@@ -456,8 +478,9 @@ class _ReviewTaskCard extends StatelessWidget {
                       Text(
                         '${item.child.name} · '
                         '${item.assignment.task.title}',
-                        textAlign: TextAlign.right,
-                        textDirection: TextDirection.rtl,
+                        textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                        textDirection:
+                            isArabic ? TextDirection.rtl : TextDirection.ltr,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
@@ -502,7 +525,7 @@ class _ReviewTaskCard extends StatelessWidget {
                           ),
                         )
                       : const Icon(Icons.check),
-                  label: const Text('اعتماد'),
+                  label: Text(isArabic ? 'اعتماد' : 'Approve'),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
                     backgroundColor: AppColors.success,
@@ -517,7 +540,7 @@ class _ReviewTaskCard extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: isUpdating ? null : onReject,
                   icon: const Icon(Icons.close),
-                  label: const Text('رفض'),
+                  label: Text(isArabic ? 'رفض' : 'Reject'),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
                     foregroundColor: AppColors.error,
@@ -534,7 +557,9 @@ class _ReviewTaskCard extends StatelessWidget {
 
 
 class _EmptyCard extends StatelessWidget {
-  const _EmptyCard();
+  final bool isArabic;
+
+  const _EmptyCard({required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -544,16 +569,22 @@ class _EmptyCard extends StatelessWidget {
         color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.verified_outlined, color: AppColors.success, size: 42),
+          const Icon(
+            Icons.verified_outlined,
+            color: AppColors.success,
+            size: 42,
+          ),
 
-          SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
 
           Text(
-            'لا توجد مهام بانتظار المراجعة',
+            isArabic
+                ? 'لا توجد مهام بانتظار المراجعة'
+                : 'No tasks are pending review',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
@@ -566,9 +597,14 @@ class _EmptyCard extends StatelessWidget {
 
 class _ErrorCard extends StatelessWidget {
   final String message;
+  final bool isArabic;
   final Future<void> Function() onRetry;
 
-  const _ErrorCard({required this.message, required this.onRetry});
+  const _ErrorCard({
+    required this.message,
+    required this.isArabic,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -586,7 +622,10 @@ class _ErrorCard extends StatelessWidget {
             style: const TextStyle(color: AppColors.error),
           ),
 
-          TextButton(onPressed: onRetry, child: const Text('إعادة المحاولة')),
+          TextButton(
+            onPressed: onRetry,
+            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
+          ),
         ],
       ),
     );
@@ -594,9 +633,10 @@ class _ErrorCard extends StatelessWidget {
 }
 
 class _BackButton extends StatelessWidget {
+  final bool isArabic;
   final VoidCallback onTap;
 
-  const _BackButton({required this.onTap});
+  const _BackButton({required this.isArabic, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -606,11 +646,13 @@ class _BackButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
-        child: const SizedBox(
+        child: SizedBox(
           width: 44,
           height: 44,
           child: Icon(
-            Icons.arrow_forward_rounded,
+            isArabic
+                ? Icons.arrow_forward_rounded
+                : Icons.arrow_back_rounded,
             color: AppColors.primaryDark,
           ),
         ),
