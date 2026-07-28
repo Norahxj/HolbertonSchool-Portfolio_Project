@@ -136,8 +136,8 @@ class WelcomeScreen extends StatelessWidget {
   children: [
     RoleCard(
       imagePath: isArabic
-          ? 'assets/role_selection/parent_card_ar.png'
-          : 'assets/role_selection/parent_card_en.png',
+          ? 'assets/role_selection/parent_card_ar_v.png'
+          : 'assets/role_selection/parent_card_en_v.png',
       onTap: () {
         Navigator.push(
           context,
@@ -155,8 +155,8 @@ class WelcomeScreen extends StatelessWidget {
 
     RoleCard(
       imagePath: isArabic
-          ? 'assets/role_selection/child_card_ar.png'
-          : 'assets/role_selection/child_card_en.png',
+          ? 'assets/role_selection/child_card_ar_v.png'
+          : 'assets/role_selection/child_card_en_v.png',
       onTap: () {
         Navigator.push(
           context,
