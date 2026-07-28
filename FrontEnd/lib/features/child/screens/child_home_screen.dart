@@ -270,6 +270,7 @@ final todayFeedback = results[3] as DailyFeedbackModel?;
     MaterialPageRoute(
       builder: (_) => ChildSettingsScreen(
         childName: _child!.name,
+        avatarIndex: _child!.avatarIndex,
         isArabic: widget.isArabic,
         onLanguageToggle: widget.onLanguageToggle,
         onLogout: _logout,

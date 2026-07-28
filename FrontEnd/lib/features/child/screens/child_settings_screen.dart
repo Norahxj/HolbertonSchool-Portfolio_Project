@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 
 class ChildSettingsScreen extends StatefulWidget {
+  final int avatarIndex;
   final String childName;
   final bool isArabic;
   final VoidCallback onLanguageToggle;
@@ -13,6 +14,7 @@ class ChildSettingsScreen extends StatefulWidget {
   const ChildSettingsScreen({
     super.key,
     required this.childName,
+    required this.avatarIndex,
     required this.isArabic,
     required this.onLanguageToggle,
     required this.onLogout,
@@ -130,19 +132,10 @@ class _ChildSettingsScreenState
               ),
               child: Row(
                 children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: const BoxDecoration(
-                      color: AppColors.pinkLight,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.child_care_rounded,
-                      color: AppColors.pink,
-                      size: 30,
-                    ),
-                  ),
+                  ChildAvatar(
+  avatarIndex: widget.avatarIndex,
+  size: 56,
+),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
