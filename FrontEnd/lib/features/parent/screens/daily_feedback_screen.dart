@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/widgets/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -7,6 +6,7 @@ import '../../../models/child_model.dart';
 import '../../../models/daily_feedback_model.dart';
 import 'package:frontend/features/parent/services/child_api_service.dart';
 import '../../../services/daily_feedback_api_service.dart';
+import '../../../core/widgets/app_page_header.dart';
 
 /// Parent screen to submit and view daily mood feedback for each child.
 ///
@@ -144,28 +144,26 @@ childId: _selectedChild.id,
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          isArabic ? 'التقييم اليومي' : 'Daily Feedback',
-          style: AppTextStyles.arabicTitle,
-        ),
-        leadingWidth: 68,
-leading: Padding(
-  padding: const EdgeInsetsDirectional.only(
-    start: 12,
-  ),
-  child: Center(
-    child: AppBackButton(
-      onTap: () {
-        Navigator.pop(context);
-      },
+      appBar: PreferredSize(
+  preferredSize: const Size.fromHeight(76),
+  child: SafeArea(
+    bottom: false,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
+      child: AppPageHeader(
+        title: isArabic
+            ? 'التقييم اليومي'
+            : 'Daily Feedback',
+        onBack: () {
+          Navigator.pop(context);
+        },
+      ),
     ),
   ),
 ),
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null

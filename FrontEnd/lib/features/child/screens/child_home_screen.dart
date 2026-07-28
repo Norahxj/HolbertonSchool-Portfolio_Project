@@ -11,6 +11,8 @@ import 'package:frontend/features/child/services/point_api_service.dart';
 import '../../../services/task_api_service.dart';
 import 'child_task_details_screen.dart';
 import 'child_settings_screen.dart';
+import '../../../models/daily_feedback_model.dart';
+import '../../../services/daily_feedback_api_service.dart';
 
 // The child's home tab.
 //
