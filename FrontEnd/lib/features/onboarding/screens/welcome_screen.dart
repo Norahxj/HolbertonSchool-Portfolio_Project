@@ -99,7 +99,7 @@ class WelcomeScreen extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.md),
 
                 Text(
                   AppStrings.welcomeTitle(isArabic),
