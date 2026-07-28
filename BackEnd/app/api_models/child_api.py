@@ -12,7 +12,7 @@ def get_child_models(api):
         "name": fields.String(required=False, description="Child name"),
         "birth_date": fields.Date(required=False, description="Child birth date in YYYY-MM-DD format"),
         "phone": fields.String(required=False, description="Optional child phone number"),
-        "avatar_index": fields.Integer(required=True, description="Selected avatar index from 0 to 3", min=0, max=3,),
+        "avatar_index": fields.Integer(required=False, description="Selected avatar index from 0 to 3", min=0, max=3,),
 
     })
 

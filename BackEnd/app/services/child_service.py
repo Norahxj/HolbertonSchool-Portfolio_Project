@@ -33,7 +33,7 @@ class ChildService:
             phone=phone,
             access_code=self.generate_access_code(),
             family_id=parent.family_id,
-            avatar_index=child_data["avatar_index"],
+            avatar_index=child_data.get("avatar_index", 0),
         )
         for guardian in parent.family.guardians:
             child.guardians.append(guardian)

@@ -54,7 +54,7 @@ class ChildCreateSchema(Schema):
     name = fields.String(required=True, validate=validate_child_name)
     birth_date = fields.Date(required=True, validate=birth_date_validator)
     phone = fields.String(required=False, allow_none=True, validate=phone_validator)
-    avatar_index = fields.Integer(required=True, validate=validate_avatar_index,)
+    avatar_index = fields.Integer(required=False, load_default=0, validate=validate_avatar_index,)
     @pre_load
     def clean_name(self, data, **kwargs):
         if not isinstance(data, dict):
