@@ -199,14 +199,15 @@ def test_create_child_response_contains_expected_fields(client):
     assert response.status_code == 201, response_data
 
     assert set(child.keys()) == {
-        "id",
-        "name",
-        "birth_date",
-        "phone",
-        "age",
-        "access_code",
-        "role",
-    }
+    "id",
+    "name",
+    "birth_date",
+    "phone",
+    "age",
+    "access_code",
+    "role",
+    "avatar_index",
+}
 
 
 def test_create_child_returns_access_code_as_string(client):

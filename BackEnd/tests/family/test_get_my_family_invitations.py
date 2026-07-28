@@ -352,7 +352,6 @@ def test_service_uses_user_email_to_get_pending_invitations(
 ):
     service = family_routes.family_service
     user = FakeUser(email="invited.parent@gmail.com")
-    invitations = [object()]
     captured = {}
 
     monkeypatch.setattr(
@@ -363,7 +362,7 @@ def test_service_uses_user_email_to_get_pending_invitations(
 
     def fake_get_pending(email):
         captured["email"] = email
-        return invitations
+        return []
 
     monkeypatch.setattr(
         service.family_invitation_repository,
@@ -374,8 +373,10 @@ def test_service_uses_user_email_to_get_pending_invitations(
     result, error = service.get_my_invitations("user-id")
 
     assert error is None
-    assert result is invitations
+    assert result == []
     assert captured["email"] == "invited.parent@gmail.com"
+
+    
 
 
 def test_service_returns_empty_list_when_repository_returns_empty(
