@@ -15,10 +15,12 @@ import '../../../services/daily_feedback_api_service.dart';
 /// editing. The history list shows all past feedback entries.
 class DailyFeedbackScreen extends StatefulWidget {
   final ChildModel child;
+   final bool isArabic;
 
   const DailyFeedbackScreen({
     super.key,
     required this.child,
+    required this.isArabic,
   });
 
   @override
@@ -38,8 +40,7 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   bool _isSubmitting = false;
   String? _error;
 
-  bool get isArabic =>
-      Localizations.localeOf(context).languageCode == 'ar';
+  bool get isArabic => widget.isArabic;
 
   @override
 void initState() {

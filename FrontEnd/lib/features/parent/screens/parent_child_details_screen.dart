@@ -222,6 +222,7 @@ InkWell(
       MaterialPageRoute(
         builder: (_) => DailyFeedbackScreen(
   child: item.child,
+  isArabic: isArabic,
 ),
       ),
     );
