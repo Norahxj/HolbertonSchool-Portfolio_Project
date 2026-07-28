@@ -14,7 +14,7 @@ class RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.75,
+        width: MediaQuery.of(context).size.width * 0.80,
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -38,22 +38,25 @@ class RoleCard extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(32),
-                child: Image.asset(
-                  imagePath,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const SizedBox(
-                      height: 180,
-                      child: Center(
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: 40,
-                          color: Colors.grey,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Image.asset(
+                    imagePath,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox(
+                        height: 180,
+                        child: Center(
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
