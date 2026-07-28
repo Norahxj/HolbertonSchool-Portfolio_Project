@@ -356,15 +356,29 @@ def test_get_me_rejects_tampered_access_token(client):
 
     original_token = parent_data["access_token"]
 
+    token_parts = original_token.split(".")
+
+    assert len(token_parts) == 3
+
+    signature = token_parts[2]
+
     replacement_character = (
         "a"
-        if original_token[-1] != "a"
+        if signature[0] != "a"
         else "b"
     )
 
-    tampered_token = (
-        original_token[:-1]
-        + replacement_character
+    tampered_signature = (
+        replacement_character
+        + signature[1:]
+    )
+
+    tampered_token = ".".join(
+        [
+            token_parts[0],
+            token_parts[1],
+            tampered_signature,
+        ]
     )
 
     response = get_me(
@@ -374,7 +388,11 @@ def test_get_me_rejects_tampered_access_token(client):
 
     response_data = response.get_json()
 
-    assert response.status_code in (401, 422), response_data
+    assert response.status_code in (
+        401,
+        422,
+    ), response_data
+
     assert "id" not in response_data
     assert "email" not in response_data
 
