@@ -39,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.md),
 
                 Stack(
                   alignment: Alignment.center,
@@ -130,7 +130,7 @@ class WelcomeScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.md),
 
                 Column(
   children: [
@@ -172,7 +172,7 @@ class WelcomeScreen extends StatelessWidget {
   ],
 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.md),
               ],
             ),
           ),
