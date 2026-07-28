@@ -251,10 +251,8 @@ class _RewardCard extends StatelessWidget {
     const SizedBox(width: AppSpacing.sm),
 
     Expanded(
-      child: Column(
-        crossAxisAlignment: isArabic
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             reward.rewardName,
