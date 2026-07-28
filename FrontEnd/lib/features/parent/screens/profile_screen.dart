@@ -19,6 +19,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final UserApiService _userApiService = UserApiService();
 
+  bool get isArabic =>
+      Localizations.localeOf(context).languageCode == 'ar';
+
   final TextEditingController firstNameController = TextEditingController();
 
   final TextEditingController lastNameController = TextEditingController();
@@ -79,7 +82,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       setState(() {
         _pageError =
-            _readBackendMessage(error) ?? 'تعذّر تحميل بيانات الملف الشخصي.';
+            _readBackendMessage(error) ??
+            (isArabic
+                ? 'تعذّر تحميل بيانات الملف الشخصي.'
+                : 'Unable to load profile data.');
 
         _isLoading = false;
       });
@@ -93,7 +99,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
 
       setState(() {
-        _pageError = 'تعذّر تحميل بيانات الملف الشخصي.';
+        _pageError = isArabic
+            ? 'تعذّر تحميل بيانات الملف الشخصي.'
+            : 'Unable to load profile data.';
 
         _isLoading = false;
       });
@@ -114,22 +122,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final phone = phoneController.text.trim();
 
     if (firstName.length < 2) {
-      _showMessage('يجب أن يتكون الاسم الأول من حرفين على الأقل.');
+      _showMessage(
+        isArabic
+            ? 'يجب أن يتكون الاسم الأول من حرفين على الأقل.'
+            : 'First name must be at least two characters.',
+      );
       return;
     }
 
     if (lastName.length < 2) {
-      _showMessage('يجب أن يتكون اسم العائلة من حرفين على الأقل.');
+      _showMessage(
+        isArabic
+            ? 'يجب أن يتكون اسم العائلة من حرفين على الأقل.'
+            : 'Last name must be at least two characters.',
+      );
       return;
     }
 
     if (!email.contains('@')) {
-      _showMessage('يرجى إدخال بريد إلكتروني صحيح.');
+      _showMessage(
+        isArabic
+            ? 'يرجى إدخال بريد إلكتروني صحيح.'
+            : 'Please enter a valid email address.',
+      );
       return;
     }
 
     if (phone.isEmpty) {
-      _showMessage('يرجى إدخال رقم الجوال.');
+      _showMessage(
+        isArabic
+            ? 'يرجى إدخال رقم الجوال.'
+            : 'Please enter a phone number.',
+      );
       return;
     }
 
@@ -149,14 +173,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('تم حفظ التغييرات بنجاح ✓')));
+      ).showSnackBar(
+        SnackBar(
+          content: Text(
+            isArabic
+                ? 'تم حفظ التغييرات بنجاح ✓'
+                : 'Changes saved successfully ✓',
+          ),
+        ),
+      );
 
       // Return the updated user to MoreSettingsScreen.
       Navigator.pop(context, updatedUser);
     } on DioException catch (error) {
       if (!mounted) return;
 
-      _showMessage(_readBackendMessage(error) ?? 'تعذّر حفظ التغييرات.');
+      _showMessage(
+        _readBackendMessage(error) ??
+            (isArabic
+                ? 'تعذّر حفظ التغييرات.'
+                : 'Unable to save changes.'),
+      );
 
       debugPrint(
         'Updating profile failed: '
@@ -166,7 +203,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (error) {
       if (!mounted) return;
 
-      _showMessage('حدث خطأ أثناء حفظ التغييرات.');
+      _showMessage(
+        isArabic
+            ? 'حدث خطأ أثناء حفظ التغييرات.'
+            : 'An error occurred while saving changes.',
+      );
 
       debugPrint('Updating profile failed: $error');
     } finally {
@@ -194,11 +235,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final errorMessage = data['error']?.toString();
 
     if (errorMessage == 'Email already registered') {
-      return 'البريد الإلكتروني مستخدم بالفعل.';
+      return isArabic
+          ? 'البريد الإلكتروني مستخدم بالفعل.'
+          : 'Email is already in use.';
     }
 
     if (errorMessage == 'Phone number already used') {
-      return 'رقم الجوال مستخدم بالفعل.';
+      return isArabic
+          ? 'رقم الجوال مستخدم بالفعل.'
+          : 'Phone number is already in use.';
     }
 
     if (errorMessage != null) {
@@ -223,13 +268,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _guardianTypeLabel(String guardianType) {
     switch (guardianType.toUpperCase()) {
       case 'MOTHER':
-        return 'أم';
+        return isArabic ? 'أم' : 'Mother';
 
       case 'FATHER':
-        return 'أب';
+        return isArabic ? 'أب' : 'Father';
 
       default:
-        return 'ولي أمر';
+        return isArabic ? 'ولي أمر' : 'Guardian';
     }
   }
 
@@ -254,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Expanded(
                             child: Center(
                               child: Text(
-                                'الملف الشخصي',
+                                isArabic ? 'الملف الشخصي' : 'Profile',
                                 style: AppTextStyles.arabicTitle,
                               ),
                             ),
@@ -288,7 +333,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.xl),
 
-                      const _FieldLabel('الاسم الأول'),
+                      _FieldLabel(
+                        isArabic ? 'الاسم الأول' : 'First Name',
+                      ),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -300,7 +347,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      const _FieldLabel('اسم العائلة'),
+                      _FieldLabel(
+                        isArabic ? 'اسم العائلة' : 'Last Name',
+                      ),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -312,7 +361,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      const _FieldLabel('البريد الإلكتروني'),
+                      _FieldLabel(
+                        isArabic ? 'البريد الإلكتروني' : 'Email',
+                      ),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -325,7 +376,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      const _FieldLabel('رقم الجوال'),
+                      _FieldLabel(
+                        isArabic ? 'رقم الجوال' : 'Phone Number',
+                      ),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -338,7 +391,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      const _FieldLabel('صلتي بالأسرة'),
+                      _FieldLabel(
+                        isArabic ? 'صلتي بالأسرة' : 'Family Relationship',
+                      ),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -379,7 +434,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: AppSpacing.xxl),
 
                       AppButton(
-                        text: _isSaving ? 'جارٍ الحفظ...' : 'حفظ التغييرات',
+                        text: _isSaving
+                            ? (isArabic ? 'جارٍ الحفظ...' : 'Saving...')
+                            : (isArabic ? 'حفظ التغييرات' : 'Save Changes'),
                         onPressed: _isSaving ? null : _saveChanges,
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
@@ -530,7 +587,11 @@ class _ProfileErrorState extends StatelessWidget {
 
             ElevatedButton(
               onPressed: onRetry,
-              child: const Text('إعادة المحاولة'),
+              child: Text(
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'إعادة المحاولة'
+                    : 'Try Again',
+              ),
             ),
           ],
         ),
