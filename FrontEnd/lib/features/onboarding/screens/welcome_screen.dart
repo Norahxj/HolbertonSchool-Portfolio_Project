@@ -25,9 +25,9 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
+  child: SingleChildScrollView(
+    padding: const EdgeInsets.all(AppSpacing.lg),
+    child: Column(
               children: [
                 Align(
                   alignment: isArabic
@@ -122,7 +122,7 @@ class WelcomeScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.md),
 
                 Text(
                   AppStrings.welcomeSubtitle(isArabic),

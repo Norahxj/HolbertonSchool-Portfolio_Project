@@ -16,38 +16,37 @@ class RoleCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
         child: Ink(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
-            child: AspectRatio(
-              aspectRatio: 1.45,
-              child: Image.asset(
-                imagePath,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.white,
-                    alignment: Alignment.center,
-                    child: const Icon(
+            borderRadius: BorderRadius.circular(24),
+            child: Image.asset(
+              imagePath,
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) {
+                return const SizedBox(
+                  height: 180,
+                  child: Center(
+                    child: Icon(
                       Icons.broken_image_outlined,
                       size: 40,
                       color: Colors.grey,
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ),
