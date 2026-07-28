@@ -30,7 +30,7 @@ class RoleCard extends StatelessWidget {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(30),
             child: Image.asset(
               imagePath,
               width: double.infinity,
