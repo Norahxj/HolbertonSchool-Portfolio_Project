@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -318,7 +318,10 @@ class _ProfileHeader extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.lg),
 
-              _LargeChildAvatar(avatarIndex: child.avatarIndex),
+              ChildAvatar(
+  childId: child.id,
+  size: 130,
+),
 
               const SizedBox(height: AppSpacing.sm),
 
