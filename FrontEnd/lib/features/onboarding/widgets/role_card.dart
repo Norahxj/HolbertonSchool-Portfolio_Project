@@ -14,7 +14,7 @@ class RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.88,
+        width: MediaQuery.of(context).size.width * 0.75,
         child: Material(
           color: Colors.transparent,
           child: InkWell(
