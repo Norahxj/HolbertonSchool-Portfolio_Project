@@ -20,6 +20,7 @@ class ChooseChildStep extends StatelessWidget {
   final ValueChanged<String> onChildSelected;
   final ValueChanged<String> onCategorySelected;
   final ValueChanged<TaskSuggestionModel> onSuggestionSelected;
+  final bool isArabic;
 
   const ChooseChildStep({
     super.key,
@@ -34,6 +35,7 @@ class ChooseChildStep extends StatelessWidget {
     required this.isLoadingSuggestions,
     required this.onSuggestionSelected,
     required this.selectedCategory,
+    required this.isArabic,
   });
 
   @override
@@ -45,9 +47,11 @@ class ChooseChildStep extends StatelessWidget {
     }
 
     if (children.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'لا يوجد أطفال بعد. الرجاء إضافة طفل أولاً.',
+          isArabic
+              ? 'لا يوجد أطفال بعد. الرجاء إضافة طفل أولاً.'
+              : 'No children yet. Please add a child first.',
         ),
       );
     }
@@ -76,17 +80,18 @@ class ChooseChildStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
 
-        const InfoBox(
-          text:
-              'المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.',
+        InfoBox(
+          text: isArabic
+              ? 'المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.'
+              : 'Tasks help children build habits and values while earning Noor points.',
         ),
-        
+
         const SizedBox(height: AppSpacing.lg),
 
-        const Text(
-          'إضافة سريعة',
-          textAlign: TextAlign.right,
-          style: TextStyle(
+        Text(
+          isArabic ? 'إضافة سريعة' : 'Quick Add',
+          textAlign: isArabic ? TextAlign.right : TextAlign.left,
+          style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -95,46 +100,46 @@ class ChooseChildStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.sm),
 
-         QuickAddCategory(
+        QuickAddCategory(
           icon: Icons.menu_book_outlined,
-          label: 'المهام اليومية',
+          label: isArabic ? 'المهام اليومية' : 'Daily Tasks',
           isSelected: selectedCategory == 'MORAL',
           onTap: () => onCategorySelected('MORAL'),
         ),
 
         const SizedBox(height: AppSpacing.md),
 
-         QuickAddCategory(
+        QuickAddCategory(
           icon: Icons.groups_outlined,
-          label: 'المهام الاجتماعية',
+          label: isArabic ? 'المهام الاجتماعية' : 'Social Tasks',
           isSelected: selectedCategory == 'SOCIAL',
           onTap: () => onCategorySelected('SOCIAL'),
-
         ),
 
         const SizedBox(height: AppSpacing.md),
 
-         QuickAddCategory(
+        QuickAddCategory(
           icon: Icons.credit_card,
-          label: 'المهام المالية',
+          label: isArabic ? 'المهام المالية' : 'Financial Tasks',
           isSelected: selectedCategory == 'FINANCIAL',
           onTap: () => onCategorySelected('FINANCIAL'),
         ),
 
         const SizedBox(height: AppSpacing.md),
 
-         QuickAddCategory(
+        QuickAddCategory(
           icon: Icons.mosque_outlined,
-          label: 'المهام الدينية',
+          label: isArabic ? 'المهام الدينية' : 'Religious Tasks',
           isSelected: selectedCategory == 'RELIGIOUS',
           onTap: () => onCategorySelected('RELIGIOUS'),
         ),
+
         if (categoryError != null) ...[
           const SizedBox(height: AppSpacing.sm),
           ErrorText(categoryError!),
-          ],
-          
-          const SizedBox(height: AppSpacing.xl),
+        ],
+
+        const SizedBox(height: AppSpacing.xl),
 
         if (isLoadingSuggestions)
           const Center(
@@ -144,10 +149,10 @@ class ChooseChildStep extends StatelessWidget {
         if (!isLoadingSuggestions &&
             selectedCategory != null &&
             suggestions.isNotEmpty) ...[
-          const Text(
-            'المقترحات',
-            textAlign: TextAlign.right,
-            style: TextStyle(
+          Text(
+            isArabic ? 'المقترحات' : 'Suggestions',
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
+            style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -165,14 +170,15 @@ class ChooseChildStep extends StatelessWidget {
                 title: Text(suggestion.title),
                 subtitle: Text(suggestion.description),
                 trailing: Text(
-                  '${suggestion.points} نقطة',
+                  isArabic
+                      ? '${suggestion.points} نقطة'
+                      : '${suggestion.points} points',
                   style: const TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onTap: () =>
-                    onSuggestionSelected(suggestion),
+                onTap: () => onSuggestionSelected(suggestion),
               ),
             ),
           ),
@@ -181,11 +187,13 @@ class ChooseChildStep extends StatelessWidget {
         if (!isLoadingSuggestions &&
             selectedCategory != null &&
             suggestions.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(top: AppSpacing.md),
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.md),
             child: Center(
               child: Text(
-                'اختر طفل اولا ثم اختر فئة لرؤية المقترحات.',
+                isArabic
+                    ? 'اختر طفلًا أولًا ثم اختر فئة لرؤية المقترحات.'
+                    : 'Select a child first, then choose a category to view suggestions.',
               ),
             ),
           ),

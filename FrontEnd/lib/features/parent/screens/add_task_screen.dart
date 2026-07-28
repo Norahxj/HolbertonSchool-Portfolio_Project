@@ -19,14 +19,22 @@ import 'package:frontend/models/task_suggestion_model.dart';
 // screens are combined into one file, switching on currentStep.
 class AddTaskScreen extends StatefulWidget {
   final int resetVersion;
+  final bool isArabic;
 
-  const AddTaskScreen({super.key, this.resetVersion = 0});
+  const AddTaskScreen({
+    super.key,
+    this.resetVersion = 0,
+    this.isArabic = true,
+  });
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
+  String _text(String arabic, String english) =>
+      widget.isArabic ? arabic : english;
+
   final TaskApiService _taskApiService = TaskApiService();
   final ChildApiService _childApiService = ChildApiService();
   final ScrollController _scrollController = ScrollController();
@@ -52,16 +60,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   String? mapBackendError(String? message) {
     switch (message) {
       case "Shorter than minimum length 1.":
-        return "الرجاء اختيار طفل واحد على الأقل";
+        return _text("الرجاء اختيار طفل واحد على الأقل", "Please select at least one child");
 
       case "Must be greater than or equal to 1 and less than or equal to 100.":
-        return "عدد النقاط يجب أن يكون بين 1 و100";
+        return _text("عدد النقاط يجب أن يكون بين 1 و100", "Points must be between 1 and 100");
 
       case "Length must be between 2 and 100.":
-        return "اسم المهمة يجب أن يكون بين حرفين و100 حرف";
+        return _text("اسم المهمة يجب أن يكون بين حرفين و100 حرف", "Task name must be between 2 and 100 characters");
 
       case "Length must be between 2 and 500.":
-        return "الوصف يجب أن يكون بين حرفين و500 حرف";
+        return _text("الوصف يجب أن يكون بين حرفين و500 حرف", "Description must be between 2 and 500 characters");
 
       default:
         return message;
@@ -107,6 +115,29 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     'السبت',
   ];
   final List<int> monthlyDays = List<int>.generate(31, (index) => index + 1);
+
+  String _weekDayLabel(String day) {
+    if (widget.isArabic) return day;
+
+    switch (day) {
+      case 'الأحد':
+        return 'Sunday';
+      case 'الإثنين':
+        return 'Monday';
+      case 'الثلاثاء':
+        return 'Tuesday';
+      case 'الأربعاء':
+        return 'Wednesday';
+      case 'الخميس':
+        return 'Thursday';
+      case 'الجمعة':
+        return 'Friday';
+      case 'السبت':
+        return 'Saturday';
+      default:
+        return day;
+    }
+  }
   String get taskFrequency {
     switch (selectedFrequency) {
       case 0:
@@ -231,7 +262,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       final suggestions = await _taskApiService.getTaskSuggestions({
         'child_ids': selectedChildIds,
         'category': category,
-        'lang': 'ar',
+        'lang': widget.isArabic ? 'ar' : 'en',
       });
 
       if (!mounted) return;
@@ -245,7 +276,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       setState(() {
         suggestionsError =
             e.response?.data?['error']?.toString() ??
-            'تعذر تحميل المهام المقترحة';
+            _text('تعذر تحميل المهام المقترحة', 'Unable to load suggested tasks');
       });
     } finally {
       if (mounted) {
@@ -320,8 +351,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'اختر يوم الشهر',
+                Text(
+                  _text('اختر يوم الشهر', 'Choose a day of the month'),
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
@@ -411,12 +442,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       bool hasError = false;
 
       if (selectedChildIds.isEmpty) {
-        childError = "الرجاء اختيار طفل واحد على الأقل";
+        childError = _text("الرجاء اختيار طفل واحد على الأقل", "Please select at least one child");
         hasError = true;
       }
 
       if (selectedTaskType == null) {
-        categoryError = "الرجاء اختيار نوع المهمة";
+        categoryError = _text("الرجاء اختيار نوع المهمة", "Please select a task type");
         hasError = true;
       }
 
@@ -431,17 +462,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       bool hasError = false;
 
       if (taskNameController.text.trim().isEmpty) {
-        titleError = "اسم المهمة مطلوب";
+        titleError = _text("اسم المهمة مطلوب", "Task name is required");
         hasError = true;
       }
 
       if (taskDescriptionController.text.trim().isEmpty) {
-        descriptionError = "الوصف مطلوب";
+        descriptionError = _text("الوصف مطلوب", "Description is required");
         hasError = true;
       }
 
       if (taskPoints < 1 || taskPoints > 100) {
-        pointsError = "عدد النقاط يجب أن يكون بين 1 و100";
+        pointsError = _text("عدد النقاط يجب أن يكون بين 1 و100", "Points must be between 1 and 100");
         hasError = true;
       }
 
@@ -472,7 +503,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
-          child: SingleChildScrollView(
+          child: Directionality(
+            textDirection: widget.isArabic
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            child: SingleChildScrollView(
             controller: _scrollController,
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
@@ -514,22 +549,29 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           ),
         ),
       ),
+      ),
     );
   }
 
   // The title text shown at the top for the current step.
   String get _stepTitle {
-    if (currentStep == 0) return 'إضافة مهمة';
-    return 'تفاصيل المهمة';
+    if (currentStep == 0) return _text('إضافة مهمة', 'Add Task');
+    return _text('تفاصيل المهمة', 'Task Details');
   }
 
   // The subtitle text shown below the title for the current step.
   String get _stepSubtitle {
     if (currentStep == 0) {
-      return 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
+      return _text(
+        'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)',
+        'Who is this task for? (You can select more than one child)',
+      );
     }
 
-    return 'أضيفي تفاصيل المهمة وحددي تكرارها';
+    return _text(
+      'أضيفي تفاصيل المهمة وحددي تكرارها',
+      'Add the task details and choose how often it repeats',
+    );
   }
 
   // ---- Step 0: choose child ----
@@ -541,9 +583,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         if (isLoadingChildren)
           const Center(child: CircularProgressIndicator())
         else if (children.isEmpty)
-          const Center(
+          Center(
             child: Text(
-              'لا يوجد أطفال بعد. الرجاء إضافة طفل أولاً.',
+              _text(
+                'لا يوجد أطفال بعد. الرجاء إضافة طفل أولاً.',
+                'No children yet. Please add a child first.',
+              ),
               style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
           )
@@ -583,10 +628,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ],
 
         const SizedBox(height: AppSpacing.lg),
-        const Align(
-          alignment: Alignment.centerRight,
+        Align(
+          alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'نوع المهمة',
+            _text('نوع المهمة', 'Task Type'),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -599,9 +644,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
         Text(
           selectedChildIds.isEmpty
-              ? 'اختر طفلًا أولًا لتفعيل أنواع المهام'
-              : 'اختر نوع المهمة',
-          textAlign: TextAlign.right,
+              ? _text(
+                  'اختر طفلًا أولًا لتفعيل أنواع المهام',
+                  'Select a child first to enable task types',
+                )
+              : _text('اختر نوع المهمة', 'Choose a task type'),
+          textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 12,
             color: selectedChildIds.isEmpty
@@ -623,12 +671,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             color: AppColors.primaryLight,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Row(
+          child: Row(
             children: [
               Expanded(
                 child: Text(
-                  'المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.',
-                  textAlign: TextAlign.right,
+                  _text(
+                    'المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.',
+                    'Tasks help children build habits and values while earning Noor points.',
+                  ),
+                  textAlign: TextAlign.start,
                   style: TextStyle(fontSize: 13, color: AppColors.textPrimary),
                 ),
               ),
@@ -641,10 +692,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const SizedBox(height: AppSpacing.lg),
 
         if (selectedTaskType != null) ...[
-          const Align(
-            alignment: Alignment.centerRight,
+          Align(
+            alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
             child: Text(
-              'إضافة سريعة',
+              _text('إضافة سريعة', 'Quick Add'),
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -671,7 +722,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ),
                 TextButton(
                   onPressed: _loadTaskSuggestions,
-                  child: const Text('إعادة المحاولة'),
+                  child: Text(_text('إعادة المحاولة', 'Try Again')),
                 ),
               ],
             )
@@ -685,13 +736,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   ? Icons.menu_book_outlined
                   : Icons.credit_card,
               label: selectedTaskType == 0
-                  ? 'المهام الثقافية'
+                  ? _text('المهام الثقافية', 'Cultural Tasks')
                   : selectedTaskType == 1
-                  ? 'المهام اليومية'
+                  ? _text('المهام اليومية', 'Daily Tasks')
                   : selectedTaskType == 2
-                  ? 'المهام الدينية'
-                  : 'المهام المالية',
+                  ? _text('المهام الدينية', 'Religious Tasks')
+                  : _text('المهام المالية', 'Financial Tasks'),
               suggestions: taskSuggestions,
+              isArabic: widget.isArabic,
               onSuggestionTap: (suggestion) {
                 setState(() {
                   _applyTaskSuggestion(suggestion);
@@ -723,7 +775,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             Expanded(
               child: _TaskTypeCard(
                 icon: Icons.mosque_outlined,
-                label: 'المهام الثقافية',
+                label: _text('المهام الثقافية', 'Cultural Tasks'),
                 isSelected: selectedTaskType == 0,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
@@ -740,7 +792,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             Expanded(
               child: _TaskTypeCard(
                 icon: Icons.shopping_bag_outlined,
-                label: 'المهام اليومية',
+                label: _text('المهام اليومية', 'Daily Tasks'),
                 isSelected: selectedTaskType == 1,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
@@ -763,7 +815,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             Expanded(
               child: _TaskTypeCard(
                 icon: Icons.menu_book_outlined,
-                label: 'المهام الدينية',
+                label: _text('المهام الدينية', 'Religious Tasks'),
                 isSelected: selectedTaskType == 2,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
@@ -780,7 +832,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             Expanded(
               child: _TaskTypeCard(
                 icon: Icons.credit_card,
-                label: 'المهام المالية',
+                label: _text('المهام المالية', 'Financial Tasks'),
                 isSelected: selectedTaskType == 3,
                 isEnabled: selectedChildIds.isNotEmpty,
                 onTap: () {
@@ -835,7 +887,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: _loadTaskSuggestions,
-              child: const Text('إعادة المحاولة'),
+              child: Text(_text('إعادة المحاولة', 'Try Again')),
             ),
           ],
         ),
@@ -849,10 +901,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Align(
-          alignment: Alignment.centerRight,
+        Align(
+          alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'مهام مقترحة',
+            _text('مهام مقترحة', 'Suggested Tasks'),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -863,9 +915,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
         const SizedBox(height: AppSpacing.xs),
 
-        const Text(
-          'اضغط على المهمة التي تناسبك',
-          textAlign: TextAlign.right,
+        Text(
+          _text('اضغط على المهمة التي تناسبك', 'Tap the task that suits you'),
+          textAlign: widget.isArabic ? TextAlign.right : TextAlign.left,
           style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
         ),
 
@@ -904,7 +956,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         children: [
                           Text(
                             suggestion.title,
-                            textAlign: TextAlign.right,
+                            textAlign: widget.isArabic ? TextAlign.right : TextAlign.left,
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -916,7 +968,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
                           Text(
                             suggestion.description,
-                            textAlign: TextAlign.right,
+                            textAlign: widget.isArabic ? TextAlign.right : TextAlign.left,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -931,7 +983,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                '${suggestion.points} نقطة',
+                                widget.isArabic
+                                    ? '${suggestion.points} نقطة'
+                                    : '${suggestion.points} points',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -965,10 +1019,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Align(
-          alignment: Alignment.centerRight,
+        Align(
+          alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'اسم المهمة',
+            _text('اسم المهمة', 'Task Name'),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -979,16 +1033,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const SizedBox(height: AppSpacing.sm),
         _TaskTextField(
           controller: taskNameController,
-          hint: 'مثال: ترتيب سريرك',
+          hint: _text('مثال: ترتيب سريرك', 'Example: Make your bed'),
+          isArabic: widget.isArabic,
           errorText: titleError,
         ),
 
         const SizedBox(height: AppSpacing.lg),
 
-        const Align(
-          alignment: Alignment.centerRight,
+        Align(
+          alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'الوصف',
+            _text('الوصف', 'Description'),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -999,17 +1054,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const SizedBox(height: AppSpacing.sm),
         _TaskTextField(
           controller: taskDescriptionController,
-          hint: 'صف المهمة باختصار...',
+          hint: _text('صف المهمة باختصار...', 'Briefly describe the task...'),
+          isArabic: widget.isArabic,
           maxLines: 2,
           errorText: descriptionError,
         ),
 
         const SizedBox(height: AppSpacing.lg),
 
-        const Align(
-          alignment: Alignment.centerRight,
+        Align(
+          alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'نقاط نور',
+            _text('نقاط نور', 'Noor Points'),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -1052,7 +1108,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               ),
               const Spacer(),
               Text(
-                '$taskPoints نقطة',
+                widget.isArabic ? '$taskPoints نقطة' : '$taskPoints points',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1083,12 +1139,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             color: AppColors.primaryLight,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Row(
+          child: Row(
             children: [
               Expanded(
                 child: Text(
-                  'نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.',
-                  textAlign: TextAlign.right,
+                  _text(
+                    'نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.',
+                    'Noor points motivate children and encourage them to keep going.',
+                  ),
+                  textAlign: widget.isArabic ? TextAlign.right : TextAlign.left,
                   style: TextStyle(fontSize: 13, color: AppColors.textPrimary),
                 ),
               ),
@@ -1102,10 +1161,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
         const SizedBox(height: AppSpacing.xl),
 
-        const Align(
-          alignment: Alignment.centerRight,
+        Align(
+          alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'تكرار المهمة',
+            _text('تكرار المهمة', 'Task Frequency'),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -1153,12 +1212,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  textDirection: TextDirection.ltr,
-                  children: const [
+                  crossAxisAlignment: widget.isArabic
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  textDirection: widget.isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  children: [
                     Text(
-                      'هل تثق بجدية طفلك في هذه المهمة؟',
-                      textAlign: TextAlign.right,
+                      _text(
+                        'هل تثق بجدية طفلك في هذه المهمة؟',
+                        'Do you trust your child to complete this task seriously?',
+                      ),
+                      textAlign: widget.isArabic ? TextAlign.right : TextAlign.left,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -1167,8 +1233,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
-                      textAlign: TextAlign.right,
+                      _text(
+                        'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
+                        'If you do, the task will be approved automatically without your review.',
+                      ),
+                      textAlign: widget.isArabic ? TextAlign.right : TextAlign.left,
                       style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textSecondary,
@@ -1190,8 +1259,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Column(
       children: [
         _FrequencyCard(
-          title: 'يوميًا',
-          subtitle: 'تُنفَّذ المهمة كل يوم',
+          title: _text('يوميًا', 'Daily'),
+          subtitle: _text('تُنفَّذ المهمة كل يوم', 'The task is completed every day'),
           isSelected: selectedFrequency == 0,
           onTap: () {
             setState(() {
@@ -1203,8 +1272,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const SizedBox(height: AppSpacing.md),
 
         _FrequencyCard(
-          title: 'مرة في الأسبوع',
-          subtitle: 'تُنفَّذ المهمة مرة في الأسبوع',
+          title: _text('مرة في الأسبوع', 'Once a Week'),
+          subtitle: _text('تُنفَّذ المهمة مرة في الأسبوع', 'The task is completed once a week'),
           isSelected: selectedFrequency == 1,
           onTap: () {
             setState(() {
@@ -1215,10 +1284,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Align(
-                      alignment: Alignment.centerRight,
+                    Align(
+                      alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
                       child: Text(
-                        'اختر يوم الأسبوع',
+                        _text('اختر يوم الأسبوع', 'Choose a day of the week'),
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -1232,7 +1301,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       children: [
                         for (final day in weekDays)
                           _SelectableChip(
-                            label: day,
+                            label: _weekDayLabel(day),
                             isSelected: selectedWeeklyDay == day,
                             onTap: () {
                               setState(() {
@@ -1250,8 +1319,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const SizedBox(height: AppSpacing.md),
 
         _FrequencyCard(
-          title: 'شهريًا',
-          subtitle: 'تُنفَّذ المهمة مرة في الشهر',
+          title: _text('شهريًا', 'Monthly'),
+          subtitle: _text('تُنفَّذ المهمة مرة في الشهر', 'The task is completed once a month'),
           isSelected: selectedFrequency == 2,
           onTap: () {
             setState(() {
@@ -1262,10 +1331,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Align(
-                      alignment: Alignment.centerRight,
+                    Align(
+                      alignment: widget.isArabic ? Alignment.centerRight : Alignment.centerLeft,
                       child: Text(
-                        'اختر تاريخ التكرار',
+                        _text('اختر تاريخ التكرار', 'Choose the repeat date'),
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -1355,7 +1424,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     // Step 0 only has a single full-width "Next" button.
     if (currentStep == 0) {
       return AppButton(
-        text: 'التالي',
+        text: _text('التالي', 'Next'),
         onPressed: _goToNextStep,
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -1373,7 +1442,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         Expanded(
           flex: 2,
           child: AppButton(
-            text: isLastStep ? 'حفظ المهمة' : 'التالي',
+            text: isLastStep
+                ? _text('حفظ المهمة', 'Save Task')
+                : _text('التالي', 'Next'),
             onPressed: isSaving
                 ? null
                 : () async {
@@ -1414,7 +1485,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (_) =>
-                                const ParentMainScreen(initialIndex: 2),
+                                ParentMainScreen(
+                              initialIndex: 2,
+                              isArabic: widget.isArabic,
+                            ),
                           ),
                         );
                       } on DioException catch (e) {
@@ -1481,8 +1555,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   borderRadius: BorderRadius.circular(18),
                 ),
               ),
-              child: const Text(
-                'رجوع',
+              child: Text(
+                _text('رجوع', 'Back'),
                 style: TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
@@ -1572,7 +1646,7 @@ class _ChildChip extends StatelessWidget {
             Expanded(
               child: Text(
                 name,
-                textAlign: TextAlign.right,
+                textAlign: TextAlign.start,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 14,
@@ -1603,12 +1677,14 @@ class _QuickAddCategory extends StatelessWidget {
   final String label;
   final List<TaskSuggestionModel> suggestions;
   final ValueChanged<TaskSuggestionModel> onSuggestionTap;
+  final bool isArabic;
 
   const _QuickAddCategory({
     required this.icon,
     required this.label,
     required this.suggestions,
     required this.onSuggestionTap,
+    required this.isArabic,
   });
 
   @override
@@ -1644,8 +1720,10 @@ class _QuickAddCategory extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: suggestions.isEmpty
-              ? const Text(
-                  'لا توجد مهام مقترحة حاليًا',
+              ? Text(
+                  isArabic
+                      ? 'لا توجد مهام مقترحة حاليًا'
+                      : 'No suggested tasks available right now',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
@@ -1677,7 +1755,7 @@ class _QuickAddCategory extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   suggestions[i].title,
-                                  textAlign: TextAlign.right,
+                                  textAlign: TextAlign.start,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -1773,12 +1851,14 @@ class _TaskTextField extends StatelessWidget {
   final String hint;
   final int maxLines;
   final String? errorText;
+  final bool isArabic;
 
   const _TaskTextField({
     required this.controller,
     required this.hint,
     this.maxLines = 1,
     this.errorText,
+    required this.isArabic,
   });
 
   @override
@@ -1786,8 +1866,8 @@ class _TaskTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       maxLines: maxLines,
-      textAlign: TextAlign.right,
-      textDirection: TextDirection.rtl,
+      textAlign: isArabic ? TextAlign.right : TextAlign.left,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,

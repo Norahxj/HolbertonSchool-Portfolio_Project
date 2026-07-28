@@ -35,6 +35,9 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   bool _isSubmitting = false;
   String? _error;
 
+  bool get isArabic =>
+      Localizations.localeOf(context).languageCode == 'ar';
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +62,9 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'تعذّر تحميل بيانات الأطفال';
+          _error = isArabic
+              ? 'تعذّر تحميل بيانات الأطفال'
+              : 'Unable to load children data';
           _isLoading = false;
         });
       }
@@ -93,7 +98,9 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'تعذّر تحميل سجل التقييم';
+          _error = isArabic
+              ? 'تعذّر تحميل سجل التقييم'
+              : 'Unable to load feedback history';
           _isLoading = false;
         });
       }
@@ -122,8 +129,12 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم حفظ التقييم بنجاح ✓'),
+          SnackBar(
+            content: Text(
+              isArabic
+                  ? 'تم حفظ التقييم بنجاح ✓'
+                  : 'Feedback saved successfully ✓',
+            ),
             backgroundColor: AppColors.success,
           ),
         );
@@ -132,8 +143,12 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تعذّر حفظ التقييم. حاول مرة أخرى.'),
+          SnackBar(
+            content: Text(
+              isArabic
+                  ? 'تعذّر حفظ التقييم. حاول مرة أخرى.'
+                  : 'Unable to save feedback. Please try again.',
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -151,10 +166,15 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: true,
-        title: Text('التقييم اليومي', style: AppTextStyles.arabicTitle),
+        title: Text(
+          isArabic ? 'التقييم اليومي' : 'Daily Feedback',
+          style: AppTextStyles.arabicTitle,
+        ),
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_forward_ios,
+          icon: Icon(
+            isArabic
+                ? Icons.arrow_forward_ios
+                : Icons.arrow_back_ios,
             color: AppColors.textPrimary,
           ),
           onPressed: () => Navigator.pop(context),
@@ -171,7 +191,9 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: _loadChildren,
-                    child: const Text('إعادة المحاولة'),
+                    child: Text(
+                      isArabic ? 'إعادة المحاولة' : 'Try Again',
+                    ),
                   ),
                 ],
               ),
@@ -183,7 +205,10 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
                 children: [
                   // ── Child selector ─────────────────────────────────────
                   if (_children.length > 1) ...[
-                    Text('اختر الطفل', style: AppTextStyles.body),
+                    Text(
+                      isArabic ? 'اختر الطفل' : 'Choose a Child',
+                      style: AppTextStyles.body,
+                    ),
                     const SizedBox(height: AppSpacing.sm),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -243,8 +268,12 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
                       children: [
                         Text(
                           _todayFeedback != null
-                              ? 'تقييم اليوم (يمكنك التعديل)'
-                              : 'كيف كان يوم ${_selectedChild?.name ?? "الطفل"}؟',
+                              ? isArabic
+                                  ? 'تقييم اليوم (يمكنك التعديل)'
+                                  : 'Today\'s Feedback (You Can Edit It)'
+                              : isArabic
+                                  ? 'كيف كان يوم ${_selectedChild?.name ?? "الطفل"}؟'
+                                  : 'How was ${_selectedChild?.name ?? "your child"}\'s day?',
                           style: AppTextStyles.arabicTitle,
                           textAlign: TextAlign.center,
                         ),
@@ -322,8 +351,12 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
                                 )
                               : Text(
                                   _todayFeedback != null
-                                      ? 'تحديث التقييم'
-                                      : 'حفظ التقييم',
+                                      ? isArabic
+                                          ? 'تحديث التقييم'
+                                          : 'Update Feedback'
+                                      : isArabic
+                                          ? 'حفظ التقييم'
+                                          : 'Save Feedback',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -339,7 +372,10 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
 
                   // ── History ────────────────────────────────────────────
                   if (_feedbackHistory.isNotEmpty) ...[
-                    Text('سجل التقييمات', style: AppTextStyles.arabicTitle),
+                    Text(
+                      isArabic ? 'سجل التقييمات' : 'Feedback History',
+                      style: AppTextStyles.arabicTitle,
+                    ),
                     const SizedBox(height: AppSpacing.md),
                     ListView.separated(
                       shrinkWrap: true,
@@ -367,7 +403,7 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      kMoodLabels[fb.mood] ?? fb.mood,
+                                      _moodShortLabel(fb.mood),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.textPrimary,
@@ -417,17 +453,17 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   String _moodShortLabel(String mood) {
     switch (mood) {
       case 'HAPPY':
-        return 'سعيد';
+        return isArabic ? 'سعيد' : 'Happy';
       case 'PROUD':
-        return 'فخور';
+        return isArabic ? 'فخور' : 'Proud';
       case 'GREAT':
-        return 'رائع';
+        return isArabic ? 'رائع' : 'Great';
       case 'LOVE':
-        return 'محبوب';
+        return isArabic ? 'محبوب' : 'Loved';
       case 'STRONG':
-        return 'قوي';
+        return isArabic ? 'قوي' : 'Strong';
       case 'STAR':
-        return 'نجم';
+        return isArabic ? 'نجم' : 'Star';
       default:
         return mood;
     }
