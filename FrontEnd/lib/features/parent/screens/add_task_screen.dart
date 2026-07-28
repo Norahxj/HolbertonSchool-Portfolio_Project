@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-
+import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -555,11 +555,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               final isSelected = selectedChildIds.contains(child.id);
 
               return _ChildChip(
-                name: child.name,
-                avatarColor: AppColors.primaryLight,
-                iconColor: AppColors.primary,
-                isSelected: isSelected,
-                onTap: () {
+  name: child.name,
+  avatarIndex: child.avatarIndex,
+  isSelected: isSelected,
+  onTap: () {
                   setState(() {
                     if (isSelected) {
                       selectedChildIds.remove(child.id);
@@ -1531,18 +1530,16 @@ class _RoundBackButton extends StatelessWidget {
 // selected. Tapping toggles that child in or out of the task.
 
 class _ChildChip extends StatelessWidget {
-  final String name;
-  final Color avatarColor;
-  final Color iconColor;
+   final String name;
+  final int avatarIndex;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _ChildChip({
     required this.name,
-    required this.avatarColor,
-    required this.iconColor,
-    required this.isSelected,
-    required this.onTap,
+  required this.avatarIndex,
+  required this.isSelected,
+  required this.onTap,
   });
 
   @override
@@ -1587,15 +1584,10 @@ class _ChildChip extends StatelessWidget {
 
             const SizedBox(width: AppSpacing.sm),
 
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: avatarColor,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.person, color: iconColor, size: 22),
-            ),
+            ChildAvatar(
+  avatarIndex: avatarIndex,
+  size: 42,
+),
           ],
         ),
       ),
