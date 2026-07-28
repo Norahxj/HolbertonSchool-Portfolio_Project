@@ -11,10 +11,10 @@ class ChildAvatar extends StatelessWidget {
   });
 
   static const List<String> _avatars = [
-    'assets/avatars/avatar_boy_1.jpg',
-    'assets/avatars/avatar_boy_2.jpg',
-    'assets/avatars/avatar_girl_1.jpg',
-    'assets/avatars/avatar_girl_2.jpg',
+    'assets/avatars/avatar_boy_1v.jpg',
+    'assets/avatars/avatar_boy_2v.jpg',
+    'assets/avatars/avatar_girl_1v.jpg',
+    'assets/avatars/avatar_girl_2v.jpg',
   ];
 
   int get _safeAvatarIndex {

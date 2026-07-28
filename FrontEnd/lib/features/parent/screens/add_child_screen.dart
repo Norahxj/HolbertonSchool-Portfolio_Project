@@ -298,7 +298,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                    _AvatarOption(
-  imagePath: 'assets/avatars/avatar_boy_1.jpg',
+  imagePath: 'assets/avatars/avatar_boy_1v.jpg',
   backgroundColor: const Color(0xFFD9F0DD),
   isSelected: selectedAvatarIndex == 0,
   onTap: () {
@@ -309,7 +309,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
 ),
 
 _AvatarOption(
-  imagePath: 'assets/avatars/avatar_boy_2.jpg',
+  imagePath: 'assets/avatars/avatar_boy_2v.jpg',
   backgroundColor: const Color(0xFFD7E9F7),
   isSelected: selectedAvatarIndex == 1,
   onTap: () {
@@ -320,7 +320,7 @@ _AvatarOption(
 ),
 
 _AvatarOption(
-  imagePath: 'assets/avatars/avatar_girl_1.jpg',
+  imagePath: 'assets/avatars/avatar_girl_1v.jpg',
   backgroundColor: AppColors.primaryLight,
   isSelected: selectedAvatarIndex == 2,
   onTap: () {
@@ -331,7 +331,7 @@ _AvatarOption(
 ),
 
 _AvatarOption(
-  imagePath: 'assets/avatars/avatar_girl_2.jpg',
+  imagePath: 'assets/avatars/avatar_girl_2v.jpg',
   backgroundColor: const Color(0xFFFBE3EA),
   isSelected: selectedAvatarIndex == 3,
   onTap: () {
