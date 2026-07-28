@@ -154,6 +154,7 @@ childId: _selectedChild.id,
         vertical: AppSpacing.sm,
       ),
       child: AppPageHeader(
+         isArabic: isArabic,
         title: isArabic
             ? 'التقييم اليومي'
             : 'Daily Feedback',

@@ -293,6 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       AppPageHeader(
+                        isArabic: isArabic,
   title: isArabic ? 'الملف الشخصي' : 'Profile',
   onBack: () {
     Navigator.pop(context);

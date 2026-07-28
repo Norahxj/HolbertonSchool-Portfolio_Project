@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import '../../../core/widgets/app_page_header.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
-import '../../../core/widgets/app_back_button.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../models/reward_suggestion_model.dart';
@@ -188,26 +187,13 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
-                  children: [
-                    const SizedBox(width: 44),
-
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          tr(
-                            'مكافأة جديدة',
-                            'New Reward',
-                          ),
-                          style: AppTextStyles.arabicTitle,
-                        ),
-                      ),
-                    ),
-
-                    const AppBackButton(),
-                  ],
-                ),
+                AppPageHeader(
+  isArabic: isArabic,
+  title: tr(
+    'مكافأة جديدة',
+    'New Reward',
+  ),
+),
 
                 const SizedBox(height: AppSpacing.xl),
 

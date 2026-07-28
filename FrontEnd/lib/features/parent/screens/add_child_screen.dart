@@ -316,11 +316,12 @@ class _AddChildScreenState extends State<AddChildScreen> {
   alignment: isArabic
       ? Alignment.centerRight
       : Alignment.centerLeft,
-  child: AppBackButton(
-    onTap: () {
-      Navigator.pop(context);
-    },
-  ),
+   child:AppBackButton(
+  isArabic: isArabic,
+  onTap: () {
+    Navigator.pop(context);
+  },
+),
 ),
 
                 const SizedBox(height: AppSpacing.lg),

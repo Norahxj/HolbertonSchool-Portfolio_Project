@@ -279,6 +279,7 @@ for (final entry in assignmentsByChild) {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                  AppPageHeader(
+                  isArabic: isArabic,
   title: tr('مراجعة المهام', 'Task Review'),
   onBack: () {
     Navigator.pop(context);

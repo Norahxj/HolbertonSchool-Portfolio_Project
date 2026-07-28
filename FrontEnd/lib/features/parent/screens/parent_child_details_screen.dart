@@ -12,6 +12,7 @@ import '../models/parent_dashboard_data.dart';
 import '../repositories/parent_child_details_repository.dart';
 import 'package:flutter/services.dart';
 import 'daily_feedback_screen.dart';
+import '../../../core/widgets/app_page_header.dart';
 
 
 class ParentChildDetailsScreen extends StatelessWidget {
@@ -132,11 +133,17 @@ class _ParentChildDetailsView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
-          title: Text(isArabic ? 'بيانات الطفل' : 'Child details'),
-        ),
+  automaticallyImplyLeading: false,
+  backgroundColor: Colors.transparent,
+  elevation: 0,
+  toolbarHeight: 80,
+  title: AppPageHeader(
+    isArabic: isArabic,
+    title: isArabic
+        ? 'بيانات الطفل'
+        : 'Child details',
+  ),
+),
         body: ScreenBackground(
           child: SafeArea(
             top: false,

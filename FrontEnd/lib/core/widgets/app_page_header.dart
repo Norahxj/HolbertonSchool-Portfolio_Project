@@ -10,6 +10,7 @@ class AppPageHeader extends StatelessWidget {
   final Color titleColor;
   final Color buttonBackgroundColor;
   final Color buttonIconColor;
+  final bool? isArabic;
 
   const AppPageHeader({
     super.key,
@@ -18,22 +19,25 @@ class AppPageHeader extends StatelessWidget {
     this.titleColor = AppColors.textPrimary,
     this.buttonBackgroundColor = AppColors.primaryLight,
     this.buttonIconColor = AppColors.primaryDark,
+    this.isArabic,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
+    final arabic =
+        isArabic ??
         Directionality.of(context) == TextDirection.rtl;
 
     final backButton = AppBackButton(
       onTap: onBack,
       backgroundColor: buttonBackgroundColor,
       iconColor: buttonIconColor,
+      isArabic: arabic,
     );
 
     return Row(
       children: [
-        if (!isArabic)
+        if (!arabic)
           backButton
         else
           const SizedBox(width: 44),
@@ -48,7 +52,7 @@ class AppPageHeader extends StatelessWidget {
           ),
         ),
 
-        if (isArabic)
+        if (arabic)
           backButton
         else
           const SizedBox(width: 44),

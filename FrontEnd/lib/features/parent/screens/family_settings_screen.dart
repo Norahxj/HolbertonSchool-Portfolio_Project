@@ -335,6 +335,7 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
                     CrossAxisAlignment.stretch,
                 children: [
                   AppPageHeader(
+                    isArabic: isArabic,
   title: isArabic
       ? 'إعدادات العائلة'
       : 'Family Settings',
