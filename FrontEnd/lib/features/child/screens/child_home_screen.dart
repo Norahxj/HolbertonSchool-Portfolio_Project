@@ -161,49 +161,8 @@ final todayFeedback = results[3] as DailyFeedbackModel?;
     }
   }
     Future<void> _logout() async {
-    final shouldLogout = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(
-  widget.isArabic ? 'تسجيل الخروج' : 'Log out',
-),
-         content: Text(
-  widget.isArabic
-      ? 'هل أنت متأكد أنك تريد تسجيل الخروج؟'
-      : 'Are you sure you want to log out?',
-),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext, false);
-              },
-              child: Text(
-  widget.isArabic ? 'إلغاء' : 'Cancel',
-),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext, true);
-              },
-              child: Text(
-  widget.isArabic ? 'تسجيل الخروج' : 'Log out',
-  style: const TextStyle(
-    color: AppColors.error,
-  ),
-),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (shouldLogout != true) return;
-
     await AuthApiService().logout();
-
     if (!mounted) return;
-
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
