@@ -257,21 +257,20 @@ for (final entry in wishesByChild) {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isArabic
-                          ? 'عند الموافقة تُخصم نقاط نور من رصيد الطفل مقابل الأمنية'
-                          : 'When approved, Noor points are deducted from the child’s balance for the wish',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-
+                Padding(
+  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+  child: Text(
+    isArabic
+        ? 'عند الموافقة تُخصم نقاط نور من رصيد الطفل مقابل الأمنية'
+        : 'When approved, Noor points are deducted from the child’s balance for the wish',
+    textAlign: TextAlign.center,
+    softWrap: true,
+    style: const TextStyle(
+      fontSize: 12,
+      color: AppColors.textSecondary,
+    ),
+  ),
+),
                 const SizedBox(height: AppSpacing.lg),
               ],
             ),
