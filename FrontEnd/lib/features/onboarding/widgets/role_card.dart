@@ -1,61 +1,54 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
 
 class RoleCard extends StatelessWidget {
-  final String arabicTitle;
-  final String englishTitle;
-  final IconData icon;
+  final String imagePath;
   final VoidCallback onTap;
-  final bool isArabic;
 
   const RoleCard({
     super.key,
-    required this.arabicTitle,
-    required this.englishTitle,
-    required this.icon,
+    required this.imagePath,
     required this.onTap,
-    required this.isArabic,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Material(
+      color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(28),
         onTap: onTap,
-        child: Container(
-          height: 220,
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        borderRadius: BorderRadius.circular(28),
+        child: Ink(
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [AppColors.primaryLight, AppColors.primary],
-            ),
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.18),
-                blurRadius: 20,
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CircleAvatar(
-                radius: 38,
-                backgroundColor: Colors.white,
-                child: Icon(icon, size: 34, color: AppColors.primaryDark),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: AspectRatio(
+              aspectRatio: 1.45,
+              child: Image.asset(
+                imagePath,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.white,
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.broken_image_outlined,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
               ),
-              Text(
-                isArabic ? arabicTitle : englishTitle,
-                style: AppTextStyles.cardTitle,
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
         ),
       ),

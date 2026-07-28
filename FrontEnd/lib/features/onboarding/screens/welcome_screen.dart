@@ -122,7 +122,7 @@ class WelcomeScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
 
-                const Spacer(),
+                const SizedBox(height: AppSpacing.xl),
 
                 Text(
                   AppStrings.welcomeSubtitle(isArabic),
@@ -132,45 +132,45 @@ class WelcomeScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                Row(
-                  children: [
-                    RoleCard(
-                      arabicTitle: 'ولي الأمر',
-                      englishTitle: 'Parent',
-                      icon: Icons.family_restroom,
-                      isArabic: isArabic,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AuthScreen(
-                              isArabic: isArabic,
-                              onLanguageToggle: onLanguageToggle,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    RoleCard(
-                      arabicTitle: 'طفل',
-                      englishTitle: 'Child',
-                      icon: Icons.person,
-                      isArabic: isArabic,
-                      onTap: () {
-                        Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => ChildPinLoginScreen(
-      isArabic: isArabic,
-      onLanguageToggle: onLanguageToggle,
+                Column(
+  children: [
+    RoleCard(
+      imagePath: isArabic
+          ? 'assets/role_selection/parent_card_ar.png'
+          : 'assets/role_selection/parent_card_en.png',
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AuthScreen(
+              isArabic: isArabic,
+              onLanguageToggle: onLanguageToggle,
+            ),
+          ),
+        );
+      },
     ),
-  ),
-);
-                      },
-                    ),
-                  ],
-                ),
+
+    const SizedBox(height: AppSpacing.md),
+
+    RoleCard(
+      imagePath: isArabic
+          ? 'assets/role_selection/child_card_ar.png'
+          : 'assets/role_selection/child_card_en.png',
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChildPinLoginScreen(
+              isArabic: isArabic,
+              onLanguageToggle: onLanguageToggle,
+            ),
+          ),
+        );
+      },
+    ),
+  ],
+),
 
                 const SizedBox(height: AppSpacing.xl),
               ],
