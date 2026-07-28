@@ -13,6 +13,7 @@ import 'child_task_details_screen.dart';
 import 'child_settings_screen.dart';
 import '../../../models/daily_feedback_model.dart';
 import '../../../services/daily_feedback_api_service.dart';
+import '../../../core/widgets/child_avatar.dart';
 
 // The child's home tab.
 //
@@ -258,6 +259,7 @@ final todayFeedback = results[3] as DailyFeedbackModel?;
         children: [
                     _HomeHeader(
   childName: _child!.name,
+   avatarIndex: _child!.avatarIndex,
   points: _points,
   completedTasks: completedCount,
   totalTasks: _assignments.length,
@@ -363,6 +365,7 @@ final todayFeedback = results[3] as DailyFeedbackModel?;
 
 class _HomeHeader extends StatelessWidget {
   final String childName;
+  final int avatarIndex;
   final int points;
   final int completedTasks;
   final int totalTasks;
@@ -371,6 +374,7 @@ class _HomeHeader extends StatelessWidget {
 
   const _HomeHeader({
     required this.childName,
+    required this.avatarIndex,
     required this.points,
     required this.completedTasks,
     required this.totalTasks,
@@ -459,30 +463,30 @@ class _HomeHeader extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 66,
-                          height: 66,
-                          decoration: BoxDecoration(
-                            color: AppColors.pinkLight,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 3,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primaryDark.withOpacity(0.22),
-                                blurRadius: 12,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.child_care_rounded,
-                            color: AppColors.pink,
-                            size: 34,
-                          ),
-                        ),
+                       Container(
+  width: 66,
+  height: 66,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    border: Border.all(
+      color: Colors.white,
+      width: 3,
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: AppColors.primaryDark.withOpacity(0.22),
+        blurRadius: 12,
+        offset: const Offset(0, 5),
+      ),
+    ],
+  ),
+  child: ClipOval(
+    child: ChildAvatar(
+      avatarIndex: avatarIndex,
+      size: 66,
+    ),
+  ),
+),
                         const SizedBox(width: AppSpacing.md),
                         Expanded(
                           child: Column(
