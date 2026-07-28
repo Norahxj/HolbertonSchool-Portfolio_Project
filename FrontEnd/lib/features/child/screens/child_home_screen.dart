@@ -34,12 +34,28 @@ class ChildHomeScreen extends StatefulWidget {
 
 class _ChildHomeScreenState extends State<ChildHomeScreen> {
   ChildModel? _child;
-  List<TaskAssignmentModel> _assignments = [];
-  int _points = 0;
+List<TaskAssignmentModel> _assignments = [];
+DailyFeedbackModel? _todayFeedback;
+int _points = 0;
+
+final DailyFeedbackApiService _feedbackService =
+    DailyFeedbackApiService();
 
   bool _isLoading = true;
   String? _errorMessage;
   final Set<String> _updatingAssignments = {};
+  Future<DailyFeedbackModel?> _loadTodayFeedback() async {
+  final feedbackHistory = await _feedbackService.getMyFeedback();
+  final today = DateTime.now();
+
+  for (final feedback in feedbackHistory) {
+    if (DateUtils.isSameDay(feedback.feedbackDate, today)) {
+      return feedback;
+    }
+  }
+
+  return null;
+}
 
   Future<void> _loadData({bool showPageLoader = true}) async {
     if (showPageLoader) {
@@ -53,16 +69,19 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       final childFuture = SecureStorage.getChild();
 final assignmentsFuture = TaskApiService().getMyAssignments();
 final pointsFuture = PointApiService().getMyPoints();
+final feedbackFuture = _loadTodayFeedback();
 
 final results = await Future.wait([
   childFuture,
   assignmentsFuture,
   pointsFuture,
+  feedbackFuture,
 ]);
 
 final child = results[0] as ChildModel?;
 final assignments = results[1] as List<TaskAssignmentModel>;
 final points = results[2] as int;
+final todayFeedback = results[3] as DailyFeedbackModel?;
 
       if (!mounted) return;
 
@@ -82,6 +101,7 @@ final points = results[2] as int;
         _points = points;
         _errorMessage = null;
         _isLoading = false;
+        _todayFeedback = todayFeedback;
       });
     } catch (error) {
       if (!mounted) return;
@@ -270,6 +290,13 @@ final points = results[2] as int;
                       totalTasks: _assignments.length,
                       isArabic: widget.isArabic,
                     ),
+                    if (_todayFeedback != null) ...[
+  const SizedBox(height: AppSpacing.md),
+  _DailyFeedbackCard(
+    feedback: _todayFeedback!,
+    isArabic: widget.isArabic,
+  ),
+],
                     const SizedBox(height: AppSpacing.xl),
                    _SectionHeader(
   title: widget.isArabic ? 'مهام اليوم' : 'Today\'s Tasks',
@@ -627,7 +654,152 @@ class _HeaderMetric extends StatelessWidget {
     );
   }
 }
+class _DailyFeedbackCard extends StatelessWidget {
+  final DailyFeedbackModel feedback;
+  final bool isArabic;
 
+  const _DailyFeedbackCard({
+    required this.feedback,
+    required this.isArabic,
+  });
+
+  String get _emoji {
+    switch (feedback.mood) {
+      case 'HAPPY':
+        return '😊';
+      case 'PROUD':
+        return '🌟';
+      case 'GREAT':
+        return '🎉';
+      case 'LOVE':
+        return '❤️';
+      case 'STRONG':
+        return '💪';
+      case 'STAR':
+        return '⭐';
+      default:
+        return '🌟';
+    }
+  }
+
+  String get _label {
+    if (isArabic) {
+      switch (feedback.mood) {
+        case 'HAPPY':
+          return 'سعيد';
+        case 'PROUD':
+          return 'فخور بك';
+        case 'GREAT':
+          return 'رائع';
+        case 'LOVE':
+          return 'محبوب';
+        case 'STRONG':
+          return 'قوي';
+        case 'STAR':
+          return 'نجم';
+        default:
+          return feedback.mood;
+      }
+    }
+
+    switch (feedback.mood) {
+      case 'HAPPY':
+        return 'Happy';
+      case 'PROUD':
+        return 'Proud of you';
+      case 'GREAT':
+        return 'Great';
+      case 'LOVE':
+        return 'Loved';
+      case 'STRONG':
+        return 'Strong';
+      case 'STAR':
+        return 'Star';
+      default:
+        return feedback.mood;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.18),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        textDirection: isArabic
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              _emoji,
+              style: const TextStyle(fontSize: 28),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: isArabic
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isArabic
+                      ? 'تشجيع اليوم'
+                      : 'Today\'s Encouragement',
+                  textAlign: isArabic
+                      ? TextAlign.right
+                      : TextAlign.left,
+                  style: AppTextStyles.caption,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _label,
+                  textAlign: isArabic
+                      ? TextAlign.right
+                      : TextAlign.left,
+                  style: AppTextStyles.sectionTitle.copyWith(
+                    fontSize: 17,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isArabic
+                      ? 'من العائلة'
+                      : 'From your family',
+                  textAlign: isArabic
+                      ? TextAlign.right
+                      : TextAlign.left,
+                  style: AppTextStyles.caption,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 class _DailyGoalCard extends StatelessWidget {
   final int completedTasks;
   final int totalTasks;
