@@ -15,10 +15,16 @@ import '../../../services/wishlist_api_service.dart';
 // ChildApiService().getChildren() is only used internally to resolve a
 // child's name for the card header — it is not shown as its own list.
 class WishlistApprovalScreen extends StatefulWidget {
-  const WishlistApprovalScreen({super.key});
+  final bool isArabic;
+
+  const WishlistApprovalScreen({
+    super.key,
+    required this.isArabic,
+  });
 
   @override
-  State<WishlistApprovalScreen> createState() => _WishlistApprovalScreenState();
+  State<WishlistApprovalScreen> createState() =>
+      _WishlistApprovalScreenState();
 }
 
 // Pairs a wish with its child's name so the cards below don't need to
@@ -44,8 +50,7 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
   List<_WishEntry> _pendingWishes = [];
   List<_WishEntry> _approvedWishes = [];
 
-  bool get isArabic =>
-      Localizations.localeOf(context).languageCode == 'ar';
+  bool get isArabic => widget.isArabic;
 
   @override
   void initState() {

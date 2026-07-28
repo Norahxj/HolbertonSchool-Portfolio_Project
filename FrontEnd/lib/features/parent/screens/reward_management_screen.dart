@@ -13,15 +13,20 @@ import '../services/child_api_service.dart';
 import 'add_reward_screen.dart';
 
 class RewardManagementScreen extends StatefulWidget {
-  const RewardManagementScreen({super.key});
+  final bool isArabic;
+
+  const RewardManagementScreen({
+    super.key,
+    required this.isArabic,
+  });
 
   @override
-  State<RewardManagementScreen> createState() => _RewardManagementScreenState();
+  State<RewardManagementScreen> createState() =>
+      _RewardManagementScreenState();
 }
 
 class _RewardManagementScreenState extends State<RewardManagementScreen> {
-  bool get isArabic =>
-    Localizations.localeOf(context).languageCode == 'ar';
+  bool get isArabic => widget.isArabic;
   final ChildApiService _childApiService = ChildApiService();
 
   final RewardApiService _rewardApiService = RewardApiService();
@@ -49,6 +54,19 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
 
     _loadChildren();
   }
+
+  @override
+void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
+  super.didUpdateWidget(oldWidget);
+
+  if (oldWidget.isArabic != widget.isArabic) {
+    rewardSuggestions = [];
+
+    if (selectedChildId != null) {
+      _loadRewardSuggestions();
+    }
+  }
+}
 
   Future<void> _loadChildren() async {
     setState(() {

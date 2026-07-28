@@ -92,16 +92,20 @@ class _ParentNavigationView extends StatelessWidget {
           : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
-          ? const RewardManagementScreen()
-          : const SizedBox.shrink(),
+    ? RewardManagementScreen(
+        isArabic: isArabic,
+      )
+    : const SizedBox.shrink(),
 
       navigation.isLoaded(2)
           ? ParentDashboardScreen(isArabic: isArabic)
           : const SizedBox.shrink(),
 
       navigation.isLoaded(3)
-          ? const WishlistApprovalScreen()
-          : const SizedBox.shrink(),
+    ? WishlistApprovalScreen(
+        isArabic: isArabic,
+      )
+    : const SizedBox.shrink(),
 
       navigation.isLoaded(4)
           ? MoreSettingsScreen(
