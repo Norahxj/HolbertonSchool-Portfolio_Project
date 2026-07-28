@@ -393,20 +393,24 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       : 'No children yet. Add a child first.',
 )
                   else
-                    Wrap(
-                      alignment: WrapAlignment.end,
-                      spacing: AppSpacing.md,
-                      runSpacing: AppSpacing.md,
-                      children: children.map((child) {
-                        return _ChildChip(
-                          child: child,
-                          isSelected: selectedChildId == child.id,
-                          onTap: () {
-                            _selectChild(child.id);
-                          },
-                        );
-                      }).toList(),
-                    ),
+                    Directionality(
+  textDirection:
+      isArabic ? TextDirection.rtl : TextDirection.ltr,
+  child: Wrap(
+    alignment: WrapAlignment.start,
+    spacing: AppSpacing.md,
+    runSpacing: AppSpacing.md,
+    children: children.map((child) {
+      return _ChildChip(
+        child: child,
+        isSelected: selectedChildId == child.id,
+        onTap: () {
+          _selectChild(child.id);
+        },
+      );
+    }).toList(),
+  ),
+),
 
                   const SizedBox(height: AppSpacing.lg),
 

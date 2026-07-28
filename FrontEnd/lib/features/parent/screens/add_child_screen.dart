@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/screen_background.dart';
 import 'package:frontend/features/parent/services/child_api_service.dart';
-
+import '../../../core/widgets/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -313,16 +313,15 @@ class _AddChildScreenState extends State<AddChildScreen> {
             child: Column(
               children: [
                 Align(
-                  alignment: isArabic
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: _RoundIconButton(
-                    icon: Icons.arrow_forward_rounded,
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
+  alignment: isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
+  child: AppBackButton(
+    onTap: () {
+      Navigator.pop(context);
+    },
+  ),
+),
 
                 const SizedBox(height: AppSpacing.lg),
 
@@ -517,29 +516,7 @@ _AvatarOption(
   }
 }
 
-class _RoundIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
 
-  const _RoundIconButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(icon, size: 18, color: AppColors.primaryDark),
-        ),
-      ),
-    );
-  }
-}
 
 class _AvatarOption extends StatelessWidget {
   final String imagePath;
