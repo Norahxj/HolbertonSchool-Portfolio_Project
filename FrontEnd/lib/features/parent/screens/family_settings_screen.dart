@@ -31,6 +31,7 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
 
   List<Map<String, dynamic>> guardians = [];
   List<Map<String, dynamic>> sentInvitations = [];
+  List<Map<String, dynamic>> incomingInvitations = [];
 
   @override
   void initState() {
@@ -54,7 +55,15 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
     }
 
     try {
-      final familyData = await familyApiService.getFamilyDetails();
+      final results = await Future.wait([
+  familyApiService.getFamilyDetails(),
+  familyApiService.getIncomingInvitations(),
+]);
+
+final familyData = results[0] as Map<String, dynamic>;
+
+final loadedIncomingInvitations =
+    results[1] as List<Map<String, dynamic>>;
 
       final loadedGuardians = (familyData['guardians'] as List? ?? [])
           .map(
@@ -80,6 +89,7 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
 
         guardians = loadedGuardians;
         sentInvitations = loadedSentInvitations;
+        incomingInvitations = loadedIncomingInvitations;
 
         isLoading = false;
       });
@@ -92,6 +102,44 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
       });
     }
   }
+
+  Future<void> _acceptInvitation(String invitationId) async {
+  try {
+    await familyApiService.acceptInvitation(invitationId);
+
+    if (!mounted) return;
+
+    _showMessage('تم قبول الدعوة والانضمام إلى العائلة');
+
+    await _loadFamilyData();
+  } catch (error) {
+    if (!mounted) return;
+
+    _showMessage(
+      familyApiService.readErrorMessage(error),
+      isError: true,
+    );
+  }
+}
+
+Future<void> _rejectInvitation(String invitationId) async {
+  try {
+    await familyApiService.rejectInvitation(invitationId);
+
+    if (!mounted) return;
+
+    _showMessage('تم رفض الدعوة');
+
+    await _loadFamilyData();
+  } catch (error) {
+    if (!mounted) return;
+
+    _showMessage(
+      familyApiService.readErrorMessage(error),
+      isError: true,
+    );
+  }
+}
 
   Future<void> _saveFamilyName() async {
     final name = familyNameController.text.trim();
@@ -444,8 +492,16 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
                     }),
                   const SizedBox(height: AppSpacing.xl),
                   _PendingInvitationsSection(
-                    invitations: sentInvitations,
-                  ),
+  invitations: sentInvitations,
+),
+
+const SizedBox(height: AppSpacing.xl),
+
+_IncomingInvitationsSection(
+  invitations: incomingInvitations,
+  onAccept: _acceptInvitation,
+  onReject: _rejectInvitation,
+),
                   const SizedBox(height: AppSpacing.xl),
                   Container(
                     padding: const EdgeInsets.all(
@@ -886,6 +942,159 @@ class _PendingInvitationsSection
               ),
             ),
           ),
+      ],
+    );
+  }
+}
+
+class _IncomingInvitationsSection extends StatelessWidget {
+  final List<Map<String, dynamic>> invitations;
+  final Future<void> Function(String invitationId) onAccept;
+  final Future<void> Function(String invitationId) onReject;
+
+  const _IncomingInvitationsSection({
+    required this.invitations,
+    required this.onAccept,
+    required this.onReject,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _FieldLabel('الدعوات الواردة'),
+
+        const SizedBox(height: AppSpacing.sm),
+
+        if (invitations.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.border,
+              ),
+            ),
+            child: const Column(
+              children: [
+                Text(
+                  'لا توجد دعوات واردة حاليًا',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'ستظهر هنا دعوات الانضمام إلى العائلات',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ...invitations.map((invitation) {
+            final invitationId =
+                invitation['id']?.toString() ?? '';
+
+            final familyName =
+                invitation['family_name']?.toString() ??
+                    invitation['family']?['name']?.toString() ??
+                    'عائلة';
+
+            final invitedByName =
+                invitation['invited_by_name']?.toString();
+
+            return Container(
+              margin: const EdgeInsets.only(
+                bottom: AppSpacing.sm,
+              ),
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.border,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.family_restroom,
+                        color: AppColors.primary,
+                        size: 26,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'دعوة للانضمام إلى $familyName',
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            if (invitedByName != null &&
+                                invitedByName.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'مرسلة من $invitedByName',
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: invitationId.isEmpty
+                              ? null
+                              : () => onReject(invitationId),
+                          child: const Text('رفض'),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: invitationId.isEmpty
+                              ? null
+                              : () => onAccept(invitationId),
+                          child: const Text('قبول'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
       ],
     );
   }
