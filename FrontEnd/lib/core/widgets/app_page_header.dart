@@ -36,6 +36,7 @@ class AppPageHeader extends StatelessWidget {
     );
 
     return Row(
+      textDirection: TextDirection.ltr,
       children: [
         if (!arabic)
           backButton
