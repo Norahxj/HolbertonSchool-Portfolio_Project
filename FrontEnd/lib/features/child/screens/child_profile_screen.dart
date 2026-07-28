@@ -362,43 +362,7 @@ class _HeaderBackButton extends StatelessWidget {
   }
 }
 
-class _LargeChildAvatar extends StatelessWidget {
-  final int avatarIndex;
 
-  const _LargeChildAvatar({required this.avatarIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    IconData icon;
-    Color backgroundColor;
-    Color iconColor;
-
-    if (avatarIndex == 0) {
-      icon = Icons.boy;
-      backgroundColor = const Color(0xFFD9F0DD);
-      iconColor = const Color(0xFF3E8E5A);
-    } else if (avatarIndex == 1) {
-      icon = Icons.boy;
-      backgroundColor = const Color(0xFFD7E9F7);
-      iconColor = const Color(0xFF2B6CA3);
-    } else if (avatarIndex == 2) {
-      icon = Icons.girl;
-      backgroundColor = AppColors.primaryLight;
-      iconColor = AppColors.primary;
-    } else {
-      icon = Icons.girl;
-      backgroundColor = const Color(0xFFFBE3EA);
-      iconColor = const Color(0xFFD1637F);
-    }
-
-    return Container(
-      width: 130,
-      height: 130,
-      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
-      child: Icon(icon, color: iconColor, size: 64),
-    );
-  }
-}
 
 class _WeeklyProgressCard extends StatelessWidget {
   final double progress;
