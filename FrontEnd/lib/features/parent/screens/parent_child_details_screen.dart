@@ -13,6 +13,7 @@ import '../repositories/parent_child_details_repository.dart';
 import 'package:flutter/services.dart';
 import 'daily_feedback_screen.dart';
 import '../../../core/widgets/app_page_header.dart';
+import 'points_history_screen.dart';
 
 
 class ParentChildDetailsScreen extends StatelessWidget {
@@ -218,6 +219,86 @@ class _ParentChildDetailsView extends StatelessWidget {
                     _ChildAccessCodeCard(
   accessCode: item.child.accessCode,
   isArabic: isArabic,
+),
+
+const SizedBox(height: AppSpacing.xl),
+InkWell(
+  borderRadius: BorderRadius.circular(24),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PointsHistoryScreen(
+          childId: child.id,
+          childName: child.name,
+          isArabic: isArabic,
+        ),
+      ),
+    );
+  },
+  child: Container(
+    padding: const EdgeInsets.all(AppSpacing.lg),
+    decoration: BoxDecoration(
+      color: AppColors.card,
+      borderRadius: BorderRadius.circular(24),
+      border: Border.all(
+        color: AppColors.border,
+      ),
+    ),
+    child: Row(
+      children: [
+        Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const Icon(
+            Icons.history,
+            color: AppColors.primary,
+          ),
+        ),
+
+        const SizedBox(width: AppSpacing.md),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isArabic
+                    ? 'سجل نقاط نور'
+                    : 'Noor Points History',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 4),
+
+              Text(
+                isArabic
+                    ? 'عرض جميع النقاط المكتسبة والمخصومة'
+                    : 'View all earned and deducted points',
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Icon(
+          isArabic
+              ? Icons.chevron_right
+              : Icons.chevron_left,
+          color: AppColors.textSecondary,
+        ),
+      ],
+    ),
+  ),
 ),
 
 const SizedBox(height: AppSpacing.xl),
