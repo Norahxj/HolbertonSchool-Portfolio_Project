@@ -26,7 +26,7 @@ class WelcomeScreen extends StatelessWidget {
       body: ScreenBackground(
         child: SafeArea(
   child: SingleChildScrollView(
-    padding: const EdgeInsets.all(AppSpacing.lg),
+    padding: const EdgeInsets.all(AppSpacing.md),
     child: Column(
               children: [
                 Align(
