@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -8,6 +10,9 @@ class ParentDashboardController extends ChangeNotifier {
   final ParentDashboardRepository _repository;
 
   ParentDashboardController(this._repository);
+
+  bool get isArabic =>
+      PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   ParentDashboardData? _data;
 
@@ -47,9 +52,15 @@ class ParentDashboardController extends ChangeNotifier {
     try {
       _data = await _repository.getDashboardData();
     } on DioException catch (error) {
-      _errorMessage = _readBackendMessage(error) ?? 'تعذّر تحميل لوحة التحكم.';
+      _errorMessage =
+          _readBackendMessage(error) ??
+          (isArabic
+              ? 'تعذّر تحميل لوحة التحكم.'
+              : 'Failed to load the dashboard.');
     } catch (error) {
-      _errorMessage = 'تعذّر تحميل لوحة التحكم.';
+      _errorMessage = isArabic
+          ? 'تعذّر تحميل لوحة التحكم.'
+          : 'Failed to load the dashboard.';
 
       debugPrint('Loading parent dashboard failed: $error');
     } finally {
@@ -69,9 +80,15 @@ class ParentDashboardController extends ChangeNotifier {
     try {
       _data = await _repository.getDashboardData();
     } on DioException catch (error) {
-      _errorMessage = _readBackendMessage(error) ?? 'تعذّر تحديث لوحة التحكم.';
+      _errorMessage =
+          _readBackendMessage(error) ??
+          (isArabic
+              ? 'تعذّر تحديث لوحة التحكم.'
+              : 'Failed to refresh the dashboard.');
     } catch (error) {
-      _errorMessage = 'تعذّر تحديث لوحة التحكم.';
+      _errorMessage = isArabic
+          ? 'تعذّر تحديث لوحة التحكم.'
+          : 'Failed to refresh the dashboard.';
 
       debugPrint('Refreshing parent dashboard failed: $error');
     } finally {
@@ -112,7 +129,9 @@ class ParentDashboardController extends ChangeNotifier {
 
       return false;
     } catch (error) {
-      _errorMessage = 'تعذّر حذف الطفل. حاول مرة أخرى.';
+      _errorMessage = isArabic
+          ? 'تعذّر حذف الطفل. حاول مرة أخرى.'
+          : 'Failed to delete the child. Please try again.';
 
       debugPrint('Deleting child failed: $error');
 
@@ -135,19 +154,29 @@ class ParentDashboardController extends ChangeNotifier {
 
     switch (backendMessage) {
       case 'Child not found':
-        return 'لم يتم العثور على الطفل، أو أنه لم يعد مرتبطًا بهذه الأسرة.';
+        return isArabic
+            ? 'لم يتم العثور على الطفل، أو أنه لم يعد مرتبطًا بهذه الأسرة.'
+            : 'The child was not found or is no longer linked to this family.';
 
       case 'Parent not found':
-        return 'تعذّر العثور على حساب ولي الأمر.';
+        return isArabic
+            ? 'تعذّر العثور على حساب ولي الأمر.'
+            : 'The parent account could not be found.';
 
       case 'Parent access required':
-        return 'هذا الإجراء متاح لحساب ولي الأمر فقط.';
+        return isArabic
+            ? 'هذا الإجراء متاح لحساب ولي الأمر فقط.'
+            : 'This action is available to parent accounts only.';
 
       case 'Failed to delete child and related data':
-        return 'تعذّر حذف الطفل والبيانات المرتبطة به.';
+        return isArabic
+            ? 'تعذّر حذف الطفل والبيانات المرتبطة به.'
+            : 'Failed to delete the child and the related data.';
 
       default:
-        return 'تعذّر حذف الطفل. حاول مرة أخرى.';
+        return isArabic
+            ? 'تعذّر حذف الطفل. حاول مرة أخرى.'
+            : 'Failed to delete the child. Please try again.';
     }
   }
 

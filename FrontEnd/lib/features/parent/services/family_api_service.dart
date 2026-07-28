@@ -1,9 +1,14 @@
+import 'dart:ui';
+
 import 'package:dio/dio.dart';
 
 import '../../../core/network/dio_factory.dart';
 
 class FamilyApiService {
   final Dio _dio = DioFactory.getDio();
+
+  bool get isArabic =>
+      PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   Future<Map<String, dynamic>> getFamilyDetails() async {
     final response = await _dio.get('/family/me');
@@ -60,29 +65,43 @@ class FamilyApiService {
 
         switch (backendError) {
           case 'Invited email does not belong to an existing user':
-            return 'لا يوجد حساب ولي أمر بهذا البريد الإلكتروني';
+            return isArabic
+                ? 'لا يوجد حساب ولي أمر بهذا البريد الإلكتروني'
+                : 'No parent account exists with this email address';
 
           case 'You cannot invite yourself':
-            return 'لا يمكنك دعوة حسابك نفسه';
+            return isArabic
+                ? 'لا يمكنك دعوة حسابك نفسه'
+                : 'You cannot invite your own account';
 
           case 'User is already in your family':
-            return 'ولي الأمر موجود بالفعل في العائلة';
+            return isArabic
+                ? 'ولي الأمر موجود بالفعل في العائلة'
+                : 'This parent is already in the family';
 
           case 'This family already has this guardian type':
-            return 'يوجد بالفعل ولي أمر من النوع نفسه في العائلة';
+            return isArabic
+                ? 'يوجد بالفعل ولي أمر من النوع نفسه في العائلة'
+                : 'A parent with the same guardian type already exists in the family';
 
           case 'An invitation is already pending for this email':
-            return 'توجد دعوة معلّقة لهذا البريد بالفعل';
+            return isArabic
+                ? 'توجد دعوة معلّقة لهذا البريد بالفعل'
+                : 'An invitation is already pending for this email';
 
           case 'Current user is not assigned to a family':
           case 'Family not found':
-            return 'تعذّر العثور على بيانات العائلة';
+            return isArabic
+                ? 'تعذّر العثور على بيانات العائلة'
+                : 'Unable to find the family information';
         }
 
         final errors = data['errors'];
 
         if (errors != null) {
-          return 'تأكدي من صحة البيانات المدخلة';
+          return isArabic
+              ? 'تأكدي من صحة البيانات المدخلة'
+              : 'Please check the entered information';
         }
 
         if (backendError != null && backendError.isNotEmpty) {
@@ -91,6 +110,8 @@ class FamilyApiService {
       }
     }
 
-    return 'حدث خطأ، حاولي مرة أخرى';
+    return isArabic
+        ? 'حدث خطأ، حاولي مرة أخرى'
+        : 'An error occurred. Please try again';
   }
 }

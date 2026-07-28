@@ -1,11 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
-  
+
 class TrustChildCard extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
-
 
   const TrustChildCard({
     super.key,
@@ -13,6 +14,8 @@ class TrustChildCard extends StatelessWidget {
     required this.onChanged,
   });
 
+  bool get isArabic =>
+      PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +29,29 @@ class TrustChildCard extends StatelessWidget {
       child: SwitchListTile(
         contentPadding: EdgeInsets.zero,
         controlAffinity: ListTileControlAffinity.leading,
-        title: const Align(
-          alignment: Alignment.centerRight,
+        title: Align(
+          alignment:
+              isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'هل تثق بجدية طفلك في هذه المهمة؟',
-            textAlign: TextAlign.right,
+            isArabic
+                ? 'هل تثق بجدية طفلك في هذه المهمة؟'
+                : 'Do you trust your child to complete this task seriously?',
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
           ),
         ),
-        subtitle: const Align(
-          alignment: Alignment.centerRight,
+        subtitle: Align(
+          alignment:
+              isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
-            'إذا وثقت، ستُعتمد المهمة تلقائيًا',
-            textAlign: TextAlign.right,
+            isArabic
+                ? 'إذا وثقت، ستُعتمد المهمة تلقائيًا'
+                : 'If you do, the task will be approved automatically',
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
           ),
         ),
         value: value,
         onChanged: onChanged,
       ),
-    ); 
+    );
   }
 }

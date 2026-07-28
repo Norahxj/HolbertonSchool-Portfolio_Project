@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
@@ -13,6 +15,9 @@ class PointsSelector extends StatelessWidget {
     required this.onIncrease,
     required this.onDecrease,
   });
+
+  bool get isArabic =>
+      PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class PointsSelector extends StatelessWidget {
           const SizedBox(width: AppSpacing.xs),
 
           Text(
-            '$points نقطة',
+            isArabic ? '$points نقطة' : '$points points',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
