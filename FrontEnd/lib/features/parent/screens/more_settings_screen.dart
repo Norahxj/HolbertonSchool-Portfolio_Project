@@ -531,13 +531,12 @@ class _SettingsRow extends StatelessWidget {
             ),
 
             Icon(
-              isArabic
-                  ? Icons.chevron_left
-                  : Icons.chevron_right,
-              color:
-                  AppColors.textSecondary,
-              size: 20,
-            ),
+  isArabic
+      ? Icons.chevron_right
+      : Icons.chevron_left,
+  color: AppColors.textSecondary,
+  size: 20,
+),
           ],
         ),
       ),
