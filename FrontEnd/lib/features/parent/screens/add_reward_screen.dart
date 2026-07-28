@@ -24,19 +24,36 @@ class AddRewardScreen extends StatefulWidget {
 class _AddRewardScreenState extends State<AddRewardScreen> {
   final RewardApiService _rewardApiService = RewardApiService();
 
+  bool get isArabic =>
+      Localizations.localeOf(context).languageCode == 'ar';
+
+  String tr(String arabic, String english) {
+    return isArabic ? arabic : english;
+  }
+
   final TextEditingController nameController = TextEditingController();
 
   final TextEditingController descriptionController = TextEditingController();
 
-  final List<String> weekDays = const [
-    'الأحد',
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-  ];
+  List<String> get weekDays => isArabic
+      ? const [
+          'الأحد',
+          'الإثنين',
+          'الثلاثاء',
+          'الأربعاء',
+          'الخميس',
+          'الجمعة',
+          'السبت',
+        ]
+      : const [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ];
 
   int selectedUnlockDay = 3;
 
@@ -79,7 +96,10 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
     if (rewardName.isEmpty) {
       setState(() {
-        nameError = 'اكتب اسم المكافأة أولًا';
+        nameError = tr(
+          'اكتب اسم المكافأة أولًا',
+          'Enter the reward name first',
+        );
       });
 
       return;
@@ -107,7 +127,17 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(message ?? 'تعذّر حفظ المكافأة')));
+      ).showSnackBar(
+        SnackBar(
+          content: Text(
+            message ??
+                tr(
+                  'تعذّر حفظ المكافأة',
+                  'Could not save the reward',
+                ),
+          ),
+        ),
+      );
 
       debugPrint(
         'Save reward failed: '
@@ -118,7 +148,14 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('حدث خطأ أثناء حفظ المكافأة')),
+        SnackBar(
+          content: Text(
+            tr(
+              'حدث خطأ أثناء حفظ المكافأة',
+              'An error occurred while saving the reward',
+            ),
+          ),
+        ),
       );
 
       debugPrint('Save reward failed: $error');
@@ -152,14 +189,17 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
-                  textDirection: TextDirection.ltr,
+                  textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
                   children: [
                     const SizedBox(width: 44),
 
                     Expanded(
                       child: Center(
                         child: Text(
-                          'مكافأة جديدة',
+                          tr(
+                            'مكافأة جديدة',
+                            'New Reward',
+                          ),
                           style: AppTextStyles.arabicTitle,
                         ),
                       ),
@@ -171,38 +211,61 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
                 const SizedBox(height: AppSpacing.xl),
 
-                const _FieldLabel('اسم المكافأة'),
+                _FieldLabel(
+                  tr(
+                    'اسم المكافأة',
+                    'Reward name',
+                  ),
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
                 _RewardTextField(
                   controller: nameController,
-                  hint: 'مثال: رحلة إلى الحديقة',
+                  isArabic: isArabic,
+                  hint: tr(
+                    'مثال: رحلة إلى الحديقة',
+                    'Example: A trip to the park',
+                  ),
                   errorText: nameError,
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                const _FieldLabel('وصف المكافأة'),
+                _FieldLabel(
+                  tr(
+                    'وصف المكافأة',
+                    'Reward description',
+                  ),
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
                 _RewardTextField(
                   controller: descriptionController,
-                  hint: 'مثال: زيارة نهاية الأسبوع للحديقة مع العائلة',
+                  isArabic: isArabic,
+                  hint: tr(
+                    'مثال: زيارة نهاية الأسبوع للحديقة مع العائلة',
+                    'Example: A weekend visit to the park with the family',
+                  ),
                   maxLines: 3,
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                const _FieldLabel('تفتح المكافأة كل'),
+                _FieldLabel(
+                  tr(
+                    'تفتح المكافأة كل',
+                    'Reward unlock day',
+                  ),
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
                 Wrap(
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.sm,
-                  alignment: WrapAlignment.end,
+                  alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
                   children: [
                     for (int index = 0; index < weekDays.length; index++)
                       GestureDetector(
@@ -224,7 +287,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                           ),
                           child: Text(
                             weekDays[index],
-                            textDirection: TextDirection.rtl,
+                            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
@@ -258,9 +321,12 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
                       Expanded(
                         child: Text(
-                          'ستصبح المكافأة متاحة للطفل يوم '
-                          '${weekDays[selectedUnlockDay]} من كل أسبوع.',
-                          textAlign: TextAlign.right,
+                          isArabic
+                              ? 'ستصبح المكافأة متاحة للطفل يوم '
+                                    '${weekDays[selectedUnlockDay]} من كل أسبوع.'
+                              : 'The reward will become available to the child '
+                                    'every ${weekDays[selectedUnlockDay]}.',
+                          textAlign: isArabic ? TextAlign.right : TextAlign.left,
                           textDirection: TextDirection.rtl,
                           style: const TextStyle(
                             fontSize: 13,
@@ -276,7 +342,15 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                 const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
-                  text: isSaving ? 'جارٍ الحفظ...' : 'حفظ المكافأة',
+                  text: isSaving
+                      ? tr(
+                          'جارٍ الحفظ...',
+                          'Saving...',
+                        )
+                      : tr(
+                          'حفظ المكافأة',
+                          'Save Reward',
+                        ),
                   onPressed: isSaving ? null : _saveReward,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
@@ -302,11 +376,14 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic =
+        Localizations.localeOf(context).languageCode == 'ar';
+
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
       child: Text(
         text,
-        textDirection: TextDirection.rtl,
+        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -322,10 +399,12 @@ class _RewardTextField extends StatelessWidget {
   final String hint;
   final int maxLines;
   final String? errorText;
+  final bool isArabic;
 
   const _RewardTextField({
     required this.controller,
     required this.hint,
+    required this.isArabic,
     this.maxLines = 1,
     this.errorText,
   });
@@ -335,8 +414,8 @@ class _RewardTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       maxLines: maxLines,
-      textAlign: TextAlign.right,
-      textDirection: TextDirection.rtl,
+      textAlign: isArabic ? TextAlign.right : TextAlign.left,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       decoration: InputDecoration(
         hintText: hint,
         errorText: errorText,
