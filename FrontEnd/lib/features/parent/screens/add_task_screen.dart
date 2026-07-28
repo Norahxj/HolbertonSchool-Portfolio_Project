@@ -202,6 +202,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   void didUpdateWidget(covariant AddTaskScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.isArabic != widget.isArabic &&
+    selectedChildIds.isNotEmpty &&
+    selectedTaskType != null) {
+  _loadTaskSuggestions();
+}
 
     if (oldWidget.resetVersion != widget.resetVersion) {
       setState(() {
@@ -619,7 +624,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         if (childError != null) ...[
           const SizedBox(height: AppSpacing.sm),
           Align(
-            alignment: Alignment.centerRight,
+             alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
             child: Text(
               childError!,
               style: const TextStyle(color: Colors.red, fontSize: 12),
@@ -851,7 +858,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Align(
-              alignment: Alignment.centerRight,
+               alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
               child: Text(
                 categoryError!,
                 style: const TextStyle(color: Colors.red, fontSize: 12),
@@ -1123,7 +1132,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         if (pointsError != null) ...[
           const SizedBox(height: AppSpacing.sm),
           Align(
-            alignment: Alignment.centerRight,
+             alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
             child: Text(
               pointsError!,
               style: const TextStyle(color: Colors.red, fontSize: 12),
@@ -1259,6 +1270,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Column(
       children: [
         _FrequencyCard(
+          isArabic: widget.isArabic,
           title: _text('يوميًا', 'Daily'),
           subtitle: _text('تُنفَّذ المهمة كل يوم', 'The task is completed every day'),
           isSelected: selectedFrequency == 0,
@@ -1272,6 +1284,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const SizedBox(height: AppSpacing.md),
 
         _FrequencyCard(
+          isArabic: widget.isArabic,
           title: _text('مرة في الأسبوع', 'Once a Week'),
           subtitle: _text('تُنفَّذ المهمة مرة في الأسبوع', 'The task is completed once a week'),
           isSelected: selectedFrequency == 1,
@@ -1319,6 +1332,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         const SizedBox(height: AppSpacing.md),
 
         _FrequencyCard(
+          isArabic: widget.isArabic,
           title: _text('شهريًا', 'Monthly'),
           subtitle: _text('تُنفَّذ المهمة مرة في الشهر', 'The task is completed once a month'),
           isSelected: selectedFrequency == 2,
@@ -1396,7 +1410,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         if (frequencyError != null) ...[
           const SizedBox(height: AppSpacing.sm),
           Align(
-            alignment: Alignment.centerRight,
+             alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
             child: Text(
               frequencyError!,
               style: const TextStyle(color: Colors.red, fontSize: 12),
@@ -1407,7 +1423,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         if (recurrenceDayError != null) ...[
           const SizedBox(height: AppSpacing.sm),
           Align(
-            alignment: Alignment.centerRight,
+             alignment: widget.isArabic
+      ? Alignment.centerRight
+      : Alignment.centerLeft,
             child: Text(
               recurrenceDayError!,
               style: const TextStyle(color: Colors.red, fontSize: 12),
@@ -1693,7 +1711,9 @@ class _QuickAddCategory extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+           mainAxisAlignment:
+      isArabic ? MainAxisAlignment.end : MainAxisAlignment.start,
+      textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
           children: [
             Text(
               label,
@@ -1955,6 +1975,7 @@ class _SelectableChip extends StatelessWidget {
 // extraContent is an optional row shown below the title when this card
 // is selected, e.g. the weekly day picker or the monthly date picker.
 class _FrequencyCard extends StatelessWidget {
+   final bool isArabic;
   final String title;
   final String subtitle;
   final bool isSelected;
@@ -1964,6 +1985,7 @@ class _FrequencyCard extends StatelessWidget {
   const _FrequencyCard({
     required this.title,
     required this.subtitle,
+    required this.isArabic,
     required this.isSelected,
     required this.onTap,
     this.extraContent,
@@ -2003,10 +2025,12 @@ class _FrequencyCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment:
+    isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
+                        textAlign: isArabic ? TextAlign.right : TextAlign.left,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -2016,6 +2040,7 @@ class _FrequencyCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
+                         textAlign: isArabic ? TextAlign.right : TextAlign.left,
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
