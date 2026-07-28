@@ -14,7 +14,12 @@ import '../../../services/daily_feedback_api_service.dart';
 /// If today's feedback already exists, it shows the current mood and allows
 /// editing. The history list shows all past feedback entries.
 class DailyFeedbackScreen extends StatefulWidget {
-  const DailyFeedbackScreen({super.key});
+  final ChildModel child;
+
+  const DailyFeedbackScreen({
+    super.key,
+    required this.child,
+  });
 
   @override
   State<DailyFeedbackScreen> createState() => _DailyFeedbackScreenState();
@@ -22,10 +27,8 @@ class DailyFeedbackScreen extends StatefulWidget {
 
 class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   final DailyFeedbackApiService _feedbackService = DailyFeedbackApiService();
-  final ChildApiService _childService = ChildApiService();
 
-  List<ChildModel> _children = [];
-  ChildModel? _selectedChild;
+  late final ChildModel _selectedChild;
 
   List<DailyFeedbackModel> _feedbackHistory = [];
   DailyFeedbackModel? _todayFeedback;
@@ -39,38 +42,17 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
       Localizations.localeOf(context).languageCode == 'ar';
 
   @override
-  void initState() {
-    super.initState();
-    _loadChildren();
-  }
+void initState() {
+  super.initState();
 
-  Future<void> _loadChildren() async {
-    try {
-      final children = await _childService.getChildren();
-      if (mounted) {
-        setState(() {
-          _children = children;
-          if (children.isNotEmpty) {
-            _selectedChild = children.first;
-          }
-          _isLoading = false;
-        });
-        if (_selectedChild != null) {
-          await _loadFeedbackForChild(_selectedChild!.id);
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = isArabic
-              ? 'تعذّر تحميل بيانات الأطفال'
-              : 'Unable to load children data';
-          _isLoading = false;
-        });
-      }
-    }
-  }
+  _selectedChild = widget.child;
 
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _loadFeedbackForChild(_selectedChild.id);
+  });
+}
+
+  
   Future<void> _loadFeedbackForChild(String childId) async {
     setState(() {
       _isLoading = true;
@@ -108,8 +90,7 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   }
 
   Future<void> _submitFeedback() async {
-    if (_selectedChild == null || _selectedMood == null) return;
-
+if (_selectedMood == null) return;
     setState(() => _isSubmitting = true);
 
     try {
@@ -122,7 +103,7 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
       } else {
         // Create new feedback
         await _feedbackService.createFeedback(
-          childId: _selectedChild!.id,
+childId: _selectedChild.id,
           mood: _selectedMood!,
         );
       }
@@ -138,7 +119,7 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
             backgroundColor: AppColors.success,
           ),
         );
-        await _loadFeedbackForChild(_selectedChild!.id);
+        await _loadFeedbackForChild(_selectedChild.id);
       }
     } catch (e) {
       if (mounted) {
@@ -194,7 +175,9 @@ leading: Padding(
                   Text(_error!, style: const TextStyle(color: AppColors.error)),
                   const SizedBox(height: 12),
                   ElevatedButton(
-                    onPressed: _loadChildren,
+                    onPressed: () {
+  _loadFeedbackForChild(_selectedChild.id);
+},
                     child: Text(
                       isArabic ? 'إعادة المحاولة' : 'Try Again',
                     ),
@@ -207,58 +190,7 @@ leading: Padding(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // ── Child selector ─────────────────────────────────────
-                  if (_children.length > 1) ...[
-                    Text(
-                      isArabic ? 'اختر الطفل' : 'Choose a Child',
-                      style: AppTextStyles.body,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: _children.map((child) {
-                          final isSelected = _selectedChild?.id == child.id;
-                          return Padding(
-                            padding: const EdgeInsets.only(left: AppSpacing.sm),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() => _selectedChild = child);
-                                _loadFeedbackForChild(child.id);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.primary
-                                      : AppColors.card,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.primary
-                                        : AppColors.border,
-                                  ),
-                                ),
-                                child: Text(
-                                  child.name,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : AppColors.textPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                  ],
+                  
 
                   // ── Today's mood picker ────────────────────────────────
                   Container(
