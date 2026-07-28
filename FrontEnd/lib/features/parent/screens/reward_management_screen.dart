@@ -663,8 +663,8 @@ class _CurrentRewardCard extends StatelessWidget {
               children: [
                 Text(
                   reward.rewardName,
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -773,7 +773,7 @@ class _QuickAddCategory extends StatelessWidget {
             ? 'لا توجد مكافآت مقترحة حاليًا'
             : 'No suggested rewards available',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+              style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
             )
           : Column(
               children: [
