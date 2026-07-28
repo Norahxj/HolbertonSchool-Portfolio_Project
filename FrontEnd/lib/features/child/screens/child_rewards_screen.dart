@@ -228,116 +228,128 @@ class _RewardCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        textDirection:
+     child: Row(
+  textDirection:
       isArabic ? TextDirection.rtl : TextDirection.ltr,
+  children: [
+    Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: isUnlocked
+            ? Colors.white.withOpacity(0.2)
+            : AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Icon(
+        Icons.card_giftcard_outlined,
+        color: isUnlocked ? Colors.white : AppColors.primaryDark,
+        size: 22,
+      ),
+    ),
+
+    const SizedBox(width: AppSpacing.sm),
+
+    Expanded(
+      child: Column(
+        crossAxisAlignment: isArabic
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
-          // Claim button (only for unlocked)
-          if (isUnlocked)
-            ElevatedButton(
-              onPressed: onClaim,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-              ),
-              child: Text(
-  isArabic ? 'استلام' : 'Claim',
-  style: const TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 13,
-  ),
-),
-            ),
-          if (isClaimed)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.gold.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-  isArabic ? '🎉 تم' : '🎉 Claimed',
-  style: const TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 13,
-    color: AppColors.gold,
-  ),
-),
-            ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-    isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: [
-                Text(
-                  reward.rewardName,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-textDirection:
-    isArabic ? TextDirection.rtl : TextDirection.ltr,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isUnlocked ? Colors.white : AppColors.textPrimary,
-                  ),
-                ),
-                if (reward.description != null &&
-                    reward.description!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    reward.description!,
-                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
-textDirection:
-    isArabic ? TextDirection.rtl : TextDirection.ltr,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isUnlocked
-                          ? Colors.white70
-                          : AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 4),
-                Text(
-                  _statusLabel(reward),
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-textDirection:
-    isArabic ? TextDirection.rtl : TextDirection.ltr,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isUnlocked
-                        ? Colors.white70
-                        : AppColors.textSecondary,
-                  ),
-                ),
-              ],
+          Text(
+            reward.rewardName,
+            textAlign:
+                isArabic ? TextAlign.right : TextAlign.left,
+            textDirection:
+                isArabic ? TextDirection.rtl : TextDirection.ltr,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color:
+                  isUnlocked ? Colors.white : AppColors.textPrimary,
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isUnlocked
-                  ? Colors.white.withOpacity(0.2)
-                  : AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(14),
+          if (reward.description != null &&
+              reward.description!.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              reward.description!,
+              textAlign:
+                  isArabic ? TextAlign.right : TextAlign.left,
+              textDirection:
+                  isArabic ? TextDirection.rtl : TextDirection.ltr,
+              style: TextStyle(
+                fontSize: 13,
+                color: isUnlocked
+                    ? Colors.white70
+                    : AppColors.textSecondary,
+              ),
             ),
-            child: Icon(
-              Icons.card_giftcard_outlined,
-              color: isUnlocked ? Colors.white : AppColors.primaryDark,
-              size: 22,
+          ],
+          const SizedBox(height: 4),
+          Text(
+            _statusLabel(reward),
+            textAlign:
+                isArabic ? TextAlign.right : TextAlign.left,
+            textDirection:
+                isArabic ? TextDirection.rtl : TextDirection.ltr,
+            style: TextStyle(
+              fontSize: 12,
+              color: isUnlocked
+                  ? Colors.white70
+                  : AppColors.textSecondary,
             ),
           ),
         ],
       ),
+    ),
+
+    const SizedBox(width: AppSpacing.md),
+
+    if (isUnlocked)
+      ElevatedButton(
+        onPressed: onClaim,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: AppColors.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
+          ),
+        ),
+        child: Text(
+          isArabic ? 'استلام' : 'Claim',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+          ),
+        ),
+      ),
+
+    if (isClaimed)
+      Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.gold.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          isArabic ? '🎉 تم' : '🎉 Claimed',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            color: AppColors.gold,
+          ),
+        ),
+      ),
+  ],
+),
     );
   }
 
