@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_rtl_align.dart';
 import '../../../core/constants/app_colors.dart';
@@ -5,7 +6,7 @@ import '../../../core/constants/app_spacing.dart';
 import 'package:frontend/features/parent/widgets/task_error_text.dart';
 import 'package:frontend/features/parent/widgets/task_text_field.dart';
 import 'package:frontend/features/parent/widgets/points_selector.dart';
-import 'package:frontend/features/parent/widgets/trust_child_card.dart';  
+import 'package:frontend/features/parent/widgets/trust_child_card.dart';
 import 'package:frontend/features/parent/widgets/task_info_box.dart';
 
 class TaskDetailsStep extends StatelessWidget {
@@ -36,12 +37,17 @@ class TaskDetailsStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic =
+        Localizations.localeOf(context).languageCode == 'ar';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TaskTextField(
-          label: 'اسم المهمة',
-          hint: 'مثال: ترتيب سريرك',
+          label: isArabic ? 'اسم المهمة' : 'Task Name',
+          hint: isArabic
+              ? 'مثال: ترتيب سريرك'
+              : 'Example: Make your bed',
           controller: nameController,
           errorText: titleError,
         ),
@@ -49,8 +55,10 @@ class TaskDetailsStep extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
 
         TaskTextField(
-          label: 'الوصف',
-          hint: 'صف المهمة باختصار...',
+          label: isArabic ? 'الوصف' : 'Description',
+          hint: isArabic
+              ? 'صف المهمة باختصار...'
+              : 'Briefly describe the task...',
           controller: descriptionController,
           maxLines: 2,
           errorText: descriptionError,
@@ -58,16 +66,16 @@ class TaskDetailsStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
 
-        const RtlAlign(
+        RtlAlign(
           child: Text(
-            'نقاط نور',
+            isArabic ? 'نقاط نور' : 'Noor Points',
             textAlign: TextAlign.right,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+              color: AppColors.textPrimary,
+            ),
           ),
-        ),
         ),
 
         const SizedBox(height: AppSpacing.sm),
@@ -91,8 +99,10 @@ class TaskDetailsStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.md),
 
-        const InfoBox(
-          text: 'نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.',
+        InfoBox(
+          text: isArabic
+              ? 'نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.'
+              : 'Noor Points motivate children and encourage them to continue.',
         ),
 
         const SizedBox(height: AppSpacing.md),

@@ -1,8 +1,9 @@
+
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_spacing.dart';
 import 'package:frontend/features/parent/widgets/task_type_card.dart';
-import 'package:frontend/features/parent/widgets/task_error_text.dart'; 
+import 'package:frontend/features/parent/widgets/task_error_text.dart';
 
 class TaskTypeStep extends StatelessWidget {
   final int? selectedType;
@@ -18,11 +19,25 @@ class TaskTypeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     final types = [
-      (Icons.mosque_outlined, 'المهام الثقافية'),
-      (Icons.shopping_bag_outlined, 'المهام اليومية'),
-      (Icons.menu_book_outlined, 'المهام الدينية'),
-      (Icons.credit_card, 'المهام المالية'),
+      (
+        Icons.mosque_outlined,
+        isArabic ? 'المهام الثقافية' : 'Cultural Tasks',
+      ),
+      (
+        Icons.shopping_bag_outlined,
+        isArabic ? 'المهام اليومية' : 'Daily Tasks',
+      ),
+      (
+        Icons.menu_book_outlined,
+        isArabic ? 'المهام الدينية' : 'Religious Tasks',
+      ),
+      (
+        Icons.credit_card,
+        isArabic ? 'المهام المالية' : 'Financial Tasks',
+      ),
     ];
 
     return Column(

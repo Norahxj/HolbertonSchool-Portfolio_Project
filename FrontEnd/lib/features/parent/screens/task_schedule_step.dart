@@ -36,11 +36,16 @@ class TaskScheduleStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic =
+        Localizations.localeOf(context).languageCode == 'ar';
+
     return Column(
       children: [
         FrequencyCard(
-          title: 'يوميًا',
-          subtitle: 'تُنفَّذ المهمة كل يوم',
+          title: isArabic ? 'يوميًا' : 'Daily',
+          subtitle: isArabic
+              ? 'تُنفَّذ المهمة كل يوم'
+              : 'The task is completed every day',
           isSelected: selectedFrequency == 0,
           onTap: () => onFrequencyChanged(0),
         ),
@@ -48,24 +53,28 @@ class TaskScheduleStep extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
 
         FrequencyCard(
-          title: 'مرة في الأسبوع',
-          subtitle: 'تُنفَّذ المهمة مرة في الأسبوع',
+          title: isArabic ? 'مرة في الأسبوع' : 'Once a week',
+          subtitle: isArabic
+              ? 'تُنفَّذ المهمة مرة في الأسبوع'
+              : 'The task is completed once a week',
           isSelected: selectedFrequency == 1,
           onTap: () => onFrequencyChanged(1),
           child: selectedFrequency == 1
-              ? _buildWeeklyDays()
+              ? _buildWeeklyDays(isArabic)
               : null,
         ),
 
         const SizedBox(height: AppSpacing.md),
 
         FrequencyCard(
-          title: 'شهريًا',
-          subtitle: 'تُنفَّذ المهمة مرة في الشهر',
+          title: isArabic ? 'شهريًا' : 'Monthly',
+          subtitle: isArabic
+              ? 'تُنفَّذ المهمة مرة في الشهر'
+              : 'The task is completed once a month',
           isSelected: selectedFrequency == 2,
           onTap: () => onFrequencyChanged(2),
           child: selectedFrequency == 2
-              ? _buildMonthlyDays()
+              ? _buildMonthlyDays(isArabic)
               : null,
         ),
 
@@ -82,23 +91,71 @@ class TaskScheduleStep extends StatelessWidget {
     );
   }
 
-  Widget _buildWeeklyDays() {
+  Widget _buildWeeklyDays(bool isArabic) {
+    final displayedWeekDays = weekDays
+        .map((day) => _translateWeekDay(day, isArabic))
+        .toList();
+
+    final selectedDayIndex = weekDays.indexOf(selectedWeeklyDay);
+
+    final displayedSelectedDay = selectedDayIndex >= 0
+        ? displayedWeekDays[selectedDayIndex]
+        : selectedWeeklyDay;
+
     return SelectableOptions(
-      title: 'اختر يوم الأسبوع',
-      options: weekDays,
-      selected: selectedWeeklyDay,
-      onSelected: onWeeklyDayChanged,
+      title: isArabic
+          ? 'اختر يوم الأسبوع'
+          : 'Select a day of the week',
+      options: displayedWeekDays,
+      selected: displayedSelectedDay,
+      onSelected: (selectedDay) {
+        final selectedIndex = displayedWeekDays.indexOf(selectedDay);
+
+        if (selectedIndex >= 0) {
+          onWeeklyDayChanged(weekDays[selectedIndex]);
+        }
+      },
     );
   }
 
-  Widget _buildMonthlyDays() {
+  Widget _buildMonthlyDays(bool isArabic) {
     return SelectableOptions(
-      title: 'اختر تاريخ التكرار',
+      title: isArabic
+          ? 'اختر تاريخ التكرار'
+          : 'Select the recurrence date',
       options: monthlyDays.map((day) => '$day').toList(),
       selected: '$selectedMonthlyDay',
       onSelected: (day) {
         onMonthlyDayChanged(int.parse(day));
       },
     );
+  }
+
+  String _translateWeekDay(String day, bool isArabic) {
+    const arabicDays = {
+      'Saturday': 'السبت',
+      'Sunday': 'الأحد',
+      'Monday': 'الاثنين',
+      'Tuesday': 'الثلاثاء',
+      'Wednesday': 'الأربعاء',
+      'Thursday': 'الخميس',
+      'Friday': 'الجمعة',
+    };
+
+    const englishDays = {
+      'السبت': 'Saturday',
+      'الأحد': 'Sunday',
+      'الاثنين': 'Monday',
+      'الثلاثاء': 'Tuesday',
+      'الأربعاء': 'Wednesday',
+      'الخميس': 'Thursday',
+      'الجمعة': 'Friday',
+    };
+
+    if (isArabic) {
+      return arabicDays[day] ?? day;
+    }
+
+    return englishDays[day] ?? day;
   }
 }
