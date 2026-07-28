@@ -1591,32 +1591,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
 // Round back button in the top-right corner. Always exits the whole
 // wizard, no matter which step is showing (same as every mockup screen).
-class _RoundBackButton extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _RoundBackButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // One child avatar + name used on Step 0, with a checkmark badge when
 // selected. Tapping toggles that child in or out of the task.

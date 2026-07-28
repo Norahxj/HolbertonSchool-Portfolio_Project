@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import '../../../core/widgets/app_page_header.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -292,26 +292,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        children: [
-                          const SizedBox(width: 44),
-
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                isArabic ? 'الملف الشخصي' : 'Profile',
-                                style: AppTextStyles.arabicTitle,
-                              ),
-                            ),
-                          ),
-
-                          _RoundBackButton(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      ),
+                      AppPageHeader(
+  title: isArabic ? 'الملف الشخصي' : 'Profile',
+  onBack: () {
+    Navigator.pop(context);
+  },
+),
 
                       const SizedBox(height: AppSpacing.xl),
 
@@ -455,32 +441,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-class _RoundBackButton extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _RoundBackButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _FieldLabel extends StatelessWidget {
   final String text;

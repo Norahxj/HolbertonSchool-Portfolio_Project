@@ -9,6 +9,7 @@ import '../../../models/child_model.dart';
 import '../../../models/task_assignment_model.dart';
 import '../../../services/task_api_service.dart';
 import '../services/child_api_service.dart';
+import '../../../core/widgets/app_page_header.dart';
 
 class TaskReviewScreen extends StatefulWidget {
   const TaskReviewScreen({super.key});
@@ -277,28 +278,12 @@ for (final entry in assignmentsByChild) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    textDirection: TextDirection.ltr,
-                    children: [
-                      const SizedBox(width: 44),
-
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            tr('مراجعة المهام', 'Task Review'),
-                            style: AppTextStyles.arabicTitle,
-                          ),
-                        ),
-                      ),
-
-                      _BackButton(
-                        isArabic: isArabic,
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
+                 AppPageHeader(
+  title: tr('مراجعة المهام', 'Task Review'),
+  onBack: () {
+    Navigator.pop(context);
+  },
+),
 
                   const SizedBox(height: AppSpacing.sm),
 
@@ -632,31 +617,3 @@ class _ErrorCard extends StatelessWidget {
   }
 }
 
-class _BackButton extends StatelessWidget {
-  final bool isArabic;
-  final VoidCallback onTap;
-
-  const _BackButton({required this.isArabic, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            isArabic
-                ? Icons.arrow_forward_rounded
-                : Icons.arrow_back_rounded,
-            color: AppColors.primaryDark,
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -282,32 +282,7 @@ for (final entry in wishesByChild) {
 }
 
 // Round back button in the top-right corner, same style as other screens.
-class _RoundBackButton extends StatelessWidget {
-  final VoidCallback onTap;
 
-  const _RoundBackButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // A small pill used for both the "بانتظار الموافقة" and "معتمدة" tags.
 class _StatusTag extends StatelessWidget {

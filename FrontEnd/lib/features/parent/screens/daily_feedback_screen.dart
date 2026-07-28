@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/widgets/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -170,15 +170,19 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
           isArabic ? 'التقييم اليومي' : 'Daily Feedback',
           style: AppTextStyles.arabicTitle,
         ),
-        leading: IconButton(
-          icon: Icon(
-            isArabic
-                ? Icons.arrow_forward_ios
-                : Icons.arrow_back_ios,
-            color: AppColors.textPrimary,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leadingWidth: 68,
+leading: Padding(
+  padding: const EdgeInsetsDirectional.only(
+    start: 12,
+  ),
+  child: Center(
+    child: AppBackButton(
+      onTap: () {
+        Navigator.pop(context);
+      },
+    ),
+  ),
+),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

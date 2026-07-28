@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import '../../../core/widgets/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -287,13 +287,12 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
   alignment: widget.isArabic
       ? Alignment.centerRight
       : Alignment.centerLeft,
-  child: _RoundBackButton(
-  isArabic: widget.isArabic,
-  onTap: () {
-    Navigator.pop(context, true);
-  },
+  child: AppBackButton(
+    onTap: () {
+      Navigator.pop(context, true);
+    },
+  ),
 ),
-              ),
 
               const SizedBox(height: AppSpacing.lg),
 
@@ -574,35 +573,3 @@ textDirection:
   }
 }
 
-class _RoundBackButton extends StatelessWidget {
-  final VoidCallback onTap;
-  final bool isArabic;
-
-  const _RoundBackButton({
-    required this.onTap,
-    required this.isArabic,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: SizedBox(
-  width: 44,
-  height: 44,
-  child: Icon(
-    isArabic
-        ? Icons.arrow_forward_rounded
-        : Icons.arrow_back_rounded,
-    size: 18,
-    color: AppColors.primaryDark,
-  ),
-),
-      ),
-    );
-  }
-}

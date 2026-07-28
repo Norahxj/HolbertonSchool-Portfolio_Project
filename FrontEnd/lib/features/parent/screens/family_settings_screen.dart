@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/widgets/app_page_header.dart';
 import '../services/family_api_service.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -334,25 +334,14 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
                 crossAxisAlignment:
                     CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            isArabic
-                                ? 'إعدادات العائلة'
-                                : 'Family Settings',
-                            style:
-                                AppTextStyles.arabicTitle,
-                          ),
-                        ),
-                      ),
-                      _RoundBackButton(
-                        onTap: () =>
-                            Navigator.pop(context),
-                      ),
-                    ],
-                  ),
+                  AppPageHeader(
+  title: isArabic
+      ? 'إعدادات العائلة'
+      : 'Family Settings',
+  onBack: () {
+    Navigator.pop(context);
+  },
+),
                   const SizedBox(height: AppSpacing.xl),
                   _FieldLabel(
                     isArabic ? 'اسم العائلة' : 'Family Name',
@@ -699,34 +688,6 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   }
 }
 
-class _RoundBackButton extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _RoundBackButton({
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 18,
-            color: AppColors.primaryDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _FieldLabel extends StatelessWidget {
   final String text;

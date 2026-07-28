@@ -9,6 +9,7 @@ import '../../../models/child_dashboard_model.dart';
 import '../../../models/child_model.dart';
 import '../../../models/task_assignment_model.dart';
 import '../../../services/task_api_service.dart';
+import '../../../core/widgets/app_page_header.dart';
 
 class ChildProfileScreen extends StatefulWidget {
   final ChildModel child;
@@ -292,29 +293,15 @@ class _ProfileHeader extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             children: [
-              Row(
-                textDirection: TextDirection.ltr,
-                children: [
-                  const SizedBox(width: 44),
-
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        child.name,
-                        style: AppTextStyles.arabicTitle.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  _HeaderBackButton(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
+              AppPageHeader(
+  title: child.name,
+  titleColor: Colors.white,
+  buttonBackgroundColor: Colors.white.withOpacity(0.18),
+  buttonIconColor: Colors.white,
+  onBack: () {
+    Navigator.pop(context);
+  },
+),
 
               const SizedBox(height: AppSpacing.lg),
 
@@ -339,28 +326,6 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-class _HeaderBackButton extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _HeaderBackButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white.withOpacity(0.18),
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: const SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(Icons.arrow_forward_rounded, color: Colors.white),
-        ),
-      ),
-    );
-  }
-}
 
 
 
