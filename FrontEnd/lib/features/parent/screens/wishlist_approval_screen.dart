@@ -44,6 +44,9 @@ class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
   List<_WishEntry> _pendingWishes = [];
   List<_WishEntry> _approvedWishes = [];
 
+  bool get isArabic =>
+      Localizations.localeOf(context).languageCode == 'ar';
+
   @override
   void initState() {
     super.initState();
@@ -100,7 +103,9 @@ for (final entry in wishesByChild) {
   if (!mounted) return;
 
   setState(() {
-    _errorMessage = 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
+    _errorMessage = isArabic
+        ? 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.'
+        : 'An error occurred while loading wishes. Please try again.';
     _isLoading = false;
   });
 }
@@ -113,7 +118,13 @@ for (final entry in wishesByChild) {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تعذّرت الموافقة على الأمنية')),
+          SnackBar(
+            content: Text(
+              isArabic
+                  ? 'تعذّرت الموافقة على الأمنية'
+                  : 'Unable to approve the wish',
+            ),
+          ),
         );
       }
     }
@@ -127,7 +138,13 @@ for (final entry in wishesByChild) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('تعذّر رفض الأمنية')));
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              isArabic ? 'تعذّر رفض الأمنية' : 'Unable to reject the wish',
+            ),
+          ),
+        );
       }
     }
   }
@@ -147,7 +164,7 @@ for (final entry in wishesByChild) {
                     Expanded(
                       child: Center(
                         child: Text(
-                          'موافقة الأمنيات',
+                          isArabic ? 'موافقة الأمنيات' : 'Wish Approval',
                           style: AppTextStyles.arabicTitle,
                         ),
                       ),
@@ -158,7 +175,9 @@ for (final entry in wishesByChild) {
                 const SizedBox(height: AppSpacing.sm),
 
                 Text(
-                  'راجع أمنيات أطفالك وحدّد نقاط نور المطلوبة',
+                  isArabic
+                      ? 'راجع أمنيات أطفالك وحدّد نقاط نور المطلوبة'
+                      : 'Review your children’s wishes and set the required Noor points',
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
@@ -184,19 +203,21 @@ for (final entry in wishesByChild) {
                         const SizedBox(height: 12),
                         ElevatedButton(
                           onPressed: _loadWishes,
-                          child: const Text('إعادة المحاولة'),
+                          child: Text(
+                            isArabic ? 'إعادة المحاولة' : 'Try Again',
+                          ),
                         ),
                       ],
                     ),
                   )
                 else if (_pendingWishes.isEmpty && _approvedWishes.isEmpty)
-                  const Center(
+                  Center(
                     child: Padding(
-                      padding: EdgeInsets.all(32),
+                      padding: const EdgeInsets.all(32),
                       child: Text(
-                        'لا توجد أمنيات بعد.',
+                        isArabic ? 'لا توجد أمنيات بعد.' : 'No wishes yet.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.textSecondary,
                         ),
@@ -210,7 +231,9 @@ for (final entry in wishesByChild) {
                       childName: entry.childName,
                       avatarIndex: entry.avatarIndex,
                       wishTitle: entry.wish.name,
-                      subtitle: 'أضاف هذه الأمنية إلى قائمته',
+                      subtitle: isArabic
+                          ? 'أضاف هذه الأمنية إلى قائمته'
+                          : 'Added this wish to the list',
                       startingPoints: entry.wish.targetPoints ?? 250,
                       onApprove: (points) =>
                           _approveWish(entry.wish.id, points),
@@ -223,7 +246,9 @@ for (final entry in wishesByChild) {
                       childName: entry.childName,
                       avatarIndex: entry.avatarIndex,
                       wishTitle: entry.wish.name,
-                      subtitle: 'تمت الموافقة على هذه الأمنية',
+                      subtitle: isArabic
+                          ? 'تمت الموافقة على هذه الأمنية'
+                          : 'This wish has been approved',
                       points: entry.wish.targetPoints ?? 0,
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -232,12 +257,14 @@ for (final entry in wishesByChild) {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'عند الموافقة تُخصم نقاط نور من رصيد الطفل مقابل الأمنية',
-                      style: TextStyle(
+                      isArabic
+                          ? 'عند الموافقة تُخصم نقاط نور من رصيد الطفل مقابل الأمنية'
+                          : 'When approved, Noor points are deducted from the child’s balance for the wish',
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
@@ -331,12 +358,14 @@ class _WishHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Row(
       children: [
         Expanded(
           child: Text(
             '$childName . $wishTitle',
-            textAlign: TextAlign.right,
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -395,6 +424,8 @@ class _PendingWishCardState extends State<_PendingWishCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -415,8 +446,8 @@ class _PendingWishCardState extends State<_PendingWishCard> {
 
           Row(
             children: [
-              const _StatusTag(
-                label: 'بانتظار الموافقة',
+              _StatusTag(
+                label: isArabic ? 'بانتظار الموافقة' : 'Pending Approval',
                 backgroundColor: AppColors.primaryLight,
                 textColor: AppColors.primaryDark,
               ),
@@ -424,7 +455,7 @@ class _PendingWishCardState extends State<_PendingWishCard> {
               Expanded(
                 child: Text(
                   widget.subtitle,
-                  textAlign: TextAlign.right,
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -482,9 +513,9 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                   },
                 ),
                 const Spacer(),
-                const Text(
-                  'نقاط نور المطلوبة',
-                  style: TextStyle(
+                Text(
+                  isArabic ? 'نقاط نور المطلوبة' : 'Required Noor Points',
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -505,8 +536,12 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                     // Don't allow approving with 0 or negative points.
                     if (requiredPoints <= 0) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('يجب أن تكون النقاط أكبر من صفر'),
+                        SnackBar(
+                          content: Text(
+                            isArabic
+                                ? 'يجب أن تكون النقاط أكبر من صفر'
+                                : 'Points must be greater than zero',
+                          ),
                         ),
                       );
                       return;
@@ -519,12 +554,14 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
                           child: Text(
-                            'موافقة وخصم النقاط',
+                            isArabic
+                                ? 'موافقة وخصم النقاط'
+                                : 'Approve and Deduct Points',
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             style: TextStyle(
@@ -534,8 +571,8 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 6),
-                        Icon(Icons.check, color: Colors.white, size: 16),
+                        const SizedBox(width: 6),
+                        const Icon(Icons.check, color: Colors.white, size: 16),
                       ],
                     ),
                   ),
@@ -552,19 +589,19 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'رفض',
+                          isArabic ? 'رفض' : 'Reject',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        SizedBox(width: 6),
-                        Icon(
+                        const SizedBox(width: 6),
+                        const Icon(
                           Icons.close,
                           color: AppColors.textPrimary,
                           size: 16,
@@ -634,6 +671,8 @@ final int points;
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -654,8 +693,8 @@ final int points;
 
           Row(
             children: [
-              const _StatusTag(
-                label: 'معتمدة',
+              _StatusTag(
+                label: isArabic ? 'معتمدة' : 'Approved',
                 backgroundColor: AppColors.success,
                 textColor: Colors.white,
               ),
@@ -663,7 +702,7 @@ final int points;
               Expanded(
                 child: Text(
                   subtitle,
-                  textAlign: TextAlign.right,
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -697,9 +736,9 @@ final int points;
                 const SizedBox(width: 4),
                 const Icon(Icons.auto_awesome, color: AppColors.gold, size: 16),
                 const Spacer(),
-                const Text(
-                  'تم خصمها من رصيده',
-                  style: TextStyle(
+                Text(
+                  isArabic ? 'تم خصمها من رصيده' : 'Deducted from the balance',
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
                   ),
