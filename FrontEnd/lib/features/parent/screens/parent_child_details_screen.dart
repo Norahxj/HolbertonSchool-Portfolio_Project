@@ -223,7 +223,7 @@ class _ParentChildDetailsView extends StatelessWidget {
 
 const SizedBox(height: AppSpacing.xl),
 InkWell(
-  borderRadius: BorderRadius.circular(24),
+  borderRadius: BorderRadius.circular(16),
   onTap: () {
     Navigator.push(
       context,
@@ -237,10 +237,10 @@ InkWell(
     );
   },
   child: Container(
-    padding: const EdgeInsets.all(AppSpacing.lg),
+    padding: const EdgeInsets.all(AppSpacing.md),
     decoration: BoxDecoration(
       color: AppColors.card,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(16),
       border: Border.all(
         color: AppColors.border,
       ),
@@ -248,11 +248,11 @@ InkWell(
     child: Row(
       children: [
         Container(
-          width: 52,
-          height: 52,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
             color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(
             Icons.history,
@@ -291,11 +291,12 @@ InkWell(
         ),
 
         Icon(
-          isArabic
-              ? Icons.chevron_right
-              : Icons.chevron_left,
-          color: AppColors.textSecondary,
-        ),
+  isArabic
+      ? Icons.arrow_back_ios_new
+      : Icons.arrow_forward_ios,
+  size: 18,
+  color: AppColors.textSecondary,
+),
       ],
     ),
   ),
