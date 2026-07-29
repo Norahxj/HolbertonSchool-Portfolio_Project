@@ -587,7 +587,8 @@ class _LanguageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
+  behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Padding(
         padding:
@@ -645,7 +646,6 @@ class _LanguageRow extends StatelessWidget {
 
             _LanguageToggle(
               isArabic: isArabic,
-               onTap: onTap,
             ),
           ],
         ),
@@ -656,48 +656,41 @@ class _LanguageRow extends StatelessWidget {
 
 class _LanguageToggle extends StatelessWidget {
   final bool isArabic;
-  final VoidCallback? onTap;
 
   const _LanguageToggle({
     required this.isArabic,
-    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryLight,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        onTap: onTap,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 6,
+        vertical: 5,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 6,
-            vertical: 5,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        textDirection: TextDirection.ltr,
+        children: [
+          _LanguageChoice(
+            text: 'ع',
+            isSelected: isArabic,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            textDirection: TextDirection.ltr,
-            children: [
-              _LanguageChoice(
-                text: 'ع',
-                isSelected: isArabic,
-              ),
-
-              const SizedBox(width: 5),
-
-              _LanguageChoice(
-                text: 'EN',
-                isSelected: !isArabic,
-              ),
-            ],
+          const SizedBox(width: 5),
+          _LanguageChoice(
+            text: 'EN',
+            isSelected: !isArabic,
           ),
-        ),
+        ],
       ),
     );
   }
 }
+
 class _LanguageChoice
     extends StatelessWidget {
   final String text;
