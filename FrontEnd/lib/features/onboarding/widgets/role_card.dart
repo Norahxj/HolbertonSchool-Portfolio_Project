@@ -166,7 +166,7 @@ class _RoleCardState extends State<RoleCard> {
                                       0xFF7047C7,
                                     ).withOpacity(0.25),
                                     blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                                    offset: const Offset(0, 6),
                                   ),
                                 ],
                               ),
