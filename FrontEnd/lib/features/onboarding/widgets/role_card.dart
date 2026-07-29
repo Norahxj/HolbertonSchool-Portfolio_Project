@@ -50,11 +50,7 @@ class _RoleCardState extends State<RoleCard> {
             child: InkWell(
               onTap: widget.onTap,
               borderRadius: BorderRadius.circular(28),
-
-              // منع تأثير Hover الافتراضي؛ لأننا أضفنا تأثيرًا
-              // يغطي الصورة والكرت بالكامل.
               hoverColor: Colors.transparent,
-
               child: Ink(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -80,7 +76,9 @@ class _RoleCardState extends State<RoleCard> {
                         vertical: 12,
                       ),
                       child: Row(
-                        textDirection: widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+                        textDirection: widget.isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         children: [
                           Expanded(
                             flex: 7,
@@ -154,30 +152,33 @@ class _RoleCardState extends State<RoleCard> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF7047C7),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF7047C7,
-                                  ).withOpacity(0.25),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
+                          Transform.translate(
+                            offset: const Offset(0, 4),
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF7047C7),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFF7047C7,
+                                    ).withOpacity(0.25),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Transform.flip(
+                                flipX: widget.isArabic,
+                                child: const Icon(
+                                  Icons.arrow_back_rounded,
+                                  color: Colors.white,
+                                  size: 27,
                                 ),
-                              ],
+                              ),
                             ),
-                            child: Transform.flip(
-  flipX: widget.isArabic,
-  child: const Icon(
-    Icons.arrow_back_rounded,
-    color: Colors.white,
-    size: 27,
-  ),
-),
                           ),
                         ],
                       ),
