@@ -153,7 +153,7 @@ class _RoleCardState extends State<RoleCard> {
                           ),
                           const SizedBox(width: 8),
                           Transform.translate(
-                            offset: const Offset(0, 25),
+                            offset: const Offset(0, 35),
                             child: Container(
                               width: 44,
                               height: 44,
