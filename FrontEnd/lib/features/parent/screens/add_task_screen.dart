@@ -20,11 +20,13 @@ import 'package:frontend/models/task_suggestion_model.dart';
 class AddTaskScreen extends StatefulWidget {
   final int resetVersion;
   final bool isArabic;
+  final VoidCallback onLanguageToggle;
 
   const AddTaskScreen({
     super.key,
     this.resetVersion = 0,
     this.isArabic = true,
+    required this.onLanguageToggle,
   });
 
   @override
@@ -1506,6 +1508,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                 ParentMainScreen(
                               initialIndex: 2,
                               isArabic: widget.isArabic,
+                              onLanguageToggle: widget.onLanguageToggle,
                             ),
                           ),
                         );
