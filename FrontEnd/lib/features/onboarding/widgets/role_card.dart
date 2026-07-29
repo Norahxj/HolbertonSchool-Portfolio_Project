@@ -80,15 +80,15 @@ class _RoleCardState extends State<RoleCard> {
                         vertical: 12,
                       ),
                       child: Row(
-                        textDirection: TextDirection.ltr,
+                        textDirection: widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
                         children: [
                           Expanded(
                             flex: 7,
                             child: Padding(
-                              padding: const EdgeInsets.only(
+                              padding: EdgeInsetsDirectional.only(
                                 top: 3,
                                 bottom: 3,
-                                right: 6,
+                                end: 6,
                               ),
                               child: Image.asset(
                                 widget.imagePath,
