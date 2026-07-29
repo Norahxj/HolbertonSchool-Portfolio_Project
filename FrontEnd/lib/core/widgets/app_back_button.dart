@@ -35,6 +35,7 @@ class AppBackButton extends StatelessWidget {
             arabic
                 ? Icons.arrow_forward_rounded
                 : Icons.arrow_back_rounded,
+                textDirection: TextDirection.ltr,
             size: 18,
             color: iconColor,
           ),
