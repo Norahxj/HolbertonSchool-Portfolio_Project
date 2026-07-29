@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'daily_feedback_screen.dart';
 import '../../../core/widgets/app_page_header.dart';
 import 'points_history_screen.dart';
+import 'child_tasks_screen.dart';
 
 
 class ParentChildDetailsScreen extends StatelessWidget {
@@ -379,21 +380,88 @@ InkWell(
 
 const SizedBox(height: AppSpacing.xl),
 
-                    Text(
-                      isArabic ? 'المهام' : 'Tasks',
-                      textAlign: TextAlign.start,
-                      style: AppTextStyles.sectionTitle,
-                    ),
+InkWell(
+  borderRadius: BorderRadius.circular(16),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChildTasksScreen(
+          childId: item.child.id,
+          childName: item.child.name,
+          isArabic: isArabic,
+          controller: tasksController,
+        ),
+      ),
+    );
+  },
+  child: Container(
+    padding: const EdgeInsets.all(AppSpacing.md),
+    decoration: BoxDecoration(
+      color: AppColors.card,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: AppColors.border,
+      ),
+    ),
+    child: Row(
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(
+            Icons.task_alt_outlined,
+            color: AppColors.primary,
+          ),
+        ),
 
-                    const SizedBox(height: AppSpacing.md),
+        const SizedBox(width: AppSpacing.md),
 
-                    _TasksSection(
-                      controller: tasksController,
-                      childId: item.child.id,
-                      isArabic: isArabic,
-                    ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isArabic ? 'المهام' : 'Tasks',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
 
-                    const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: 4),
+
+              Text(
+                isArabic
+                    ? 'عرض مهام ${item.child.name}'
+                    : 'View ${item.child.name}’s tasks',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Icon(
+          isArabic
+              ? Icons.arrow_back_ios_new
+              : Icons.arrow_forward_ios,
+          size: 18,
+          color: AppColors.textSecondary,
+        ),
+      ],
+    ),
+  ),
+),
+
+const SizedBox(height: AppSpacing.xl),
 
                     const Divider(color: AppColors.border),
 
