@@ -134,7 +134,7 @@ class WelcomeScreen extends StatelessWidget {
                 Column(
                   children: [
                     RoleCard(
-                      imagePath: 'assets/role_selection/parent.png',
+                      imagePath: 'assets/role_selection/parent1.png',
                       title: isArabic ? 'ولي أمر' : 'Parent',
                       description: isArabic
                           ? 'إدارة أطفالك ومتابعة المهام والمكافآت'
