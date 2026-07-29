@@ -25,14 +25,13 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
-  child: SingleChildScrollView(
-    padding: const EdgeInsets.all(AppSpacing.md),
-    child: Column(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
               children: [
                 Align(
-                  alignment: isArabic
-                      ? Alignment.centerLeft
-                      : Alignment.centerRight,
+                  alignment:
+                      isArabic ? Alignment.centerLeft : Alignment.centerRight,
                   child: LanguageToggle(
                     isArabic: isArabic,
                     onTap: onLanguageToggle,
@@ -130,47 +129,53 @@ class WelcomeScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: AppSpacing.md),
+                const SizedBox(height: AppSpacing.lg),
 
                 Column(
-  children: [
-    RoleCard(
-      imagePath: isArabic
-          ? 'assets/role_selection/parent_card_ar_v.png'
-          : 'assets/role_selection/parent_card_en_v.png',
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => AuthScreen(
-              isArabic: isArabic,
-              onLanguageToggle: onLanguageToggle,
-            ),
-          ),
-        );
-      },
-    ),
+                  children: [
+                    RoleCard(
+                      imagePath: 'assets/role_selection/parent_card.png',
+                      title: isArabic ? 'ولي أمر' : 'Parent',
+                      description: isArabic
+                          ? 'إدارة أطفالك ومتابعة المهام والمكافآت'
+                          : 'Manage your children, tasks, and rewards',
+                      isArabic: isArabic,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AuthScreen(
+                              isArabic: isArabic,
+                              onLanguageToggle: onLanguageToggle,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
 
-    const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
 
-    RoleCard(
-      imagePath: isArabic
-          ? 'assets/role_selection/child_card_ar_v.png'
-          : 'assets/role_selection/child_card_en_v.png',
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ChildPinLoginScreen(
-              isArabic: isArabic,
-              onLanguageToggle: onLanguageToggle,
-            ),
-          ),
-        );
-      },
-    ),
-  ],
-),
+                    RoleCard(
+                      imagePath: 'assets/role_selection/child_card.png',
+                      title: isArabic ? 'طفل' : 'Child',
+                      description: isArabic
+                          ? 'أنجز المهام واجمع النقاط واحصل على المكافآت'
+                          : 'Complete tasks, earn points, and unlock rewards',
+                      isArabic: isArabic,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChildPinLoginScreen(
+                              isArabic: isArabic,
+                              onLanguageToggle: onLanguageToggle,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
 
                 const SizedBox(height: AppSpacing.md),
               ],
@@ -186,7 +191,10 @@ class _SoftPill extends StatelessWidget {
   final double width;
   final double height;
 
-  const _SoftPill({required this.width, required this.height});
+  const _SoftPill({
+    required this.width,
+    required this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
