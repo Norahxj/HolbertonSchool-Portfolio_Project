@@ -171,11 +171,12 @@ class _RoleCardState extends State<RoleCard> {
                               ],
                             ),
                             child: Icon(
-  Icons.arrow_forward_rounded,
+                              widget.isArabic
+      ? Icons.arrow_forward_rounded
+      : Icons.arrow_back_rounded,
   color: Colors.white,
   size: 27,
-  textDirection:
-      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+ 
 )
                           ),
                         ],
