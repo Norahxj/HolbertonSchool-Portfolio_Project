@@ -129,7 +129,7 @@ class WelcomeScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: 48),
 
                 Column(
                   children: [

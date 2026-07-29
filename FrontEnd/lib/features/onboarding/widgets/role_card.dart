@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class RoleCard extends StatelessWidget {
+class RoleCard extends StatefulWidget {
   final String imagePath;
   final String title;
   final String description;
@@ -17,6 +17,13 @@ class RoleCard extends StatelessWidget {
   });
 
   @override
+  State<RoleCard> createState() => _RoleCardState();
+}
+
+class _RoleCardState extends State<RoleCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -24,131 +31,172 @@ class RoleCard extends StatelessWidget {
       child: SizedBox(
         width: screenWidth * 0.75,
         height: 170,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) {
+            setState(() {
+              _isHovered = true;
+            });
+          },
+          onExit: (_) {
+            setState(() {
+              _isHovered = false;
+            });
+          },
+          child: Material(
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(28),
-            child: Ink(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: widget.onTap,
+              borderRadius: BorderRadius.circular(28),
+
+              // منع تأثير Hover الافتراضي؛ لأننا أضفنا تأثيرًا
+              // يغطي الصورة والكرت بالكامل.
+              hoverColor: Colors.transparent,
+
+              child: Ink(
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 18,
-                    offset: const Offset(0, 8),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2,
                   ),
-                ],
-              ),
-              child: Row(
-                textDirection: TextDirection.ltr,
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 4,
-                        bottom: 4,
-                        right: 8,
-                      ),
-                      child: Image.asset(
-                        imagePath,
-                        fit: BoxFit.contain,
-                        alignment: Alignment.center,
-                        errorBuilder: (
-                          context,
-                          error,
-                          stackTrace,
-                        ) {
-                          return const Center(
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              size: 40,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
-                      ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
                     ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Directionality(
-                      textDirection: isArabic
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: isArabic
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
+                  ],
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        textDirection: TextDirection.ltr,
                         children: [
-                          Text(
-                            title,
-                            textAlign: isArabic
-                                ? TextAlign.right
-                                : TextAlign.left,
-                            style: const TextStyle(
-                              color: Color(0xFF7047C7),
-                              fontSize: 23,
-                              fontWeight: FontWeight.w800,
-                              height: 1.2,
+                          Expanded(
+                            flex: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                top: 4,
+                                bottom: 4,
+                                right: 8,
+                              ),
+                              child: Image.asset(
+                                widget.imagePath,
+                                fit: BoxFit.contain,
+                                alignment: Alignment.center,
+                                errorBuilder: (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                ) {
+                                  return const Center(
+                                    child: Icon(
+                                      Icons.broken_image_outlined,
+                                      size: 40,
+                                      color: Colors.grey,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            description,
-                            textAlign: isArabic
-                                ? TextAlign.right
-                                : TextAlign.left,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF676174),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              height: 1.5,
+                          Expanded(
+                            flex: 4,
+                            child: Directionality(
+                              textDirection: widget.isArabic
+                                  ? TextDirection.rtl
+                                  : TextDirection.ltr,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: widget.isArabic
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.title,
+                                    textAlign: widget.isArabic
+                                        ? TextAlign.right
+                                        : TextAlign.left,
+                                    style: const TextStyle(
+                                      color: Color(0xFF7047C7),
+                                      fontSize: 23,
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    widget.description,
+                                    textAlign: widget.isArabic
+                                        ? TextAlign.right
+                                        : TextAlign.left,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color(0xFF676174),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF7047C7),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFF7047C7,
+                                  ).withOpacity(0.25),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+  Icons.arrow_forward_rounded,
+  color: Colors.white,
+  size: 27,
+  textDirection:
+      widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
+)
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7047C7),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(
-                            0xFF7047C7,
-                          ).withOpacity(0.25),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+
+                    // طبقة الـ Hover فوق جميع محتويات الكرت.
+                    IgnorePointer(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 160),
+                        curve: Curves.easeOut,
+                        decoration: BoxDecoration(
+                          color: _isHovered
+                              ? Colors.black.withOpacity(0.055)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(28),
                         ),
-                      ],
+                      ),
                     ),
-                    child: Icon(
-                      isArabic
-                          ? Icons.arrow_forward_rounded
-                          : Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: 27,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
