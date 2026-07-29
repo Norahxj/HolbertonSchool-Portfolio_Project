@@ -280,8 +280,8 @@ InkWell(
 
               Text(
                 isArabic
-                    ? 'عرض جميع النقاط المكتسبة والمخصومة'
-                    : 'View all earned and deducted points',
+                    ? 'عرض سجل النقاط'
+                    : 'View history points',
                 style: const TextStyle(
                   color: AppColors.textSecondary,
                 ),
