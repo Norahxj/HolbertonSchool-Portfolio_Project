@@ -12,7 +12,12 @@ import '../services/child_api_service.dart';
 import '../../../core/widgets/app_page_header.dart';
 
 class TaskReviewScreen extends StatefulWidget {
-  const TaskReviewScreen({super.key});
+  final bool isArabic;
+
+  const TaskReviewScreen({
+    super.key,
+    required this.isArabic,
+  });
 
   @override
   State<TaskReviewScreen> createState() => _TaskReviewScreenState();
@@ -26,12 +31,11 @@ class _ReviewTask {
 }
 
 class _TaskReviewScreenState extends State<TaskReviewScreen> {
-  bool get isArabic =>
-      Localizations.localeOf(context).languageCode == 'ar';
+  
 
   String tr(String arabic, String english) {
-    return isArabic ? arabic : english;
-  }
+  return widget.isArabic ? arabic : english;
+}
 
   final ChildApiService _childApiService = ChildApiService();
 
@@ -279,7 +283,7 @@ for (final entry in assignmentsByChild) {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                  AppPageHeader(
-                  isArabic: isArabic,
+                  isArabic: widget.isArabic,
   title: tr('مراجعة المهام', 'Task Review'),
   onBack: () {
     Navigator.pop(context);
@@ -302,7 +306,7 @@ for (final entry in assignmentsByChild) {
                   if (!isLoading && errorMessage == null)
                     _PendingHeader(
                       count: pendingTasks.length,
-                      isArabic: isArabic,
+                      isArabic: widget.isArabic,
                     ),
 
                   const SizedBox(height: AppSpacing.md),
@@ -315,18 +319,18 @@ for (final entry in assignmentsByChild) {
                   else if (errorMessage != null)
                     _ErrorCard(
                       message: errorMessage!,
-                      isArabic: isArabic,
+                      isArabic: widget.isArabic,
                       onRetry: _loadPendingTasks,
                     )
                   else if (pendingTasks.isEmpty)
-                    _EmptyCard(isArabic: isArabic)
+                    _EmptyCard(isArabic: widget.isArabic)
                   else
                     ...pendingTasks.map((item) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.md),
                         child: _ReviewTaskCard(
                           item: item,
-                          isArabic: isArabic,
+                          isArabic: widget.isArabic,
                           timeText: _formatCompletedTime(
                             item.assignment.completedAt,
                           ),

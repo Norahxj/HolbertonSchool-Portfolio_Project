@@ -38,7 +38,7 @@ class _ParentDashboardView extends StatelessWidget {
 
     final wasAdded = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) => const AddChildScreen()),
+      MaterialPageRoute(builder: (_) =>  AddChildScreen(isArabic: isArabic,)),
     );
 
     if (!context.mounted) return;
@@ -53,7 +53,7 @@ class _ParentDashboardView extends StatelessWidget {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const TaskReviewScreen()),
+      MaterialPageRoute(builder: (_) =>  TaskReviewScreen(isArabic: isArabic,)),
     );
 
     if (!context.mounted) return;

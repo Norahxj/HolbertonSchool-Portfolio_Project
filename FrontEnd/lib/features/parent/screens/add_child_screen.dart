@@ -11,7 +11,12 @@ import '../../../core/widgets/app_text_field.dart';
 
 // Add Child screen (Screen 5).
 class AddChildScreen extends StatefulWidget {
-  const AddChildScreen({super.key});
+  final bool isArabic;
+
+  const AddChildScreen({
+    super.key,
+    required this.isArabic,
+  });
 
   @override
   State<AddChildScreen> createState() => _AddChildScreenState();
@@ -19,13 +24,11 @@ class AddChildScreen extends StatefulWidget {
 
 class _AddChildScreenState extends State<AddChildScreen> {
   final ChildApiService childApiService = ChildApiService();
-  bool get isArabic {
-    return Localizations.localeOf(context).languageCode == 'ar';
-  }
+  
 
   String tr(String arabic, String english) {
-    return isArabic ? arabic : english;
-  }
+  return widget.isArabic ? arabic : english;
+}
 
   int selectedAvatarIndex = 0;
 
@@ -313,11 +316,11 @@ class _AddChildScreenState extends State<AddChildScreen> {
             child: Column(
               children: [
                 Align(
-  alignment: isArabic
+  alignment: widget.isArabic
       ? Alignment.centerRight
       : Alignment.centerLeft,
    child:AppBackButton(
-  isArabic: isArabic,
+  isArabic: widget.isArabic,
   onTap: () {
     Navigator.pop(context);
   },
@@ -425,7 +428,7 @@ _AvatarOption(
                   icon: Icons.person_outline,
                   controller: nameController,
                   errorText: nameError,
-                  isArabic: isArabic,
+                  isArabic: widget.isArabic,
                 ),
 
                 const SizedBox(height: AppSpacing.md),
@@ -440,13 +443,13 @@ _AvatarOption(
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Align(
-                      alignment: isArabic
+                      alignment: widget.isArabic
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       child: Text(
                         birthDateError!,
                         textAlign:
-                            isArabic ? TextAlign.right : TextAlign.left,
+                            widget.isArabic ? TextAlign.right : TextAlign.left,
                         style: const TextStyle(
                           color: AppColors.error,
                           fontSize: 12,
@@ -484,7 +487,7 @@ _AvatarOption(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
                   errorText: phoneError,
-                  isArabic: isArabic,
+                  isArabic: widget.isArabic,
                 ),
 
                 const SizedBox(height: AppSpacing.xxl),

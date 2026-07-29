@@ -10,7 +10,12 @@ import '../../../models/user_model.dart';
 import '../../../services/user_api_service.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final bool isArabic;
+
+  const ProfileScreen({
+    super.key,
+    required this.isArabic,
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -19,8 +24,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final UserApiService _userApiService = UserApiService();
 
-  bool get isArabic =>
-      Localizations.localeOf(context).languageCode == 'ar';
+  bool get isArabic => widget.isArabic;
 
   final TextEditingController firstNameController = TextEditingController();
 

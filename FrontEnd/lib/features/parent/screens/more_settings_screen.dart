@@ -59,7 +59,7 @@ class _MoreSettingsScreenState
       context,
       MaterialPageRoute(
         builder: (_) =>
-            const ProfileScreen(),
+             ProfileScreen(isArabic: widget.isArabic,),
       ),
     );
 
@@ -387,7 +387,7 @@ class _SettingsCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (_) =>
-                      const FamilySettingsScreen(),
+                       FamilySettingsScreen(isArabic: isArabic,),
                 ),
               );
             },

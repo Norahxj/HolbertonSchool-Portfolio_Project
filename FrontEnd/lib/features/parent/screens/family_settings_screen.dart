@@ -8,17 +8,22 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 
 class FamilySettingsScreen extends StatefulWidget {
-  const FamilySettingsScreen({super.key});
+  final bool isArabic;
+
+  const FamilySettingsScreen({
+    super.key,
+    required this.isArabic,
+  });
 
   @override
-  State<FamilySettingsScreen> createState() => _FamilySettingsScreenState();
+  State<FamilySettingsScreen> createState() =>
+      _FamilySettingsScreenState();
 }
 
 class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   final FamilyApiService familyApiService = FamilyApiService();
 
-  bool get isArabic =>
-      Localizations.localeOf(context).languageCode == 'ar';
+  bool get isArabic => widget.isArabic;
 
   final TextEditingController familyNameController =
       TextEditingController();
