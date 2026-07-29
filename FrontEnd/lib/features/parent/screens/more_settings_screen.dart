@@ -13,7 +13,7 @@ import 'profile_screen.dart';
 
 class MoreSettingsScreen extends StatefulWidget {
   final bool isArabic;
-  final VoidCallback? onLanguageToggle;
+  final VoidCallback onLanguageToggle;
 
   const MoreSettingsScreen({
     super.key,
@@ -333,7 +333,7 @@ class _ProfileBanner extends StatelessWidget {
 
 class _SettingsCard extends StatelessWidget {
   final bool isArabic;
-  final VoidCallback? onLanguageToggle;
+  final VoidCallback onLanguageToggle;
   final VoidCallback onProfileTap;
   final VoidCallback onComingSoon;
 
@@ -401,6 +401,7 @@ class _SettingsCard extends StatelessWidget {
           _LanguageRow(
             isArabic: isArabic,
             onTap: onLanguageToggle,
+            
           ),
 
           const Divider(
@@ -578,7 +579,7 @@ class _ComingSoonTag extends StatelessWidget {
 
 class _LanguageRow extends StatelessWidget {
   final bool isArabic;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
   const _LanguageRow({
     required this.isArabic,

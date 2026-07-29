@@ -12,13 +12,13 @@ import 'wishlist_approval_screen.dart';
 class ParentMainScreen extends StatelessWidget {
   final int initialIndex;
   final bool isArabic;
-  final VoidCallback? onLanguageToggle;
+final VoidCallback onLanguageToggle;
 
   const ParentMainScreen({
     super.key,
     this.initialIndex = 2,
     this.isArabic = true,
-    this.onLanguageToggle,
+    required this.onLanguageToggle,
   });
 
   @override
@@ -35,7 +35,7 @@ class ParentMainScreen extends StatelessWidget {
 
 class _ParentNavigationView extends StatelessWidget {
   final bool isArabic;
-  final VoidCallback? onLanguageToggle;
+  final VoidCallback onLanguageToggle;
 
   const _ParentNavigationView({
     required this.isArabic,
