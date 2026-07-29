@@ -170,14 +170,16 @@ class _RoleCardState extends State<RoleCard> {
                                   ),
                                 ],
                               ),
-                              child: Transform.flip(
-                                flipX: widget.isArabic,
-                                child: const Icon(
-                                  Icons.arrow_back_rounded,
-                                  color: Colors.white,
-                                  size: 27,
-                                ),
-                              ),
+                              child: Directionality(
+  textDirection: TextDirection.ltr,
+  child: Icon(
+    widget.isArabic
+        ? Icons.arrow_forward_rounded
+        : Icons.arrow_back_rounded,
+    color: Colors.white,
+    size: 27,
+  ),
+),
                             ),
                           ),
                         ],
