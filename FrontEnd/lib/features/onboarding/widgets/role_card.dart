@@ -83,12 +83,12 @@ class _RoleCardState extends State<RoleCard> {
                         textDirection: TextDirection.ltr,
                         children: [
                           Expanded(
-                            flex: 5,
+                            flex: 7,
                             child: Padding(
                               padding: const EdgeInsets.only(
-                                top: 4,
-                                bottom: 4,
-                                right: 8,
+                                top: 3,
+                                bottom: 3,
+                                right: 6,
                               ),
                               child: Image.asset(
                                 widget.imagePath,
