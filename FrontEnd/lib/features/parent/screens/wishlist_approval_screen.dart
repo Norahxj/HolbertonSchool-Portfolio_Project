@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../core/widgets/child_avatar.dart';
+import 'package:provider/provider.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/widgets/app_refresh_indicator.dart';
+import '../../../core/widgets/child_avatar.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../../models/wish_model.dart';
-import 'package:frontend/features/parent/services/child_api_service.dart';
-import '../../../services/wishlist_api_service.dart';
+import '../controllers/wishlist_approval_controller.dart';
 
-// Wishlist Approval screen (Screen 14).
-//
-// Loads every child's wishes from the backend and splits them into
-// pending (needs approve/reject) and approved (already decided) groups.
-// ChildApiService().getChildren() is only used internally to resolve a
-// child's name for the card header — it is not shown as its own list.
-class WishlistApprovalScreen extends StatefulWidget {
+class WishlistApprovalScreen extends StatelessWidget {
   final bool isArabic;
 
   const WishlistApprovalScreen({
@@ -23,261 +18,213 @@ class WishlistApprovalScreen extends StatefulWidget {
   });
 
   @override
-  State<WishlistApprovalScreen> createState() =>
-      _WishlistApprovalScreenState();
-}
-
-// Pairs a wish with its child's name so the cards below don't need to
-// look the child up themselves.
-class _WishEntry {
-  final WishModel wish;
-  final String childName;
-  final int avatarIndex;
-
-  _WishEntry({
-    required this.wish,
-    required this.childName,
-    required this.avatarIndex,
-  });
-}
-
-class _WishlistApprovalScreenState extends State<WishlistApprovalScreen> {
-  final ChildApiService _childApiService = ChildApiService();
-  final WishlistApiService _wishlistService = WishlistApiService();
-
-  bool _isLoading = true;
-  String? _errorMessage;
-  List<_WishEntry> _pendingWishes = [];
-  List<_WishEntry> _approvedWishes = [];
-
-  bool get isArabic => widget.isArabic;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadWishes();
-  }
-
-  Future<void> _loadWishes() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final children = await _childApiService.getChildren();
-
-      final pending = <_WishEntry>[];
-      final approved = <_WishEntry>[];
-
-      final wishesByChild = await Future.wait(
-  children.map((child) async {
-    final wishes = await _wishlistService.getChildWishes(child.id);
-
-    return MapEntry(child, wishes);
-  }),
-);
-
-for (final entry in wishesByChild) {
-  final child = entry.key;
-  final wishes = entry.value;
-
-  for (final wish in wishes) {
-    final wishEntry = _WishEntry(
-      wish: wish,
-      childName: child.name,
-      avatarIndex: child.avatarIndex,
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) =>
+          WishlistApprovalController()..loadWishes(),
+      child: _WishlistApprovalView(
+        isArabic: isArabic,
+      ),
     );
-
-    final status = wish.status.toUpperCase();
-
-    if (status == 'PENDING') {
-      pending.add(wishEntry);
-    } else if (status == 'APPROVED') {
-      approved.add(wishEntry);
-    }
   }
 }
-    if (!mounted) return;
-      setState(() {
-        _pendingWishes = pending;
-        _approvedWishes = approved;
-        _isLoading = false;
-      });
-    } catch (e) {
-  if (!mounted) return;
 
-  setState(() {
-    _errorMessage = isArabic
-        ? 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.'
-        : 'An error occurred while loading wishes. Please try again.';
-    _isLoading = false;
+class _WishlistApprovalView extends StatelessWidget {
+  final bool isArabic;
+
+  const _WishlistApprovalView({
+    required this.isArabic,
   });
-}
-  }
 
-  Future<void> _approveWish(String wishId, int targetPoints) async {
-    try {
-      await _wishlistService.approveWish(wishId, targetPoints);
-      _loadWishes();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              isArabic
-                  ? 'تعذّرت الموافقة على الأمنية'
-                  : 'Unable to approve the wish',
-            ),
+  Future<void> _refresh(BuildContext context) async {
+    final success = await context
+        .read<WishlistApprovalController>()
+        .refresh();
+
+    if (!success && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isArabic
+                ? 'تعذّر تحديث الأمنيات'
+                : 'Unable to refresh wishes',
           ),
-        );
-      }
+        ),
+      );
     }
   }
 
-  Future<void> _rejectWish(String wishId) async {
-    try {
-      await _wishlistService.rejectWish(wishId);
-      _loadWishes();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(
-          SnackBar(
-            content: Text(
-              isArabic ? 'تعذّر رفض الأمنية' : 'Unable to reject the wish',
-            ),
+  Future<void> _approveWish(
+    BuildContext context,
+    String wishId,
+    int targetPoints,
+  ) async {
+    final success = await context
+        .read<WishlistApprovalController>()
+        .approveWish(wishId, targetPoints);
+
+    if (!success && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isArabic
+                ? 'تعذّرت الموافقة على الأمنية'
+                : 'Unable to approve the wish',
           ),
-        );
-      }
+        ),
+      );
+    }
+  }
+
+  Future<void> _rejectWish(
+    BuildContext context,
+    String wishId,
+  ) async {
+    final success = await context
+        .read<WishlistApprovalController>()
+        .rejectWish(wishId);
+
+    if (!success && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isArabic
+                ? 'تعذّر رفض الأمنية'
+                : 'Unable to reject the wish',
+          ),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller =
+        context.watch<WishlistApprovalController>();
+
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          isArabic ? 'موافقة الأمنيات' : 'Wish Approval',
-                          style: AppTextStyles.arabicTitle,
-                        ),
+          child: AppRefreshIndicator(
+            onRefresh: () => _refresh(context),
+            child: SingleChildScrollView(
+              physics:
+                  const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    isArabic
+                        ? 'موافقة الأمنيات'
+                        : 'Wish Approval',
+                    style: AppTextStyles.arabicTitle,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: AppSpacing.sm),
+
+                  Text(
+                    isArabic
+                        ? 'راجع أمنيات أطفالك وحدّد نقاط نور المطلوبة'
+                        : 'Review your children’s wishes and set the required Noor points',
+                    style: AppTextStyles.body,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  if (controller.isLoading)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32),
+                        child:
+                            CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (controller.hasError &&
+                      controller.isEmpty)
+                    _ErrorState(
+                      isArabic: isArabic,
+                      onRetry: () {
+                        controller.loadWishes();
+                      },
+                    )
+                  else if (controller.isEmpty)
+                    _EmptyState(isArabic: isArabic)
+                  else ...[
+                    for (final entry
+                        in controller.pendingWishes) ...[
+                      _PendingWishCard(
+                        key: ValueKey(entry.wish.id),
+                        childName: entry.childName,
+                        avatarIndex: entry.avatarIndex,
+                        wishTitle: entry.wish.name,
+                        subtitle: isArabic
+                            ? 'أضاف هذه الأمنية إلى قائمته'
+                            : 'Added this wish to the list',
+                        startingPoints:
+                            entry.wish.targetPoints ?? 250,
+                        onApprove: (points) {
+                          _approveWish(
+                            context,
+                            entry.wish.id,
+                            points,
+                          );
+                        },
+                        onReject: () {
+                          _rejectWish(
+                            context,
+                            entry.wish.id,
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: AppSpacing.md,
+                      ),
+                    ],
+
+                    for (final entry
+                        in controller.approvedWishes) ...[
+                      _ApprovedWishCard(
+                        childName: entry.childName,
+                        avatarIndex: entry.avatarIndex,
+                        wishTitle: entry.wish.name,
+                        subtitle: isArabic
+                            ? 'تمت الموافقة على هذه الأمنية'
+                            : 'This wish has been approved',
+                        points: entry.approvedPoints ??
+                            entry.wish.targetPoints ??
+                            0,
+                      ),
+                      const SizedBox(
+                        height: AppSpacing.md,
+                      ),
+                    ],
+                  ],
+
+                  const SizedBox(height: AppSpacing.sm),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
+                    child: Text(
+                      isArabic
+                          ? 'عند الموافقة تُخصم نقاط نور من رصيد الطفل مقابل الأمنية'
+                          : 'When approved, Noor points are deducted from the child’s balance for the wish',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                  ],
-                ),
+                  ),
 
-                const SizedBox(height: AppSpacing.sm),
-
-                Text(
-                  isArabic
-                      ? 'راجع أمنيات أطفالك وحدّد نقاط نور المطلوبة'
-                      : 'Review your children’s wishes and set the required Noor points',
-                  style: AppTextStyles.body,
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: AppSpacing.lg),
-
-                if (_isLoading)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(32),
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                else if (_errorMessage != null)
-                  Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          _errorMessage!,
-                          style: const TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: _loadWishes,
-                          child: Text(
-                            isArabic ? 'إعادة المحاولة' : 'Try Again',
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                else if (_pendingWishes.isEmpty && _approvedWishes.isEmpty)
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Text(
-                        isArabic ? 'لا توجد أمنيات بعد.' : 'No wishes yet.',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  )
-                else ...[
-                  for (final entry in _pendingWishes) ...[
-                    _PendingWishCard(
-                      key: ValueKey(entry.wish.id),
-                      childName: entry.childName,
-                      avatarIndex: entry.avatarIndex,
-                      wishTitle: entry.wish.name,
-                      subtitle: isArabic
-                          ? 'أضاف هذه الأمنية إلى قائمته'
-                          : 'Added this wish to the list',
-                      startingPoints: entry.wish.targetPoints ?? 250,
-                      onApprove: (points) =>
-                          _approveWish(entry.wish.id, points),
-                      onReject: () => _rejectWish(entry.wish.id),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
-                  for (final entry in _approvedWishes) ...[
-                    _ApprovedWishCard(
-                      childName: entry.childName,
-                      avatarIndex: entry.avatarIndex,
-                      wishTitle: entry.wish.name,
-                      subtitle: isArabic
-                          ? 'تمت الموافقة على هذه الأمنية'
-                          : 'This wish has been approved',
-                      points: entry.wish.targetPoints ?? 0,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
+                  const SizedBox(height: AppSpacing.lg),
                 ],
-
-                const SizedBox(height: AppSpacing.sm),
-
-                Padding(
-  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-  child: Text(
-    isArabic
-        ? 'عند الموافقة تُخصم نقاط نور من رصيد الطفل مقابل الأمنية'
-        : 'When approved, Noor points are deducted from the child’s balance for the wish',
-    textAlign: TextAlign.center,
-    softWrap: true,
-    style: const TextStyle(
-      fontSize: 12,
-      color: AppColors.textSecondary,
-    ),
-  ),
-),
-                const SizedBox(height: AppSpacing.lg),
-              ],
+              ),
             ),
           ),
         ),
@@ -286,10 +233,71 @@ for (final entry in wishesByChild) {
   }
 }
 
-// Round back button in the top-right corner, same style as other screens.
+class _ErrorState extends StatelessWidget {
+  final bool isArabic;
+  final VoidCallback onRetry;
 
+  const _ErrorState({
+    required this.isArabic,
+    required this.onRetry,
+  });
 
-// A small pill used for both the "بانتظار الموافقة" and "معتمدة" tags.
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            isArabic
+                ? 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.'
+                : 'An error occurred while loading wishes. Please try again.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppColors.error,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: Text(
+              isArabic
+                  ? 'إعادة المحاولة'
+                  : 'Try Again',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final bool isArabic;
+
+  const _EmptyState({
+    required this.isArabic,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Text(
+          isArabic
+              ? 'لا توجد أمنيات بعد.'
+              : 'No wishes yet.',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 16,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _StatusTag extends StatelessWidget {
   final String label;
   final Color backgroundColor;
@@ -304,7 +312,10 @@ class _StatusTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
@@ -321,13 +332,10 @@ class _StatusTag extends StatelessWidget {
   }
 }
 
-// The top row shared by both cards: child name + wish title on the right,
-// avatar circle on the left... wait, avatar on the far side, name next to
-// it. Used by both the pending and approved cards.
 class _WishHeader extends StatelessWidget {
   final String childName;
   final String wishTitle;
-   final int avatarIndex;
+  final int avatarIndex;
 
   const _WishHeader({
     required this.childName,
@@ -337,14 +345,18 @@ class _WishHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final isArabic =
+        Localizations.localeOf(context).languageCode ==
+            'ar';
 
     return Row(
       children: [
         Expanded(
           child: Text(
             '$childName . $wishTitle',
-            textAlign: isArabic ? TextAlign.right : TextAlign.left,
+            textAlign: isArabic
+                ? TextAlign.right
+                : TextAlign.left,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -354,45 +366,41 @@ class _WishHeader extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.sm),
         ChildAvatar(
-  avatarIndex: avatarIndex,
-  size: 40,
-),
+          avatarIndex: avatarIndex,
+          size: 40,
+        ),
       ],
     );
   }
 }
 
-// A wish that is still waiting for the parent's decision. This is a
-// StatefulWidget only because the "نقاط نور المطلوبة" value can be
-// increased or decreased with the + / - buttons.
 class _PendingWishCard extends StatefulWidget {
   final String childName;
-final int avatarIndex;
-final String wishTitle;
-final String subtitle;
-final int startingPoints;
+  final int avatarIndex;
+  final String wishTitle;
+  final String subtitle;
+  final int startingPoints;
   final ValueChanged<int> onApprove;
   final VoidCallback onReject;
 
   const _PendingWishCard({
     super.key,
     required this.childName,
+    required this.avatarIndex,
     required this.wishTitle,
     required this.subtitle,
     required this.startingPoints,
-    required this.avatarIndex,
     required this.onApprove,
     required this.onReject,
   });
 
   @override
-  State<_PendingWishCard> createState() => _PendingWishCardState();
+  State<_PendingWishCard> createState() =>
+      _PendingWishCardState();
 }
 
-class _PendingWishCardState extends State<_PendingWishCard> {
-  // The current "نقاط نور المطلوبة" (Noor points required) value. This
-  // starts at whatever was passed in, and only changes when the parent
-  // taps the + or - button below.
+class _PendingWishCardState
+    extends State<_PendingWishCard> {
   late int requiredPoints;
 
   @override
@@ -403,17 +411,22 @@ class _PendingWishCardState extends State<_PendingWishCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final isArabic =
+        Localizations.localeOf(context).languageCode ==
+            'ar';
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment:
+            CrossAxisAlignment.stretch,
         children: [
           _WishHeader(
             childName: widget.childName,
@@ -426,18 +439,24 @@ class _PendingWishCardState extends State<_PendingWishCard> {
           Row(
             children: [
               _StatusTag(
-                label: isArabic ? 'بانتظار الموافقة' : 'Pending Approval',
-                backgroundColor: AppColors.primaryLight,
+                label: isArabic
+                    ? 'بانتظار الموافقة'
+                    : 'Pending Approval',
+                backgroundColor:
+                    AppColors.primaryLight,
                 textColor: AppColors.primaryDark,
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   widget.subtitle,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  textAlign: isArabic
+                      ? TextAlign.right
+                      : TextAlign.left,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color:
+                        AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -453,8 +472,11 @@ class _PendingWishCardState extends State<_PendingWishCard> {
             ),
             decoration: BoxDecoration(
               color: AppColors.card,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.border),
+              borderRadius:
+                  BorderRadius.circular(18),
+              border: Border.all(
+                color: AppColors.border,
+              ),
             ),
             child: Row(
               children: [
@@ -463,41 +485,52 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                   isFilled: true,
                   onTap: () {
                     setState(() {
-                      requiredPoints = requiredPoints + 10;
+                      requiredPoints += 10;
                     });
                   },
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                const SizedBox(
+                  width: AppSpacing.sm,
+                ),
                 Text(
                   '$requiredPoints',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
+                    color:
+                        AppColors.primaryDark,
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Icon(Icons.auto_awesome, color: AppColors.gold, size: 16),
-                const SizedBox(width: AppSpacing.sm),
+                const Icon(
+                  Icons.auto_awesome,
+                  color: AppColors.gold,
+                  size: 16,
+                ),
+                const SizedBox(
+                  width: AppSpacing.sm,
+                ),
                 _StepperButton(
                   icon: Icons.remove,
                   isFilled: false,
                   onTap: () {
-                    // Do not let the required points go below zero.
-                    if (requiredPoints > 0) {
+                    if (requiredPoints > 10) {
                       setState(() {
-                        requiredPoints = requiredPoints - 10;
+                        requiredPoints -= 10;
                       });
                     }
                   },
                 ),
                 const Spacer(),
                 Text(
-                  isArabic ? 'نقاط نور المطلوبة' : 'Required Noor Points',
+                  isArabic
+                      ? 'نقاط نور المطلوبة'
+                      : 'Required Noor Points',
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color:
+                        AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -512,9 +545,9 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                 flex: 2,
                 child: GestureDetector(
                   onTap: () {
-                    // Don't allow approving with 0 or negative points.
                     if (requiredPoints <= 0) {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(
                         SnackBar(
                           content: Text(
                             isArabic
@@ -525,39 +558,53 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                       );
                       return;
                     }
-                    widget.onApprove(requiredPoints);
+
+                    widget.onApprove(
+                      requiredPoints,
+                    );
                   },
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius:
+                          BorderRadius.circular(14),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment:
+                          MainAxisAlignment.center,
                       children: [
                         Flexible(
                           child: Text(
                             isArabic
                                 ? 'موافقة وخصم النقاط'
                                 : 'Approve and Deduct Points',
-                            textAlign: TextAlign.center,
+                            textAlign:
+                                TextAlign.center,
                             maxLines: 2,
-                            style: TextStyle(
+                            style:
+                                const TextStyle(
                               fontSize: 13,
-                              fontWeight: FontWeight.bold,
+                              fontWeight:
+                                  FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
                         ),
                         const SizedBox(width: 6),
-                        const Icon(Icons.check, color: Colors.white, size: 16),
+                        const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(
+                width: AppSpacing.sm,
+              ),
               Expanded(
                 child: GestureDetector(
                   onTap: widget.onReject,
@@ -565,24 +612,34 @@ class _PendingWishCardState extends State<_PendingWishCard> {
                     height: 56,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppColors.border),
+                      borderRadius:
+                          BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.border,
+                      ),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment:
+                          MainAxisAlignment.center,
                       children: [
                         Text(
-                          isArabic ? 'رفض' : 'Reject',
-                          style: TextStyle(
+                          isArabic
+                              ? 'رفض'
+                              : 'Reject',
+                          style:
+                              const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            fontWeight:
+                                FontWeight.bold,
+                            color: AppColors
+                                .textPrimary,
                           ),
                         ),
                         const SizedBox(width: 6),
                         const Icon(
                           Icons.close,
-                          color: AppColors.textPrimary,
+                          color: AppColors
+                              .textPrimary,
                           size: 16,
                         ),
                       ],
@@ -598,7 +655,6 @@ class _PendingWishCardState extends State<_PendingWishCard> {
   }
 }
 
-// The small round + / - buttons next to the points value.
 class _StepperButton extends StatelessWidget {
   final IconData icon;
   final bool isFilled;
@@ -618,54 +674,61 @@ class _StepperButton extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: isFilled ? AppColors.primary : AppColors.primaryLight,
+          color: isFilled
+              ? AppColors.primary
+              : AppColors.primaryLight,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
           icon,
           size: 16,
-          color: isFilled ? Colors.white : AppColors.primaryDark,
+          color: isFilled
+              ? Colors.white
+              : AppColors.primaryDark,
         ),
       ),
     );
   }
 }
 
-// A wish that has already been approved. No buttons or stepper here,
-// just the result: how many points were deducted from the child.
 class _ApprovedWishCard extends StatelessWidget {
   final String childName;
-final int avatarIndex;
-final String wishTitle;
-final String subtitle;
-final int points;
+  final int avatarIndex;
+  final String wishTitle;
+  final String subtitle;
+  final int points;
 
   const _ApprovedWishCard({
     required this.childName,
-  required this.avatarIndex,
-  required this.wishTitle,
-  required this.subtitle,
-  required this.points,
+    required this.avatarIndex,
+    required this.wishTitle,
+    required this.subtitle,
+    required this.points,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final isArabic =
+        Localizations.localeOf(context).languageCode ==
+            'ar';
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: const Color(0xFFE8F5EA),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFBFE3C6)),
+        border: Border.all(
+          color: const Color(0xFFBFE3C6),
+        ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment:
+            CrossAxisAlignment.stretch,
         children: [
           _WishHeader(
-             childName: childName,
-  wishTitle: wishTitle,
-  avatarIndex: avatarIndex,
+            childName: childName,
+            wishTitle: wishTitle,
+            avatarIndex: avatarIndex,
           ),
 
           const SizedBox(height: AppSpacing.sm),
@@ -673,18 +736,24 @@ final int points;
           Row(
             children: [
               _StatusTag(
-                label: isArabic ? 'معتمدة' : 'Approved',
-                backgroundColor: AppColors.success,
+                label: isArabic
+                    ? 'معتمدة'
+                    : 'Approved',
+                backgroundColor:
+                    AppColors.success,
                 textColor: Colors.white,
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   subtitle,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  textAlign: isArabic
+                      ? TextAlign.right
+                      : TextAlign.left,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color:
+                        AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -700,7 +769,8 @@ final int points;
             ),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius:
+                  BorderRadius.circular(18),
             ),
             child: Row(
               children: [
@@ -713,13 +783,20 @@ final int points;
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Icon(Icons.auto_awesome, color: AppColors.gold, size: 16),
+                const Icon(
+                  Icons.auto_awesome,
+                  color: AppColors.gold,
+                  size: 16,
+                ),
                 const Spacer(),
                 Text(
-                  isArabic ? 'تم خصمها من رصيده' : 'Deducted from the balance',
+                  isArabic
+                      ? 'تم خصمها من رصيده'
+                      : 'Deducted from the balance',
                   style: const TextStyle(
                     fontSize: 13,
-                    color: AppColors.textSecondary,
+                    color:
+                        AppColors.textSecondary,
                   ),
                 ),
               ],
