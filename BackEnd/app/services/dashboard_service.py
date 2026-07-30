@@ -3,12 +3,14 @@ from app.repositories.child_repository import ChildRepository
 from app.repositories.task_assignment_repository import TaskAssignmentRepository
 from datetime import timedelta
 from app.utils.datetime_utils import riyadh_today
+from app.repositories.point_repository import PointRepository
 
 class DashboardService:
     def __init__(self):
         self.child_repository = ChildRepository()
         self.assignment_repository = TaskAssignmentRepository()
         self.user_repository = UserRepository()
+        self.point_repository = PointRepository()
 
     def get_dashboard(self, user_id, role):
         if role == "parent":
@@ -32,6 +34,8 @@ class DashboardService:
         week_end = week_start + timedelta(days=6)
         dashboard = []
         for child in children:
+            points_record = self.point_repository.get_points_by_child_id(child.id)
+            total_points = points_record.total_points if points_record else 0
             assignments = (
                 self.assignment_repository
                 .get_child_assignments_between_dates(
@@ -83,6 +87,7 @@ class DashboardService:
                 "pending_tasks": pending_tasks,
                 "rejected_tasks": rejected_tasks,
                 "remaining_tasks": remaining_tasks,
-                "total_tasks": total_tasks
+                "total_tasks": total_tasks,
+                "total_points": total_points
             })
         return dashboard, None

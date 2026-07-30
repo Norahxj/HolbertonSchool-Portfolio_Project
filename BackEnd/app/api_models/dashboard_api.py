@@ -16,7 +16,8 @@ def get_dashboard_models(api):
             "pending_tasks": fields.Integer(description="Tasks not completed by the child"),
             "rejected_tasks": fields.Integer(description="Rejected tasks"),
             "remaining_tasks": fields.Integer(description="All tasks that are not approved"),
-            "total_tasks": fields.Integer(description="Total tasks assigned during the current week")
+            "total_tasks": fields.Integer(description="Total tasks assigned during the current week"),
+            "total_points": fields.Integer(description="Current child points")
         }
     )
     return child_dashboard_response_model

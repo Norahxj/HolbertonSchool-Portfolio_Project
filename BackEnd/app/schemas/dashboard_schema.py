@@ -14,3 +14,4 @@ class ChildDashboardResponseSchema(Schema):
     rejected_tasks = fields.Integer()
     remaining_tasks = fields.Integer()
     total_tasks = fields.Integer()
+    total_points = fields.Integer()

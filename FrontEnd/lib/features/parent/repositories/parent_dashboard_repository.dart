@@ -1,7 +1,6 @@
 import '../../../models/child_dashboard_model.dart';
 import '../../../models/child_model.dart';
 import '../../../services/user_api_service.dart';
-import '../../child/services/point_api_service.dart';
 import '../models/parent_dashboard_data.dart';
 import '../services/child_api_service.dart';
 import '../services/dashboard_api_service.dart';
@@ -14,17 +13,7 @@ class ParentDashboardRepository {
   final UserApiService _userApiService;
   final ChildApiService _childApiService;
   final DashboardApiService _dashboardApiService;
-  final PointApiService _pointApiService;
 
-  ParentDashboardRepository({
-    UserApiService? userApiService,
-    ChildApiService? childApiService,
-    DashboardApiService? dashboardApiService,
-    PointApiService? pointApiService,
-  }) : _userApiService = userApiService ?? UserApiService(),
-       _childApiService = childApiService ?? ChildApiService(),
-       _dashboardApiService = dashboardApiService ?? DashboardApiService(),
-       _pointApiService = pointApiService ?? PointApiService();
 
   Future<ParentDashboardData> getDashboardData() async {
     // Starting these futures before awaiting allows the requests
@@ -43,21 +32,7 @@ class ParentDashboardRepository {
       for (final dashboard in dashboards) dashboard.childId: dashboard,
     };
 
-    final pointsEntries = await Future.wait(
-      children.map((child) async {
-        try {
-          final points = await _pointApiService.getChildPoints(child.id);
-
-          return MapEntry<String, int?>(child.id, points);
-        } catch (_) {
-          // A failed points request should not prevent the entire
-          // dashboard from loading.
-          return MapEntry<String, int?>(child.id, null);
-        }
-      }),
-    );
-
-    final pointsByChildId = Map<String, int?>.fromEntries(pointsEntries);
+    
 
     final childItems = children.map((child) {
       final dashboard = dashboardByChildId[child.id] ?? _emptyDashboard(child);
@@ -65,7 +40,7 @@ class ParentDashboardRepository {
       return ParentDashboardChildItem(
         child: child,
         dashboard: dashboard,
-        points: pointsByChildId[child.id],
+       points: dashboard.totalPoints,
       );
     }).toList();
 
@@ -91,6 +66,7 @@ class ParentDashboardRepository {
       rejectedTasks: 0,
       remainingTasks: 0,
       totalTasks: 0,
+      totalPoints: 0,
     );
   }
 }

@@ -12,6 +12,7 @@ class ChildDashboardModel {
   final int rejectedTasks;
   final int remainingTasks;
   final int totalTasks;
+  final int totalPoints;
 
   const ChildDashboardModel({
     required this.childId,
@@ -27,6 +28,7 @@ class ChildDashboardModel {
     required this.rejectedTasks,
     required this.remainingTasks,
     required this.totalTasks,
+    required this.totalPoints
   });
 
   factory ChildDashboardModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,7 @@ class ChildDashboardModel {
           (json['remaining_tasks'] as num?)?.toInt() ?? 0,
       totalTasks:
           (json['total_tasks'] as num?)?.toInt() ?? 0,
+      totalPoints: (json['total_points'] as num?)?.toInt() ?? 0,
     );
   }
 }
