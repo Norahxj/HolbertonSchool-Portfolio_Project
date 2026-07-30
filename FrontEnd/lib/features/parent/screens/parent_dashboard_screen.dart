@@ -269,7 +269,7 @@ class _WelcomeBanner extends StatelessWidget {
                         Colors.white.withOpacity(0.95),
                         const Color(0xFFF4EEF9),
                        const Color(0xFFE8DDF5),
-                        const Color(0xFFEADDF7),
+                        const Color(0xFFEADDF7).withOpacity(0.08),
                       ],
                       stops: const [
                         0.0,
