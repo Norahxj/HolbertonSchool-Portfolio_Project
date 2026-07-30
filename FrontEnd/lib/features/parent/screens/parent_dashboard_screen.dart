@@ -38,7 +38,7 @@ class _ParentDashboardView extends StatelessWidget {
 
     final wasAdded = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) =>  AddChildScreen(isArabic: isArabic,)),
+      MaterialPageRoute(builder: (_) => AddChildScreen(isArabic: isArabic)),
     );
 
     if (!context.mounted) return;
@@ -53,7 +53,7 @@ class _ParentDashboardView extends StatelessWidget {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) =>  TaskReviewScreen(isArabic: isArabic,)),
+      MaterialPageRoute(builder: (_) => TaskReviewScreen(isArabic: isArabic)),
     );
 
     if (!context.mounted) return;
@@ -76,16 +76,11 @@ class _ParentDashboardView extends StatelessWidget {
         ),
       ),
     );
-
-    // The controller removes the child from the local dashboard
-    // immediately after successful deletion.
-    // Therefore, no additional refresh is required here.
   }
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<ParentDashboardController>();
-
     final data = controller.data;
 
     return Directionality(
@@ -141,9 +136,7 @@ class _ParentDashboardView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _WelcomeBanner(
-              parentName:
-                  '${data.user.firstName} '
-                  '${data.user.lastName}',
+              parentName: '${data.user.firstName} ${data.user.lastName}',
               isArabic: isArabic,
             ),
 
@@ -182,6 +175,7 @@ class _ParentDashboardView extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.sm),
 
+              // The same button is used before and after adding children.
               _AddChildButton(
                 isArabic: isArabic,
                 onTap: () {
@@ -212,10 +206,7 @@ class _WelcomeBanner extends StatelessWidget {
   final String parentName;
   final bool isArabic;
 
-  const _WelcomeBanner({
-    required this.parentName,
-    required this.isArabic,
-  });
+  const _WelcomeBanner({required this.parentName, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -228,10 +219,7 @@ class _WelcomeBanner extends StatelessWidget {
           height: 210,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
+            border: Border.all(color: Colors.white, width: 2),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.06),
@@ -245,7 +233,6 @@ class _WelcomeBanner extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // الصورة
                 Transform.flip(
                   flipX: isArabic,
                   child: Image.asset(
@@ -257,7 +244,6 @@ class _WelcomeBanner extends StatelessWidget {
                   ),
                 ),
 
-                // التدرج خلف النص
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -268,22 +254,16 @@ class _WelcomeBanner extends StatelessWidget {
                           ? Alignment.centerLeft
                           : Alignment.centerRight,
                       colors: [
-  const Color(0xFFF7F2FB).withOpacity(0.78),
-  const Color(0xFFF1E8F8).withOpacity(0.55),
-  const Color(0xFFE7DAF5).withOpacity(0.18),
-  const Color(0xFFF2ECF8).withOpacity(0.18),
-],
-                      stops: const [
-                        0.0,
-                        0.30,
-                        0.52,
-                        0.75,
+                        const Color(0xFFF7F2FB).withOpacity(0.78),
+                        const Color(0xFFF1E8F8).withOpacity(0.55),
+                        const Color(0xFFE7DAF5).withOpacity(0.18),
+                        const Color(0xFFF2ECF8).withOpacity(0.18),
                       ],
+                      stops: const [0.0, 0.30, 0.52, 0.75],
                     ),
                   ),
                 ),
 
-                // النص
                 Positioned(
                   top: 0,
                   bottom: 0,
@@ -356,6 +336,7 @@ class _WelcomeBanner extends StatelessWidget {
     );
   }
 }
+
 class _SectionHeader extends StatelessWidget {
   final String title;
 
@@ -385,7 +366,6 @@ class _SimpleChildCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboard = item.dashboard;
-
     final progress = dashboard.progressPercentage.clamp(0, 100).round();
 
     return Material(
@@ -401,8 +381,7 @@ class _SimpleChildCard extends StatelessWidget {
             border: Border.all(color: AppColors.border),
           ),
           child: Row(
-            // Keep the points badge on the left
-            // and progress ring on the right.
+            // Keep points on the left and progress on the right.
             textDirection: TextDirection.ltr,
             children: [
               _ChildPointsBadge(points: item.points, isArabic: isArabic),
@@ -533,6 +512,7 @@ class _ProgressRing extends StatelessWidget {
   }
 }
 
+/// The same compact button is used in both dashboard states.
 class _AddChildButton extends StatelessWidget {
   final bool isArabic;
   final VoidCallback onTap;
@@ -541,36 +521,27 @@ class _AddChildButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onTap,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size.fromHeight(60),
-        side: const BorderSide(color: AppColors.primary),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      child: Row(
-        // Keep the plus button on the left.
-        textDirection: TextDirection.ltr,
-        children: [
-          const CircleAvatar(
-            backgroundColor: AppColors.primary,
-            child: Icon(Icons.add, color: Colors.white),
+    return Center(
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: const Icon(Icons.add, size: 20),
+        label: Text(
+          isArabic ? 'إضافة طفل' : 'Add child',
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primaryLight,
+          foregroundColor: AppColors.primary,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          minimumSize: Size.zero,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
           ),
-
-          Expanded(
-            child: Center(
-              child: Text(
-                isArabic ? 'إضافة طفل' : 'Add child',
-                style: const TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 40),
-        ],
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: const StadiumBorder(),
+        ),
       ),
     );
   }
@@ -674,11 +645,7 @@ class _NoChildrenState extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.md),
 
-          ElevatedButton.icon(
-            onPressed: onAddChild,
-            icon: const Icon(Icons.add),
-            label: Text(isArabic ? 'إضافة طفل' : 'Add child'),
-          ),
+          _AddChildButton(isArabic: isArabic, onTap: onAddChild),
         ],
       ),
     );
