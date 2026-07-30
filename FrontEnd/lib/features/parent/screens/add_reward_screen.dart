@@ -1,20 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../../core/widgets/app_page_header.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_page_header.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../models/reward_suggestion_model.dart';
 import '../../../services/reward_api_service.dart';
 
-// Allows the parent to create a real reward for a selected child.
+/// Allows the parent to create a reward for a selected child.
 class AddRewardScreen extends StatefulWidget {
   final String childId;
+  final bool isArabic;
   final RewardSuggestionModel? suggestion;
 
-  const AddRewardScreen({super.key, required this.childId, this.suggestion});
+  const AddRewardScreen({
+    super.key,
+    required this.childId,
+    required this.isArabic,
+    this.suggestion,
+  });
 
   @override
   State<AddRewardScreen> createState() => _AddRewardScreenState();
@@ -23,42 +29,42 @@ class AddRewardScreen extends StatefulWidget {
 class _AddRewardScreenState extends State<AddRewardScreen> {
   final RewardApiService _rewardApiService = RewardApiService();
 
-  bool get isArabic =>
-      Localizations.localeOf(context).languageCode == 'ar';
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
-  String tr(String arabic, String english) {
+  int selectedUnlockDay = 3;
+  bool isSaving = false;
+  String? nameError;
+
+  bool get isArabic => widget.isArabic;
+
+  String _text(String arabic, String english) {
     return isArabic ? arabic : english;
   }
 
-  final TextEditingController nameController = TextEditingController();
+  List<String> get weekDays {
+    if (isArabic) {
+      return const [
+        'الأحد',
+        'الإثنين',
+        'الثلاثاء',
+        'الأربعاء',
+        'الخميس',
+        'الجمعة',
+        'السبت',
+      ];
+    }
 
-  final TextEditingController descriptionController = TextEditingController();
-
-  List<String> get weekDays => isArabic
-      ? const [
-          'الأحد',
-          'الإثنين',
-          'الثلاثاء',
-          'الأربعاء',
-          'الخميس',
-          'الجمعة',
-          'السبت',
-        ]
-      : const [
-          'Sunday',
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday',
-        ];
-
-  int selectedUnlockDay = 3;
-
-  bool isSaving = false;
-
-  String? nameError;
+    return const [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+  }
 
   @override
   void initState() {
@@ -69,8 +75,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     if (suggestion != null) {
       nameController.text = suggestion.rewardName;
       descriptionController.text = suggestion.description;
-
-      selectedUnlockDay = suggestion.unlockDay.clamp(0, 6);
+      selectedUnlockDay = suggestion.unlockDay.clamp(0, 6).toInt();
     }
   }
 
@@ -78,7 +83,6 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
   void dispose() {
     nameController.dispose();
     descriptionController.dispose();
-
     super.dispose();
   }
 
@@ -86,7 +90,6 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     if (isSaving) return;
 
     final rewardName = nameController.text.trim();
-
     final description = descriptionController.text.trim();
 
     setState(() {
@@ -95,12 +98,11 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
     if (rewardName.isEmpty) {
       setState(() {
-        nameError = tr(
+        nameError = _text(
           'اكتب اسم المكافأة أولًا',
           'Enter the reward name first',
         );
       });
-
       return;
     }
 
@@ -124,13 +126,11 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
       final message = _readBackendMessage(error);
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             message ??
-                tr(
+                _text(
                   'تعذّر حفظ المكافأة',
                   'Could not save the reward',
                 ),
@@ -149,7 +149,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            tr(
+            _text(
               'حدث خطأ أثناء حفظ المكافأة',
               'An error occurred while saving the reward',
             ),
@@ -182,171 +182,157 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppPageHeader(
-  isArabic: isArabic,
-  title: tr(
-    'مكافأة جديدة',
-    'New Reward',
-  ),
-),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                _FieldLabel(
-                  tr(
-                    'اسم المكافأة',
-                    'Reward name',
+          child: Directionality(
+            textDirection:
+                isArabic ? TextDirection.rtl : TextDirection.ltr,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppPageHeader(
+                    isArabic: isArabic,
+                    title: _text(
+                      'مكافأة جديدة',
+                      'New Reward',
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.xl),
 
-                _RewardTextField(
-                  controller: nameController,
-                  isArabic: isArabic,
-                  hint: tr(
-                    'مثال: رحلة إلى الحديقة',
-                    'Example: A trip to the park',
+                  _FieldLabel(
+                    text: _text(
+                      'اسم المكافأة',
+                      'Reward name',
+                    ),
+                    isArabic: isArabic,
                   ),
-                  errorText: nameError,
-                ),
 
-                const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: AppSpacing.sm),
 
-                _FieldLabel(
-                  tr(
-                    'وصف المكافأة',
-                    'Reward description',
+                  _RewardTextField(
+                    controller: nameController,
+                    isArabic: isArabic,
+                    hint: _text(
+                      'مثال: رحلة إلى الحديقة',
+                      'Example: A trip to the park',
+                    ),
+                    errorText: nameError,
                   ),
-                ),
 
-                const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.lg),
 
-                _RewardTextField(
-                  controller: descriptionController,
-                  isArabic: isArabic,
-                  hint: tr(
-                    'مثال: زيارة نهاية الأسبوع للحديقة مع العائلة',
-                    'Example: A weekend visit to the park with the family',
+                  _FieldLabel(
+                    text: _text(
+                      'وصف المكافأة',
+                      'Reward description',
+                    ),
+                    isArabic: isArabic,
                   ),
-                  maxLines: 3,
-                ),
 
-                const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: AppSpacing.sm),
 
-                _FieldLabel(
-                  tr(
-                    'تفتح المكافأة كل',
-                    'Reward unlock day',
+                  _RewardTextField(
+                    controller: descriptionController,
+                    isArabic: isArabic,
+                    hint: _text(
+                      'مثال: زيارة الحديقة مع العائلة في نهاية الأسبوع',
+                      'Example: A weekend visit to the park with the family',
+                    ),
+                    maxLines: 3,
                   ),
-                ),
 
-                const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.lg),
 
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
-                  children: [
-                    for (int index = 0; index < weekDays.length; index++)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedUnlockDay = index;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selectedUnlockDay == index
-                                ? AppColors.primary
-                                : AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                  _FieldLabel(
+                    text: _text(
+                      'يوم إتاحة المكافأة',
+                      'Reward unlock day',
+                    ),
+                    isArabic: isArabic,
+                  ),
+
+                  const SizedBox(height: AppSpacing.sm),
+
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    alignment: WrapAlignment.start,
+                    children: [
+                      for (int index = 0;
+                          index < weekDays.length;
+                          index++)
+                        _DayChip(
+                          label: weekDays[index],
+                          isSelected: selectedUnlockDay == index,
+                          onTap: () {
+                            setState(() {
+                              selectedUnlockDay = index;
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryLight,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_month_outlined,
+                          color: AppColors.primary,
+                          size: 19,
+                        ),
+
+                        const SizedBox(width: AppSpacing.sm),
+
+                        Expanded(
                           child: Text(
-                            weekDays[index],
-                            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                            style: TextStyle(
+                            _text(
+                              'ستصبح المكافأة متاحة للطفل يوم '
+                                  '${weekDays[selectedUnlockDay]} من كل أسبوع.',
+                              'The reward will become available to the child '
+                                  'every ${weekDays[selectedUnlockDay]}.',
+                            ),
+                            textAlign:
+                                isArabic ? TextAlign.right : TextAlign.left,
+                            textDirection: isArabic
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
+                            style: const TextStyle(
                               fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: selectedUnlockDay == index
-                                  ? Colors.white
-                                  : AppColors.primaryDark,
+                              height: 1.5,
+                              color: AppColors.textPrimary,
                             ),
                           ),
                         ),
-                      ),
-                  ],
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(18),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_month_outlined,
-                        color: AppColors.primary,
-                        size: 19,
-                      ),
 
-                      const SizedBox(width: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.xxl),
 
-                      Expanded(
-                        child: Text(
-                          isArabic
-                              ? 'ستصبح المكافأة متاحة للطفل يوم '
-                                    '${weekDays[selectedUnlockDay]} من كل أسبوع.'
-                              : 'The reward will become available to the child '
-                                    'every ${weekDays[selectedUnlockDay]}.',
-                          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                          textDirection: TextDirection.rtl,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            height: 1.5,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
+                  AppButton(
+                    text: isSaving
+                        ? _text('جارٍ الحفظ...', 'Saving...')
+                        : _text('حفظ المكافأة', 'Save Reward'),
+                    onPressed: isSaving ? null : _saveReward,
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: AppColors.primaryGradient,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: AppSpacing.xxl),
-
-                AppButton(
-                  text: isSaving
-                      ? tr(
-                          'جارٍ الحفظ...',
-                          'Saving...',
-                        )
-                      : tr(
-                          'حفظ المكافأة',
-                          'Save Reward',
-                        ),
-                  onPressed: isSaving ? null : _saveReward,
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: AppColors.primaryGradient,
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.lg),
-              ],
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+              ),
             ),
           ),
         ),
@@ -357,19 +343,22 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
 class _FieldLabel extends StatelessWidget {
   final String text;
+  final bool isArabic;
 
-  const _FieldLabel(this.text);
+  const _FieldLabel({
+    required this.text,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
-
     return Align(
-      alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+      alignment:
+          isArabic ? Alignment.centerRight : Alignment.centerLeft,
       child: Text(
         text,
-        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+        textDirection:
+            isArabic ? TextDirection.rtl : TextDirection.ltr,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -383,9 +372,9 @@ class _FieldLabel extends StatelessWidget {
 class _RewardTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
+  final bool isArabic;
   final int maxLines;
   final String? errorText;
-  final bool isArabic;
 
   const _RewardTextField({
     required this.controller,
@@ -401,7 +390,8 @@ class _RewardTextField extends StatelessWidget {
       controller: controller,
       maxLines: maxLines,
       textAlign: isArabic ? TextAlign.right : TextAlign.left,
-      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textDirection:
+          isArabic ? TextDirection.rtl : TextDirection.ltr,
       decoration: InputDecoration(
         hintText: hint,
         errorText: errorText,
@@ -414,7 +404,10 @@ class _RewardTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+            width: 1.5,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -422,7 +415,51 @@ class _RewardTextField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.error,
+            width: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DayChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _DayChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary
+              : AppColors.primaryLight,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: isSelected
+                ? Colors.white
+                : AppColors.primaryDark,
+          ),
         ),
       ),
     );

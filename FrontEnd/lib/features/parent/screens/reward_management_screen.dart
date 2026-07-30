@@ -229,7 +229,11 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       context,
       MaterialPageRoute(
         builder: (_) =>
-            AddRewardScreen(childId: childId, suggestion: suggestion),
+            AddRewardScreen(
+              childId: childId,
+              isArabic: isArabic,
+              suggestion: suggestion,
+            ),
       ),
     );
 
