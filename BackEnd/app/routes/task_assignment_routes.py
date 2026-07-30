@@ -44,6 +44,34 @@ class MyAssignmentsResource(Resource):
         assignments = assignment_service.get_assignments_for_child(child_id)
         return child_assignments_response_schema.dump(assignments), 200
 
+@api.route("/my/current-week")
+class MyCurrentWeekAssignmentsResource(Resource):
+    @api.response(
+        200,
+        "Current week assignments retrieved successfully"
+    )
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Child access required")
+    @api.doc(security="JWT")
+    @jwt_required()
+    def get(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "child":
+            return {"error": "Child access required"}, 403
+
+        child_id = get_jwt_identity()
+
+        assignments = (
+            assignment_service
+            .get_current_week_assignments_for_child(child_id)
+        )
+
+        return (
+            child_assignments_response_schema.dump(assignments),
+            200,
+        )
+
 @api.route("/child/<child_id>")
 class AssignmentsByChildResource(Resource):
     @api.response(200, "Assignments retrieved successfully")

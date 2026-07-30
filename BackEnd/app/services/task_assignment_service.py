@@ -4,6 +4,8 @@ from app.repositories.child_repository import ChildRepository
 from app.services.points_service import PointsService
 from app.extensions import db
 from app.utils.datetime_utils import utc_now
+from datetime import timedelta
+from app.utils.datetime_utils import riyadh_today
 
 class TaskAssignmentService:
     def __init__(self):
@@ -20,6 +22,27 @@ class TaskAssignmentService:
 
     def get_assignments_for_child(self, child_id):
         return self.task_assignment_repository.get_assignments_by_child_id(child_id)
+
+    def get_current_week_assignments_for_child(self, child_id):
+        today = riyadh_today()
+
+        days_from_sunday = today.weekday() + 1
+
+        if days_from_sunday == 7:
+            days_from_sunday = 0
+
+        week_start = today - timedelta(days=days_from_sunday)
+        week_end = week_start + timedelta(days=7)
+
+        return (
+            self.task_assignment_repository
+            .get_child_assignments_between_dates(
+                child_id,
+                week_start,
+                week_end,
+            )
+        )
+
     def get_assignments_for_child_by_parent(self, child_id, parent_id):
         child = self.child_repository.get_child_for_guardian(
             child_id,

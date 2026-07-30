@@ -51,6 +51,26 @@ class TaskApiService {
     return _convertAssignments(response.data);
   }
 
+  Future<List<TaskAssignmentModel>>
+    getMyCurrentWeekAssignments() async {
+  final response =
+      await _apiService.getMyCurrentWeekAssignments();
+
+  final data = response.data;
+
+  if (data is! List) {
+    return [];
+  }
+
+  return data
+      .map(
+        (item) => TaskAssignmentModel.fromJson(
+          item as Map<String, dynamic>,
+        ),
+      )
+      .toList();
+}
+
   Future<List<TaskAssignmentModel>> getAssignmentsForTask(String taskId) async {
     final response = await _apiService.getAssignmentsForTask(taskId);
 

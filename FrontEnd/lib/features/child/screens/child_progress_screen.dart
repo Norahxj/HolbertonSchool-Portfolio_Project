@@ -45,7 +45,7 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
 
     try {
       final results = await Future.wait([
-  _taskApiService.getMyAssignments(),
+  _taskApiService.getMyCurrentWeekAssignments(),
   _pointApiService.getMyPoints(),
 ]);
 
@@ -72,39 +72,25 @@ final points = results[1] as int;
       debugPrint('Progress loading error: $error');
     }
   }
+  
+DateTime get _today {
+  final now = DateTime.now();
 
-  DateTime get _today {
-    final now = DateTime.now();
-
-    return DateTime(now.year, now.month, now.day);
-  }
-
-  DateTime get _weekStart {
-    final daysFromSunday = _today.weekday % 7;
-
-    return _today.subtract(Duration(days: daysFromSunday));
-  }
-
-  DateTime get _weekEnd {
-    return _weekStart.add(const Duration(days: 7));
-  }
-
-  bool _isInsideCurrentWeek(DateTime date) {
-    final localDate = date.toLocal();
-
-    return !localDate.isBefore(_weekStart) && localDate.isBefore(_weekEnd);
-  }
-
+  return DateTime(
+    now.year,
+    now.month,
+    now.day,
+  );
+}
+  
   DateTime? _completionDate(TaskAssignmentModel assignment) {
     return assignment.completedAt?.toLocal() ??
         assignment.approvedAt?.toLocal();
   }
 
   List<TaskAssignmentModel> get _weeklyAssignments {
-    return _assignments.where((assignment) {
-      return _isInsideCurrentWeek(assignment.assignedDate);
-    }).toList();
-  }
+  return _assignments;
+}
 
   int get _weeklyCompleted {
     return _weeklyAssignments.where((assignment) {
@@ -191,7 +177,7 @@ final points = results[1] as int;
 
       final completionDate = _completionDate(assignment);
 
-      if (completionDate == null || !_isInsideCurrentWeek(completionDate)) {
+      if (completionDate == null) {
         continue;
       }
 
