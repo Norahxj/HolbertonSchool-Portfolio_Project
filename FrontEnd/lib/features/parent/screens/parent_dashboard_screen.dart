@@ -268,11 +268,11 @@ class _WelcomeBanner extends StatelessWidget {
                           ? Alignment.centerLeft
                           : Alignment.centerRight,
                       colors: [
-                        Colors.white.withOpacity(0.95),
-                        const Color(0xFFF4EEF9).withOpacity(0.82),
-                        const Color(0xFFE8DDF5).withOpacity(0.38),
-                        const Color(0xFFEADDF7).withOpacity(0.08),
-                      ],
+  const Color(0xFFF7F2FB).withOpacity(0.78),
+  const Color(0xFFF1E8F8).withOpacity(0.55),
+  const Color(0xFFE7DAF5).withOpacity(0.18),
+  const Color(0xFFF2ECF8).withOpacity(0.18),
+],
                       stops: const [
                         0.0,
                         0.30,
