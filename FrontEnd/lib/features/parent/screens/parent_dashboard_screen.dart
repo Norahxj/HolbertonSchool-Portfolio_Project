@@ -296,9 +296,7 @@ class _WelcomeBanner extends StatelessWidget {
                         : TextDirection.ltr,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: isArabic
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           isArabic ? 'مرحبًا' : 'Welcome',
