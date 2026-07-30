@@ -83,6 +83,43 @@ class MyDailyFeedbackResource(Resource):
         if error:
             return {"error": "Failed to retrieve feedback"}, 500
         return daily_feedback_list_schema.dump(feedback), 200
+
+@api.route("/my/today")
+class MyTodayDailyFeedbackResource(Resource):
+    @api.response(
+        200,
+        "Today's feedback retrieved successfully",
+        daily_feedback_response_model
+    )
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Child access required")
+    @api.response(404, "Child not found")
+    @api.response(500, "Failed to retrieve feedback")
+    @api.doc(security="JWT")
+    @jwt_required()
+    def get(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "child":
+            return {"error": "Child access required"}, 403
+
+        child_id = get_jwt_identity()
+
+        feedback, error = (
+            daily_feedback_service
+            .get_my_today_feedback(child_id)
+        )
+
+        if error == "child_not_found":
+            return {"error": "Child not found"}, 404
+
+        if error:
+            return {"error": "Failed to retrieve feedback"}, 500
+
+        if feedback is None:
+            return None, 200
+
+        return daily_feedback_response_schema.dump(feedback), 200
     
 @api.route("/<feedback_id>")
 class DailyFeedbackResource(Resource):

@@ -45,18 +45,7 @@ final DailyFeedbackApiService _feedbackService =
   bool _isLoading = true;
   String? _errorMessage;
   final Set<String> _updatingAssignments = {};
-  Future<DailyFeedbackModel?> _loadTodayFeedback() async {
-  final feedbackHistory = await _feedbackService.getMyFeedback();
-  final today = DateTime.now();
-
-  for (final feedback in feedbackHistory) {
-    if (DateUtils.isSameDay(feedback.feedbackDate, today)) {
-      return feedback;
-    }
-  }
-
-  return null;
-}
+  
 
   Future<void> _loadData({bool showPageLoader = true}) async {
     if (showPageLoader) {
@@ -70,8 +59,7 @@ final DailyFeedbackApiService _feedbackService =
       final childFuture = SecureStorage.getChild();
 final assignmentsFuture = TaskApiService().getMyAssignments();
 final pointsFuture = PointApiService().getMyPoints();
-final feedbackFuture = _loadTodayFeedback();
-
+final feedbackFuture = _feedbackService.getMyTodayFeedback();
 final results = await Future.wait([
   childFuture,
   assignmentsFuture,

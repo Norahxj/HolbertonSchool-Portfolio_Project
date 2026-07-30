@@ -148,6 +148,9 @@ abstract class ApiService {
   @GET('/daily-feedback/my')
   Future<HttpResponse<dynamic>> getMyDailyFeedback();
 
+  @GET('/daily-feedback/my/today')
+Future<HttpResponse<dynamic>> getMyTodayDailyFeedback();
+
   @PUT('/daily-feedback/{feedbackId}')
   Future<HttpResponse<dynamic>> updateDailyFeedback(
     @Path('feedbackId') String feedbackId,

@@ -38,6 +38,14 @@ class DailyFeedbackRepository:
             feedback_date=today
         ).first()
 
+    def get_feedback_for_child_today(self, child_id):
+        today = riyadh_today()
+
+        return DailyFeedback.query.filter_by(
+            child_id=child_id,
+            feedback_date=today
+        ).first()
+
     def update_feedback(self):
         try:
             db.session.commit()

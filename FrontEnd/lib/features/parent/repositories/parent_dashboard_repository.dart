@@ -14,6 +14,15 @@ class ParentDashboardRepository {
   final ChildApiService _childApiService;
   final DashboardApiService _dashboardApiService;
 
+  ParentDashboardRepository({
+  UserApiService? userApiService,
+  ChildApiService? childApiService,
+  DashboardApiService? dashboardApiService,
+})  : _userApiService = userApiService ?? UserApiService(),
+      _childApiService = childApiService ?? ChildApiService(),
+      _dashboardApiService =
+          dashboardApiService ?? DashboardApiService();
+
 
   Future<ParentDashboardData> getDashboardData() async {
     // Starting these futures before awaiting allows the requests
