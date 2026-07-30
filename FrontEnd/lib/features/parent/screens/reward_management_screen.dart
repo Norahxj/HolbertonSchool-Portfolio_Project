@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -10,6 +9,7 @@ import '../../../models/reward_model.dart';
 import '../../../models/reward_suggestion_model.dart';
 import '../../../services/reward_api_service.dart';
 import '../services/child_api_service.dart';
+import '../widgets/child_card.dart';
 import 'add_reward_screen.dart';
 
 class RewardManagementScreen extends StatefulWidget {
@@ -401,8 +401,9 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
     spacing: AppSpacing.md,
     runSpacing: AppSpacing.md,
     children: children.map((child) {
-      return _ChildChip(
-        child: child,
+      return ChildCard(
+        name: child.name,
+        avatarIndex: child.avatarIndex,
         isSelected: selectedChildId == child.id,
         onTap: () {
           _selectChild(child.id);
@@ -529,84 +530,6 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ChildChip extends StatelessWidget {
-  final ChildModel child;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _ChildChip({
-    required this.child,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 100,
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                ChildAvatar(
-  avatarIndex: child.avatarIndex,
-  size: 48,
-),
-
-                if (isSelected)
-                  Positioned(
-                    top: -2,
-                    right: -2,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 12,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-
-            const SizedBox(height: AppSpacing.xs),
-
-            Text(
-              child.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
         ),
       ),
     );

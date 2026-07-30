@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
+import '../widgets/child_card.dart';
 import 'package:frontend/models/child_model.dart';
 import 'package:frontend/services/task_api_service.dart';
 import 'package:frontend/features/parent/services/child_api_service.dart';
@@ -606,7 +606,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             children: children.map((child) {
               final isSelected = selectedChildIds.contains(child.id);
 
-              return _ChildChip(
+              return ChildCard(
   name: child.name,
   avatarIndex: child.avatarIndex,
   isSelected: isSelected,
@@ -1588,78 +1588,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           ),
         ),
       ],
-    );
-  }
-}
-
-// Round back button in the top-right corner. Always exits the whole
-// wizard, no matter which step is showing (same as every mockup screen).
-
-// One child avatar + name used on Step 0, with a checkmark badge when
-// selected. Tapping toggles that child in or out of the task.
-
-class _ChildChip extends StatelessWidget {
-   final String name;
-  final int avatarIndex;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _ChildChip({
-    required this.name,
-  required this.avatarIndex,
-  required this.isSelected,
-  required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 160,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryLight : AppColors.card,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            if (isSelected)
-              const Icon(Icons.check_circle, color: AppColors.primary, size: 20)
-            else
-              const SizedBox(width: 20),
-
-            const SizedBox(width: AppSpacing.sm),
-
-            Expanded(
-              child: Text(
-                name,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ),
-
-            const SizedBox(width: AppSpacing.sm),
-
-            ChildAvatar(
-  avatarIndex: avatarIndex,
-  size: 42,
-),
-          ],
-        ),
-      ),
     );
   }
 }
