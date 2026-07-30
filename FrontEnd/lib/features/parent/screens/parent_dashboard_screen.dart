@@ -252,12 +252,12 @@ class _WelcomeBanner extends StatelessWidget {
                     'assets/dashboard/family_home.png',
                     fit: BoxFit.cover,
                     alignment: isArabic
-    ? Alignment.centerLeft
-    : Alignment.centerRight,
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
                   ),
                 ),
 
-                // التدرج الفاتح خلف النص
+                // التدرج خلف النص
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -270,7 +270,7 @@ class _WelcomeBanner extends StatelessWidget {
                       colors: [
                         Colors.white.withOpacity(0.95),
                         const Color(0xFFF4EEF9).withOpacity(0.82),
-                       const Color(0xFFE8DDF5).withOpacity(0.38),
+                        const Color(0xFFE8DDF5).withOpacity(0.38),
                         const Color(0xFFEADDF7).withOpacity(0.08),
                       ],
                       stops: const [
@@ -284,76 +284,69 @@ class _WelcomeBanner extends StatelessWidget {
                 ),
 
                 // النص
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 18,
-                  ),
-                  child: Align(
-                    alignment: isArabic
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: SizedBox(
-                      width: bannerWidth * 0.44,
-                      child: Directionality(
-                        textDirection: isArabic
-                            ? TextDirection.rtl
-                            : TextDirection.ltr,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: isArabic
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isArabic ? 'مرحبًا' : 'Welcome',
-                              textAlign: isArabic
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryDark.withOpacity(0.75),
-                              ),
-                            ),
-
-                            const SizedBox(height: 3),
-
-                            Text(
-                              parentName,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: isArabic
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                              style: const TextStyle(
-                                fontSize: 21,
-                                height: 1.15,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryDark,
-                              ),
-                            ),
-
-                            const SizedBox(height: 9),
-
-                            Text(
-                              isArabic
-                                  ? 'أنتِ تبنين جيلاً رائعًا'
-                                  : 'You are building a wonderful generation',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: isArabic
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                              style: const TextStyle(
-                                fontSize: 11.5,
-                                height: 1.45,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  right: isArabic ? 24 : null,
+                  left: isArabic ? null : 24,
+                  width: bannerWidth * 0.44,
+                  child: Directionality(
+                    textDirection: isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: isArabic
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isArabic ? 'مرحبًا' : 'Welcome',
+                          textAlign: isArabic
+                              ? TextAlign.right
+                              : TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primaryDark.withOpacity(0.75),
+                          ),
                         ),
-                      ),
+
+                        const SizedBox(height: 3),
+
+                        Text(
+                          parentName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: isArabic
+                              ? TextAlign.right
+                              : TextAlign.left,
+                          style: const TextStyle(
+                            fontSize: 21,
+                            height: 1.15,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryDark,
+                          ),
+                        ),
+
+                        const SizedBox(height: 9),
+
+                        Text(
+                          isArabic
+                              ? 'أنتِ تبنين جيلاً رائعًا'
+                              : 'You are building a wonderful generation',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: isArabic
+                              ? TextAlign.right
+                              : TextAlign.left,
+                          style: const TextStyle(
+                            fontSize: 11.5,
+                            height: 1.45,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
