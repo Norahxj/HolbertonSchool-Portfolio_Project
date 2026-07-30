@@ -251,7 +251,9 @@ class _WelcomeBanner extends StatelessWidget {
                   child: Image.asset(
                     'assets/dashboard/family_home.png',
                     fit: BoxFit.cover,
-                    alignment: Alignment.centerRight,
+                    alignment: isArabic
+    ? Alignment.centerLeft
+    : Alignment.centerRight,
                   ),
                 ),
 
@@ -267,8 +269,8 @@ class _WelcomeBanner extends StatelessWidget {
                           : Alignment.centerRight,
                       colors: [
                         Colors.white.withOpacity(0.95),
-                        const Color(0xFFF4EEF9),
-                       const Color(0xFFE8DDF5),
+                        const Color(0xFFF4EEF9).withOpacity(0.82),
+                       const Color(0xFFE8DDF5).withOpacity(0.38),
                         const Color(0xFFEADDF7).withOpacity(0.08),
                       ],
                       stops: const [
