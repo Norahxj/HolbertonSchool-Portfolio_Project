@@ -212,50 +212,154 @@ class _WelcomeBanner extends StatelessWidget {
   final String parentName;
   final bool isArabic;
 
-  const _WelcomeBanner({required this.parentName, required this.isArabic});
+  const _WelcomeBanner({
+    required this.parentName,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bannerHeight = screenWidth < 500 ? 190.0 : 230.0;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      height: bannerHeight,
       decoration: BoxDecoration(
-        color: const Color(0xFFE4D9F7),
         borderRadius: BorderRadius.circular(28),
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.home_rounded,
-            color: AppColors.primaryDark,
-            size: 48,
-          ),
-
-          const SizedBox(height: AppSpacing.sm),
-
-          Text(
-            isArabic ? 'مرحبًا $parentName!' : 'Welcome, $parentName!',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 19,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryDark,
-            ),
-          ),
-
-          const SizedBox(height: 3),
-
-          Text(
-            isArabic
-                ? 'أنتِ تبنين جيلاً رائعًا'
-                : 'You are building a wonderful generation',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-            ),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.8),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(27),
+        child: Stack(
+          children: [
+            // الصورة
+            Positioned.fill(
+              child: Transform.flip(
+                flipX: isArabic,
+                child: Image.asset(
+                  'assets/dashboard/family_home.png',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerRight,
+                ),
+              ),
+            ),
+
+            // طبقة فاتحة خلف النص
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: isArabic
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    end: isArabic
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                    colors: [
+                      Colors.white.withOpacity(0.96),
+                      Colors.white.withOpacity(0.84),
+                      Colors.white.withOpacity(0.25),
+                      Colors.transparent,
+                    ],
+                    stops: const [
+                      0.0,
+                      0.32,
+                      0.58,
+                      0.82,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // النص
+            Positioned(
+              left: isArabic ? null : AppSpacing.lg,
+              right: isArabic ? AppSpacing.lg : null,
+              top: 0,
+              bottom: 0,
+              child: SizedBox(
+                width: screenWidth < 500
+                    ? screenWidth * 0.43
+                    : 320,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: isArabic
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isArabic ? 'مرحبًا' : 'Welcome',
+                      textAlign: isArabic
+                          ? TextAlign.right
+                          : TextAlign.left,
+                      textDirection: isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      style: TextStyle(
+                        fontSize: screenWidth < 500 ? 14 : 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryDark.withOpacity(0.75),
+                      ),
+                    ),
+
+                    const SizedBox(height: 2),
+
+                    Text(
+                      parentName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: isArabic
+                          ? TextAlign.right
+                          : TextAlign.left,
+                      textDirection: isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      style: TextStyle(
+                        fontSize: screenWidth < 500 ? 20 : 25,
+                        height: 1.25,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Text(
+                      isArabic
+                          ? 'أنتِ تبنين جيلاً رائعًا'
+                          : 'You are building a wonderful generation',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: isArabic
+                          ? TextAlign.right
+                          : TextAlign.left,
+                      textDirection: isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      style: TextStyle(
+                        fontSize: screenWidth < 500 ? 11.5 : 13,
+                        height: 1.5,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
