@@ -41,7 +41,8 @@ int _points = 0;
 
 final DailyFeedbackApiService _feedbackService =
     DailyFeedbackApiService();
-
+final TaskApiService _taskApiService = TaskApiService();
+final PointApiService _pointApiService = PointApiService();
   bool _isLoading = true;
   String? _errorMessage;
   final Set<String> _updatingAssignments = {};
@@ -57,8 +58,8 @@ final DailyFeedbackApiService _feedbackService =
 
     try {
       final childFuture = SecureStorage.getChild();
-final assignmentsFuture = TaskApiService().getMyAssignments();
-final pointsFuture = PointApiService().getMyPoints();
+final assignmentsFuture = _taskApiService.getMyAssignments();
+final pointsFuture = _pointApiService.getMyPoints();
 final feedbackFuture = _feedbackService.getMyTodayFeedback();
 final results = await Future.wait([
   childFuture,
@@ -106,14 +107,32 @@ final todayFeedback = results[3] as DailyFeedbackModel?;
     }
   }
 
+  Future<void> _refreshTasksAndPoints() async {
+  try {
+    final results = await Future.wait([
+      _taskApiService.getMyAssignments(),
+      _pointApiService.getMyPoints(),
+    ]);
+
+    if (!mounted) return;
+
+    setState(() {
+      _assignments = results[0] as List<TaskAssignmentModel>;
+      _points = results[1] as int;
+    });
+  } catch (error) {
+    debugPrint('Tasks and points refresh error: $error');
+  }
+}
+
   Future<void> _completeAssignment(String assignmentId) async {
     setState(() {
       _updatingAssignments.add(assignmentId);
     });
 
     try {
-      await TaskApiService().completeAssignment(assignmentId);
-      await _loadData(showPageLoader: false);
+      await _taskApiService.completeAssignment(assignmentId);
+await _refreshTasksAndPoints();
 
       if (!mounted) return;
 
@@ -290,7 +309,7 @@ final todayFeedback = results[3] as DailyFeedbackModel?;
 
                               if (!mounted) return;
 
-                              await _loadData(showPageLoader: false);
+                             await _refreshTasksAndPoints();
                             },
                           ),
                         ),
