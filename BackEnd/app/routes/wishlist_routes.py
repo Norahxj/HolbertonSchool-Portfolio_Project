@@ -77,6 +77,33 @@ class MyWishlistResource(Resource):
         return wishlists_response_schema.dump(wishes), 200
 
 
+@api.route("/my-family")
+class MyFamilyWishesResource(Resource):
+    @api.response(
+        200,
+        "Family wishes retrieved successfully",
+    )
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Parent access required")
+    @api.doc(security="JWT")
+    @jwt_required()
+    def get(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "parent":
+            return {"error": "Parent access required"}, 403
+
+        guardian_id = get_jwt_identity()
+
+        wishes = wishlist_service.get_family_wishes(
+            guardian_id
+        )
+
+        return wishlist_response_schema.dump(
+            wishes,
+        ), 200
+
+
 @api.route("/child/<child_id>")
 class ChildWishlistResource(Resource):
     @api.response(200, "Wishes retrieved successfully")

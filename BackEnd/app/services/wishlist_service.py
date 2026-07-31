@@ -48,6 +48,11 @@ class WishlistService:
         wishes = self.wishlist_repository.get_wishes_by_child_id(child_id)
         return wishes, None
 
+    def get_family_wishes(self, guardian_id):
+        return self.wishlist_repository.get_wishes_by_guardian_id(
+        guardian_id
+        )
+
     def approve_wish(self, wish_id, parent_id, target_points):
         if target_points < 1 or target_points > 10000:
             return None, "invalid_target_points"
