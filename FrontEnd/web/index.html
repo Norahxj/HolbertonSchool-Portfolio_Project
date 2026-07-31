@@ -16,7 +16,10 @@
 
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta
+  name="apple-mobile-web-app-status-bar-style"
+  content="black-translucent"
+>
   <meta name="apple-mobile-web-app-title" content="Asalah">
 
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -26,16 +29,39 @@
   <title>Asalah</title>
 
   <style>
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      overscroll-behavior: none;
-      background: #f8f5fc;
-    }
+  html {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #f8f5fc;
+  }
+
+  body {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    min-height: 100%;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: #f8f5fc;
+  }
+
+  flutter-view {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    display: block;
+    background: #f8f5fc;
+  }
 
   </style>
 </head>
