@@ -2,6 +2,9 @@ from sqlalchemy.exc import IntegrityError
 from app.extensions import db
 from app.models.wishlist_model import Wishlist
 from app.models.points_history_model import PointsHistory
+from sqlalchemy.orm import joinedload
+from app.models.child_model import Child
+from app.models.user_model import User
 
 
 class WishlistRepository:
@@ -22,6 +25,17 @@ class WishlistRepository:
 
     def get_wishes_by_child_id(self, child_id):
         return (Wishlist.query.filter_by(child_id=child_id).order_by(Wishlist.created_at.desc()).all())
+
+    def get_wishes_by_guardian_id(self, guardian_id):
+        return (
+        Wishlist.query
+        .options(joinedload(Wishlist.child))
+        .join(Wishlist.child)
+        .join(Child.guardians)
+        .filter(User.id == guardian_id)
+        .order_by(Wishlist.created_at.desc())
+        .all()
+        )
 
     def get_wish_for_child(self, wish_id, child_id):
         return Wishlist.query.filter_by(id=wish_id, child_id=child_id).first()
