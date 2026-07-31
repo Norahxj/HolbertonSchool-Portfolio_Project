@@ -873,10 +873,11 @@ class _LanguageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-  behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: Padding(
+    return Material(
+  color: Colors.transparent,
+  child: InkWell(
+    onTap: onTap,
+    child: Padding(
         padding:
             const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -905,6 +906,7 @@ class _LanguageRow extends StatelessWidget {
                 size: 20,
               ),
             ),
+            
 
             const SizedBox(
               width: AppSpacing.md,
@@ -927,29 +929,40 @@ class _LanguageRow extends StatelessWidget {
                 ),
               ),
             ),
+            
+
 
             
 
             _LanguageToggle(
               isArabic: isArabic,
+              onTap: onTap,
             ),
           ],
         ),
       ),
+       ),
     );
   }
 }
 
 class _LanguageToggle extends StatelessWidget {
   final bool isArabic;
+   final VoidCallback onTap;
 
   const _LanguageToggle({
     required this.isArabic,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+  color: Colors.transparent,
+  child: InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(20),
+    child: Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 6,
         vertical: 5,
@@ -973,7 +986,10 @@ class _LanguageToggle extends StatelessWidget {
           ),
         ],
       ),
+      ),
+  ),
     );
+    
   }
 }
 
