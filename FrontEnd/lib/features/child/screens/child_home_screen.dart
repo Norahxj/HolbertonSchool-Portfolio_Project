@@ -449,9 +449,9 @@ class _HomeHeader extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.lg,
-                  12,
+                  6,
                   AppSpacing.lg,
-                  18,
+                  10,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -484,7 +484,7 @@ class _HomeHeader extends StatelessWidget {
     ),
   ),
 ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
 
                     Text(
                       greeting,
@@ -496,7 +496,7 @@ class _HomeHeader extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 1),
 
                     Text(
                       childName,
@@ -509,7 +509,7 @@ class _HomeHeader extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 2),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -534,7 +534,7 @@ class _HomeHeader extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
 
                     Row(
                       children: [
