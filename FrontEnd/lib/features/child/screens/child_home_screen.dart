@@ -838,29 +838,29 @@ class _DailyGoalCard extends StatelessWidget {
     final progress = totalTasks == 0
         ? 0.0
         : (completedTasks / totalTasks).clamp(0.0, 1.0).toDouble();
-    final remainingTasks = (totalTasks - completedTasks)
-        .clamp(0, totalTasks)
-        .toInt();
+
+    final remainingTasks =
+        (totalTasks - completedTasks).clamp(0, totalTasks).toInt();
 
     String message;
 
-if (totalTasks == 0) {
-  message = isArabic
-      ? 'لا توجد مهام اليوم، استمتع بيومك!'
-      : 'There are no tasks today. Enjoy your day!';
-} else if (remainingTasks == 0) {
-  message = isArabic
-      ? 'رائع! أنجزت جميع مهام اليوم 🎉'
-      : 'Great! You completed all of today\'s tasks 🎉';
-} else if (remainingTasks == 1) {
-  message = isArabic
-      ? 'بقيت لك مهمة واحدة لإكمال هدف اليوم!'
-      : 'You have one task left to complete today\'s goal!';
-} else {
-  message = isArabic
-      ? 'بقيت لك $remainingTasks مهام لإكمال هدف اليوم'
-      : 'You have $remainingTasks tasks left to complete today\'s goal';
-}
+    if (totalTasks == 0) {
+      message = isArabic
+          ? 'لا توجد مهام اليوم، استمتع بيومك!'
+          : 'There are no tasks today. Enjoy your day!';
+    } else if (remainingTasks == 0) {
+      message = isArabic
+          ? 'رائع! أنجزت جميع مهام اليوم 🎉'
+          : 'Great! You completed all of today\'s tasks 🎉';
+    } else if (remainingTasks == 1) {
+      message = isArabic
+          ? 'بقيت لك مهمة واحدة لإكمال هدف اليوم!'
+          : 'You have one task left to complete today\'s goal!';
+    } else {
+      message = isArabic
+          ? 'بقيت لك $remainingTasks مهام لإكمال هدف اليوم'
+          : 'You have $remainingTasks tasks left to complete today\'s goal';
+    }
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -868,10 +868,15 @@ if (totalTasks == 0) {
         gradient: const LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [AppColors.goldLight, Color(0xFFFFF9E7)],
+          colors: [
+            AppColors.goldLight,
+            Color(0xFFFFF9E7),
+          ],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.gold.withOpacity(0.35)),
+        border: Border.all(
+          color: AppColors.gold.withOpacity(0.35),
+        ),
         boxShadow: [
           BoxShadow(
             color: AppColors.gold.withOpacity(0.12),
@@ -884,78 +889,86 @@ if (totalTasks == 0) {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-  textDirection:
-      isArabic ? TextDirection.rtl : TextDirection.ltr,
-  children: [
-    Expanded(
-      child: Row(
-        textDirection:
-        isArabic ? TextDirection.rtl : TextDirection.ltr,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.flag_rounded,
-              color: AppColors.orange,
-              size: 23,
-            ),
+            textDirection:
+                isArabic ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              Expanded(
+                child: Row(
+                  textDirection:
+                      isArabic ? TextDirection.rtl : TextDirection.ltr,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: isArabic
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isArabic
+                                ? 'هدف اليوم'
+                                : 'Today\'s Goal',
+                            textAlign: isArabic
+                                ? TextAlign.right
+                                : TextAlign.left,
+                            style:
+                                AppTextStyles.sectionTitle.copyWith(
+                              fontSize: 17,
+                            ),
+                          ),
+                          Text(
+                            message,
+                            textAlign: isArabic
+                                ? TextAlign.right
+                                : TextAlign.left,
+                            style: AppTextStyles.caption,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(width: AppSpacing.sm),
+
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.flag_rounded,
+                        color: AppColors.orange,
+                        size: 23,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: AppSpacing.sm),
+
+              Text(
+                '$completedTasks/$totalTasks',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.orange,
+                ),
+              ),
+            ],
           ),
 
-          const SizedBox(width: AppSpacing.sm),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: isArabic
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                Text(
-                  isArabic ? 'هدف اليوم' : 'Today\'s Goal',
-                  textAlign:
-                      isArabic ? TextAlign.right : TextAlign.left,
-                  style: AppTextStyles.sectionTitle.copyWith(
-                    fontSize: 17,
-                  ),
-                ),
-                Text(
-                  message,
-                  textAlign:
-                      isArabic ? TextAlign.right : TextAlign.left,
-                  style: AppTextStyles.caption,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-
-    const SizedBox(width: AppSpacing.sm),
-
-    Text(
-      '$completedTasks/$totalTasks',
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w800,
-        color: AppColors.orange,
-      ),
-    ),
-  ],
-),
           const SizedBox(height: AppSpacing.md),
+
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 10,
               backgroundColor: Colors.white,
-              valueColor: const AlwaysStoppedAnimation(AppColors.orange),
+              valueColor: const AlwaysStoppedAnimation(
+                AppColors.orange,
+              ),
             ),
           ),
         ],
@@ -963,7 +976,6 @@ if (totalTasks == 0) {
     );
   }
 }
-
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String count;
