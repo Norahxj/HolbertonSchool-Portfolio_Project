@@ -12,6 +12,16 @@ CHILDREN_URL = "/api/children/"
 CHILD_LOGIN_URL = "/api/auth/child-login"
 DASHBOARD_URL = "/api/dashboard/"
 
+@pytest.fixture(autouse=True)
+def mock_dashboard_points_repository(monkeypatch):
+    service = dashboard_routes.dashboard_service
+
+    monkeypatch.setattr(
+        service.point_repository,
+        "get_points_by_child_id",
+        lambda child_id: None,
+    )
+
 
 def auth_header(token):
     return {"Authorization": token}

@@ -365,24 +365,36 @@ class _HomeHeader extends StatelessWidget {
     return Directionality(
       textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-  Color(0xFF8B5FE8),
-  Color(0xFFA783F2),
-  Color(0xFFB99AF7),
-],
-          ),
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(36),
-            bottomRight: Radius.circular(36),
-          ),
-        ),
+  clipBehavior: Clip.antiAlias,
+  decoration: const BoxDecoration(
+    borderRadius: BorderRadius.only(
+      bottomLeft: Radius.circular(36),
+      bottomRight: Radius.circular(36),
+    ),
+    image: DecorationImage(
+      image: AssetImage(
+        'assets/dashboard/child_home_background.png',
+      ),
+      fit: BoxFit.cover,
+      alignment: Alignment.center,
+    ),
+  ),
         child: Stack(
           children: [
+            Positioned.fill(
+  child: DecoratedBox(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          const Color(0xFF6F42C1).withOpacity(0.30),
+          const Color(0xFF7F55D9).withOpacity(0.52),
+        ],
+      ),
+    ),
+  ),
+),
             PositionedDirectional(
               top: -35,
               start: -20,
