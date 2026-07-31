@@ -159,6 +159,7 @@ class _WishlistApprovalView extends StatelessWidget {
                       _PendingWishCard(
                         key: ValueKey(entry.wish.id),
                         childName: entry.childName,
+                        isArabic: isArabic,
                         avatarIndex: entry.avatarIndex,
                         wishTitle: entry.wish.name,
                         subtitle: isArabic
@@ -189,6 +190,7 @@ class _WishlistApprovalView extends StatelessWidget {
                         in controller.approvedWishes) ...[
                       _ApprovedWishCard(
                         childName: entry.childName,
+                        isArabic: isArabic,
                         avatarIndex: entry.avatarIndex,
                         wishTitle: entry.wish.name,
                         subtitle: isArabic
@@ -248,7 +250,7 @@ class _ErrorState extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            isArabic
+           isArabic
                 ? 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.'
                 : 'An error occurred while loading wishes. Please try again.',
             textAlign: TextAlign.center,
@@ -260,7 +262,7 @@ class _ErrorState extends StatelessWidget {
           ElevatedButton(
             onPressed: onRetry,
             child: Text(
-              isArabic
+             isArabic
                   ? 'إعادة المحاولة'
                   : 'Try Again',
             ),
@@ -336,18 +338,17 @@ class _WishHeader extends StatelessWidget {
   final String childName;
   final String wishTitle;
   final int avatarIndex;
+  final bool isArabic;
 
   const _WishHeader({
     required this.childName,
     required this.wishTitle,
     required this.avatarIndex,
+    required this.isArabic,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode ==
-            'ar';
 
     return Row(
       children: [
@@ -376,6 +377,7 @@ class _WishHeader extends StatelessWidget {
 
 class _PendingWishCard extends StatefulWidget {
   final String childName;
+  final bool isArabic;
   final int avatarIndex;
   final String wishTitle;
   final String subtitle;
@@ -392,6 +394,7 @@ class _PendingWishCard extends StatefulWidget {
     required this.startingPoints,
     required this.onApprove,
     required this.onReject,
+    required this.isArabic,
   });
 
   @override
@@ -411,9 +414,6 @@ class _PendingWishCardState
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode ==
-            'ar';
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -432,6 +432,7 @@ class _PendingWishCardState
             childName: widget.childName,
             wishTitle: widget.wishTitle,
             avatarIndex: widget.avatarIndex,
+            isArabic: widget.isArabic,
           ),
 
           const SizedBox(height: AppSpacing.sm),
@@ -439,7 +440,7 @@ class _PendingWishCardState
           Row(
             children: [
               _StatusTag(
-                label: isArabic
+                label: widget.isArabic
                     ? 'بانتظار الموافقة'
                     : 'Pending Approval',
                 backgroundColor:
@@ -450,7 +451,7 @@ class _PendingWishCardState
               Expanded(
                 child: Text(
                   widget.subtitle,
-                  textAlign: isArabic
+                  textAlign: widget.isArabic
                       ? TextAlign.right
                       : TextAlign.left,
                   style: const TextStyle(
@@ -523,7 +524,7 @@ class _PendingWishCardState
                 ),
                 const Spacer(),
                 Text(
-                  isArabic
+                  widget.isArabic
                       ? 'نقاط نور المطلوبة'
                       : 'Required Noor Points',
                   style: const TextStyle(
@@ -550,7 +551,7 @@ class _PendingWishCardState
                           .showSnackBar(
                         SnackBar(
                           content: Text(
-                            isArabic
+                            widget.isArabic
                                 ? 'يجب أن تكون النقاط أكبر من صفر'
                                 : 'Points must be greater than zero',
                           ),
@@ -576,7 +577,7 @@ class _PendingWishCardState
                       children: [
                         Flexible(
                           child: Text(
-                            isArabic
+                            widget.isArabic
                                 ? 'موافقة وخصم النقاط'
                                 : 'Approve and Deduct Points',
                             textAlign:
@@ -623,7 +624,7 @@ class _PendingWishCardState
                           MainAxisAlignment.center,
                       children: [
                         Text(
-                          isArabic
+                          widget.isArabic
                               ? 'رفض'
                               : 'Reject',
                           style:
@@ -697,9 +698,11 @@ class _ApprovedWishCard extends StatelessWidget {
   final String wishTitle;
   final String subtitle;
   final int points;
+  final bool isArabic;
 
   const _ApprovedWishCard({
     required this.childName,
+    required this.isArabic,
     required this.avatarIndex,
     required this.wishTitle,
     required this.subtitle,
@@ -708,9 +711,6 @@ class _ApprovedWishCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode ==
-            'ar';
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -729,6 +729,7 @@ class _ApprovedWishCard extends StatelessWidget {
             childName: childName,
             wishTitle: wishTitle,
             avatarIndex: avatarIndex,
+            isArabic: isArabic,
           ),
 
           const SizedBox(height: AppSpacing.sm),
