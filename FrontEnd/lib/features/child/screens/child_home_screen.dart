@@ -370,7 +370,11 @@ class _HomeHeader extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: AppColors.primaryGradient,
+            colors: [
+  Color(0xFF8B5FE8),
+  Color(0xFFA783F2),
+  Color(0xFFB99AF7),
+],
           ),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(36),
@@ -443,16 +447,16 @@ class _HomeHeader extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.lg,
-                  18,
+                  12,
                   AppSpacing.lg,
-                  24,
+                  18,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Container(
-                      width: 84,
-                      height: 84,
+                      width: 72,
+                      height: 72,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -477,7 +481,7 @@ class _HomeHeader extends StatelessWidget {
                       child: ClipOval(
                         child: ChildAvatar(
                           avatarIndex: avatarIndex,
-                          size: 84,
+                          size: 72,
                         ),
                       ),
                     ),
@@ -503,7 +507,7 @@ class _HomeHeader extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: AppTextStyles.childTitle.copyWith(
                         color: Colors.white,
-                        fontSize: 30,
+                        fontSize: 26,
                       ),
                     ),
 
@@ -532,7 +536,7 @@ class _HomeHeader extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 16),
 
                     Row(
                       children: [
@@ -603,11 +607,11 @@ class _HeaderMetric extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 12,
-        vertical: 13,
+        vertical: 10,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: Colors.white.withOpacity(0.75),
         ),
@@ -623,8 +627,8 @@ class _HeaderMetric extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: iconColor.withOpacity(0.13),
               shape: BoxShape.circle,
@@ -632,7 +636,7 @@ class _HeaderMetric extends StatelessWidget {
             child: Icon(
               icon,
               color: iconColor,
-              size: 22,
+              size: 19,
             ),
           ),
 
@@ -649,7 +653,7 @@ class _HeaderMetric extends StatelessWidget {
                   maxLines: 1,
                   style: const TextStyle(
                     color: AppColors.primaryDark,
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -880,52 +884,70 @@ if (totalTasks == 0) {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            textDirection:
+  textDirection:
       isArabic ? TextDirection.rtl : TextDirection.ltr,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.flag_rounded,
-                  color: AppColors.orange,
-                  size: 23,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: isArabic
-    ? CrossAxisAlignment.end
-    : CrossAxisAlignment.start,
-                  children: [
-                    Text(
-  isArabic ? 'هدف اليوم' : 'Today\'s Goal',
-                      style: AppTextStyles.sectionTitle.copyWith(fontSize: 17),
-                    ),
-                    Text(
-                      message,
-                      textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                      style: AppTextStyles.caption,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                '$completedTasks/$totalTasks',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.orange,
-                ),
-              ),
-            ],
+  children: [
+    Expanded(
+      child: Row(
+        textDirection:
+        isArabic ? TextDirection.rtl : TextDirection.ltr,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.flag_rounded,
+              color: AppColors.orange,
+              size: 23,
+            ),
           ),
+
+          const SizedBox(width: AppSpacing.sm),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: isArabic
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isArabic ? 'هدف اليوم' : 'Today\'s Goal',
+                  textAlign:
+                      isArabic ? TextAlign.right : TextAlign.left,
+                  style: AppTextStyles.sectionTitle.copyWith(
+                    fontSize: 17,
+                  ),
+                ),
+                Text(
+                  message,
+                  textAlign:
+                      isArabic ? TextAlign.right : TextAlign.left,
+                  style: AppTextStyles.caption,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+
+    const SizedBox(width: AppSpacing.sm),
+
+    Text(
+      '$completedTasks/$totalTasks',
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w800,
+        color: AppColors.orange,
+      ),
+    ),
+  ],
+),
           const SizedBox(height: AppSpacing.md),
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
