@@ -5,7 +5,7 @@ from app.services.points_service import PointsService
 from app.extensions import db
 from app.utils.datetime_utils import utc_now
 from datetime import timedelta
-from app.utils.datetime_utils import riyadh_today
+from app.utils.datetime_utils import riyadh_today, RIYADH_TIMEZONE
 
 class TaskAssignmentService:
     def __init__(self):
@@ -76,7 +76,11 @@ class TaskAssignmentService:
             )
 
             if completion_date:
-                completion_days.add(completion_date.date())
+                completion_days.add(
+                    completion_date
+                    .astimezone(RIYADH_TIMEZONE)
+                    .date()
+                )
 
         today = riyadh_today()
 

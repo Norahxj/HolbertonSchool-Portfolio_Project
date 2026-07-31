@@ -47,12 +47,12 @@ class TaskApiService {
   }
 
   Future<ChildProgressSummaryModel> getMyProgressSummary() async {
-  final response = await _apiService.getMyProgressSummary();
+    final response = await _apiService.getMyProgressSummary();
 
-  return ChildProgressSummaryModel.fromJson(
-    response.data as Map<String, dynamic>,
-  );
-}
+    return ChildProgressSummaryModel.fromJson(
+      response.data as Map<String, dynamic>,
+    );
+  }
 
   Future<List<TaskAssignmentModel>> getMyAssignments() async {
     final response = await _apiService.getMyAssignments();
@@ -60,25 +60,21 @@ class TaskApiService {
     return _convertAssignments(response.data);
   }
 
-  Future<List<TaskAssignmentModel>>
-    getMyCurrentWeekAssignments() async {
-  final response =
-      await _apiService.getMyCurrentWeekAssignments();
+  Future<List<TaskAssignmentModel>> getMyCurrentWeekAssignments() async {
+    final response = await _apiService.getMyCurrentWeekAssignments();
 
-  final data = response.data;
+    final data = response.data;
 
-  if (data is! List) {
-    return [];
+    if (data is! List) {
+      return [];
+    }
+
+    return data
+        .map(
+          (item) => TaskAssignmentModel.fromJson(item as Map<String, dynamic>),
+        )
+        .toList();
   }
-
-  return data
-      .map(
-        (item) => TaskAssignmentModel.fromJson(
-          item as Map<String, dynamic>,
-        ),
-      )
-      .toList();
-}
 
   Future<List<TaskAssignmentModel>> getAssignmentsForTask(String taskId) async {
     final response = await _apiService.getAssignmentsForTask(taskId);

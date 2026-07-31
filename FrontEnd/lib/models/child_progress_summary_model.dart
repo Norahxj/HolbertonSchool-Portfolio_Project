@@ -9,22 +9,15 @@ class ChildProgressSummaryModel {
     required this.completedByCategory,
   });
 
-  factory ChildProgressSummaryModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory ChildProgressSummaryModel.fromJson(Map<String, dynamic> json) {
     final categoryData =
         json['completed_by_category'] as Map<String, dynamic>? ?? {};
 
     return ChildProgressSummaryModel(
-      totalCompleted:
-          (json['total_completed'] as num?)?.toInt() ?? 0,
-      currentStreak:
-          (json['current_streak'] as num?)?.toInt() ?? 0,
+      totalCompleted: (json['total_completed'] as num?)?.toInt() ?? 0,
+      currentStreak: (json['current_streak'] as num?)?.toInt() ?? 0,
       completedByCategory: categoryData.map(
-        (key, value) => MapEntry(
-          key,
-          (value as num?)?.toInt() ?? 0,
-        ),
+        (key, value) => MapEntry(key, (value as num?)?.toInt() ?? 0),
       ),
     );
   }

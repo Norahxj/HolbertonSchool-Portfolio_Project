@@ -74,10 +74,10 @@ abstract class ApiService {
   Future<HttpResponse<dynamic>> getMyAssignments();
 
   @GET('/task-assignments/my/current-week')
-Future<HttpResponse<dynamic>> getMyCurrentWeekAssignments();
+  Future<HttpResponse<dynamic>> getMyCurrentWeekAssignments();
 
-@GET('/task-assignments/my/progress-summary')
-Future<HttpResponse<dynamic>> getMyProgressSummary();
+  @GET('/task-assignments/my/progress-summary')
+  Future<HttpResponse<dynamic>> getMyProgressSummary();
 
   @PUT('/task-assignments/{assignmentId}/complete')
   Future<HttpResponse<dynamic>> completeAssignment(
@@ -155,7 +155,7 @@ Future<HttpResponse<dynamic>> getMyProgressSummary();
   Future<HttpResponse<dynamic>> getMyDailyFeedback();
 
   @GET('/daily-feedback/my/today')
-Future<HttpResponse<dynamic>> getMyTodayDailyFeedback();
+  Future<HttpResponse<dynamic>> getMyTodayDailyFeedback();
 
   @PUT('/daily-feedback/{feedbackId}')
   Future<HttpResponse<dynamic>> updateDailyFeedback(
