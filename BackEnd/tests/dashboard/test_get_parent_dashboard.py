@@ -729,6 +729,7 @@ def test_service_counts_all_assignment_statuses(
             "rejected_tasks": 1,
             "remaining_tasks": 4,
             "total_tasks": 6,
+            "total_points": 0,
         }
     ]
 
