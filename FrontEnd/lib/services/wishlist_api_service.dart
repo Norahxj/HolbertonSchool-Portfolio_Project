@@ -35,7 +35,7 @@ class WishlistApiService {
     await _apiService.deleteWish(wishId);
   }
 
-  /// Parent: Get a specific child's wishes - 
+  /// Parent: Get a specific child's wishes -
 
   Future<List<WishModel>> getChildWishes(String childId) async {
     final response = await _apiService.getChildWishes(childId);
@@ -45,13 +45,24 @@ class WishlistApiService {
         .toList();
   }
 
+  /// Parent: Get all wishes for all children
+
+  Future<List<WishModel>> getFamilyWishes() async {
+    final response = await _apiService.getFamilyWishes();
+
+    final List<dynamic> data = response.data as List<dynamic>;
+
+    return data
+        .map((json) => WishModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
   /// Parent: Approve a wish and set how many points it costs -
 
   Future<WishModel> approveWish(String wishId, int targetPoints) async {
-    final response = await _apiService.approveWish(
-      wishId,
-      {'target_points': targetPoints},
-    );
+    final response = await _apiService.approveWish(wishId, {
+      'target_points': targetPoints,
+    });
     return WishModel.fromJson(response.data as Map<String, dynamic>);
   }
 

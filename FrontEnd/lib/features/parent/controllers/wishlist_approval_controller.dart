@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 
 import '../../../models/wish_model.dart';
 import '../../../services/wishlist_api_service.dart';
-import '../services/child_api_service.dart';
 
 class WishlistEntry {
   final WishModel wish;
@@ -17,11 +16,9 @@ class WishlistEntry {
     this.approvedPoints,
   });
 
-  WishlistEntry copyWith({
-    int? approvedPoints,
-  }) {
+  WishlistEntry copyWith({WishModel? wish, int? approvedPoints}) {
     return WishlistEntry(
-      wish: wish,
+      wish: wish ?? this.wish,
       childName: childName,
       avatarIndex: avatarIndex,
       approvedPoints: approvedPoints ?? this.approvedPoints,
@@ -30,15 +27,9 @@ class WishlistEntry {
 }
 
 class WishlistApprovalController extends ChangeNotifier {
-  WishlistApprovalController({
-    ChildApiService? childApiService,
-    WishlistApiService? wishlistApiService,
-  })  : _childApiService =
-            childApiService ?? ChildApiService(),
-        _wishlistApiService =
-            wishlistApiService ?? WishlistApiService();
+  WishlistApprovalController({WishlistApiService? wishlistApiService})
+    : _wishlistApiService = wishlistApiService ?? WishlistApiService();
 
-  final ChildApiService _childApiService;
   final WishlistApiService _wishlistApiService;
 
   final List<WishlistEntry> _pendingWishes = [];
@@ -49,21 +40,16 @@ class WishlistApprovalController extends ChangeNotifier {
   bool _requestRunning = false;
   bool _isDisposed = false;
 
-  List<WishlistEntry> get pendingWishes =>
-      List.unmodifiable(_pendingWishes);
+  List<WishlistEntry> get pendingWishes => List.unmodifiable(_pendingWishes);
 
-  List<WishlistEntry> get approvedWishes =>
-      List.unmodifiable(_approvedWishes);
+  List<WishlistEntry> get approvedWishes => List.unmodifiable(_approvedWishes);
 
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
 
-  bool get isEmpty =>
-      _pendingWishes.isEmpty && _approvedWishes.isEmpty;
+  bool get isEmpty => _pendingWishes.isEmpty && _approvedWishes.isEmpty;
 
-  Future<bool> loadWishes({
-    bool showLoading = true,
-  }) async {
+  Future<bool> loadWishes({bool showLoading = true}) async {
     if (_requestRunning) {
       return true;
     }
@@ -78,38 +64,33 @@ class WishlistApprovalController extends ChangeNotifier {
     _notify();
 
     try {
-      final children = await _childApiService.getChildren();
-
-      final wishesByChild = await Future.wait(
-        children.map((child) async {
-          final wishes = await _wishlistApiService
-              .getChildWishes(child.id);
-
-          return MapEntry(child, wishes);
-        }),
-      );
+      final wishes = await _wishlistApiService.getFamilyWishes();
 
       final pending = <WishlistEntry>[];
       final approved = <WishlistEntry>[];
 
-      for (final entry in wishesByChild) {
-        final child = entry.key;
-        final wishes = entry.value;
+      for (final wish in wishes) {
+        final childName = wish.childName;
+        final avatarIndex = wish.childAvatarIndex;
 
-        for (final wish in wishes) {
-          final wishEntry = WishlistEntry(
-            wish: wish,
-            childName: child.name,
-            avatarIndex: child.avatarIndex,
-          );
+        // بيانات الطفل يجب أن تأتي من endpoint العائلة.
+        // نتجاوز العنصر فقط لو كانت الاستجابة ناقصة.
+        if (childName == null || avatarIndex == null) {
+          continue;
+        }
 
-          final status = wish.status.toUpperCase();
+        final wishEntry = WishlistEntry(
+          wish: wish,
+          childName: childName,
+          avatarIndex: avatarIndex,
+        );
 
-          if (status == 'PENDING') {
-            pending.add(wishEntry);
-          } else if (status == 'APPROVED') {
-            approved.add(wishEntry);
-          }
+        final status = wish.status.toUpperCase();
+
+        if (status == 'PENDING') {
+          pending.add(wishEntry);
+        } else if (status == 'APPROVED') {
+          approved.add(wishEntry);
         }
       }
 
@@ -139,12 +120,9 @@ class WishlistApprovalController extends ChangeNotifier {
     return loadWishes(showLoading: false);
   }
 
-  Future<bool> approveWish(
-    String wishId,
-    int targetPoints,
-  ) async {
+  Future<bool> approveWish(String wishId, int targetPoints) async {
     try {
-      await _wishlistApiService.approveWish(
+      final approvedWish = await _wishlistApiService.approveWish(
         wishId,
         targetPoints,
       );
@@ -156,7 +134,7 @@ class WishlistApprovalController extends ChangeNotifier {
       if (index != -1) {
         final approvedEntry = _pendingWishes
             .removeAt(index)
-            .copyWith(approvedPoints: targetPoints);
+            .copyWith(wish: approvedWish, approvedPoints: targetPoints);
 
         _approvedWishes.insert(0, approvedEntry);
         _notify();
@@ -172,9 +150,7 @@ class WishlistApprovalController extends ChangeNotifier {
     try {
       await _wishlistApiService.rejectWish(wishId);
 
-      _pendingWishes.removeWhere(
-        (entry) => entry.wish.id == wishId,
-      );
+      _pendingWishes.removeWhere((entry) => entry.wish.id == wishId);
 
       _notify();
       return true;

@@ -115,7 +115,7 @@ abstract class ApiService {
   Future<HttpResponse<dynamic>> getChildWishes(@Path('childId') String childId);
 
   @GET('/wishlists/my-family')
-Future<HttpResponse<dynamic>> getFamilyWishes();
+  Future<HttpResponse<dynamic>> getFamilyWishes();
 
   @PUT('/wishlists/{wishId}/approve')
   Future<HttpResponse<dynamic>> approveWish(
