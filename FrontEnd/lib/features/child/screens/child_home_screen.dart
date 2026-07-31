@@ -413,16 +413,6 @@ class _HomeHeader extends StatelessWidget {
               ),
             ),
 
-            const Positioned(
-              top: 105,
-              right: 52,
-              child: Icon(
-                Icons.auto_awesome,
-                size: 15,
-                color: AppColors.gold,
-              ),
-            ),
-
             Positioned(
               top: 145,
               left: 54,
@@ -466,38 +456,34 @@ class _HomeHeader extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 4,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.35),
-                            blurRadius: 18,
-                            spreadRadius: 2,
-                          ),
-                          BoxShadow(
-                            color:
-                                AppColors.primaryDark.withOpacity(0.22),
-                            blurRadius: 18,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: ChildAvatar(
-                          avatarIndex: avatarIndex,
-                          size: 72,
-                        ),
-                      ),
-                    ),
-
+                    Align(
+  alignment: Alignment.center,
+  child: Container(
+    width: 86,
+    height: 86,
+    padding: const EdgeInsets.all(4),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      shape: BoxShape.circle,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white.withOpacity(0.45),
+          blurRadius: 18,
+          spreadRadius: 3,
+        ),
+        BoxShadow(
+          color: AppColors.primaryDark.withOpacity(0.25),
+          blurRadius: 16,
+          offset: const Offset(0, 6),
+        ),
+      ],
+    ),
+    child: ChildAvatar(
+      avatarIndex: avatarIndex,
+      size: 78,
+    ),
+  ),
+),
                     const SizedBox(height: 12),
 
                     Text(
