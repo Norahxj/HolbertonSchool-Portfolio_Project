@@ -9,10 +9,10 @@ import 'parent_dashboard_screen.dart';
 import 'reward_management_screen.dart';
 import 'wishlist_approval_screen.dart';
 
-class ParentMainScreen extends StatelessWidget {
+class ParentMainScreen extends StatefulWidget {
   final int initialIndex;
   final bool isArabic;
-final VoidCallback onLanguageToggle;
+  final VoidCallback onLanguageToggle;
 
   const ParentMainScreen({
     super.key,
@@ -22,17 +22,48 @@ final VoidCallback onLanguageToggle;
   });
 
   @override
+  State<ParentMainScreen> createState() => _ParentMainScreenState();
+}
+
+class _ParentMainScreenState extends State<ParentMainScreen> {
+  late bool _isArabic;
+
+  @override
+  void initState() {
+    super.initState();
+    _isArabic = widget.isArabic;
+  }
+
+  @override
+  void didUpdateWidget(covariant ParentMainScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isArabic != widget.isArabic) {
+      _isArabic = widget.isArabic;
+    }
+  }
+
+  void _toggleLanguage() {
+    setState(() {
+      _isArabic = !_isArabic;
+    });
+
+    widget.onLanguageToggle();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AppNavigationController(initialIndex: initialIndex),
+      create: (_) => AppNavigationController(
+        initialIndex: widget.initialIndex,
+      ),
       child: _ParentNavigationView(
-        isArabic: isArabic,
-        onLanguageToggle: onLanguageToggle,
+        isArabic: _isArabic,
+        onLanguageToggle: _toggleLanguage,
       ),
     );
   }
 }
-
 class _ParentNavigationView extends StatelessWidget {
   final bool isArabic;
   final VoidCallback onLanguageToggle;
