@@ -929,14 +929,8 @@ class _LanguageRow extends StatelessWidget {
                 ),
               ),
             ),
-            
-
-
-            
-
             _LanguageToggle(
               isArabic: isArabic,
-              onTap: onTap,
             ),
           ],
         ),
@@ -948,21 +942,14 @@ class _LanguageRow extends StatelessWidget {
 
 class _LanguageToggle extends StatelessWidget {
   final bool isArabic;
-   final VoidCallback onTap;
 
   const _LanguageToggle({
     required this.isArabic,
-    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-  color: Colors.transparent,
-  child: InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(20),
-    child: Container(
+    return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 6,
         vertical: 5,
@@ -986,10 +973,7 @@ class _LanguageToggle extends StatelessWidget {
           ),
         ],
       ),
-      ),
-  ),
     );
-    
   }
 }
 
