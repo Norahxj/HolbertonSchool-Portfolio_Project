@@ -351,14 +351,15 @@ class _HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final greeting = isArabic ? 'أهلًا يا بطل! 👋' : 'Hello, champion! 👋';
+    final greeting =
+        isArabic ? 'أهلًا يا بطل! 👋' : 'Hello, champion! 👋';
 
     final subtitle = isArabic
         ? 'يوم جديد وإنجازات جديدة بانتظارك'
         : 'A new day and new achievements await you';
 
     final pointsLabel = isArabic ? 'نقاط نور' : 'Noor Points';
-    final tasksLabel = isArabic ? 'مهام اليوم' : 'Today\'s tasks';
+    final tasksLabel = isArabic ? 'مهام اليوم' : 'Today\'s Tasks';
     final settingsLabel = isArabic ? 'الإعدادات' : 'Settings';
 
     return Directionality(
@@ -386,6 +387,7 @@ class _HomeHeader extends StatelessWidget {
                 color: Colors.white.withOpacity(0.10),
               ),
             ),
+
             PositionedDirectional(
               bottom: -30,
               end: -15,
@@ -394,132 +396,144 @@ class _HomeHeader extends StatelessWidget {
                 color: AppColors.gold.withOpacity(0.16),
               ),
             ),
-            
+
+            const Positioned(
+              top: 105,
+              right: 52,
+              child: Icon(
+                Icons.auto_awesome,
+                size: 15,
+                color: AppColors.gold,
+              ),
+            ),
+
             Positioned(
-  top: 8,
-  left: isArabic ? 12 : null,
-  right: isArabic ? null : 12,
-  child: SafeArea(
-    bottom: false,
-    child: IconButton(
-      tooltip: settingsLabel,
-      onPressed: onSettingsPressed,
-      style: IconButton.styleFrom(
-        backgroundColor: Colors.white.withOpacity(0.16),
-      ),
-      icon: const Icon(
-        Icons.settings_rounded,
-        color: Colors.white,
-        size: 25,
-      ),
-    ),
-  ),
-),
+              top: 145,
+              left: 54,
+              child: Icon(
+                Icons.star_rounded,
+                size: 13,
+                color: Colors.white.withOpacity(0.70),
+              ),
+            ),
+
+            Positioned(
+              top: 8,
+              left: isArabic ? 12 : null,
+              right: isArabic ? null : 12,
+              child: SafeArea(
+                bottom: false,
+                child: IconButton(
+                  tooltip: settingsLabel,
+                  onPressed: onSettingsPressed,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white.withOpacity(0.16),
+                  ),
+                  icon: const Icon(
+                    Icons.settings_rounded,
+                    color: Colors.white,
+                    size: 25,
+                  ),
+                ),
+              ),
+            ),
+
             SafeArea(
               bottom: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.lg,
-                  AppSpacing.md,
+                  18,
                   AppSpacing.lg,
-                  AppSpacing.lg,
+                  24,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Container(
+                      width: 84,
+                      height: 84,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 4,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.35),
+                            blurRadius: 18,
+                            spreadRadius: 2,
+                          ),
+                          BoxShadow(
+                            color:
+                                AppColors.primaryDark.withOpacity(0.22),
+                            blurRadius: 18,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: ChildAvatar(
+                          avatarIndex: avatarIndex,
+                          size: 84,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Text(
+                      greeting,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    const SizedBox(height: 3),
+
+                    Text(
+                      childName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.childTitle.copyWith(
+                        color: Colors.white,
+                        fontSize: 30,
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                       Container(
-  width: 66,
-  height: 66,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    border: Border.all(
-      color: Colors.white,
-      width: 3,
-    ),
-    boxShadow: [
-      BoxShadow(
-        color: AppColors.primaryDark.withOpacity(0.22),
-        blurRadius: 12,
-        offset: const Offset(0, 5),
-      ),
-    ],
-  ),
-  child: ClipOval(
-    child: ChildAvatar(
-      avatarIndex: avatarIndex,
-      size: 66,
-    ),
-  ),
-),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: isArabic
-                                ? CrossAxisAlignment.start
-                                : CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                greeting,
-                                textAlign: isArabic
-                                    ? TextAlign.right
-                                    : TextAlign.left,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                childName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: isArabic
-                                    ? TextAlign.right
-                                    : TextAlign.left,
-                                style: AppTextStyles.childTitle.copyWith(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Row(
-  mainAxisSize: MainAxisSize.min,
-  mainAxisAlignment: MainAxisAlignment.start,
-  children: [
-    Flexible(
-      child: Text(
-        subtitle,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        textAlign: isArabic
-            ? TextAlign.right
-            : TextAlign.left,
-        style: const TextStyle(
-          color: Colors.white70,
-          fontSize: 12,
-        ),
-      ),
-    ),
-    const SizedBox(width: 4),
-    const Icon(
-      Icons.auto_awesome,
-      size: 15,
-      color: AppColors.gold,
-    ),
-  ],
-),
-                            ],
+                        const Icon(
+                          Icons.auto_awesome,
+                          color: AppColors.gold,
+                          size: 15,
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            subtitle,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
-                        
-],
-),
-                        
-                    const SizedBox(height: AppSpacing.lg),
+                      ],
+                    ),
+
+                    const SizedBox(height: 22),
+
                     Row(
                       children: [
                         Expanded(
@@ -581,44 +595,77 @@ class _HeaderMetric extends StatelessWidget {
     required this.iconColor,
     required this.value,
     required this.label,
-     required this.isArabic,
+    required this.isArabic,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: 11,
+        horizontal: 12,
+        vertical: 13,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.25)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.75),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 16,
+            offset: const Offset(0, 7),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: iconColor, size: 22),
-          const SizedBox(width: AppSpacing.sm),
-          Column(
-            crossAxisAlignment: isArabic
-    ? CrossAxisAlignment.end
-    : CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.13),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 22,
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          Flexible(
+            child: Column(
+              crossAxisAlignment: isArabic
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    color: AppColors.primaryDark,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-              Text(
-                label,
-                style: const TextStyle(color: Colors.white70, fontSize: 10),
-              ),
-            ],
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -833,6 +880,8 @@ if (totalTasks == 0) {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
+            textDirection:
+      isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
               Container(
                 width: 44,
@@ -907,57 +956,35 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: isArabic
-          ? [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  count,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Text(
-                title,
-                style: AppTextStyles.sectionTitle,
-              ),
-            ]
-          : [
-              Text(
-                title,
-                style: AppTextStyles.sectionTitle,
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  count,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-              ),
-            ],
+      textDirection:
+          isArabic ? TextDirection.rtl : TextDirection.ltr,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.sectionTitle,
+        ),
+
+        const Spacer(),
+
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 6,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Text(
+            count,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primaryDark,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
