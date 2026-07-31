@@ -3,7 +3,7 @@
     "short_name": "frontend",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#F8F5FC",
+    "background_color": "#EFE7FA",
     "theme_color": "#EFE7FA",
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",
