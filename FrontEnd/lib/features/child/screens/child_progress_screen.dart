@@ -305,14 +305,16 @@ class _ProgressSummaryCard extends StatelessWidget {
     final safePercent = percent.clamp(0, 100);
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: AppColors.primaryGradient,
-        ),
-        borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(24),
+    image: const DecorationImage(
+      image: AssetImage(
+        'assets/dashboard/child_progress_background.png',
       ),
+      fit: BoxFit.cover,
+    ),
+  ),
       child: Column(
         children: [
           Padding(
@@ -365,13 +367,13 @@ class _ProgressSummaryCard extends StatelessWidget {
               horizontal: AppSpacing.md,
               vertical: AppSpacing.sm,
             ),
-            decoration: const BoxDecoration(
-              color: AppColors.primaryDark,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
+            decoration: BoxDecoration(
+  color: Colors.black.withValues(alpha: 0.25),
+  borderRadius: const BorderRadius.only(
+    bottomLeft: Radius.circular(24),
+    bottomRight: Radius.circular(24),
+  ),
+),
             child: Text(
               message,
               textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
