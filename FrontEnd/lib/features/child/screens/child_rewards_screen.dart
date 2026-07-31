@@ -177,7 +177,7 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
                             return _RewardCard(
   reward: reward,
   isArabic: widget.isArabic,
-  onClaim: reward.status == 'unlocked'
+  onClaim: reward.status.toLowerCase() == 'unlocked'
       ? () => _claimReward(reward.id)
       : null,
 );
