@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../models/child_progress_summary_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -18,12 +18,20 @@ class ChildProgressScreen extends StatefulWidget {
   State<ChildProgressScreen> createState() => _ChildProgressScreenState();
 }
 
+
 class _ChildProgressScreenState extends State<ChildProgressScreen> {
   final TaskApiService _taskApiService = TaskApiService();
 
   final PointApiService _pointApiService = PointApiService();
 
   List<TaskAssignmentModel> _assignments = [];
+
+  ChildProgressSummaryModel _summary =
+    const ChildProgressSummaryModel(
+  totalCompleted: 0,
+  currentStreak: 0,
+  completedByCategory: {},
+);
 
   int _points = 0;
 
@@ -47,10 +55,14 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
       final results = await Future.wait([
   _taskApiService.getMyCurrentWeekAssignments(),
   _pointApiService.getMyPoints(),
+  _taskApiService.getMyProgressSummary(),
 ]);
 
-final assignments = results[0] as List<TaskAssignmentModel>;
+final assignments =
+    results[0] as List<TaskAssignmentModel>;
 final points = results[1] as int;
+final summary =
+    results[2] as ChildProgressSummaryModel;
 
       if (!mounted) return;
 
@@ -58,6 +70,7 @@ final points = results[1] as int;
         _assignments = assignments;
         _points = points;
         _isLoading = false;
+        _summary = summary;
       });
     } catch (error) {
       if (!mounted) return;
@@ -73,15 +86,7 @@ final points = results[1] as int;
     }
   }
   
-DateTime get _today {
-  final now = DateTime.now();
 
-  return DateTime(
-    now.year,
-    now.month,
-    now.day,
-  );
-}
   
   DateTime? _completionDate(TaskAssignmentModel assignment) {
     return assignment.completedAt?.toLocal() ??
@@ -109,63 +114,10 @@ DateTime get _today {
     );
   }
 
-  int get _totalCompleted {
-    return _assignments.where((assignment) {
-      return assignment.countsTowardProgress;
-    }).length;
-  }
+  int get _totalCompleted => _summary.totalCompleted;
 
-  String _dateKey(DateTime date) {
-    final local = date.toLocal();
-
-    return '${local.year}-'
-        '${local.month.toString().padLeft(2, '0')}-'
-        '${local.day.toString().padLeft(2, '0')}';
-  }
-
-  int get _currentStreak {
-    final completionDays = <String>{};
-
-    for (final assignment in _assignments) {
-      if (!assignment.countsTowardProgress) {
-        continue;
-      }
-
-      final date = _completionDate(assignment);
-
-      if (date != null) {
-        completionDays.add(_dateKey(date));
-      }
-    }
-
-    if (completionDays.isEmpty) {
-      return 0;
-    }
-
-    DateTime currentDay;
-
-    if (completionDays.contains(_dateKey(_today))) {
-      currentDay = _today;
-    } else {
-      final yesterday = _today.subtract(const Duration(days: 1));
-
-      if (!completionDays.contains(_dateKey(yesterday))) {
-        return 0;
-      }
-
-      currentDay = yesterday;
-    }
-
-    int streak = 0;
-
-    while (completionDays.contains(_dateKey(currentDay))) {
-      streak++;
-
-      currentDay = currentDay.subtract(const Duration(days: 1));
-    }
-
-    return streak;
-  }
+  
+  int get _currentStreak => _summary.currentStreak;
 
   List<int> get _weeklyActivity {
     final counts = List<int>.filled(7, 0);
@@ -190,44 +142,19 @@ DateTime get _today {
   }
 
   Map<_TrophyKind, int> get _completedByCategory {
-    final counts = <_TrophyKind, int>{
-      _TrophyKind.daily: 0,
-      _TrophyKind.cultural: 0,
-      _TrophyKind.financial: 0,
-      _TrophyKind.religious: 0,
-    };
+  return {
+    _TrophyKind.daily:
+        _summary.completedByCategory['DAILY'] ?? 0,
+    _TrophyKind.cultural:
+        _summary.completedByCategory['CULTURAL'] ?? 0,
+    _TrophyKind.financial:
+        _summary.completedByCategory['FINANCIAL'] ?? 0,
+    _TrophyKind.religious:
+        _summary.completedByCategory['RELIGIOUS'] ?? 0,
+  };
+}
 
-    for (final assignment in _assignments) {
-      if (!assignment.countsTowardProgress) {
-        continue;
-      }
-
-      final kind = _categoryKind(assignment.task.category);
-
-      counts[kind] = (counts[kind] ?? 0) + 1;
-    }
-
-    return counts;
-  }
-
-  _TrophyKind _categoryKind(String? category) {
-    switch (category?.toUpperCase()) {
-      case 'RELIGIOUS':
-        return _TrophyKind.religious;
-
-      case 'FINANCIAL':
-        return _TrophyKind.financial;
-
-      case 'CULTURAL':
-      case 'SOCIAL':
-        return _TrophyKind.cultural;
-
-      case 'DAILY':
-      case 'MORAL':
-      default:
-        return _TrophyKind.daily;
-    }
-  }
+  
 
   String get _progressMessage {
   if (_weeklyAssignments.isEmpty) {

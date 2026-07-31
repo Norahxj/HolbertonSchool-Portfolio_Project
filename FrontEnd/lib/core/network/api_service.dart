@@ -76,6 +76,9 @@ abstract class ApiService {
   @GET('/task-assignments/my/current-week')
 Future<HttpResponse<dynamic>> getMyCurrentWeekAssignments();
 
+@GET('/task-assignments/my/progress-summary')
+Future<HttpResponse<dynamic>> getMyProgressSummary();
+
   @PUT('/task-assignments/{assignmentId}/complete')
   Future<HttpResponse<dynamic>> completeAssignment(
     @Path('assignmentId') String assignmentId,

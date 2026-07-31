@@ -3,6 +3,7 @@ from app.extensions import db
 from app.models.task_assignment_model import TaskAssignment
 from app.models.task_model import Task
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
 class TaskAssignmentRepository:
 
@@ -82,4 +83,15 @@ class TaskAssignmentRepository:
             )
             .order_by(TaskAssignment.assigned_date.desc())
             .all()
+        )
+    def get_approved_assignments_for_child(self, child_id):
+        return (
+        TaskAssignment.query
+        .options(joinedload(TaskAssignment.task))
+        .filter(
+            TaskAssignment.child_id == child_id,
+            TaskAssignment.status == "APPROVED",
+        )
+        .order_by(TaskAssignment.approved_at.desc())
+        .all()
         )

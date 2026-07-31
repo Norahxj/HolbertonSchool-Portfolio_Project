@@ -43,6 +43,62 @@ class TaskAssignmentService:
             )
         )
 
+    def get_progress_summary_for_child(self, child_id):
+        assignments = (
+        self.task_assignment_repository
+        .get_approved_assignments_for_child(child_id)
+        )
+
+        completed_by_category = {
+        "DAILY": 0,
+        "CULTURAL": 0,
+        "FINANCIAL": 0,
+        "RELIGIOUS": 0,
+        }
+
+        completion_days = set()
+
+        for assignment in assignments:
+            category = (assignment.task.category or "").upper()
+
+            if category == "RELIGIOUS":
+                completed_by_category["RELIGIOUS"] += 1
+            elif category == "FINANCIAL":
+                completed_by_category["FINANCIAL"] += 1
+            elif category in ("CULTURAL", "SOCIAL"):
+                completed_by_category["CULTURAL"] += 1
+            else:
+                completed_by_category["DAILY"] += 1
+
+            completion_date = (
+            assignment.completed_at
+            or assignment.approved_at
+            )
+
+            if completion_date:
+                completion_days.add(completion_date.date())
+
+        today = riyadh_today()
+
+        if today in completion_days:
+            current_day = today
+        elif today - timedelta(days=1) in completion_days:
+            current_day = today - timedelta(days=1)
+        else:
+            current_day = None
+
+        current_streak = 0
+
+        while current_day and current_day in completion_days:
+            current_streak += 1
+            current_day -= timedelta(days=1)
+
+        return {
+        "total_completed": len(assignments),
+        "current_streak": current_streak,
+        "completed_by_category": completed_by_category,
+        }
+
     def get_assignments_for_child_by_parent(self, child_id, parent_id):
         child = self.child_repository.get_child_for_guardian(
             child_id,

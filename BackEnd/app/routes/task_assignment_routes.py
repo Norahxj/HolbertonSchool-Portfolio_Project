@@ -72,6 +72,31 @@ class MyCurrentWeekAssignmentsResource(Resource):
             200,
         )
 
+@api.route("/my/progress-summary")
+class MyProgressSummaryResource(Resource):
+    @api.response(
+        200,
+        "Progress summary retrieved successfully",
+    )
+    @api.response(401, "Missing or invalid access token")
+    @api.response(403, "Child access required")
+    @api.doc(security="JWT")
+    @jwt_required()
+    def get(self):
+        claims = get_jwt()
+
+        if claims.get("role") != "child":
+            return {"error": "Child access required"}, 403
+
+        child_id = get_jwt_identity()
+
+        summary = (
+            assignment_service
+            .get_progress_summary_for_child(child_id)
+        )
+
+        return summary, 200
+
 @api.route("/child/<child_id>")
 class AssignmentsByChildResource(Resource):
     @api.response(200, "Assignments retrieved successfully")

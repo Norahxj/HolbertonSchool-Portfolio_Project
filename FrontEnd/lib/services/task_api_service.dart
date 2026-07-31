@@ -3,6 +3,7 @@ import '../core/network/dio_factory.dart';
 import '../models/task_assignment_model.dart';
 import '../models/task_model.dart';
 import '../models/task_suggestion_model.dart';
+import '../models/child_progress_summary_model.dart';
 
 class TaskApiService {
   final ApiService _apiService = ApiService(DioFactory.getDio());
@@ -44,6 +45,14 @@ class TaskApiService {
 
     return response.data.suggestions;
   }
+
+  Future<ChildProgressSummaryModel> getMyProgressSummary() async {
+  final response = await _apiService.getMyProgressSummary();
+
+  return ChildProgressSummaryModel.fromJson(
+    response.data as Map<String, dynamic>,
+  );
+}
 
   Future<List<TaskAssignmentModel>> getMyAssignments() async {
     final response = await _apiService.getMyAssignments();
