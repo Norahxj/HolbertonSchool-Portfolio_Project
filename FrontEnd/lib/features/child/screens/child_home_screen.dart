@@ -822,6 +822,7 @@ class _DailyFeedbackCard extends StatelessWidget {
     );
   }
 }
+
 class _DailyGoalCard extends StatelessWidget {
   final int completedTasks;
   final int totalTasks;
@@ -892,60 +893,37 @@ class _DailyGoalCard extends StatelessWidget {
             textDirection:
                 isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
-              Expanded(
-                child: Row(
-                  textDirection:
-                      isArabic ? TextDirection.rtl : TextDirection.ltr,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: isArabic
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            isArabic
-                                ? 'هدف اليوم'
-                                : 'Today\'s Goal',
-                            textAlign: isArabic
-                                ? TextAlign.right
-                                : TextAlign.left,
-                            style:
-                                AppTextStyles.sectionTitle.copyWith(
-                              fontSize: 17,
-                            ),
-                          ),
-                          Text(
-                            message,
-                            textAlign: isArabic
-                                ? TextAlign.right
-                                : TextAlign.left,
-                            style: AppTextStyles.caption,
-                          ),
-                        ],
-                      ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                textDirection:
+                    isArabic ? TextDirection.rtl : TextDirection.ltr,
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
                     ),
-
-                    const SizedBox(width: AppSpacing.sm),
-
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.flag_rounded,
-                        color: AppColors.orange,
-                        size: 23,
-                      ),
+                    child: const Icon(
+                      Icons.flag_rounded,
+                      color: AppColors.orange,
+                      size: 20,
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(width: AppSpacing.sm),
+
+                  Text(
+                    isArabic ? 'هدف اليوم' : 'Today\'s Goal',
+                    style: AppTextStyles.sectionTitle.copyWith(
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
               ),
 
-              const SizedBox(width: AppSpacing.sm),
+              const Spacer(),
 
               Text(
                 '$completedTasks/$totalTasks',
@@ -956,6 +934,20 @@ class _DailyGoalCard extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+
+          const SizedBox(height: 6),
+
+          Align(
+            alignment: isArabic
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            child: Text(
+              message,
+              textAlign:
+                  isArabic ? TextAlign.right : TextAlign.left,
+              style: AppTextStyles.caption,
+            ),
           ),
 
           const SizedBox(height: AppSpacing.md),
@@ -976,6 +968,7 @@ class _DailyGoalCard extends StatelessWidget {
     );
   }
 }
+
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String count;
