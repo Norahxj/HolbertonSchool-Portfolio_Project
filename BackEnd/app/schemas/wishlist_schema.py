@@ -6,10 +6,15 @@ def validate_wish_name(value):
         raise ValidationError("Wish name must be at least 2 characters long.")
     if len(cleaned_value) > 255:
         raise ValidationError("Wish name must not exceed 255 characters.")
+class WishlistChildSchema(Schema):
+    id = fields.String()
+    name = fields.String()
+    avatar_index = fields.Integer()
 
 class WishlistResponseSchema(Schema):
     id = fields.String()
     child_id = fields.String()
+    child = fields.Nested(WishlistChildSchema)
     name = fields.String()
     target_points = fields.Integer(allow_none=True)
     status = fields.String()

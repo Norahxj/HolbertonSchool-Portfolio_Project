@@ -99,7 +99,7 @@ class MyFamilyWishesResource(Resource):
             guardian_id
         )
 
-        return wishlist_response_schema.dump(
+        return wishlists_response_schema.dump(
             wishes,
         ), 200
 
