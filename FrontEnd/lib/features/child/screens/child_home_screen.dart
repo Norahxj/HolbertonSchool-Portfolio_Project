@@ -1046,15 +1046,7 @@ class _AssignmentCard extends StatelessWidget {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      category.label,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: category.color,
-                      ),
-                    ),
+                    
                     const SizedBox(height: AppSpacing.sm),
                     Wrap(
                       alignment: isArabic
