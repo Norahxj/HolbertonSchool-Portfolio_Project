@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/widgets/app_page_header.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../models/user_model.dart';

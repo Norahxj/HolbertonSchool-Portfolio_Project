@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/child_avatar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../models/task_assignment_model.dart';
 import '../controllers/parent_child_details_controller.dart';
@@ -551,49 +550,6 @@ const SizedBox(
   }
 }
 
-class _TasksSection extends StatelessWidget {
-  final ParentChildDetailsController controller;
-  final String childId;
-  final bool isArabic;
-
-  const _TasksSection({
-    required this.controller,
-    required this.childId,
-    required this.isArabic,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (controller.isLoading && controller.tasks.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(AppSpacing.lg),
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (controller.errorMessage != null && controller.tasks.isEmpty) {
-      return _TasksErrorState(
-        isArabic: isArabic,
-        onRetry: () {
-          controller.loadTasks(childId);
-        },
-      );
-    }
-
-    if (controller.tasks.isEmpty) {
-      return _TasksEmptyState(isArabic: isArabic);
-    }
-
-    return Column(
-      children: controller.tasks.map((assignment) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-          child: _ChildTaskCard(assignment: assignment, isArabic: isArabic),
-        );
-      }).toList(),
-    );
-  }
-}
 
 class _ChildTaskCard extends StatelessWidget {
   final TaskAssignmentModel assignment;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/child_model.dart';
 import 'package:dio/dio.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -275,66 +274,6 @@ class _PinBox extends StatelessWidget {
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),
-      ),
-    );
-  }
-}
-
-// The "تم التعرّف عليك!" banner. Only shown once all 6 digits are typed.
-class _RecognizedBanner extends StatelessWidget {
-  final ChildModel child;
-
-  const _RecognizedBanner({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.check_circle, color: AppColors.success, size: 20),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'تم التعرّف عليك!',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  '✦ ${child.name}',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFBE3EA),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.child_care,
-              color: Color(0xFFD1637F),
-              size: 20,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -40,7 +40,6 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
 
   bool get _canComplete {
     return _status == 'PENDING' || _status == 'REJECTED';
-    ;
   }
 
   bool get _isPendingReview {
@@ -140,52 +139,8 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
 
     return null;
   }
-String _categoryText(String? category) {
-  switch (category?.toUpperCase()) {
-    case 'RELIGIOUS':
-      return widget.isArabic
-          ? 'قيمة دينية'
-          : 'Religious value';
 
-    case 'FINANCIAL':
-      return widget.isArabic
-          ? 'مهارة مالية'
-          : 'Financial skill';
 
-    case 'MORAL':
-      return widget.isArabic
-          ? 'قيمة أخلاقية'
-          : 'Moral value';
-
-    case 'SOCIAL':
-      return widget.isArabic
-          ? 'مهمة اجتماعية'
-          : 'Social task';
-
-    default:
-      return widget.isArabic
-          ? 'غير محدد'
-          : 'Not specified';
-  }
-}
-IconData _categoryIcon(String? category) {
-  switch (category?.toUpperCase()) {
-    case 'RELIGIOUS':
-      return Icons.mosque_rounded;
-
-    case 'FINANCIAL':
-      return Icons.monetization_on_rounded;
-
-    case 'MORAL':
-      return Icons.volunteer_activism_rounded;
-
-    case 'SOCIAL':
-      return Icons.groups_rounded;
-
-    default:
-      return Icons.category_outlined;
-  }
-}
   String _frequencyText(String frequency) {
     switch (frequency.toUpperCase()) {
       case 'DAILY':
@@ -629,54 +584,6 @@ IconData _categoryIcon(String? category) {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _TaskDetailBadge extends StatelessWidget {
-  final IconData icon;
-  final String text;
-
-  const _TaskDetailBadge({
-    required this.icon,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.18),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: AppColors.primaryDark,
-          ),
-
-          const SizedBox(width: 6),
-
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ],
       ),
     );
   }
