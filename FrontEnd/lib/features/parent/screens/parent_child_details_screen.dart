@@ -286,13 +286,7 @@ class _ParentChildDetailsView extends StatelessWidget {
                               ),
                             ),
 
-                            Icon(
-                              isArabic
-                                  ? Icons.arrow_back_ios_new
-                                  : Icons.arrow_forward_ios,
-                              size: 18,
-                              color: AppColors.textSecondary,
-                            ),
+                            const _LeftNavigationArrow(),
                           ],
                         ),
                       ),
@@ -361,13 +355,7 @@ class _ParentChildDetailsView extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Icon(
-                              isArabic
-                                  ? Icons.arrow_back_ios_new
-                                  : Icons.arrow_forward_ios,
-                              size: 18,
-                              color: AppColors.textSecondary,
-                            ),
+                            const _LeftNavigationArrow(),
                           ],
                         ),
                       ),
@@ -442,13 +430,7 @@ class _ParentChildDetailsView extends StatelessWidget {
                               ),
                             ),
 
-                            Icon(
-                              isArabic
-                                  ? Icons.arrow_back_ios_new
-                                  : Icons.arrow_forward_ios,
-                              size: 18,
-                              color: AppColors.textSecondary,
-                            ),
+                            const _LeftNavigationArrow(),
                           ],
                         ),
                       ),
@@ -459,58 +441,46 @@ class _ParentChildDetailsView extends StatelessWidget {
                     const SizedBox(height: AppSpacing.xl),
 
                     TextButton.icon(
-  onPressed: () async {
-    final updatedChild = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => EditChildScreen(
-          child: item.child,
-          isArabic: isArabic,
-        ),
-      ),
-    );
+                      onPressed: () async {
+                        final updatedChild = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditChildScreen(
+                              child: item.child,
+                              isArabic: isArabic,
+                            ),
+                          ),
+                        );
 
-    if (updatedChild == null || !context.mounted) {
-      return;
-    }
+                        if (updatedChild == null || !context.mounted) {
+                          return;
+                        }
 
-    final dashboardController =
-        context.read<ParentDashboardController>();
+                        final dashboardController = context
+                            .read<ParentDashboardController>();
 
-    await dashboardController.refresh();
+                        await dashboardController.refresh();
 
-    if (!context.mounted) return;
+                        if (!context.mounted) return;
 
-    Navigator.pop(context, true);
-  },
-  style: TextButton.styleFrom(
-    foregroundColor: AppColors.primary,
-    padding: const EdgeInsets.symmetric(
-      vertical: 16,
-    ),
-  ),
-  icon: const Icon(
-    Icons.edit_outlined,
-  ),
-  label: Text(
-    isArabic
-        ? 'تعديل بيانات الطفل'
-        : 'Edit child information',
-    style: const TextStyle(
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-),
+                        Navigator.pop(context, true);
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      icon: const Icon(Icons.edit_outlined),
+                      label: Text(
+                        isArabic
+                            ? 'تعديل بيانات الطفل'
+                            : 'Edit child information',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
 
-const Divider(
-  color: AppColors.border,
-),
+                    const Divider(color: AppColors.border),
 
-const SizedBox(
-  height: AppSpacing.md,
-),
-
-                   
+                    const SizedBox(height: AppSpacing.md),
 
                     TextButton.icon(
                       onPressed: isDeleting
@@ -549,6 +519,7 @@ const SizedBox(
     );
   }
 }
+
 class _InformationCard extends StatelessWidget {
   final IconData icon;
   final String value;
@@ -698,6 +669,23 @@ class _ChildAccessCodeCard extends StatelessWidget {
             icon: const Icon(Icons.copy_rounded, color: AppColors.primary),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LeftNavigationArrow extends StatelessWidget {
+  const _LeftNavigationArrow();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Directionality(
+      // Keep the arrow pointing left even inside an Arabic RTL screen.
+      textDirection: TextDirection.ltr,
+      child: Icon(
+        Icons.arrow_back_ios_new_rounded,
+        size: 18,
+        color: AppColors.textSecondary,
       ),
     );
   }
