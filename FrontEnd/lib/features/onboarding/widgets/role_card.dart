@@ -29,8 +29,8 @@ class _RoleCardState extends State<RoleCard> {
 
     return Center(
       child: SizedBox(
-        width: screenWidth * 0.75,
-        height: 170,
+        width: screenWidth * 0.88,
+        height: 190,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           onEnter: (_) {
@@ -138,7 +138,7 @@ class _RoleCardState extends State<RoleCard> {
                                     textAlign: widget.isArabic
                                         ? TextAlign.right
                                         : TextAlign.left,
-                                    maxLines: 3,
+                                    maxLines: 4,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       color: Color(0xFF676174),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -300,6 +299,8 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
+
+
 class _StatusTag extends StatelessWidget {
   final String label;
   final Color backgroundColor;
@@ -348,30 +349,54 @@ class _WishHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+Widget build(BuildContext context) {
+  return Row(
+    textDirection:
+        isArabic ? TextDirection.rtl : TextDirection.ltr,
+    children: [
+      ChildAvatar(
+        avatarIndex: avatarIndex,
+        size: 40,
+      ),
 
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            '$childName . $wishTitle',
-            textAlign: isArabic
-                ? TextAlign.right
-                : TextAlign.left,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
+      const SizedBox(width: AppSpacing.sm),
+
+      Expanded(
+  child: Column(
+    crossAxisAlignment:
+        isArabic
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
+    children: [
+      Text(
+        childName,
+        textAlign:
+            isArabic ? TextAlign.right : TextAlign.left,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
         ),
-        const SizedBox(width: AppSpacing.sm),
-        ChildAvatar(
-          avatarIndex: avatarIndex,
-          size: 40,
+      ),
+
+      const SizedBox(height: 2),
+
+      Text(
+        wishTitle,
+        textAlign:
+            isArabic ? TextAlign.right : TextAlign.left,
+        style: const TextStyle(
+          fontSize: 14,
+          color: AppColors.textSecondary,
         ),
-      ],
-    );
+      ),
+    ],
+  ),
+),
+          
+    
+    ],
+  );
   }
 }
 
@@ -726,19 +751,17 @@ class _ApprovedWishCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-  color: AppColors.card,
-  borderRadius: BorderRadius.circular(24),
-  border: Border.all(
-    color: AppColors.border,
-  ),
-),
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.border,
+        ),
+      ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _WishHeader(
             childName: childName,
@@ -750,25 +773,27 @@ class _ApprovedWishCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           Row(
+            textDirection:
+                isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
-             _StatusTag(
-  label: isArabic
-      ? 'هدف معتمد'
-      : 'Goal Created',
-  backgroundColor: AppColors.primaryLight,
-  textColor: AppColors.primaryDark,
-),
+              _StatusTag(
+                label: isArabic
+                    ? 'هدف معتمد'
+                    : 'Goal Created',
+                backgroundColor: AppColors.primaryLight,
+                textColor: AppColors.primaryDark,
+              ),
+
               const SizedBox(width: AppSpacing.sm),
+
               Expanded(
                 child: Text(
                   subtitle,
-                  textAlign: isArabic
-                      ? TextAlign.right
-                      : TextAlign.left,
+                  textAlign:
+                      isArabic ? TextAlign.right : TextAlign.left,
                   style: const TextStyle(
                     fontSize: 12,
-                    color:
-                        AppColors.textSecondary,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -784,35 +809,45 @@ class _ApprovedWishCard extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius:
-                  BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Row(
+              textDirection:
+                  isArabic ? TextDirection.rtl : TextDirection.ltr,
               children: [
-                Text(
-                  '$points',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
+                Expanded(
+                  child: Text(
+                    isArabic
+                        ? 'هدف النقاط المحدد'
+                        : 'Selected Points Goal',
+                    textAlign:
+                        isArabic ? TextAlign.right : TextAlign.left,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.auto_awesome,
-                  color: AppColors.gold,
-                  size: 16,
-                ),
-                const Spacer(),
-                Text(
-  isArabic
-      ? 'هدف النقاط المحدد'
-      : 'Selected Points Goal',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color:
-                        AppColors.textSecondary,
-                  ),
+
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.auto_awesome,
+                      color: AppColors.gold,
+                      size: 16,
+                    ),
+
+                    const SizedBox(width: 4),
+
+                    Text(
+                      '$points',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
