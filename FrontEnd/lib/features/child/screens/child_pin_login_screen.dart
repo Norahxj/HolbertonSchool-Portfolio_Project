@@ -115,16 +115,18 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
                 const SizedBox(height: AppSpacing.lg),
 
                 Container(
-                  width: 72,
-                  height: 72,
+                  width: 120,
+                  height: 120,
+                  padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(
-                    color: AppColors.primary,
+                    color: AppColors.primaryLight,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.auto_awesome,
-                    color: AppColors.gold,
-                    size: 30,
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/child_login/child_login.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
 

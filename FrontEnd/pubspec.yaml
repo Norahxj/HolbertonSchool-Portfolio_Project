@@ -88,6 +88,7 @@ flutter:
     - assets/avatars/
     - assets/role_selection/
     - assets/dashboard/
+    - assets/child_login/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
