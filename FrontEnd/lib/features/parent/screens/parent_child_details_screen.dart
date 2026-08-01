@@ -459,97 +459,57 @@ class _ParentChildDetailsView extends StatelessWidget {
 
                     const SizedBox(height: AppSpacing.xl),
 
-                    InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () async {
-                        final updatedChild = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EditChildScreen(
-                              child: item.child,
-                              isArabic: isArabic,
-                            ),
-                          ),
-                        );
+                    TextButton.icon(
+  onPressed: () async {
+    final updatedChild = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditChildScreen(
+          child: item.child,
+          isArabic: isArabic,
+        ),
+      ),
+    );
 
-                        if (updatedChild == null || !context.mounted) {
-                          return;
-                        }
+    if (updatedChild == null || !context.mounted) {
+      return;
+    }
 
-                        final dashboardController = context
-                            .read<ParentDashboardController>();
+    final dashboardController =
+        context.read<ParentDashboardController>();
 
-                        await dashboardController.refresh();
+    await dashboardController.refresh();
 
-                        if (!context.mounted) return;
+    if (!context.mounted) return;
 
-                        Navigator.pop(context, true);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(
-                          color: AppColors.card,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryLight,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.edit_outlined,
-                                color: AppColors.primary,
-                              ),
-                            ),
+    Navigator.pop(context, true);
+  },
+  style: TextButton.styleFrom(
+    foregroundColor: AppColors.primary,
+    padding: const EdgeInsets.symmetric(
+      vertical: 16,
+    ),
+  ),
+  icon: const Icon(
+    Icons.edit_outlined,
+  ),
+  label: Text(
+    isArabic
+        ? 'تعديل بيانات الطفل'
+        : 'Edit child information',
+    style: const TextStyle(
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+),
 
-                            const SizedBox(width: AppSpacing.md),
+const Divider(
+  color: AppColors.border,
+),
 
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    isArabic
-                                        ? 'تعديل بيانات الطفل'
-                                        : 'Edit Child Information',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 4),
-
-                                  Text(
-                                    isArabic
-                                        ? 'تعديل الاسم وتاريخ الميلاد والصورة والجوال'
-                                        : 'Update name, birth date, avatar, and phone',
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Icon(
-                              isArabic
-                                  ? Icons.arrow_back_ios_new
-                                  : Icons.arrow_forward_ios,
-                              size: 18,
-                              color: AppColors.textSecondary,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+const SizedBox(
+  height: AppSpacing.md,
+),
 
                     const Divider(color: AppColors.border),
                     const SizedBox(height: AppSpacing.md),
