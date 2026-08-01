@@ -137,7 +137,6 @@ class _ParentDashboardView extends StatelessWidget {
           children: [
             _WelcomeBanner(
               parentName: '${data.user.firstName} ${data.user.lastName}',
-              guardianType: data.user.guardianType,
               isArabic: isArabic,
             ),
 
@@ -205,10 +204,9 @@ class _ParentDashboardView extends StatelessWidget {
 
 class _WelcomeBanner extends StatelessWidget {
   final String parentName;
-  final String guardianType;
   final bool isArabic;
 
-  const _WelcomeBanner({required this.parentName,  required this.guardianType, required this.isArabic});
+  const _WelcomeBanner({required this.parentName, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -312,11 +310,9 @@ class _WelcomeBanner extends StatelessWidget {
                         const SizedBox(height: 9),
 
                         Text(
-  isArabic
-      ? guardianType.toLowerCase() == 'mother'
-            ? 'أنتِ تبنين جيلاً رائعًا'
-            : 'أنت تبني جيلاً رائعًا'
-      : 'You are building a wonderful generation',
+                          isArabic
+                              ? 'أنتِ تبنين جيلاً رائعًا'
+                              : 'You are building a wonderful generation',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           textAlign: isArabic
