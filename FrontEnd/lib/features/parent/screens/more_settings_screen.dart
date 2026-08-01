@@ -22,25 +22,21 @@ class MoreSettingsScreen extends StatefulWidget {
   });
 
   @override
-  State<MoreSettingsScreen> createState() =>
-      _MoreSettingsScreenState();
+  State<MoreSettingsScreen> createState() => _MoreSettingsScreenState();
 }
 
-class _MoreSettingsScreenState
-    extends State<MoreSettingsScreen> {
+class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   late Future<UserModel> _userFuture;
 
   @override
   void initState() {
     super.initState();
 
-    _userFuture =
-        UserApiService().getCurrentUser();
+    _userFuture = UserApiService().getCurrentUser();
   }
 
   Future<void> _reloadUser() async {
-    final future =
-        UserApiService().getCurrentUser();
+    final future = UserApiService().getCurrentUser();
 
     setState(() {
       _userFuture = future;
@@ -54,12 +50,10 @@ class _MoreSettingsScreenState
   }
 
   Future<void> _openProfileScreen() async {
-    final updatedUser =
-        await Navigator.push<UserModel>(
+    final updatedUser = await Navigator.push<UserModel>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-             ProfileScreen(isArabic: widget.isArabic,),
+        builder: (_) => ProfileScreen(isArabic: widget.isArabic),
       ),
     );
 
@@ -67,8 +61,7 @@ class _MoreSettingsScreenState
 
     if (updatedUser != null) {
       setState(() {
-        _userFuture =
-            Future.value(updatedUser);
+        _userFuture = Future.value(updatedUser);
       });
     } else {
       await _reloadUser();
@@ -76,8 +69,7 @@ class _MoreSettingsScreenState
   }
 
   void _showComingSoon() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           widget.isArabic
@@ -94,116 +86,66 @@ class _MoreSettingsScreenState
 
     return Scaffold(
       body: Directionality(
-        textDirection: isArabic
-            ? TextDirection.rtl
-            : TextDirection.ltr,
+        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
         child: ScreenBackground(
           child: SafeArea(
             bottom: false,
             child: RefreshIndicator(
               onRefresh: _reloadUser,
               child: SingleChildScrollView(
-                physics:
-                    const AlwaysScrollableScrollPhysics(),
-                padding:
-                    const EdgeInsets.fromLTRB(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
                   AppSpacing.lg,
                   AppSpacing.md,
                   AppSpacing.lg,
                   AppSpacing.xxl,
                 ),
-                child:
-                    FutureBuilder<UserModel>(
+                child: FutureBuilder<UserModel>(
                   future: _userFuture,
-                  builder: (
-                    context,
-                    snapshot,
-                  ) {
-                    if (snapshot
-                            .connectionState ==
-                        ConnectionState.waiting) {
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return SizedBox(
-                        height:
-                            MediaQuery.sizeOf(
-                                  context,
-                                ).height *
-                                0.65,
-                        child: const Center(
-                          child:
-                              CircularProgressIndicator(),
-                        ),
+                        height: MediaQuery.sizeOf(context).height * 0.65,
+                        child: const Center(child: CircularProgressIndicator()),
                       );
                     }
 
-                    if (snapshot.hasError ||
-                        !snapshot.hasData) {
+                    if (snapshot.hasError || !snapshot.hasData) {
                       return _SettingsErrorState(
                         isArabic: isArabic,
                         onRetry: _reloadUser,
                       );
                     }
 
-                    final user =
-                        snapshot.data!;
+                    final user = snapshot.data!;
 
                     return Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .stretch,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          isArabic
-                              ? 'المزيد'
-                              : 'More',
-                          textAlign:
-                              TextAlign.center,
-                          style:
-                              AppTextStyles
-                                  .arabicTitle,
+                          isArabic ? 'المزيد' : 'More',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.arabicTitle,
                         ),
 
-                        const SizedBox(
-                          height:
-                              AppSpacing.lg,
-                        ),
+                        const SizedBox(height: AppSpacing.lg),
 
-                        _ProfileBanner(
-                          user: user,
-                          isArabic:
-                              isArabic,
-                        ),
+                        _ProfileBanner(user: user, isArabic: isArabic),
 
-                        const SizedBox(
-                          height:
-                              AppSpacing.lg,
-                        ),
+                        const SizedBox(height: AppSpacing.lg),
 
                         _SettingsCard(
-                          isArabic:
-                              isArabic,
-                          onLanguageToggle:
-                              widget
-                                  .onLanguageToggle,
-                          onProfileTap:
-                              _openProfileScreen,
-                          onComingSoon:
-                              _showComingSoon,
+                          isArabic: isArabic,
+                          onLanguageToggle: widget.onLanguageToggle,
+                          onProfileTap: _openProfileScreen,
+                          onComingSoon: _showComingSoon,
                         ),
 
-                        const SizedBox(
-                          height:
-                              AppSpacing.xl,
-                        ),
+                        const SizedBox(height: AppSpacing.xl),
 
-                        _LogoutButton(
-                          isArabic:
-                              isArabic,
-                        ),
+                        _LogoutButton(isArabic: isArabic),
 
-                        const SizedBox(
-                          height:
-                              AppSpacing.md,
-                        ),
+                        const SizedBox(height: AppSpacing.md),
                       ],
                     );
                   },
@@ -221,10 +163,7 @@ class _ProfileBanner extends StatelessWidget {
   final UserModel user;
   final bool isArabic;
 
-  const _ProfileBanner({
-    required this.user,
-    required this.isArabic,
-  });
+  const _ProfileBanner({required this.user, required this.isArabic});
 
   String get _roleLabel {
     switch (user.guardianType.toUpperCase()) {
@@ -241,8 +180,7 @@ class _ProfileBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fullName =
-        '${user.firstName} ${user.lastName}';
+    final fullName = '${user.firstName} ${user.lastName}';
 
     return Container(
       width: double.infinity,
@@ -251,9 +189,7 @@ class _ProfileBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(26),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(
-              alpha: 0.18,
-            ),
+            color: AppColors.primary.withValues(alpha: 0.18),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -290,9 +226,7 @@ class _ProfileBanner extends StatelessWidget {
                 height: 125,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(
-                    alpha: 0.06,
-                  ),
+                  color: Colors.white.withValues(alpha: 0.06),
                 ),
               ),
             ),
@@ -307,9 +241,7 @@ class _ProfileBanner extends StatelessWidget {
                 height: 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(
-                    alpha: 0.35,
-                  ),
+                  color: Colors.white.withValues(alpha: 0.35),
                 ),
               ),
             ),
@@ -330,9 +262,7 @@ class _ProfileBanner extends StatelessWidget {
               child: Icon(
                 Icons.auto_awesome,
                 size: 19,
-                color: Colors.white.withValues(
-                  alpha: 0.55,
-                ),
+                color: Colors.white.withValues(alpha: 0.55),
               ),
             ),
 
@@ -344,9 +274,7 @@ class _ProfileBanner extends StatelessWidget {
               child: Icon(
                 Icons.star_rounded,
                 size: 15,
-                color: Colors.white.withValues(
-                  alpha: 0.32,
-                ),
+                color: Colors.white.withValues(alpha: 0.32),
               ),
             ),
 
@@ -359,8 +287,7 @@ class _ProfileBanner extends StatelessWidget {
               child: ClipPath(
                 clipper: _BackWaveClipper(),
                 child: Container(
-                  color: const Color(0xFFC5A5FA)
-                      .withValues(alpha: 0.55),
+                  color: const Color(0xFFC5A5FA).withValues(alpha: 0.55),
                 ),
               ),
             ),
@@ -374,8 +301,7 @@ class _ProfileBanner extends StatelessWidget {
               child: ClipPath(
                 clipper: _FrontWaveClipper(),
                 child: Container(
-                  color: const Color(0xFFD7C1FC)
-                      .withValues(alpha: 0.72),
+                  color: const Color(0xFFD7C1FC).withValues(alpha: 0.72),
                 ),
               ),
             ),
@@ -400,15 +326,14 @@ class _ProfileBanner extends StatelessWidget {
                         color: Colors.white,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withValues(
-                            alpha: 0.65,
-                          ),
+                          color: Colors.white.withValues(alpha: 0.65),
                           width: 5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF4D278F)
-                                .withValues(alpha: 0.22),
+                            color: const Color(
+                              0xFF4D278F,
+                            ).withValues(alpha: 0.22),
                             blurRadius: 16,
                             offset: const Offset(0, 7),
                           ),
@@ -423,83 +348,78 @@ class _ProfileBanner extends StatelessWidget {
 
                     const SizedBox(width: 18),
 
-                   Expanded(
-  child: Align(
-    alignment: isArabic
-        ? Alignment.centerRight
-        : Alignment.centerLeft,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: isArabic
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: Text(
-            fullName,
-            textDirection: isArabic
-                ? TextDirection.rtl
-                : TextDirection.ltr,
-            textAlign: isArabic
-                ? TextAlign.right
-                : TextAlign.left,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              height: 1.2,
-            ),
-          ),
-        ),
+                    Expanded(
+                      child: Align(
+                        alignment: isArabic
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: isArabic
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: Text(
+                                fullName,
+                                textDirection: isArabic
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                                textAlign: isArabic
+                                    ? TextAlign.right
+                                    : TextAlign.left,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
 
-        const SizedBox(height: 8),
+                            const SizedBox(height: 8),
 
-        Align(
-          alignment: isArabic
-              ? Alignment.centerRight
-              : Alignment.centerLeft,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 5,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(
-                alpha: 0.17,
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withValues(
-                  alpha: 0.24,
-                ),
-              ),
-            ),
-            child: Text(
-              _roleLabel,
-              textDirection: isArabic
-                  ? TextDirection.rtl
-                  : TextDirection.ltr,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
+                            Align(
+                              alignment: isArabic
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.17),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.24),
+                                  ),
+                                ),
+                                child: Text(
+                                  _roleLabel,
+                                  textDirection: isArabic
+                                      ? TextDirection.rtl
+                                      : TextDirection.ltr,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            
           ],
         ),
       ),
@@ -525,9 +445,7 @@ class _BannerDots extends StatelessWidget {
             height: 3,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withValues(
-                alpha: 0.28,
-              ),
+              color: Colors.white.withValues(alpha: 0.28),
             ),
           ),
         ),
@@ -569,9 +487,7 @@ class _BackWaveClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(
-    covariant CustomClipper<Path> oldClipper,
-  ) {
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
     return false;
   }
 }
@@ -609,9 +525,7 @@ class _FrontWaveClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(
-    covariant CustomClipper<Path> oldClipper,
-  ) {
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
     return false;
   }
 }
@@ -634,12 +548,10 @@ class _SettingsCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius:
-            BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary
-                .withValues(alpha: 0.08),
+            color: AppColors.primary.withValues(alpha: 0.08),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -649,72 +561,46 @@ class _SettingsCard extends StatelessWidget {
         children: [
           _SettingsRow(
             icon: Icons.person_outline,
-            label: isArabic
-                ? 'الملف الشخصي'
-                : 'Personal profile',
+            label: isArabic ? 'الملف الشخصي' : 'Personal profile',
             isArabic: isArabic,
             onTap: onProfileTap,
           ),
 
-          const Divider(
-            height: 1,
-            color: AppColors.border,
-          ),
+          const Divider(height: 1, color: AppColors.border),
 
           _SettingsRow(
             icon: Icons.home_outlined,
-            label: isArabic
-                ? 'إعدادات العائلة'
-                : 'Family settings',
+            label: isArabic ? 'إعدادات العائلة' : 'Family settings',
             isArabic: isArabic,
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                       FamilySettingsScreen(isArabic: isArabic,),
+                  builder: (_) => FamilySettingsScreen(isArabic: isArabic),
                 ),
               );
             },
           ),
 
-          const Divider(
-            height: 1,
-            color: AppColors.border,
-          ),
+          const Divider(height: 1, color: AppColors.border),
 
-          _LanguageRow(
-            isArabic: isArabic,
-            onTap: onLanguageToggle,
-            
-          ),
+          _LanguageRow(isArabic: isArabic, onTap: onLanguageToggle),
 
-          const Divider(
-            height: 1,
-            color: AppColors.border,
-          ),
+          const Divider(height: 1, color: AppColors.border),
 
           _SettingsRow(
-            icon:
-                Icons.notifications_none,
-            label: isArabic
-                ? 'الإشعارات'
-                : 'Notifications',
+            icon: Icons.notifications_none,
+            label: isArabic ? 'الإشعارات' : 'Notifications',
             isArabic: isArabic,
             showComingSoon: true,
             onTap: onComingSoon,
           ),
 
-          const Divider(
-            height: 1,
-            color: AppColors.border,
-          ),
+          const Divider(height: 1, color: AppColors.border),
 
           _SettingsRow(
             icon: Icons.help_outline,
-            label: isArabic
-                ? 'المساعدة والدعم'
-                : 'Help and support',
+            label: isArabic ? 'المساعدة والدعم' : 'Help and support',
             isArabic: isArabic,
             showComingSoon: true,
             onTap: onComingSoon,
@@ -745,86 +631,72 @@ class _SettingsRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding:
-            const EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.md,
         ),
         child: Row(
-          textDirection: isArabic
-              ? TextDirection.rtl
-              : TextDirection.ltr,
+          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
           children: [
             Container(
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color:
-                    AppColors.primaryLight,
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color:
-                    AppColors.primaryDark,
-                size: 20,
-              ),
+              child: Icon(icon, color: AppColors.primaryDark, size: 20),
             ),
 
-            const SizedBox(
-              width: AppSpacing.md,
-            ),
+            const SizedBox(width: AppSpacing.md),
 
             Expanded(
               child: Row(
-                textDirection: isArabic
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
+                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                 children: [
                   Flexible(
                     child: Text(
                       label,
-                      textAlign: isArabic
-                          ? TextAlign.right
-                          : TextAlign.left,
-                      style:
-                          const TextStyle(
+                      textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                      style: const TextStyle(
                         fontSize: 15,
-                        fontWeight:
-                            FontWeight.w600,
-                        color: AppColors
-                            .textPrimary,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ),
 
                   if (showComingSoon) ...[
-                    const SizedBox(
-                      width:
-                          AppSpacing.sm,
-                    ),
+                    const SizedBox(width: AppSpacing.sm),
 
-                    _ComingSoonTag(
-                      isArabic:
-                          isArabic,
-                    ),
+                    _ComingSoonTag(isArabic: isArabic),
                   ],
                 ],
               ),
             ),
 
-            Icon(
-  isArabic
-      ? Icons.chevron_right
-      : Icons.chevron_left,
-  color: AppColors.textSecondary,
-  size: 20,
-),
+            _SettingsNavigationArrow(isArabic: isArabic),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SettingsNavigationArrow extends StatelessWidget {
+  final bool isArabic;
+
+  const _SettingsNavigationArrow({required this.isArabic});
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      // Keep the icon direction fixed instead of letting RTL mirror it.
+      textDirection: TextDirection.ltr,
+      child: Icon(
+        isArabic ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+        color: AppColors.textSecondary,
+        size: 22,
       ),
     );
   }
@@ -833,22 +705,15 @@ class _SettingsRow extends StatelessWidget {
 class _ComingSoonTag extends StatelessWidget {
   final bool isArabic;
 
-  const _ComingSoonTag({
-    required this.isArabic,
-  });
+  const _ComingSoonTag({required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.primaryLight,
-        borderRadius:
-            BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         isArabic ? 'قريبًا' : 'Soon',
@@ -866,76 +731,54 @@ class _LanguageRow extends StatelessWidget {
   final bool isArabic;
   final VoidCallback onTap;
 
-  const _LanguageRow({
-    required this.isArabic,
-    required this.onTap,
-  });
+  const _LanguageRow({required this.isArabic, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Material(
-  color: Colors.transparent,
-  child: InkWell(
-    onTap: onTap,
-    child: Padding(
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
-        ),
-        child: Row(
-          textDirection: isArabic
-              ? TextDirection.rtl
-              : TextDirection.ltr,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color:
-                    AppColors.primaryLight,
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.md,
+          ),
+          child: Row(
+            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.language,
+                  color: AppColors.primaryDark,
+                  size: 20,
                 ),
               ),
-              child: const Icon(
-                Icons.language,
-                color:
-                    AppColors.primaryDark,
-                size: 20,
-              ),
-            ),
-            
 
-            const SizedBox(
-              width: AppSpacing.md,
-            ),
+              const SizedBox(width: AppSpacing.md),
 
-            Expanded(
-              child: Text(
-                isArabic
-                    ? 'اللغة'
-                    : 'Language',
-                textAlign: isArabic
-                    ? TextAlign.right
-                    : TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight:
-                      FontWeight.w600,
-                  color:
-                      AppColors.textPrimary,
+              Expanded(
+                child: Text(
+                  isArabic ? 'اللغة' : 'Language',
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
-            ),
-            _LanguageToggle(
-              isArabic: isArabic,
-            ),
-          ],
+              _LanguageToggle(isArabic: isArabic),
+            ],
+          ),
         ),
       ),
-       ),
     );
   }
 }
@@ -943,17 +786,12 @@ class _LanguageRow extends StatelessWidget {
 class _LanguageToggle extends StatelessWidget {
   final bool isArabic;
 
-  const _LanguageToggle({
-    required this.isArabic,
-  });
+  const _LanguageToggle({required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 6,
-        vertical: 5,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       decoration: BoxDecoration(
         color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(20),
@@ -962,48 +800,29 @@ class _LanguageToggle extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         textDirection: TextDirection.ltr,
         children: [
-          _LanguageChoice(
-            text: 'ع',
-            isSelected: isArabic,
-          ),
+          _LanguageChoice(text: 'ع', isSelected: isArabic),
           const SizedBox(width: 5),
-          _LanguageChoice(
-            text: 'EN',
-            isSelected: !isArabic,
-          ),
+          _LanguageChoice(text: 'EN', isSelected: !isArabic),
         ],
       ),
     );
   }
 }
 
-class _LanguageChoice
-    extends StatelessWidget {
+class _LanguageChoice extends StatelessWidget {
   final String text;
   final bool isSelected;
 
-  const _LanguageChoice({
-    required this.text,
-    required this.isSelected,
-  });
+  const _LanguageChoice({required this.text, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(
-        minWidth: 26,
-        minHeight: 26,
-      ),
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 5,
-      ),
+      constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
-        color: isSelected
-            ? AppColors.primary
-            : Colors.transparent,
-        borderRadius:
-            BorderRadius.circular(14),
+        color: isSelected ? AppColors.primary : Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
       ),
       alignment: Alignment.center,
       child: Text(
@@ -1011,9 +830,7 @@ class _LanguageChoice
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: isSelected
-              ? Colors.white
-              : AppColors.primaryDark,
+          color: isSelected ? Colors.white : AppColors.primaryDark,
         ),
       ),
     );
@@ -1023,9 +840,7 @@ class _LanguageChoice
 class _LogoutButton extends StatelessWidget {
   final bool isArabic;
 
-  const _LogoutButton({
-    required this.isArabic,
-  });
+  const _LogoutButton({required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -1037,34 +852,20 @@ class _LogoutButton extends StatelessWidget {
 
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (_) =>
-                const AsalahApp(),
-          ),
+          MaterialPageRoute(builder: (_) => const AsalahApp()),
           (route) => false,
         );
       },
       child: Row(
-        textDirection: isArabic
-            ? TextDirection.rtl
-            : TextDirection.ltr,
-        mainAxisAlignment:
-            MainAxisAlignment.center,
+        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.logout,
-            color: AppColors.error,
-            size: 18,
-          ),
+          const Icon(Icons.logout, color: AppColors.error, size: 18),
 
-          const SizedBox(
-            width: AppSpacing.sm,
-          ),
+          const SizedBox(width: AppSpacing.sm),
 
           Text(
-            isArabic
-                ? 'تسجيل الخروج'
-                : 'Log out',
+            isArabic ? 'تسجيل الخروج' : 'Log out',
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -1077,49 +878,33 @@ class _LogoutButton extends StatelessWidget {
   }
 }
 
-class _SettingsErrorState
-    extends StatelessWidget {
+class _SettingsErrorState extends StatelessWidget {
   final bool isArabic;
   final Future<void> Function() onRetry;
 
-  const _SettingsErrorState({
-    required this.isArabic,
-    required this.onRetry,
-  });
+  const _SettingsErrorState({required this.isArabic, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height:
-          MediaQuery.sizeOf(context)
-                  .height *
-              0.65,
+      height: MediaQuery.sizeOf(context).height * 0.65,
       child: Center(
         child: Column(
-          mainAxisSize:
-              MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               isArabic
                   ? 'تعذّر تحميل بيانات المستخدم.'
                   : 'Could not load user information.',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.error,
-              ),
+              style: const TextStyle(color: AppColors.error),
             ),
 
-            const SizedBox(
-              height: AppSpacing.sm,
-            ),
+            const SizedBox(height: AppSpacing.sm),
 
             ElevatedButton(
               onPressed: onRetry,
-              child: Text(
-                isArabic
-                    ? 'إعادة المحاولة'
-                    : 'Try again',
-              ),
+              child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
             ),
           ],
         ),
