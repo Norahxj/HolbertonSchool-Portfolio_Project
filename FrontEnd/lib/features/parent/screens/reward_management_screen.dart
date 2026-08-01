@@ -15,14 +15,10 @@ import 'add_reward_screen.dart';
 class RewardManagementScreen extends StatefulWidget {
   final bool isArabic;
 
-  const RewardManagementScreen({
-    super.key,
-    required this.isArabic,
-  });
+  const RewardManagementScreen({super.key, required this.isArabic});
 
   @override
-  State<RewardManagementScreen> createState() =>
-      _RewardManagementScreenState();
+  State<RewardManagementScreen> createState() => _RewardManagementScreenState();
 }
 
 class _RewardManagementScreenState extends State<RewardManagementScreen> {
@@ -56,17 +52,17 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   }
 
   @override
-void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
-  super.didUpdateWidget(oldWidget);
+  void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-  if (oldWidget.isArabic != widget.isArabic) {
-    rewardSuggestions = [];
+    if (oldWidget.isArabic != widget.isArabic) {
+      rewardSuggestions = [];
 
-    if (selectedChildId != null) {
-      _loadRewardSuggestions();
+      if (selectedChildId != null) {
+        _loadRewardSuggestions();
+      }
     }
   }
-}
 
   Future<void> _loadChildren() async {
     setState(() {
@@ -95,8 +91,9 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       if (!mounted) return;
 
       setState(() {
-        childrenError = _readBackendMessage(error) ??
-    (isArabic ? 'تعذّر تحميل الأطفال' : 'Failed to load children');
+        childrenError =
+            _readBackendMessage(error) ??
+            (isArabic ? 'تعذّر تحميل الأطفال' : 'Failed to load children');
 
         isLoadingChildren = false;
       });
@@ -104,8 +101,9 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       if (!mounted) return;
 
       setState(() {
-        childrenError =
-    isArabic ? 'تعذّر تحميل الأطفال' : 'Failed to load children';
+        childrenError = isArabic
+            ? 'تعذّر تحميل الأطفال'
+            : 'Failed to load children';
 
         isLoadingChildren = false;
       });
@@ -113,16 +111,14 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
   }
 
   Future<void> _loadSelectedChildData() async {
-  final requests = <Future<void>>[
-    _loadCurrentRewards(),
-  ];
+    final requests = <Future<void>>[_loadCurrentRewards()];
 
-  if (rewardSuggestions.isEmpty) {
-    requests.add(_loadRewardSuggestions());
+    if (rewardSuggestions.isEmpty) {
+      requests.add(_loadRewardSuggestions());
+    }
+
+    await Future.wait(requests);
   }
-
-  await Future.wait(requests);
-}
 
   Future<void> _selectChild(String childId) async {
     if (selectedChildId == childId) {
@@ -163,10 +159,11 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       }
 
       setState(() {
-       rewardsError = _readBackendMessage(error) ??
-    (isArabic
-        ? 'تعذّر تحميل مكافآت الطفل'
-        : 'Failed to load child rewards');
+        rewardsError =
+            _readBackendMessage(error) ??
+            (isArabic
+                ? 'تعذّر تحميل مكافآت الطفل'
+                : 'Failed to load child rewards');
       });
     } finally {
       if (mounted && selectedChildId == childId) {
@@ -189,9 +186,9 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
 
     try {
       final suggestions = await _rewardApiService.getRewardSuggestions(
-  lang: isArabic ? 'ar' : 'en',
-  count: 5,
-);
+        lang: isArabic ? 'ar' : 'en',
+        count: 5,
+      );
 
       if (!mounted || selectedChildId != childId) {
         return;
@@ -206,10 +203,11 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       }
 
       setState(() {
-       suggestionsError = _readBackendMessage(error) ??
-    (isArabic
-        ? 'تعذّر تحميل المكافآت المقترحة'
-        : 'Failed to load suggested rewards');
+        suggestionsError =
+            _readBackendMessage(error) ??
+            (isArabic
+                ? 'تعذّر تحميل المكافآت المقترحة'
+                : 'Failed to load suggested rewards');
       });
     } finally {
       if (mounted && selectedChildId == childId) {
@@ -228,12 +226,11 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
     final saved = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            AddRewardScreen(
-              childId: childId,
-              isArabic: isArabic,
-              suggestion: suggestion,
-            ),
+        builder: (_) => AddRewardScreen(
+          childId: childId,
+          isArabic: isArabic,
+          suggestion: suggestion,
+        ),
       ),
     );
 
@@ -245,14 +242,14 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    content: Text(
-      isArabic
-          ? 'تمت إضافة المكافأة بنجاح 🎉'
-          : 'Reward added successfully 🎉',
-    ),
-  ),
-);
+        SnackBar(
+          content: Text(
+            isArabic
+                ? 'تمت إضافة المكافأة بنجاح 🎉'
+                : 'Reward added successfully 🎉',
+          ),
+        ),
+      );
     }
   }
 
@@ -266,16 +263,16 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
       builder: (dialogContext) {
         return AlertDialog(
           title: Text(
-  isArabic ? 'حذف المكافأة' : 'Delete Reward',
-  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-),
+            isArabic ? 'حذف المكافأة' : 'Delete Reward',
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
+          ),
           content: Text(
-  isArabic
-      ? 'هل تريد حذف مكافأة "${reward.rewardName}"؟'
-      : 'Do you want to delete the reward "${reward.rewardName}"?',
-  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-  textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-),
+            isArabic
+                ? 'هل تريد حذف مكافأة "${reward.rewardName}"؟'
+                : 'Do you want to delete the reward "${reward.rewardName}"?',
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
+            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -288,9 +285,9 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
                 Navigator.pop(dialogContext, true);
               },
               child: Text(
-  isArabic ? 'حذف' : 'Delete',
-  style: const TextStyle(color: AppColors.error),
-),
+                isArabic ? 'حذف' : 'Delete',
+                style: const TextStyle(color: AppColors.error),
+              ),
             ),
           ],
         );
@@ -314,24 +311,22 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
         currentRewards.removeWhere((item) => item.id == reward.id);
       });
 
-     ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    content: Text(
-      isArabic ? 'تم حذف المكافأة' : 'Reward deleted',
-    ),
-  ),
-);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic ? 'تم حذف المكافأة' : 'Reward deleted'),
+        ),
+      );
     } on DioException catch (error) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    content: Text(
-      _readBackendMessage(error) ??
-          (isArabic ? 'تعذّر حذف المكافأة' : 'Failed to delete reward'),
-    ),
-  ),
-);
+        SnackBar(
+          content: Text(
+            _readBackendMessage(error) ??
+                (isArabic ? 'تعذّر حذف المكافأة' : 'Failed to delete reward'),
+          ),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -366,20 +361,20 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-  isArabic ? 'إدارة المكافآت' : 'Reward Management',
-  style: AppTextStyles.arabicTitle,
-  textAlign: TextAlign.center,
-),
+                    isArabic ? 'إدارة المكافآت' : 'Reward Management',
+                    style: AppTextStyles.arabicTitle,
+                    textAlign: TextAlign.center,
+                  ),
 
                   const SizedBox(height: AppSpacing.sm),
 
                   Text(
-  isArabic
-      ? 'مكافآت أسبوعية تُمنح حسب أداء الطفل'
-      : 'Weekly rewards based on the child’s performance',
-  style: AppTextStyles.body,
-  textAlign: TextAlign.center,
-),
+                    isArabic
+                        ? 'مكافآت أسبوعية تُمنح حسب أداء الطفل'
+                        : 'Weekly rewards based on the child’s performance',
+                    style: AppTextStyles.body,
+                    textAlign: TextAlign.center,
+                  ),
 
                   const SizedBox(height: AppSpacing.lg),
 
@@ -392,46 +387,50 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
                     )
                   else if (children.isEmpty)
                     _EmptyMessage(
-  message: isArabic
-      ? 'لا يوجد أطفال بعد. أضف طفلًا أولًا.'
-      : 'No children yet. Add a child first.',
-)
+                      message: isArabic
+                          ? 'لا يوجد أطفال بعد. أضف طفلًا أولًا.'
+                          : 'No children yet. Add a child first.',
+                    )
                   else
                     Directionality(
-  textDirection:
-      isArabic ? TextDirection.rtl : TextDirection.ltr,
-  child: Wrap(
-    alignment: WrapAlignment.start,
-    spacing: AppSpacing.md,
-    runSpacing: AppSpacing.md,
-    children: children.map((child) {
-      return ChildCard(
-        name: child.name,
-        avatarIndex: child.avatarIndex,
-        isSelected: selectedChildId == child.id,
-        onTap: () {
-          _selectChild(child.id);
-        },
-      );
-    }).toList(),
-  ),
-),
+                      textDirection: isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: AppSpacing.md,
+                        runSpacing: AppSpacing.md,
+                        children: children.map((child) {
+                          return ChildCard(
+                            name: child.name,
+                            avatarIndex: child.avatarIndex,
+                            isSelected: selectedChildId == child.id,
+                            onTap: () {
+                              _selectChild(child.id);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
 
                   const SizedBox(height: AppSpacing.lg),
 
                   if (selectedChildId != null) ...[
                     Align(
-  alignment:
-      isArabic ? Alignment.centerRight : Alignment.centerLeft,
-  child: Text(
-    isArabic ? 'مكافآت الطفل الحالية' : 'Current Child Rewards',
-    style: const TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.bold,
-      color: AppColors.textPrimary,
-    ),
-  ),
-),
+                      alignment: isArabic
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Text(
+                        isArabic
+                            ? 'مكافآت الطفل الحالية'
+                            : 'Current Child Rewards',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
 
                     const SizedBox(height: AppSpacing.sm),
 
@@ -449,10 +448,10 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
                       )
                     else if (currentRewards.isEmpty)
                       _EmptyMessage(
-  message: isArabic
-      ? 'لا توجد مكافآت لهذا الطفل حتى الآن'
-      : 'This child has no rewards yet',
-)
+                        message: isArabic
+                            ? 'لا توجد مكافآت لهذا الطفل حتى الآن'
+                            : 'This child has no rewards yet',
+                      )
                     else
                       Column(
                         children: currentRewards.map((reward) {
@@ -476,28 +475,27 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
                   ],
 
                   Align(
-  alignment:
-      isArabic ? Alignment.centerRight : Alignment.centerLeft,
-  child: Text(
-    isArabic ? 'إضافة سريعة' : 'Quick Add',
-    style: const TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.bold,
-      color: AppColors.textPrimary,
-    ),
-  ),
-),
-                     
-                   
+                    alignment: isArabic
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Text(
+                      isArabic ? 'إضافة سريعة' : 'Quick Add',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: AppSpacing.sm),
 
                   if (selectedChildId == null)
                     _EmptyMessage(
-  message: isArabic
-      ? 'اختر طفلًا أولًا لعرض المكافآت المقترحة'
-      : 'Select a child first to view suggested rewards',
-)
+                      message: isArabic
+                          ? 'اختر طفلًا أولًا لعرض المكافآت المقترحة'
+                          : 'Select a child first to view suggested rewards',
+                    )
                   else if (isLoadingSuggestions)
                     const Center(
                       child: Padding(
@@ -542,29 +540,29 @@ void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
 
 class _CurrentRewardCard extends StatelessWidget {
   final RewardModel reward;
-   final bool isArabic;
+  final bool isArabic;
   final bool isDeleting;
   final VoidCallback? onDelete;
 
   const _CurrentRewardCard({
     required this.reward,
-     required this.isArabic,
+    required this.isArabic,
     required this.isDeleting,
     required this.onDelete,
   });
 
   String get statusLabel {
-  switch (reward.status.toUpperCase()) {
-    case 'UNLOCKED':
-      return isArabic ? 'متاحة' : 'Unlocked';
+    switch (reward.status.toUpperCase()) {
+      case 'UNLOCKED':
+        return isArabic ? 'متاحة' : 'Unlocked';
 
-    case 'CLAIMED':
-      return isArabic ? 'تم استلامها' : 'Claimed';
+      case 'CLAIMED':
+        return isArabic ? 'تم استلامها' : 'Claimed';
 
-    default:
-      return isArabic ? 'مقفلة' : 'Locked';
+      default:
+        return isArabic ? 'مقفلة' : 'Locked';
+    }
   }
-}
 
   IconData get statusIcon {
     switch (reward.status.toUpperCase()) {
@@ -607,13 +605,16 @@ class _CurrentRewardCard extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-    isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isArabic
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Text(
                   reward.rewardName,
                   textAlign: isArabic ? TextAlign.right : TextAlign.left,
-textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                  textDirection: isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -627,8 +628,10 @@ textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
 
                   Text(
                     reward.description!,
-                   textAlign: isArabic ? TextAlign.right : TextAlign.left,
-textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                    textDirection: isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -641,8 +644,9 @@ textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                 const SizedBox(height: 6),
 
                 Row(
-                  mainAxisAlignment:
-      isArabic ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  mainAxisAlignment: isArabic
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
                   children: [
                     Text(
                       statusLabel,
@@ -662,11 +666,13 @@ textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                 const SizedBox(height: 3),
 
                 Text(
-  isArabic
-      ? 'تفتح يوم ${reward.unlockDayLabel}'
-      : 'Unlocks on ${reward.unlockDayLabel}',
-  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-  textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                  isArabic
+                      ? 'تفتح يوم ${reward.unlockDayLabel}'
+                      : 'Unlocks on ${reward.unlockDayLabel}',
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  textDirection: isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,
@@ -698,7 +704,7 @@ textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
 
 class _QuickAddCategory extends StatelessWidget {
   final List<RewardSuggestionModel> suggestions;
-   final bool isArabic;
+  final bool isArabic;
 
   final ValueChanged<RewardSuggestionModel> onSuggestionTap;
 
@@ -717,12 +723,15 @@ class _QuickAddCategory extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: suggestions.isEmpty
-    ? Text(
-        isArabic
-            ? 'لا توجد مكافآت مقترحة حاليًا'
-            : 'No suggested rewards available',
+          ? Text(
+              isArabic
+                  ? 'لا توجد مكافآت مقترحة حاليًا'
+                  : 'No suggested rewards available',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
             )
           : Column(
               children: [
@@ -737,7 +746,9 @@ class _QuickAddCategory extends StatelessWidget {
                         vertical: AppSpacing.sm,
                       ),
                       child: Row(
-                        textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
+                        textDirection: isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         children: [
                           const Icon(
                             Icons.add_circle_outline,
@@ -749,13 +760,14 @@ class _QuickAddCategory extends StatelessWidget {
 
                           Expanded(
                             child: Column(
-                              crossAxisAlignment:
-    isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   suggestions[index].rewardName,
-                                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                                  textAlign: TextAlign.start,
+                                  textDirection: isArabic
+                                      ? TextDirection.rtl
+                                      : TextDirection.ltr,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -770,8 +782,10 @@ textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
 
                                   Text(
                                     suggestions[index].description,
-                                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
-textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                                    textAlign: TextAlign.start,
+                                    textDirection: isArabic
+                                        ? TextDirection.rtl
+                                        : TextDirection.ltr,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
@@ -799,10 +813,14 @@ textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
 
 class _AddRewardButton extends StatelessWidget {
   final bool enabled;
-   final bool isArabic;
+  final bool isArabic;
   final VoidCallback onTap;
 
-  const _AddRewardButton({required this.enabled, required this.onTap,  required this.isArabic,});
+  const _AddRewardButton({
+    required this.enabled,
+    required this.onTap,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -820,7 +838,7 @@ class _AddRewardButton extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(18),
           ),
-          child:  Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.add, color: Colors.white, size: 20),
@@ -828,8 +846,8 @@ class _AddRewardButton extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
 
               Text(
-  isArabic ? 'إضافة مكافأة' : 'Add Reward',
-  style: const TextStyle(
+                isArabic ? 'إضافة مكافأة' : 'Add Reward',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -875,8 +893,7 @@ class _ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-    Localizations.localeOf(context).languageCode == 'ar';
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     return Column(
       children: [
         Text(
@@ -885,10 +902,11 @@ class _ErrorMessage extends StatelessWidget {
           style: const TextStyle(color: AppColors.error, fontSize: 13),
         ),
 
-TextButton(
-  onPressed: onRetry,
-  child: Text(isArabic ? 'إعادة المحاولة' : 'Retry'),
-),      ],
+        TextButton(
+          onPressed: onRetry,
+          child: Text(isArabic ? 'إعادة المحاولة' : 'Retry'),
+        ),
+      ],
     );
   }
 }
