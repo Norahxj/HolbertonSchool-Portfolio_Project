@@ -511,8 +511,7 @@ const SizedBox(
   height: AppSpacing.md,
 ),
 
-                    const Divider(color: AppColors.border),
-                    const SizedBox(height: AppSpacing.md),
+                   
 
                     TextButton.icon(
                       onPressed: isDeleting
