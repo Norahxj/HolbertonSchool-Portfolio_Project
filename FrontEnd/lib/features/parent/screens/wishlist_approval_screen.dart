@@ -361,17 +361,13 @@ Widget build(BuildContext context) {
 
       const SizedBox(width: AppSpacing.sm),
 
-      Expanded(
+      Flexible(
   child: Column(
-    crossAxisAlignment:
-        isArabic
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         childName,
-        textAlign:
-            isArabic ? TextAlign.right : TextAlign.left,
+        textAlign: TextAlign.start,
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -383,8 +379,7 @@ Widget build(BuildContext context) {
 
       Text(
         wishTitle,
-        textAlign:
-            isArabic ? TextAlign.right : TextAlign.left,
+       textAlign: TextAlign.start,
         style: const TextStyle(
           fontSize: 14,
           color: AppColors.textSecondary,
