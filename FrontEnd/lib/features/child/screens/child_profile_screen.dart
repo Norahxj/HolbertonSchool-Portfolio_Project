@@ -294,21 +294,18 @@ class _ProfileHeader extends StatelessWidget {
           child: Column(
             children: [
               AppPageHeader(
-  title: child.name,
-  titleColor: Colors.white,
-  buttonBackgroundColor: Colors.white.withOpacity(0.18),
-  buttonIconColor: Colors.white,
-  onBack: () {
-    Navigator.pop(context);
-  },
-),
+                title: child.name,
+                titleColor: Colors.white,
+                buttonBackgroundColor: Colors.white.withOpacity(0.18),
+                buttonIconColor: Colors.white,
+                onBack: () {
+                  Navigator.pop(context);
+                },
+              ),
 
               const SizedBox(height: AppSpacing.lg),
 
-              ChildAvatar(
-  avatarIndex: child.avatarIndex,
-  size: 130,
-),
+              ChildAvatar(avatarIndex: child.avatarIndex, size: 130),
 
               const SizedBox(height: AppSpacing.sm),
 
@@ -325,9 +322,6 @@ class _ProfileHeader extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class _WeeklyProgressCard extends StatelessWidget {
   final double progress;

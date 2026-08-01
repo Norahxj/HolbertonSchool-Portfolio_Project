@@ -5,15 +5,13 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../services/wishlist_api_service.dart';
+import '../../../core/widgets/screen_background.dart';
 
 // شاشة إضافة أمنية جديدة للطفل.
 class AddWishlistScreen extends StatefulWidget {
   final bool isArabic;
 
-  const AddWishlistScreen({
-    super.key,
-    required this.isArabic,
-  });
+  const AddWishlistScreen({super.key, required this.isArabic});
 
   @override
   State<AddWishlistScreen> createState() => _AddWishlistScreenState();
@@ -197,9 +195,9 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
       if (backendMessage?.contains('Wishlist limit reached') == true) {
         return widget.isArabic
             ? 'وصلتِ إلى الحد الأقصى: '
-                '5 أمنيات بانتظار المراجعة.'
+                  '5 أمنيات بانتظار المراجعة.'
             : 'You have reached the limit: '
-                '5 wishes awaiting review.';
+                  '5 wishes awaiting review.';
       }
 
       if (data['errors'] is Map) {
@@ -225,219 +223,215 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
   String get _countText {
     return widget.isArabic
         ? 'لديك $_pendingWishesCount من أصل '
-            '$_maximumPendingWishes أمنيات بانتظار المراجعة'
+              '$_maximumPendingWishes أمنيات بانتظار المراجعة'
         : 'You have $_pendingWishesCount of '
-            '$_maximumPendingWishes wishes awaiting review';
+              '$_maximumPendingWishes wishes awaiting review';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppPageHeader(
-  title: widget.isArabic
-      ? 'إضافة أمنية'
-      : 'Add a Wish',
-  onBack: () {
-    Navigator.pop(context);
-  },
-),
-
-              const SizedBox(height: AppSpacing.sm),
-
-              Text(
-                widget.isArabic
-                    ? 'اختر أمنياتك بعناية'
-                    : 'Choose your wishes carefully',
-                style: AppTextStyles.body,
-                textAlign: TextAlign.center,
-                textDirection: widget.isArabic
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
-              ),
-
-              const SizedBox(height: AppSpacing.md),
-
-              if (_isLoading)
-                const Center(
-                  child: SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              else
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _hasReachedLimit
-                          ? const Color(0xFFF9DEDE)
-                          : AppColors.primaryLight,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Text(
-                      _countText,
-                      textAlign: TextAlign.center,
-                      textDirection: widget.isArabic
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: _hasReachedLimit
-                            ? AppColors.error
-                            : AppColors.primaryDark,
-                      ),
-                    ),
-                  ),
+      backgroundColor: Colors.transparent,
+      body: ScreenBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppPageHeader(
+                  title: widget.isArabic ? 'إضافة أمنية' : 'Add a Wish',
+                  onBack: () {
+                    Navigator.pop(context);
+                  },
                 ),
 
-              if (_pageError != null) ...[
                 const SizedBox(height: AppSpacing.sm),
 
                 Text(
-                  _pageError!,
+                  widget.isArabic
+                      ? 'اختر أمنياتك بعناية'
+                      : 'Choose your wishes carefully',
+                  style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                   textDirection: widget.isArabic
                       ? TextDirection.rtl
                       : TextDirection.ltr,
-                  style: const TextStyle(
-                    color: AppColors.error,
-                    fontSize: 12,
-                  ),
                 ),
 
-                TextButton(
-                  onPressed: _loadCurrentWishes,
-                  child: Text(
-                    widget.isArabic
-                        ? 'إعادة المحاولة'
-                        : 'Try again',
-                  ),
-                ),
-              ],
+                const SizedBox(height: AppSpacing.md),
 
-              const SizedBox(height: AppSpacing.xl),
-
-              _FieldLabel(
-                widget.isArabic
-                    ? 'اسم الأمنية'
-                    : 'Wish name',
-                isArabic: widget.isArabic,
-              ),
-
-              const SizedBox(height: AppSpacing.sm),
-
-              _WishTextField(
-                controller: _nameController,
-                hint: widget.isArabic
-                    ? 'مثال: دراجة هوائية'
-                    : 'Example: A bicycle',
-                errorText: _nameError,
-                enabled: !_hasReachedLimit,
-                isArabic: widget.isArabic,
-              ),
-
-              const SizedBox(height: AppSpacing.lg),
-
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome,
-                      color: AppColors.primary,
-                      size: 18,
+                if (_isLoading)
+                  const Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
-
-                    const SizedBox(width: AppSpacing.sm),
-
-                    Expanded(
+                  )
+                else
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: 7,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _hasReachedLimit
+                            ? const Color(0xFFF9DEDE)
+                            : AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                       child: Text(
-                        widget.isArabic
-                            ? 'يمكنك إضافة حتى 5 أمنيات '
-                                'بانتظار مراجعة ولي أمرك. '
-                                'بعد قبول الأمنية سيحدد ولي '
-                                'أمرك عدد النقاط المطلوبة لتحقيقها.'
-                            : 'You can add up to 5 wishes '
-                                'awaiting your guardian\'s review. '
-                                'After a wish is approved, your guardian '
-                                'will set the number of points required to achieve it.',
-                        textAlign: widget.isArabic
-                            ? TextAlign.right
-                            : TextAlign.left,
+                        _countText,
+                        textAlign: TextAlign.center,
                         textDirection: widget.isArabic
                             ? TextDirection.rtl
                             : TextDirection.ltr,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          height: 1.5,
-                          color: AppColors.textPrimary,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _hasReachedLimit
+                              ? AppColors.error
+                              : AppColors.primaryDark,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              const SizedBox(height: AppSpacing.xl),
+                if (_pageError != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
 
-              SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isSaving || _isLoading || _hasReachedLimit
-                      ? null
-                      : _saveWish,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: AppColors.primaryLight,
-                    foregroundColor: Colors.white,
-                    disabledForegroundColor: AppColors.primaryDark,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
+                  Text(
+                    _pageError!,
+                    textAlign: TextAlign.center,
+                    textDirection: widget.isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    style: const TextStyle(
+                      color: AppColors.error,
+                      fontSize: 12,
                     ),
                   ),
-                  child: _isSaving
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Text(
-                          _hasReachedLimit
-                              ? widget.isArabic
-                                  ? 'وصلتِ إلى الحد الأقصى'
-                                  : 'Maximum limit reached'
-                              : widget.isArabic
-                                  ? 'حفظ الأمنية'
-                                  : 'Save wish',
+
+                  TextButton(
+                    onPressed: _loadCurrentWishes,
+                    child: Text(
+                      widget.isArabic ? 'إعادة المحاولة' : 'Try again',
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: AppSpacing.xl),
+
+                _FieldLabel(
+                  widget.isArabic ? 'اسم الأمنية' : 'Wish name',
+                  isArabic: widget.isArabic,
+                ),
+
+                const SizedBox(height: AppSpacing.sm),
+
+                _WishTextField(
+                  controller: _nameController,
+                  hint: widget.isArabic
+                      ? 'مثال: دراجة هوائية'
+                      : 'Example: A bicycle',
+                  errorText: _nameError,
+                  enabled: !_hasReachedLimit,
+                  isArabic: widget.isArabic,
+                ),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryLight,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.auto_awesome,
+                        color: AppColors.primary,
+                        size: 18,
+                      ),
+
+                      const SizedBox(width: AppSpacing.sm),
+
+                      Expanded(
+                        child: Text(
+                          widget.isArabic
+                              ? 'يمكنك إضافة حتى 5 أمنيات '
+                                    'بانتظار مراجعة ولي أمرك. '
+                                    'بعد قبول الأمنية سيحدد ولي '
+                                    'أمرك عدد النقاط المطلوبة لتحقيقها.'
+                              : 'You can add up to 5 wishes '
+                                    'awaiting your guardian\'s review. '
+                                    'After a wish is approved, your guardian '
+                                    'will set the number of points required to achieve it.',
+                          textAlign: widget.isArabic
+                              ? TextAlign.right
+                              : TextAlign.left,
+                          textDirection: widget.isArabic
+                              ? TextDirection.rtl
+                              : TextDirection.ltr,
                           style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            height: 1.5,
+                            color: AppColors.textPrimary,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: AppSpacing.lg),
-            ],
+                const SizedBox(height: AppSpacing.xl),
+
+                SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isSaving || _isLoading || _hasReachedLimit
+                        ? null
+                        : _saveWish,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      disabledBackgroundColor: AppColors.primaryLight,
+                      foregroundColor: Colors.white,
+                      disabledForegroundColor: AppColors.primaryDark,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    child: _isSaving
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            _hasReachedLimit
+                                ? widget.isArabic
+                                      ? 'وصلتِ إلى الحد الأقصى'
+                                      : 'Maximum limit reached'
+                                : widget.isArabic
+                                ? 'حفظ الأمنية'
+                                : 'Save wish',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.lg),
+              ],
+            ),
           ),
         ),
       ),
@@ -445,26 +439,19 @@ class _AddWishlistScreenState extends State<AddWishlistScreen> {
   }
 }
 
-
 class _FieldLabel extends StatelessWidget {
   final String text;
   final bool isArabic;
 
-  const _FieldLabel(
-    this.text, {
-    required this.isArabic,
-  });
+  const _FieldLabel(this.text, {required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: isArabic
-          ? Alignment.centerRight
-          : Alignment.centerLeft,
+      alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
       child: Text(
         text,
-        textDirection:
-            isArabic ? TextDirection.rtl : TextDirection.ltr,
+        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -496,8 +483,7 @@ class _WishTextField extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       textAlign: isArabic ? TextAlign.right : TextAlign.left,
-      textDirection:
-          isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       decoration: InputDecoration(
         hintText: hint,
         errorText: errorText,
@@ -514,10 +500,7 @@ class _WishTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -525,10 +508,7 @@ class _WishTextField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: AppColors.error,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
         ),
       ),
     );

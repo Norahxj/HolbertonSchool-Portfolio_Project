@@ -6,6 +6,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../models/task_assignment_model.dart';
 import '../../../services/task_api_service.dart';
 import '../services/point_api_service.dart';
+import '../../../core/widgets/screen_background.dart';
 
 class ChildProgressScreen extends StatefulWidget {
   final bool isArabic;
@@ -181,106 +182,110 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _loadData,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  widget.isArabic ? 'تقدّمي' : 'My Progress',
-                  style: AppTextStyles.arabicTitle,
-                  textAlign: TextAlign.center,
-                  textDirection: widget.isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                ),
+      backgroundColor: Colors.transparent,
+      body: ScreenBackground(
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _loadData,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    widget.isArabic ? 'تقدّمي' : 'My Progress',
+                    style: AppTextStyles.arabicTitle,
+                    textAlign: TextAlign.center,
+                    textDirection: widget.isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                  ),
 
-                const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: AppSpacing.lg),
 
-                _ProgressSummaryCard(
-                  percent: _weeklyPercent,
-                  message: _progressMessage,
-                  isArabic: widget.isArabic,
-                ),
+                  _ProgressSummaryCard(
+                    percent: _weeklyPercent,
+                    message: _progressMessage,
+                    isArabic: widget.isArabic,
+                  ),
 
-                const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: AppSpacing.lg),
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: _StatTile(
-                        icon: Icons.water_drop,
-                        iconColor: const Color(0xFFDE9A3E),
-                        value: '$_currentStreak',
-                        label: widget.isArabic ? 'أيام متتالية' : 'Day streak',
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _StatTile(
+                          icon: Icons.water_drop,
+                          iconColor: const Color(0xFFDE9A3E),
+                          value: '$_currentStreak',
+                          label: widget.isArabic
+                              ? 'أيام متتالية'
+                              : 'Day streak',
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(width: AppSpacing.sm),
+                      const SizedBox(width: AppSpacing.sm),
 
-                    Expanded(
-                      child: _StatTile(
-                        icon: Icons.check_circle_outline,
-                        iconColor: AppColors.success,
-                        value: '$_totalCompleted',
-                        label: widget.isArabic
-                            ? 'مهمة مكتملة'
-                            : 'Completed tasks',
+                      Expanded(
+                        child: _StatTile(
+                          icon: Icons.check_circle_outline,
+                          iconColor: AppColors.success,
+                          value: '$_totalCompleted',
+                          label: widget.isArabic
+                              ? 'مهمة مكتملة'
+                              : 'Completed tasks',
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(width: AppSpacing.sm),
+                      const SizedBox(width: AppSpacing.sm),
 
-                    Expanded(
-                      child: _StatTile(
-                        icon: Icons.auto_awesome,
-                        iconColor: AppColors.gold,
-                        value: '$_points',
-                        label: widget.isArabic
-                            ? 'رصيد النقاط'
-                            : 'Points balance',
+                      Expanded(
+                        child: _StatTile(
+                          icon: Icons.auto_awesome,
+                          iconColor: AppColors.gold,
+                          value: '$_points',
+                          label: widget.isArabic
+                              ? 'رصيد النقاط'
+                              : 'Points balance',
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
 
-                const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: AppSpacing.xl),
 
-                _TrophiesSection(
-                  completedByCategory: _completedByCategory,
-                  isArabic: widget.isArabic,
-                ),
+                  _TrophiesSection(
+                    completedByCategory: _completedByCategory,
+                    isArabic: widget.isArabic,
+                  ),
 
-                const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: AppSpacing.xl),
 
-                Align(
-                  alignment: widget.isArabic
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Text(
-                    widget.isArabic ? 'نشاط الأسبوع' : 'Weekly Activity',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                  Align(
+                    alignment: widget.isArabic
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Text(
+                      widget.isArabic ? 'نشاط الأسبوع' : 'Weekly Activity',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.sm),
 
-                _WeeklyBarChart(
-                  activity: _weeklyActivity,
-                  isArabic: widget.isArabic,
-                ),
+                  _WeeklyBarChart(
+                    activity: _weeklyActivity,
+                    isArabic: widget.isArabic,
+                  ),
 
-                const SizedBox(height: AppSpacing.lg),
-              ],
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+              ),
             ),
           ),
         ),
@@ -306,15 +311,13 @@ class _ProgressSummaryCard extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.antiAlias,
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(24),
-    image: const DecorationImage(
-      image: AssetImage(
-        'assets/dashboard/child_progress_background.png',
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        image: const DecorationImage(
+          image: AssetImage('assets/dashboard/child_progress_background.png'),
+          fit: BoxFit.cover,
+        ),
       ),
-      fit: BoxFit.cover,
-    ),
-  ),
       child: Column(
         children: [
           Padding(
@@ -368,12 +371,12 @@ class _ProgressSummaryCard extends StatelessWidget {
               vertical: AppSpacing.sm,
             ),
             decoration: BoxDecoration(
-  color: Colors.black.withValues(alpha: 0.25),
-  borderRadius: const BorderRadius.only(
-    bottomLeft: Radius.circular(24),
-    bottomRight: Radius.circular(24),
-  ),
-),
+              color: Colors.black.withValues(alpha: 0.25),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(24),
+                bottomRight: Radius.circular(24),
+              ),
+            ),
             child: Text(
               message,
               textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,

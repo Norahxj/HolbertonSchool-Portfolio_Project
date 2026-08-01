@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../core/widgets/screen_background.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -12,19 +12,13 @@ import 'add_wishlist_screen.dart';
 class ChildWishlistScreen extends StatelessWidget {
   final bool isArabic;
 
-  const ChildWishlistScreen({
-    super.key,
-    required this.isArabic,
-  });
+  const ChildWishlistScreen({super.key, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) =>
-          ChildWishlistController()..loadData(),
-      child: _ChildWishlistView(
-        isArabic: isArabic,
-      ),
+      create: (_) => ChildWishlistController()..loadData(),
+      child: _ChildWishlistView(isArabic: isArabic),
     );
   }
 }
@@ -32,14 +26,10 @@ class ChildWishlistScreen extends StatelessWidget {
 class _ChildWishlistView extends StatelessWidget {
   final bool isArabic;
 
-  const _ChildWishlistView({
-    required this.isArabic,
-  });
+  const _ChildWishlistView({required this.isArabic});
 
   Future<void> _refresh(BuildContext context) async {
-    final success = await context
-        .read<ChildWishlistController>()
-        .refresh();
+    final success = await context.read<ChildWishlistController>().refresh();
 
     if (!success && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,34 +44,26 @@ class _ChildWishlistView extends StatelessWidget {
     }
   }
 
-  Future<void> _deleteWish(
-    BuildContext context,
-    String wishId,
-  ) async {
-    final success = await context
-        .read<ChildWishlistController>()
-        .deleteWish(wishId);
+  Future<void> _deleteWish(BuildContext context, String wishId) async {
+    final success = await context.read<ChildWishlistController>().deleteWish(
+      wishId,
+    );
 
     if (!success && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            isArabic
-                ? 'تعذّر حذف الأمنية'
-                : 'Could not delete the wish',
+            isArabic ? 'تعذّر حذف الأمنية' : 'Could not delete the wish',
           ),
         ),
       );
     }
   }
 
-  Future<void> _achieveWish(
-    BuildContext context,
-    String wishId,
-  ) async {
-    final success = await context
-        .read<ChildWishlistController>()
-        .achieveWish(wishId);
+  Future<void> _achieveWish(BuildContext context, String wishId) async {
+    final success = await context.read<ChildWishlistController>().achieveWish(
+      wishId,
+    );
 
     if (!success && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -98,221 +80,175 @@ class _ChildWishlistView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-        context.watch<ChildWishlistController>();
+    final controller = context.watch<ChildWishlistController>();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: AppRefreshIndicator(
-          onRefresh: () => _refresh(context),
-          child: SingleChildScrollView(
-            physics:
-                const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+      backgroundColor: Colors.transparent,
+      body: ScreenBackground(
+        child: SafeArea(
+          child: AppRefreshIndicator(
+            onRefresh: () => _refresh(context),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.goldLight,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              controller.isLoading
+                                  ? '—'
+                                  : '${controller.points}',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.auto_awesome,
+                              color: AppColors.gold,
+                              size: 14,
+                            ),
+                          ],
+                        ),
                       ),
+                      Expanded(
+                        child: Text(
+                          isArabic ? 'قائمة أمنياتي' : 'My Wishlist',
+                          textAlign: TextAlign.center,
+                          textDirection: isArabic
+                              ? TextDirection.rtl
+                              : TextDirection.ltr,
+                          style: AppTextStyles.arabicTitle,
+                        ),
+                      ),
+                      const SizedBox(width: 56),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.sm),
+
+                  Text(
+                    isArabic
+                        ? 'اجمع نقاط نور لتحقيق أمنياتك'
+                        : 'Collect Noor Points to achieve your wishes',
+                    style: AppTextStyles.body,
+                    textAlign: TextAlign.center,
+                    textDirection: isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                  ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  if (controller.isLoading)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (controller.hasError && controller.wishes.isEmpty)
+                    _ErrorState(
+                      isArabic: isArabic,
+                      onRetry: () {
+                        controller.loadData();
+                      },
+                    )
+                  else if (controller.wishes.isEmpty)
+                    _EmptyState(isArabic: isArabic)
+                  else
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.wishes.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: AppSpacing.md),
+                      itemBuilder: (context, index) {
+                        final wish = controller.wishes[index];
+
+                        return _WishCard(
+                          wish: wish,
+                          currentPoints: controller.points,
+                          isArabic: isArabic,
+                          onDelete: () {
+                            _deleteWish(context, wish.id);
+                          },
+                          onAchieve: () {
+                            _achieveWish(context, wish.id);
+                          },
+                        );
+                      },
+                    ),
+
+                  const SizedBox(height: AppSpacing.xl),
+
+                  GestureDetector(
+                    onTap: () async {
+                      final wasAdded = await Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AddWishlistScreen(isArabic: isArabic),
+                        ),
+                      );
+
+                      if (!context.mounted) return;
+
+                      if (wasAdded == true) {
+                        await controller.refresh();
+                      }
+                    },
+                    child: Container(
+                      height: 56,
                       decoration: BoxDecoration(
-                        color: AppColors.goldLight,
-                        borderRadius:
-                            BorderRadius.circular(14),
+                        color: AppColors.card,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Row(
-                        mainAxisSize:
-                            MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        textDirection: isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         children: [
                           Text(
-                            controller.isLoading
-                                ? '—'
-                                : '${controller.points}',
-                            style:
-                                const TextStyle(
-                              fontSize: 13,
-                              fontWeight:
-                                  FontWeight.bold,
-                              color: AppColors
-                                  .textPrimary,
+                            isArabic ? 'إضافة أمنية' : 'Add a wish',
+                            textDirection: isArabic
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
                             ),
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.sm),
                           const Icon(
-                            Icons.auto_awesome,
-                            color: AppColors.gold,
-                            size: 14,
+                            Icons.add,
+                            color: AppColors.primary,
+                            size: 20,
                           ),
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        isArabic
-                            ? 'قائمة أمنياتي'
-                            : 'My Wishlist',
-                        textAlign: TextAlign.center,
-                        textDirection: isArabic
-                            ? TextDirection.rtl
-                            : TextDirection.ltr,
-                        style:
-                            AppTextStyles.arabicTitle,
-                      ),
-                    ),
-                    const SizedBox(width: 56),
-                  ],
-                ),
-
-                const SizedBox(
-                  height: AppSpacing.sm,
-                ),
-
-                Text(
-                  isArabic
-                      ? 'اجمع نقاط نور لتحقيق أمنياتك'
-                      : 'Collect Noor Points to achieve your wishes',
-                  style: AppTextStyles.body,
-                  textAlign: TextAlign.center,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                ),
-
-                const SizedBox(
-                  height: AppSpacing.lg,
-                ),
-
-                if (controller.isLoading)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(32),
-                      child:
-                          CircularProgressIndicator(),
-                    ),
-                  )
-                else if (controller.hasError &&
-                    controller.wishes.isEmpty)
-                  _ErrorState(
-                    isArabic: isArabic,
-                    onRetry: () {
-                      controller.loadData();
-                    },
-                  )
-                else if (controller.wishes.isEmpty)
-                  _EmptyState(isArabic: isArabic)
-                else
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics:
-                        const NeverScrollableScrollPhysics(),
-                    itemCount:
-                        controller.wishes.length,
-                    separatorBuilder:
-                        (context, index) =>
-                            const SizedBox(
-                      height: AppSpacing.md,
-                    ),
-                    itemBuilder: (context, index) {
-                      final wish =
-                          controller.wishes[index];
-
-                      return _WishCard(
-                        wish: wish,
-                        currentPoints:
-                            controller.points,
-                        isArabic: isArabic,
-                        onDelete: () {
-                          _deleteWish(
-                            context,
-                            wish.id,
-                          );
-                        },
-                        onAchieve: () {
-                          _achieveWish(
-                            context,
-                            wish.id,
-                          );
-                        },
-                      );
-                    },
                   ),
-
-                const SizedBox(
-                  height: AppSpacing.xl,
-                ),
-
-                GestureDetector(
-                  onTap: () async {
-                    final wasAdded =
-                        await Navigator.push<bool>(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            AddWishlistScreen(
-                          isArabic: isArabic,
-                        ),
-                      ),
-                    );
-
-                    if (!context.mounted) return;
-
-                    if (wasAdded == true) {
-                      await controller.refresh();
-                    }
-                  },
-                  child: Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppColors.card,
-                      borderRadius:
-                          BorderRadius.circular(18),
-                      border: Border.all(
-                        color: AppColors.border,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
-                      textDirection: isArabic
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
-                      children: [
-                        Text(
-                          isArabic
-                              ? 'إضافة أمنية'
-                              : 'Add a wish',
-                          textDirection: isArabic
-                              ? TextDirection.rtl
-                              : TextDirection.ltr,
-                          style:
-                              const TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                FontWeight.bold,
-                            color:
-                                AppColors.primary,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: AppSpacing.sm,
-                        ),
-                        const Icon(
-                          Icons.add,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -325,10 +261,7 @@ class _ErrorState extends StatelessWidget {
   final bool isArabic;
   final VoidCallback onRetry;
 
-  const _ErrorState({
-    required this.isArabic,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.isArabic, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -340,21 +273,13 @@ class _ErrorState extends StatelessWidget {
                 ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.'
                 : 'An error occurred while loading the data. Please try again.',
             textAlign: TextAlign.center,
-            textDirection: isArabic
-                ? TextDirection.rtl
-                : TextDirection.ltr,
-            style: const TextStyle(
-              color: AppColors.error,
-            ),
+            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+            style: const TextStyle(color: AppColors.error),
           ),
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: onRetry,
-            child: Text(
-              isArabic
-                  ? 'إعادة المحاولة'
-                  : 'Try again',
-            ),
+            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
           ),
         ],
       ),
@@ -365,9 +290,7 @@ class _ErrorState extends StatelessWidget {
 class _EmptyState extends StatelessWidget {
   final bool isArabic;
 
-  const _EmptyState({
-    required this.isArabic,
-  });
+  const _EmptyState({required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -379,13 +302,8 @@ class _EmptyState extends StatelessWidget {
               ? 'لا توجد أمنيات بعد.\nأضف أمنيتك الأولى!'
               : 'There are no wishes yet.\nAdd your first wish!',
           textAlign: TextAlign.center,
-          textDirection: isArabic
-              ? TextDirection.rtl
-              : TextDirection.ltr,
-          style: const TextStyle(
-            fontSize: 16,
-            color: AppColors.textSecondary,
-          ),
+          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+          style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
         ),
       ),
     );
@@ -410,21 +328,13 @@ class _WishCard extends StatelessWidget {
   String get _statusLabel {
     switch (wish.status.toUpperCase()) {
       case 'APPROVED':
-        return isArabic
-            ? 'مقبولة ✓'
-            : 'Approved ✓';
+        return isArabic ? 'مقبولة ✓' : 'Approved ✓';
       case 'REJECTED':
-        return isArabic
-            ? 'مرفوضة ✗'
-            : 'Rejected ✗';
+        return isArabic ? 'مرفوضة ✗' : 'Rejected ✗';
       case 'ACHIEVED':
-        return isArabic
-            ? 'تحققت! 🌟'
-            : 'Achieved! 🌟';
+        return isArabic ? 'تحققت! 🌟' : 'Achieved! 🌟';
       default:
-        return isArabic
-            ? 'في الانتظار...'
-            : 'Pending...';
+        return isArabic ? 'في الانتظار...' : 'Pending...';
     }
   }
 
@@ -446,14 +356,10 @@ class _WishCard extends StatelessWidget {
     final status = wish.status.toUpperCase();
     final target = wish.targetPoints;
 
-    final hasProgress =
-        status == 'APPROVED' &&
-        target != null &&
-        target > 0;
+    final hasProgress = status == 'APPROVED' && target != null && target > 0;
 
     final progressValue = hasProgress
-        ? (currentPoints / target)
-            .clamp(0.0, 1.0)
+        ? (currentPoints / target).clamp(0.0, 1.0)
         : 0.0;
 
     return Container(
@@ -463,22 +369,17 @@ class _WishCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(
-              alpha: 0.06,
-            ),
+            color: AppColors.primary.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            textDirection: isArabic
-                ? TextDirection.ltr
-                : TextDirection.rtl,
+            textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
             children: [
               Expanded(
                 child: Column(
@@ -488,49 +389,35 @@ class _WishCard extends StatelessWidget {
                   children: [
                     Text(
                       wish.name,
-                      textAlign: isArabic
-                          ? TextAlign.right
-                          : TextAlign.left,
+                      textAlign: isArabic ? TextAlign.right : TextAlign.left,
                       textDirection: isArabic
                           ? TextDirection.rtl
                           : TextDirection.ltr,
-                      style:
-                          const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
-                        fontWeight:
-                            FontWeight.bold,
-                        color: AppColors
-                            .textPrimary,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       _statusLabel,
-                      textAlign: isArabic
-                          ? TextAlign.right
-                          : TextAlign.left,
+                      textAlign: isArabic ? TextAlign.right : TextAlign.left,
                       textDirection: isArabic
                           ? TextDirection.rtl
                           : TextDirection.ltr,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: _statusColor,
-                      ),
+                      style: TextStyle(fontSize: 12, color: _statusColor),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                width: AppSpacing.sm,
-              ),
+              const SizedBox(width: AppSpacing.sm),
               Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color:
-                      AppColors.primaryLight,
-                  borderRadius:
-                      BorderRadius.circular(14),
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
                   Icons.star,
@@ -542,43 +429,28 @@ class _WishCard extends StatelessWidget {
           ),
 
           if (hasProgress) ...[
-            const SizedBox(
-              height: AppSpacing.md,
-            ),
+            const SizedBox(height: AppSpacing.md),
             ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(8),
-              child:
-                  LinearProgressIndicator(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
                 value: progressValue,
                 minHeight: 8,
-                backgroundColor:
-                    AppColors.primaryLight,
-                valueColor:
-                    const AlwaysStoppedAnimation(
-                  AppColors.primary,
-                ),
+                backgroundColor: AppColors.primaryLight,
+                valueColor: const AlwaysStoppedAnimation(AppColors.primary),
               ),
             ),
-            const SizedBox(
-              height: AppSpacing.sm,
-            ),
+            const SizedBox(height: AppSpacing.sm),
             Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  isArabic
-                      ? 'الهدف: $target نقطة'
-                      : 'Target: $target points',
+                  isArabic ? 'الهدف: $target نقطة' : 'Target: $target points',
                   textDirection: isArabic
                       ? TextDirection.rtl
                       : TextDirection.ltr,
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors
-                        .textSecondary,
+                    color: AppColors.textSecondary,
                   ),
                 ),
                 Text(
@@ -588,11 +460,9 @@ class _WishCard extends StatelessWidget {
                   textDirection: isArabic
                       ? TextDirection.rtl
                       : TextDirection.ltr,
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors
-                        .textSecondary,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -600,54 +470,38 @@ class _WishCard extends StatelessWidget {
           ],
 
           if (status == 'APPROVED') ...[
-            const SizedBox(
-              height: AppSpacing.md,
-            ),
+            const SizedBox(height: AppSpacing.md),
             ElevatedButton(
-              onPressed:
-                  target != null &&
-                          currentPoints >= target
-                      ? onAchieve
-                      : null,
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    AppColors.primary,
-                disabledBackgroundColor:
-                    AppColors.primaryLight,
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(12),
+              onPressed: target != null && currentPoints >= target
+                  ? onAchieve
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                disabledBackgroundColor: AppColors.primaryLight,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: Text(
                 target == null
                     ? isArabic
-                        ? 'لم يتم تحديد النقاط المطلوبة'
-                        : 'Required points were not specified'
+                          ? 'لم يتم تحديد النقاط المطلوبة'
+                          : 'Required points were not specified'
                     : currentPoints >= target
-                        ? isArabic
-                            ? 'لقد حققت أمنيتي! 🌟'
-                            : 'I achieved my wish! 🌟'
-                        : isArabic
-                            ? 'اجمع المزيد من النقاط'
-                            : 'Collect more points',
-                textDirection: isArabic
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+                    ? isArabic
+                          ? 'لقد حققت أمنيتي! 🌟'
+                          : 'I achieved my wish! 🌟'
+                    : isArabic
+                    ? 'اجمع المزيد من النقاط'
+                    : 'Collect more points',
+                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
 
-          if (status == 'PENDING' ||
-              status == 'REJECTED') ...[
-            const SizedBox(
-              height: AppSpacing.sm,
-            ),
+          if (status == 'PENDING' || status == 'REJECTED') ...[
+            const SizedBox(height: AppSpacing.sm),
             TextButton.icon(
               onPressed: onDelete,
               icon: const Icon(
@@ -656,12 +510,8 @@ class _WishCard extends StatelessWidget {
                 size: 18,
               ),
               label: Text(
-                isArabic
-                    ? 'حذف'
-                    : 'Delete',
-                style: const TextStyle(
-                  color: Colors.red,
-                ),
+                isArabic ? 'حذف' : 'Delete',
+                style: const TextStyle(color: Colors.red),
               ),
             ),
           ],
