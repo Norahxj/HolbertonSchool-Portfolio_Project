@@ -359,16 +359,30 @@ class _HomeHeader extends StatelessWidget {
     required this.onSettingsPressed,
   });
 
+  /// Avatar indices 0 and 1 are boy avatars.
+  /// Avatar indices 2 and 3 are girl avatars.
+  bool get isGirlAvatar {
+    return avatarIndex == 2 || avatarIndex == 3;
+  }
+
+  String get greeting {
+    if (!isArabic) {
+      return 'Hello, champion! 👋';
+    }
+
+    return isGirlAvatar ? 'أهلًا يا بطلة! 👋' : 'أهلًا يا بطل! 👋';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final greeting = isArabic ? 'أهلًا يا بطل! 👋' : 'Hello, champion! 👋';
-
     final subtitle = isArabic
         ? 'يوم جديد وإنجازات جديدة بانتظارك'
         : 'A new day and new achievements await you';
 
     final pointsLabel = isArabic ? 'نقاط نور' : 'Noor Points';
+
     final tasksLabel = isArabic ? 'مهام اليوم' : 'Today\'s Tasks';
+
     final settingsLabel = isArabic ? 'الإعدادات' : 'Settings';
 
     return Directionality(
@@ -395,19 +409,20 @@ class _HomeHeader extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      const Color(0xFF6F42C1).withOpacity(0.30),
-                      const Color(0xFF7F55D9).withOpacity(0.52),
+                      const Color(0xFF6F42C1).withValues(alpha: 0.30),
+                      const Color(0xFF7F55D9).withValues(alpha: 0.52),
                     ],
                   ),
                 ),
               ),
             ),
+
             PositionedDirectional(
               top: -35,
               start: -20,
               child: _DecorativeBubble(
                 size: 110,
-                color: Colors.white.withOpacity(0.10),
+                color: Colors.white.withValues(alpha: 0.10),
               ),
             ),
 
@@ -416,7 +431,7 @@ class _HomeHeader extends StatelessWidget {
               end: -15,
               child: _DecorativeBubble(
                 size: 90,
-                color: AppColors.gold.withOpacity(0.16),
+                color: AppColors.gold.withValues(alpha: 0.16),
               ),
             ),
 
@@ -426,7 +441,7 @@ class _HomeHeader extends StatelessWidget {
               child: Icon(
                 Icons.star_rounded,
                 size: 13,
-                color: Colors.white.withOpacity(0.70),
+                color: Colors.white.withValues(alpha: 0.70),
               ),
             ),
 
@@ -440,7 +455,7 @@ class _HomeHeader extends StatelessWidget {
                   tooltip: settingsLabel,
                   onPressed: onSettingsPressed,
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(0.16),
+                    backgroundColor: Colors.white.withValues(alpha: 0.16),
                   ),
                   icon: const Icon(
                     Icons.settings_rounded,
@@ -474,12 +489,14 @@ class _HomeHeader extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white.withOpacity(0.45),
+                              color: Colors.white.withValues(alpha: 0.45),
                               blurRadius: 18,
                               spreadRadius: 3,
                             ),
                             BoxShadow(
-                              color: AppColors.primaryDark.withOpacity(0.25),
+                              color: AppColors.primaryDark.withValues(
+                                alpha: 0.25,
+                              ),
                               blurRadius: 16,
                               offset: const Offset(0, 6),
                             ),
@@ -488,6 +505,7 @@ class _HomeHeader extends StatelessWidget {
                         child: ChildAvatar(avatarIndex: avatarIndex, size: 78),
                       ),
                     ),
+
                     const SizedBox(height: 6),
 
                     Text(
@@ -515,27 +533,45 @@ class _HomeHeader extends StatelessWidget {
 
                     const SizedBox(height: 2),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.auto_awesome,
-                          color: AppColors.gold,
-                          size: 15,
-                        ),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            subtitle,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
+                    /*
+                     * The text is placed first in the Row.
+                     *
+                     * In Arabic, RTL places the text on the right and
+                     * the glitter directly after it on the left.
+                     *
+                     * In English, LTR places the text on the left and
+                     * the glitter directly after it on the right.
+                     */
+                    Directionality(
+                      textDirection: isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              subtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+
+                          const SizedBox(width: 5),
+
+                          const Icon(
+                            Icons.auto_awesome,
+                            color: AppColors.gold,
+                            size: 15,
+                          ),
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 10),
@@ -551,7 +587,9 @@ class _HomeHeader extends StatelessWidget {
                             isArabic: isArabic,
                           ),
                         ),
+
                         const SizedBox(width: AppSpacing.sm),
+
                         Expanded(
                           child: _HeaderMetric(
                             icon: Icons.task_alt_rounded,
@@ -1046,7 +1084,7 @@ class _AssignmentCard extends StatelessWidget {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    
+
                     const SizedBox(height: AppSpacing.sm),
                     Wrap(
                       alignment: isArabic
