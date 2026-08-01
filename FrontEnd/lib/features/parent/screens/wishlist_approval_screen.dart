@@ -116,22 +116,22 @@ class _WishlistApprovalView extends StatelessWidget {
                     CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    isArabic
-                        ? 'موافقة الأمنيات'
-                        : 'Wish Approval',
-                    style: AppTextStyles.arabicTitle,
-                    textAlign: TextAlign.center,
-                  ),
+  isArabic
+      ? 'أمنيات الأطفال'
+      : 'Children’s Wishes',
+  style: AppTextStyles.arabicTitle,
+  textAlign: TextAlign.center,
+),
 
-                  const SizedBox(height: AppSpacing.sm),
+const SizedBox(height: AppSpacing.sm),
 
-                  Text(
-                    isArabic
-                        ? 'راجع أمنيات أطفالك وحدّد نقاط نور المطلوبة'
-                        : 'Review your children’s wishes and set the required Noor points',
-                    style: AppTextStyles.body,
-                    textAlign: TextAlign.center,
-                  ),
+Text(
+  isArabic
+      ? 'راجع أمنية طفلك وحدد عدد نقاط نور التي يحتاج لجمعها حتى يتمكن من تحقيقها'
+      : 'Review your child’s wish and set how many Noor points they need to collect to achieve it',
+  style: AppTextStyles.body,
+  textAlign: TextAlign.center,
+),
 
                   const SizedBox(height: AppSpacing.lg),
 
@@ -162,9 +162,9 @@ class _WishlistApprovalView extends StatelessWidget {
                         isArabic: isArabic,
                         avatarIndex: entry.avatarIndex,
                         wishTitle: entry.wish.name,
-                        subtitle: isArabic
-                            ? 'أضاف هذه الأمنية إلى قائمته'
-                            : 'Added this wish to the list',
+                       subtitle: isArabic
+    ? 'طلب هذه الأمنية وينتظر منك تحديد هدف النقاط'
+    : 'Requested this wish and is waiting for you to set the points goal',
                         startingPoints:
                             entry.wish.targetPoints ?? 250,
                         onApprove: (points) {
@@ -212,10 +212,10 @@ class _WishlistApprovalView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.md,
                     ),
-                    child: Text(
-                      isArabic
-                          ? 'عند الموافقة تُخصم نقاط نور من رصيد الطفل مقابل الأمنية'
-                          : 'When approved, Noor points are deducted from the child’s balance for the wish',
+                   child: Text(
+  isArabic
+      ? 'بعد اعتماد الأمنية، يبدأ الطفل بجمع نقاط نور حتى يصل إلى الهدف المحدد.'
+      : 'After the wish is approved, the child starts collecting Noor points until reaching the selected goal.',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 12,
@@ -524,9 +524,9 @@ class _PendingWishCardState
                 ),
                 const Spacer(),
                 Text(
-                  widget.isArabic
-                      ? 'نقاط نور المطلوبة'
-                      : 'Required Noor Points',
+  widget.isArabic
+      ? 'هدف النقاط'
+      : 'Points Goal',
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -538,7 +538,22 @@ class _PendingWishCardState
             ),
           ),
 
-          const SizedBox(height: AppSpacing.md),
+
+          const SizedBox(height: AppSpacing.sm),
+
+Text(
+  widget.isArabic
+      ? 'بعد تحويل الأمنية إلى هدف، يبدأ الطفل بجمع هذا العدد من نقاط نور لتحقيقها.'
+      : 'After converting the wish into a goal, the child starts collecting these Noor points to achieve it.',
+  textAlign: TextAlign.center,
+  style: const TextStyle(
+    fontSize: 12,
+    height: 1.5,
+    color: AppColors.textSecondary,
+  ),
+),
+
+const SizedBox(height: AppSpacing.md),
 
           Row(
             children: [
@@ -578,8 +593,8 @@ class _PendingWishCardState
                         Flexible(
                           child: Text(
                             widget.isArabic
-                                ? 'موافقة وخصم النقاط'
-                                : 'Approve and Deduct Points',
+    ? 'تحويل إلى هدف'
+    : 'Convert to Goal',
                             textAlign:
                                 TextAlign.center,
                             maxLines: 2,
@@ -715,12 +730,12 @@ class _ApprovedWishCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8F5EA),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFFBFE3C6),
-        ),
-      ),
+  color: AppColors.card,
+  borderRadius: BorderRadius.circular(24),
+  border: Border.all(
+    color: AppColors.border,
+  ),
+),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
@@ -736,14 +751,13 @@ class _ApprovedWishCard extends StatelessWidget {
 
           Row(
             children: [
-              _StatusTag(
-                label: isArabic
-                    ? 'معتمدة'
-                    : 'Approved',
-                backgroundColor:
-                    AppColors.success,
-                textColor: Colors.white,
-              ),
+             _StatusTag(
+  label: isArabic
+      ? 'هدف معتمد'
+      : 'Goal Created',
+  backgroundColor: AppColors.primaryLight,
+  textColor: AppColors.primaryDark,
+),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
@@ -780,7 +794,7 @@ class _ApprovedWishCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.success,
+                    color: AppColors.primary,
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -791,9 +805,9 @@ class _ApprovedWishCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  isArabic
-                      ? 'تم خصمها من رصيده'
-                      : 'Deducted from the balance',
+  isArabic
+      ? 'هدف النقاط المحدد'
+      : 'Selected Points Goal',
                   style: const TextStyle(
                     fontSize: 13,
                     color:
