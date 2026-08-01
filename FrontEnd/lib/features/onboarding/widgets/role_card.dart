@@ -30,7 +30,7 @@ class _RoleCardState extends State<RoleCard> {
     return Center(
       child: SizedBox(
         width: screenWidth * 0.88,
-        height: 190,
+        height: 180,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           onEnter: (_) {
