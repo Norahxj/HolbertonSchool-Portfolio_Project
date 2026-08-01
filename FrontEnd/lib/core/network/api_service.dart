@@ -38,6 +38,12 @@ abstract class ApiService {
   @GET('/children/{id}')
   Future<HttpResponse<ChildModel>> getChild(@Path('id') String childId);
 
+  @PUT('/children/{id}')
+  Future<HttpResponse<ChildModel>> updateChild(
+    @Path('id') String childId,
+    @Body() Map<String, dynamic> body,
+  );
+
   @DELETE('/children/{id}')
   Future<HttpResponse<dynamic>> deleteChild(@Path('id') String childId);
 

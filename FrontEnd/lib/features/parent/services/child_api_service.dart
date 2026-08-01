@@ -14,27 +14,46 @@ class ChildApiService {
   }
 
   // Adds a new child.
-Future<ChildModel> addChild({
-  required String name,
-  required String birthDate,
-  required int avatarIndex,
-  String? phone,
-}) async {
-  final body = <String, dynamic>{
-    'name': name,
-    'birth_date': birthDate,
-    'avatar_index': avatarIndex,
-    if (phone != null && phone.isNotEmpty) 'phone': phone,
-  };
+  Future<ChildModel> addChild({
+    required String name,
+    required String birthDate,
+    required int avatarIndex,
+    String? phone,
+  }) async {
+    final body = <String, dynamic>{
+      'name': name,
+      'birth_date': birthDate,
+      'avatar_index': avatarIndex,
+      if (phone != null && phone.isNotEmpty) 'phone': phone,
+    };
 
-  final response = await _apiService.addChild(body);
+    final response = await _apiService.addChild(body);
 
-  return response.data;
-}
+    return response.data;
+  }
 
   // Gets information about one child.
   Future<ChildModel> getChildById(String childId) async {
     final response = await _apiService.getChild(childId);
+
+    return response.data;
+  }
+
+  Future<ChildModel> updateChild({
+    required String childId,
+    required String name,
+    required String birthDate,
+    required int avatarIndex,
+    String? phone,
+  }) async {
+    final body = <String, dynamic>{
+      'name': name,
+      'birth_date': birthDate,
+      'avatar_index': avatarIndex,
+      'phone': phone == null || phone.trim().isEmpty ? null : phone.trim(),
+    };
+
+    final response = await _apiService.updateChild(childId, body);
 
     return response.data;
   }

@@ -15,7 +15,7 @@ import 'daily_feedback_screen.dart';
 import '../../../core/widgets/app_page_header.dart';
 import 'points_history_screen.dart';
 import 'child_tasks_screen.dart';
-
+import 'edit_child_screen.dart';
 
 class ParentChildDetailsScreen extends StatelessWidget {
   final ParentDashboardChildItem item;
@@ -135,17 +135,15 @@ class _ParentChildDetailsView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-  automaticallyImplyLeading: false,
-  backgroundColor: Colors.transparent,
-  elevation: 0,
-  toolbarHeight: 80,
-  title: AppPageHeader(
-    isArabic: isArabic,
-    title: isArabic
-        ? 'بيانات الطفل'
-        : 'Child details',
-  ),
-),
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: 80,
+          title: AppPageHeader(
+            isArabic: isArabic,
+            title: isArabic ? 'بيانات الطفل' : 'Child details',
+          ),
+        ),
         body: ScreenBackground(
           child: SafeArea(
             top: false,
@@ -158,11 +156,11 @@ class _ParentChildDetailsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Center(
-  child: ChildAvatar(
-    avatarIndex: item.child.avatarIndex,
-    size: 92,
-  ),
-),
+                      child: ChildAvatar(
+                        avatarIndex: item.child.avatarIndex,
+                        size: 92,
+                      ),
+                    ),
 
                     const SizedBox(height: AppSpacing.md),
 
@@ -218,253 +216,342 @@ class _ParentChildDetailsView extends StatelessWidget {
 
                     const SizedBox(height: AppSpacing.xl),
                     _ChildAccessCodeCard(
-  accessCode: item.child.accessCode,
-  isArabic: isArabic,
-),
+                      accessCode: item.child.accessCode,
+                      isArabic: isArabic,
+                    ),
 
-const SizedBox(height: AppSpacing.xl),
-InkWell(
-  borderRadius: BorderRadius.circular(16),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => PointsHistoryScreen(
-          childId: item.child.id,
-          childName: item.child.name,
-          isArabic: isArabic,
-        ),
-      ),
-    );
-  },
-  child: Container(
-    padding: const EdgeInsets.all(AppSpacing.md),
-    decoration: BoxDecoration(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: AppColors.border,
-      ),
-    ),
-    child: Row(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.history,
-            color: AppColors.primary,
-          ),
-        ),
+                    const SizedBox(height: AppSpacing.xl),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PointsHistoryScreen(
+                              childId: item.child.id,
+                              childName: item.child.name,
+                              isArabic: isArabic,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        decoration: BoxDecoration(
+                          color: AppColors.card,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.history,
+                                color: AppColors.primary,
+                              ),
+                            ),
 
-        const SizedBox(width: AppSpacing.md),
+                            const SizedBox(width: AppSpacing.md),
 
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                isArabic
-                    ? 'سجل نقاط نور'
-                    : 'Noor Points History',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    isArabic
+                                        ? 'سجل نقاط نور'
+                                        : 'Noor Points History',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
 
-              const SizedBox(height: 4),
+                                  const SizedBox(height: 4),
 
-              Text(
-                isArabic
-                    ? 'عرض سجل النقاط'
-                    : 'View history points',
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
+                                  Text(
+                                    isArabic
+                                        ? 'عرض سجل النقاط'
+                                        : 'View history points',
+                                    style: const TextStyle(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-        Icon(
-  isArabic
-      ? Icons.arrow_back_ios_new
-      : Icons.arrow_forward_ios,
-  size: 18,
-  color: AppColors.textSecondary,
-),
-      ],
-    ),
-  ),
-),
+                            Icon(
+                              isArabic
+                                  ? Icons.arrow_back_ios_new
+                                  : Icons.arrow_forward_ios,
+                              size: 18,
+                              color: AppColors.textSecondary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-const SizedBox(height: AppSpacing.xl),
-InkWell(
-  borderRadius: BorderRadius.circular(16),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => DailyFeedbackScreen(
-  child: item.child,
-  isArabic: isArabic,
-),
-      ),
-    );
-  },
-  child: Container(
-    padding: const EdgeInsets.all(AppSpacing.md),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: AppColors.border,
-      ),
-    ),
-    child: Row(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.sentiment_satisfied_alt,
-            color: AppColors.primary,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                isArabic ? 'التقييم اليومي' : 'Daily Feedback',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                isArabic
-                    ? 'قيّمي يوم ${item.child.name} وراجعي السجل'
-                    : 'Rate ${item.child.name}’s day and view history',
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Icon(
-          isArabic
-              ? Icons.arrow_back_ios_new
-              : Icons.arrow_forward_ios,
-          size: 18,
-          color: AppColors.textSecondary,
-        ),
-      ],
-    ),
-  ),
-),
+                    const SizedBox(height: AppSpacing.xl),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DailyFeedbackScreen(
+                              child: item.child,
+                              isArabic: isArabic,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.sentiment_satisfied_alt,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    isArabic
+                                        ? 'التقييم اليومي'
+                                        : 'Daily Feedback',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    isArabic
+                                        ? 'قيّمي يوم ${item.child.name} وراجعي السجل'
+                                        : 'Rate ${item.child.name}’s day and view history',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              isArabic
+                                  ? Icons.arrow_back_ios_new
+                                  : Icons.arrow_forward_ios,
+                              size: 18,
+                              color: AppColors.textSecondary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-const SizedBox(height: AppSpacing.xl),
+                    const SizedBox(height: AppSpacing.xl),
 
-InkWell(
-  borderRadius: BorderRadius.circular(16),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChildTasksScreen(
-          childId: item.child.id,
-          childName: item.child.name,
-          isArabic: isArabic,
-          controller: tasksController,
-        ),
-      ),
-    );
-  },
-  child: Container(
-    padding: const EdgeInsets.all(AppSpacing.md),
-    decoration: BoxDecoration(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: AppColors.border,
-      ),
-    ),
-    child: Row(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.task_alt_outlined,
-            color: AppColors.primary,
-          ),
-        ),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChildTasksScreen(
+                              childId: item.child.id,
+                              childName: item.child.name,
+                              isArabic: isArabic,
+                              controller: tasksController,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        decoration: BoxDecoration(
+                          color: AppColors.card,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.task_alt_outlined,
+                                color: AppColors.primary,
+                              ),
+                            ),
 
-        const SizedBox(width: AppSpacing.md),
+                            const SizedBox(width: AppSpacing.md),
 
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                isArabic ? 'المهام' : 'Tasks',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    isArabic ? 'المهام' : 'Tasks',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
 
-              const SizedBox(height: 4),
+                                  const SizedBox(height: 4),
 
-              Text(
-                isArabic
-                    ? 'عرض مهام ${item.child.name}'
-                    : 'View ${item.child.name}’s tasks',
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
+                                  Text(
+                                    isArabic
+                                        ? 'عرض مهام ${item.child.name}'
+                                        : 'View ${item.child.name}’s tasks',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-        Icon(
-          isArabic
-              ? Icons.arrow_back_ios_new
-              : Icons.arrow_forward_ios,
-          size: 18,
-          color: AppColors.textSecondary,
-        ),
-      ],
-    ),
-  ),
-),
+                            Icon(
+                              isArabic
+                                  ? Icons.arrow_back_ios_new
+                                  : Icons.arrow_forward_ios,
+                              size: 18,
+                              color: AppColors.textSecondary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-const SizedBox(height: AppSpacing.xl),
+                    const SizedBox(height: AppSpacing.xl),
+
+                    const SizedBox(height: AppSpacing.xl),
+
+                    InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () async {
+                        final updatedChild = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditChildScreen(
+                              child: item.child,
+                              isArabic: isArabic,
+                            ),
+                          ),
+                        );
+
+                        if (updatedChild == null || !context.mounted) {
+                          return;
+                        }
+
+                        final dashboardController = context
+                            .read<ParentDashboardController>();
+
+                        await dashboardController.refresh();
+
+                        if (!context.mounted) return;
+
+                        Navigator.pop(context, true);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        decoration: BoxDecoration(
+                          color: AppColors.card,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.edit_outlined,
+                                color: AppColors.primary,
+                              ),
+                            ),
+
+                            const SizedBox(width: AppSpacing.md),
+
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    isArabic
+                                        ? 'تعديل بيانات الطفل'
+                                        : 'Edit Child Information',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 4),
+
+                                  Text(
+                                    isArabic
+                                        ? 'تعديل الاسم وتاريخ الميلاد والصورة والجوال'
+                                        : 'Update name, birth date, avatar, and phone',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            Icon(
+                              isArabic
+                                  ? Icons.arrow_back_ios_new
+                                  : Icons.arrow_forward_ios,
+                              size: 18,
+                              color: AppColors.textSecondary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
                     const Divider(color: AppColors.border),
-
                     const SizedBox(height: AppSpacing.md),
 
                     TextButton.icon(
@@ -832,6 +919,7 @@ class _InformationCard extends StatelessWidget {
     );
   }
 }
+
 class _ChildAccessCodeCard extends StatelessWidget {
   final String accessCode;
   final bool isArabic;
@@ -842,18 +930,14 @@ class _ChildAccessCodeCard extends StatelessWidget {
   });
 
   Future<void> _copyCode(BuildContext context) async {
-    await Clipboard.setData(
-      ClipboardData(text: accessCode),
-    );
+    await Clipboard.setData(ClipboardData(text: accessCode));
 
     if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isArabic
-              ? 'تم نسخ رمز دخول الطفل'
-              : 'Child access code copied',
+          isArabic ? 'تم نسخ رمز دخول الطفل' : 'Child access code copied',
         ),
       ),
     );
@@ -893,9 +977,7 @@ class _ChildAccessCodeCard extends StatelessWidget {
                   : CrossAxisAlignment.start,
               children: [
                 Text(
-                  isArabic
-                      ? 'رمز دخول الطفل'
-                      : 'Child access code',
+                  isArabic ? 'رمز دخول الطفل' : 'Child access code',
                   textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 12,
@@ -926,10 +1008,7 @@ class _ChildAccessCodeCard extends StatelessWidget {
                 : () {
                     _copyCode(context);
                   },
-            icon: const Icon(
-              Icons.copy_rounded,
-              color: AppColors.primary,
-            ),
+            icon: const Icon(Icons.copy_rounded, color: AppColors.primary),
           ),
         ],
       ),
