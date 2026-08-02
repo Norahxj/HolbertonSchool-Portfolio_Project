@@ -551,7 +551,7 @@ class _SimpleChildCard extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 5),
 
                     _ChildPointsBadge(
                       points: item.points,
@@ -592,30 +592,28 @@ class _ChildPointsBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
-        textDirection:
-            isArabic ? TextDirection.rtl : TextDirection.ltr,
-        children: [
-          const Icon(
-            Icons.auto_awesome_rounded,
-            color: AppColors.gold,
-            size: 15,
-          ),
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    const Icon(
+      Icons.auto_awesome_rounded,
+      color: AppColors.gold,
+      size: 14,
+    ),
 
-          const SizedBox(width: 6),
+    const SizedBox(width: 5),
 
-          Text(
-            isArabic
-                ? '$pointsText نقطة'
-                : '$pointsText points',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ],
+    Text(
+      isArabic
+          ? '$pointsText نقطة'
+          : '$pointsText points',
+      style: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
       ),
+    ),
+  ],
+),
     );
   }
 }
