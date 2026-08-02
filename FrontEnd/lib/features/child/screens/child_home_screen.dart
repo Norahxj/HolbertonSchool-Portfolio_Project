@@ -255,28 +255,30 @@ _taskApiService.getMyCurrentWeekAssignments(),
       body: ScreenBackground(
         child: Column(
           children: [
-            _HomeHeader(
-              childName: _child!.name,
-              avatarIndex: _child!.avatarIndex,
-              points: _points,
-              completedTasks: completedCount,
-              totalTasks: _assignments.length,
-              isArabic: widget.isArabic,
-              onSettingsPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChildSettingsScreen(
-                      childName: _child!.name,
-                      avatarIndex: _child!.avatarIndex,
-                      isArabic: widget.isArabic,
-                      onLanguageToggle: widget.onLanguageToggle,
-                      onLogout: _logout,
-                    ),
-                  ),
-                );
-              },
-            ),
+           RepaintBoundary(
+  child: _HomeHeader(
+    childName: _child!.name,
+    avatarIndex: _child!.avatarIndex,
+    points: _points,
+    completedTasks: completedCount,
+    totalTasks: _assignments.length,
+    isArabic: widget.isArabic,
+    onSettingsPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ChildSettingsScreen(
+            childName: _child!.name,
+            avatarIndex: _child!.avatarIndex,
+            isArabic: widget.isArabic,
+            onLanguageToggle: widget.onLanguageToggle,
+            onLogout: _logout,
+          ),
+        ),
+      );
+    },
+  ),
+),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => _loadData(showPageLoader: false),

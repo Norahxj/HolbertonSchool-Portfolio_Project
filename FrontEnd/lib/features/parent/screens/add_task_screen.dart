@@ -248,6 +248,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
     setState(() {
       children = data;
+      selectedChildIds.removeWhere(
+  (id) => !data.any((child) => child.id == id),
+);
       isLoadingChildren = false;
     });
   } on DioException {
@@ -519,10 +522,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             textDirection: widget.isArabic
                 ? TextDirection.rtl
                 : TextDirection.ltr,
-            child: SingleChildScrollView(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
+            child: RefreshIndicator(
+  onRefresh: _loadChildren,
+  child: SingleChildScrollView(
+    controller: _scrollController,
+    physics: const AlwaysScrollableScrollPhysics(),
+    padding: const EdgeInsets.all(AppSpacing.lg),
+    child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
@@ -560,6 +566,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             ),
           ),
         ),
+      ),
       ),
       ),
     );
