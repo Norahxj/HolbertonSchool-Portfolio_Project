@@ -41,7 +41,7 @@ class ChildAvatar extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) {
+          errorBuilder: (_, _, _) {
             return Icon(
               Icons.person_rounded,
               size: size * 0.65,

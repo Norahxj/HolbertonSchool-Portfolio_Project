@@ -174,7 +174,7 @@ class _TaskFilterBar extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: ChildTaskFilter.values.length,
-        separatorBuilder: (_, __) {
+        separatorBuilder: (_, _) {
           return const SizedBox(width: 8);
         },
         itemBuilder: (context, index) {

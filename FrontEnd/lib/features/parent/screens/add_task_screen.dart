@@ -1330,12 +1330,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         recurrenceDayError = null;
                         childError = null;
                       });
-
                       try {
-                        print("Before API");
-                        print("recurrenceDay = $recurrenceDay");
-                        print("type = ${recurrenceDay.runtimeType}");
-
                         await _taskApiService.createTask({
                           "child_ids": selectedChildIds,
                           "title": taskNameController.text.trim(),
