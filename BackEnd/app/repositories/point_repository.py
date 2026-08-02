@@ -5,6 +5,21 @@ from app.models.point_model import ChildPoints
 class PointRepository:
     def get_points_by_child_id(self, child_id):
         return ChildPoints.query.filter_by(child_id=child_id).first()
+
+    def get_points_by_child_ids(self, child_ids):
+        if not child_ids:
+            return {}
+
+        records = (
+        ChildPoints.query
+        .filter(ChildPoints.child_id.in_(child_ids))
+        .all()
+        )
+
+        return {
+        str(record.child_id): record.total_points
+        for record in records
+        }
     
     def get_points_by_child_id_for_update(self, child_id):
         return (ChildPoints.query.filter_by(child_id=child_id).with_for_update().first())

@@ -84,6 +84,34 @@ class TaskAssignmentRepository:
             .order_by(TaskAssignment.assigned_date.desc())
             .all()
         )
+
+    def get_children_assignments_between_dates(
+        self,
+    child_ids,
+    start_date,
+    end_date,
+    ):
+        if not child_ids:
+            return {}
+
+        assignments = (
+        TaskAssignment.query.filter(
+            TaskAssignment.child_id.in_(child_ids),
+            TaskAssignment.assigned_date >= start_date,
+            TaskAssignment.assigned_date <= end_date,
+            ).all()
+        )
+
+        grouped = {}
+
+        for assignment in assignments:
+            child_id = str(assignment.child_id)
+
+            grouped.setdefault(child_id, []).append(
+                assignment,
+            )
+
+        return grouped
     def get_approved_assignments_for_child(self, child_id):
         return (
         TaskAssignment.query
