@@ -306,36 +306,69 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
       return;
     }
 
-    setState(() {
-      deletingRewardIds.add(reward.id);
-    });
+    final rewardIndex = currentRewards.indexWhere(
+  (item) => item.id == reward.id,
+);
 
-    try {
-      await _rewardApiService.deleteReward(reward.id);
+setState(() {
+  deletingRewardIds.add(reward.id);
+  currentRewards.removeWhere((item) => item.id == reward.id);
+});
 
-      if (!mounted) return;
+try {
+  await _rewardApiService.deleteReward(reward.id);
 
-      setState(() {
-        currentRewards.removeWhere((item) => item.id == reward.id);
-      });
+  if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(isArabic ? 'تم حذف المكافأة' : 'Reward deleted'),
-        ),
-      );
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        isArabic
+            ? 'تم حذف المكافأة'
+            : 'Reward deleted',
+      ),
+    ),
+  );
     } on DioException catch (error) {
-      if (!mounted) return;
+  if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _readBackendMessage(error) ??
-                (isArabic ? 'تعذّر حذف المكافأة' : 'Failed to delete reward'),
-          ),
-        ),
-      );
-    } finally {
+  setState(() {
+    final safeIndex = rewardIndex.clamp(
+      0,
+      currentRewards.length,
+    ).toInt();
+
+    currentRewards.insert(safeIndex, reward);
+  });
+
+  final statusCode = error.response?.statusCode;
+  final backendMessage = _readBackendMessage(error);
+
+  String message;
+
+  if (statusCode == 404) {
+    message = isArabic
+        ? 'لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.'
+        : 'You cannot delete this reward. Only the parent who added it can delete it.';
+  } else if (backendMessage
+          ?.toLowerCase()
+          .contains('claimed') ==
+      true) {
+    message = isArabic
+        ? 'لا يمكن حذف المكافأة بعد استلامها.'
+        : 'A claimed reward cannot be deleted.';
+  } else {
+    message = isArabic
+        ? 'تعذّر حذف المكافأة. حاول مرة أخرى.'
+        : 'Failed to delete the reward. Please try again.';
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message)),
+  );
+}
+
+   finally {
       if (mounted) {
         setState(() {
           deletingRewardIds.remove(reward.id);
