@@ -475,20 +475,20 @@ _AvatarOption(
                 const SizedBox(height: AppSpacing.md),
 
                 AppTextField(
-                  label: tr(
-                    'رقم الجوال',
-                    'Phone number',
-                  ),
-                  hint: tr(
-                    'رقم الجوال (اختياري)',
-                    'Phone number (optional)',
-                  ),
-                  icon: Icons.phone_outlined,
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
-                  errorText: phoneError,
-                  isArabic: widget.isArabic,
-                ),
+  label: tr(
+    'رقم الجوال (اختياري)',
+    'Phone number (optional)',
+  ),
+  hint: tr(
+    '05XXXXXXXX',
+    '05XXXXXXXX',
+  ),
+  icon: Icons.phone_outlined,
+  controller: phoneController,
+  keyboardType: TextInputType.phone,
+  errorText: phoneError,
+  isArabic: widget.isArabic,
+),
 
                 const SizedBox(height: AppSpacing.xxl),
 

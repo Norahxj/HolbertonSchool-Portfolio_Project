@@ -14,8 +14,13 @@ import 'add_reward_screen.dart';
 
 class RewardManagementScreen extends StatefulWidget {
   final bool isArabic;
+  final int childrenVersion;
 
-  const RewardManagementScreen({super.key, required this.isArabic});
+  const RewardManagementScreen({
+    super.key,
+    required this.isArabic,
+    this.childrenVersion = 0,
+  });
 
   @override
   State<RewardManagementScreen> createState() => _RewardManagementScreenState();
@@ -54,6 +59,9 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   @override
   void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.childrenVersion != widget.childrenVersion) {
+  _loadChildren();
+}
 
     if (oldWidget.isArabic != widget.isArabic) {
       rewardSuggestions = [];

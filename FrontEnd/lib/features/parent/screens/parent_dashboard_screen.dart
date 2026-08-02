@@ -14,8 +14,13 @@ import '../../../core/widgets/child_avatar.dart';
 
 class ParentDashboardScreen extends StatelessWidget {
   final bool isArabic;
+  final VoidCallback onChildrenChanged;
 
-  const ParentDashboardScreen({super.key, required this.isArabic});
+  const ParentDashboardScreen({
+    super.key,
+    required this.isArabic,
+    required this.onChildrenChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +28,22 @@ class ParentDashboardScreen extends StatelessWidget {
       create: (_) =>
           ParentDashboardController(ParentDashboardRepository())
             ..loadDashboard(),
-      child: _ParentDashboardView(isArabic: isArabic),
+      child: _ParentDashboardView(
+  isArabic: isArabic,
+  onChildrenChanged: onChildrenChanged,
+),
     );
   }
 }
 
 class _ParentDashboardView extends StatelessWidget {
   final bool isArabic;
+  final VoidCallback onChildrenChanged;
 
-  const _ParentDashboardView({required this.isArabic});
+  const _ParentDashboardView({
+    required this.isArabic,
+    required this.onChildrenChanged,
+  });
 
   Future<void> _openAddChild(BuildContext context) async {
     final controller = context.read<ParentDashboardController>();
@@ -45,6 +57,7 @@ class _ParentDashboardView extends StatelessWidget {
 
     if (wasAdded == true) {
       await controller.refresh();
+      onChildrenChanged();
     }
   }
 

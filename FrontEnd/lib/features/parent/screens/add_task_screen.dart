@@ -21,11 +21,13 @@ class AddTaskScreen extends StatefulWidget {
   final int resetVersion;
   final bool isArabic;
   final VoidCallback onLanguageToggle;
+  final int childrenVersion;
 
   const AddTaskScreen({
     super.key,
     this.resetVersion = 0,
     this.isArabic = true,
+    this.childrenVersion = 0,
     required this.onLanguageToggle,
   });
 
@@ -204,6 +206,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   void didUpdateWidget(covariant AddTaskScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.childrenVersion != widget.childrenVersion) {
+  _loadChildren();
+}
     if (oldWidget.isArabic != widget.isArabic &&
     selectedChildIds.isNotEmpty &&
     selectedTaskType != null) {

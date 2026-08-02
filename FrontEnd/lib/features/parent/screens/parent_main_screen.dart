@@ -119,17 +119,26 @@ class _ParentNavigationView extends StatelessWidget {
       // Tasks tab:
       // Restore the original Add Task flow.
       navigation.isLoaded(0)
-          ? AddTaskScreen(resetVersion: navigation.reselectionVersionFor(0), isArabic: isArabic,  onLanguageToggle: onLanguageToggle,)
+          ?AddTaskScreen(
+  resetVersion: navigation.reselectionVersionFor(0),
+  childrenVersion: navigation.childrenVersion,
+  isArabic: isArabic,
+  onLanguageToggle: onLanguageToggle,
+)
           : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
     ? RewardManagementScreen(
-        isArabic: isArabic,
-      )
+  isArabic: isArabic,
+  childrenVersion: navigation.childrenVersion,
+)
     : const SizedBox.shrink(),
 
       navigation.isLoaded(2)
-          ? ParentDashboardScreen(isArabic: isArabic)
+          ? ParentDashboardScreen(
+  isArabic: isArabic,
+  onChildrenChanged: navigation.notifyChildrenChanged,
+)
           : const SizedBox.shrink(),
 
       navigation.isLoaded(3)

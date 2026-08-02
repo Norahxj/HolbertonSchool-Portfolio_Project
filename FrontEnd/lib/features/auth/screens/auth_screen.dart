@@ -233,21 +233,36 @@ class _AuthScreenState extends State<AuthScreen> {
       if (!mounted) return;
 
       if (response.response.statusCode == 200 ||
-          response.response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isArabic
-                  ? 'تم إنشاء الحساب بنجاح'
-                  : 'Account created successfully',
-            ),
-          ),
-        );
+    response.response.statusCode == 201) {
+  firstNameController.clear();
+  familyNameController.clear();
+  registerEmailController.clear();
+  phoneController.clear();
+  registerPasswordController.clear();
+  confirmPasswordController.clear();
 
-        setState(() {
-          isSignInSelected = true;
-        });
-      }
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        _isArabic
+            ? 'تم إنشاء الحساب بنجاح'
+            : 'Account created successfully',
+      ),
+    ),
+  );
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ParentMainScreen(
+        isArabic: _isArabic,
+        onLanguageToggle: widget.onLanguageToggle,
+      ),
+    ),
+  );
+}
     } on DioException catch (error) {
       if (!mounted) return;
 

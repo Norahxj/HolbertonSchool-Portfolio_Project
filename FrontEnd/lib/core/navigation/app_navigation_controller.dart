@@ -14,8 +14,10 @@ class AppNavigationController extends ChangeNotifier {
   final Set<int> _loadedIndexes;
 
   final Map<int, int> _reselectionVersions = {};
+  int _childrenVersion = 0;
 
   int get currentIndex => _currentIndex;
+  int get childrenVersion => _childrenVersion;
 
   /// Returns true after a tab has been opened at least once.
   bool isLoaded(int index) {
@@ -42,4 +44,8 @@ class AppNavigationController extends ChangeNotifier {
 
     notifyListeners();
   }
+  void notifyChildrenChanged() {
+  _childrenVersion++;
+  notifyListeners();
+}
 }
