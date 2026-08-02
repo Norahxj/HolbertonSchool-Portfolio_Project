@@ -167,6 +167,7 @@ setState(() {
 
       _showMessage(
         isArabic ? 'تم رفض الدعوة' : 'Invitation rejected',
+        isError: true,
       );
 
       await _loadFamilyData();
@@ -287,7 +288,7 @@ final name = displayedName == originalDisplayedName
       SnackBar(
         content: Text(message),
         backgroundColor:
-            isError ? Colors.red : AppColors.success,
+            isError ? AppColors.error : AppColors.success,
       ),
     );
   }
