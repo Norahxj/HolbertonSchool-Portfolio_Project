@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -148,11 +147,15 @@ class _ParentDashboardView extends StatelessWidget {
                 onClose: controller.clearError,
               ),
 
-           _SectionHeader(
+          _SectionHeader(
   title: isArabic ? 'أطفالك' : 'Your children',
   isArabic: isArabic,
+  pendingReviewCount: data.pendingReviewCount,
   onAddChild: () {
     _openAddChild(context);
+  },
+  onReviewTasks: () {
+    _openTaskReview(context);
   },
 ),
 
@@ -179,16 +182,6 @@ class _ParentDashboardView extends StatelessWidget {
     );
   }),
 ],
-            const SizedBox(height: AppSpacing.md),
-
-            _TaskReviewButton(
-              count: data.pendingReviewCount,
-              isArabic: isArabic,
-              onTap: () {
-                _openTaskReview(context);
-              },
-            ),
-
             const SizedBox(height: AppSpacing.lg),
           ],
         ),
@@ -335,12 +328,16 @@ class _WelcomeBanner extends StatelessWidget {
 class _SectionHeader extends StatelessWidget {
   final String title;
   final bool isArabic;
+  final int pendingReviewCount;
   final VoidCallback onAddChild;
+  final VoidCallback onReviewTasks;
 
   const _SectionHeader({
     required this.title,
     required this.isArabic,
+    required this.pendingReviewCount,
     required this.onAddChild,
+    required this.onReviewTasks,
   });
 
   @override
@@ -354,27 +351,121 @@ class _SectionHeader extends StatelessWidget {
           style: AppTextStyles.arabicTitle,
         ),
 
-        Tooltip(
-          message: isArabic ? 'إضافة طفل' : 'Add child',
-          child: Material(
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _HeaderActionButton(
+              tooltip: isArabic ? 'إضافة طفل' : 'Add child',
+              icon: Icons.add_rounded,
+              onTap: onAddChild,
+            ),
+
+            const SizedBox(width: AppSpacing.sm),
+
+            _ReviewTasksHeaderButton(
+              isArabic: isArabic,
+              count: pendingReviewCount,
+              onTap: onReviewTasks,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _HeaderActionButton extends StatelessWidget {
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _HeaderActionButton({
+    required this.tooltip,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: AppColors.primaryLight,
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: Icon(
+              icon,
+              size: 24,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReviewTasksHeaderButton extends StatelessWidget {
+  final bool isArabic;
+  final int count;
+  final VoidCallback onTap;
+
+  const _ReviewTasksHeaderButton({
+    required this.isArabic,
+    required this.count,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: isArabic ? 'مراجعة المهام' : 'Review tasks',
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Material(
             color: AppColors.primaryLight,
             shape: const CircleBorder(),
             child: InkWell(
-              onTap: onAddChild,
+              onTap: onTap,
               customBorder: const CircleBorder(),
               child: const SizedBox(
                 width: 40,
                 height: 40,
                 child: Icon(
-                  Icons.add_rounded,
-                  size: 25,
+                  Icons.fact_check_outlined,
+                  size: 23,
                   color: AppColors.primary,
                 ),
               ),
             ),
           ),
-        ),
-      ],
+
+          if (count > 0)
+            Positioned(
+              top: -2,
+              right: isArabic ? null : -2,
+              left: isArabic ? -2 : null,
+              child: Container(
+                width: 11,
+                height: 11,
+                decoration: BoxDecoration(
+                  color: AppColors.error,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -573,67 +664,6 @@ class _AddChildButton extends StatelessWidget {
   }
 }
 
-class _TaskReviewButton extends StatelessWidget {
-  final int count;
-  final bool isArabic;
-  final VoidCallback onTap;
-
-  const _TaskReviewButton({
-    required this.count,
-    required this.isArabic,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Row(
-            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-            children: [
-              const Icon(Icons.fact_check_outlined, color: AppColors.primary),
-
-              const SizedBox(width: AppSpacing.md),
-
-              Expanded(
-                child: Text(
-                  isArabic ? 'مراجعة المهام' : 'Review tasks',
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-
-              if (count > 0)
-                CircleAvatar(
-                  radius: 14,
-                  backgroundColor: AppColors.error,
-                  child: Text(
-                    '$count',
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                )
-              else
-                Icon(
-                  isArabic ? Icons.chevron_left : Icons.chevron_right,
-                  color: AppColors.textSecondary,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _NoChildrenState extends StatelessWidget {
   final bool isArabic;
