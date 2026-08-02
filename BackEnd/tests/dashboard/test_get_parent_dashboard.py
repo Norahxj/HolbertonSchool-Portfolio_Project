@@ -13,13 +13,29 @@ CHILD_LOGIN_URL = "/api/auth/child-login"
 DASHBOARD_URL = "/api/dashboard/"
 
 @pytest.fixture(autouse=True)
-def mock_dashboard_points_repository(monkeypatch):
+def mock_dashboard_repositories(monkeypatch):
     service = dashboard_routes.dashboard_service
 
     monkeypatch.setattr(
         service.point_repository,
-        "get_points_by_child_id",
-        lambda child_id: None,
+        "get_points_by_child_ids",
+        lambda child_ids: {},
+    )
+
+    monkeypatch.setattr(
+        service.assignment_repository,
+        "get_children_assignments_between_dates",
+        lambda child_ids, week_start, week_end: {
+            str(child_id): (
+                service.assignment_repository
+                .get_child_assignments_between_dates(
+                    child_id,
+                    week_start,
+                    week_end,
+                )
+            )
+            for child_id in child_ids
+        },
     )
 
 
