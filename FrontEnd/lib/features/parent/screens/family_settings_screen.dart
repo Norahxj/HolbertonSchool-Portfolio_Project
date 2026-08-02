@@ -35,6 +35,7 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
 
   String? pageError;
   String? currentUserId;
+  String originalFamilyName = '';
 
   List<Map<String, dynamic>> guardians = [];
   List<Map<String, dynamic>> sentInvitations = [];
@@ -52,6 +53,26 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
     inviteEmailController.dispose();
     super.dispose();
   }
+
+
+String _displayFamilyName(String name) {
+  final trimmedName = name.trim();
+
+  if (!isArabic) {
+    return trimmedName;
+  }
+
+  if (trimmedName.toLowerCase().endsWith(' family')) {
+    final nameWithoutFamily = trimmedName.substring(
+      0,
+      trimmedName.length - ' family'.length,
+    ).trim();
+
+    return 'عائلة $nameWithoutFamily';
+  }
+
+  return trimmedName;
+}
 
   Future<void> _loadFamilyData() async {
     if (mounted) {
@@ -87,12 +108,17 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        familyNameController.text =
-            familyData['name']?.toString() ?? '';
+      final loadedFamilyName =
+    familyData['name']?.toString() ?? '';
 
-        currentUserId =
-            familyData['current_user_id']?.toString();
+setState(() {
+  originalFamilyName = loadedFamilyName;
+
+  familyNameController.text =
+      _displayFamilyName(loadedFamilyName);
+
+  currentUserId =
+      familyData['current_user_id']?.toString();
 
         guardians = loadedGuardians;
         sentInvitations = loadedSentInvitations;
@@ -155,7 +181,15 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   }
 
   Future<void> _saveFamilyName() async {
-    final name = familyNameController.text.trim();
+    final displayedName =
+    familyNameController.text.trim();
+
+final originalDisplayedName =
+    _displayFamilyName(originalFamilyName);
+
+final name = displayedName == originalDisplayedName
+    ? originalFamilyName
+    : displayedName;
 
     if (name.length < 2) {
       _showMessage(
@@ -500,11 +534,9 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
                           name:
                               '$firstName $lastName'
                                   .trim(),
-                          subtitle: isCurrentUser
-                              ? '${isArabic ? 'أنت' : 'You'} · ${_guardianTypeLabel(guardianType)}'
-                              : _guardianTypeLabel(
-                                  guardianType,
-                                ),
+                          subtitle: _guardianTypeLabel(
+  guardianType,
+),
                           subtitleColor:
                               isCurrentUser
                                   ? const Color(

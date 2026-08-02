@@ -41,6 +41,12 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
 
   bool get isArabic => widget.isArabic;
 
+  bool _isSameDay(DateTime first, DateTime second) {
+  return first.year == second.year &&
+      first.month == second.month &&
+      first.day == second.day;
+}
+
   @override
 void initState() {
   super.initState();
@@ -54,91 +60,122 @@ void initState() {
 
   
   Future<void> _loadFeedbackForChild(String childId) async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-      _todayFeedback = null;
-      _selectedMood = null;
-    });
+  setState(() {
+    _isLoading = true;
+    _error = null;
+  });
 
-    try {
-      final results = await Future.wait([
-        _feedbackService.getFeedbackForChild(childId),
-        _feedbackService.getTodayFeedback(childId),
-      ]);
+  try {
+    final history =
+        await _feedbackService.getFeedbackForChild(childId);
+history.sort(
+  (first, second) =>
+      second.feedbackDate.compareTo(first.feedbackDate),
+);
+    if (!mounted) return;
 
-      if (mounted) {
-        final history = results[0] as List<DailyFeedbackModel>;
-        final today = results[1] as DailyFeedbackModel?;
-        setState(() {
-          _feedbackHistory = history;
-          _todayFeedback = today;
-          _selectedMood = today?.mood;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = isArabic
-              ? 'تعذّر تحميل سجل التقييم'
-              : 'Unable to load feedback history';
-          _isLoading = false;
-        });
+    final today = DateTime.now();
+
+    DailyFeedbackModel? todayFeedback;
+
+    for (final feedback in history) {
+      if (_isSameDay(feedback.feedbackDate, today)) {
+        todayFeedback = feedback;
+        break;
       }
     }
+
+    setState(() {
+      _feedbackHistory = history;
+      _todayFeedback = todayFeedback;
+      _selectedMood = todayFeedback?.mood;
+      _isLoading = false;
+    });
+  } catch (error) {
+    if (!mounted) return;
+
+    setState(() {
+      _error = isArabic
+          ? 'تعذّر تحميل سجل التقييم'
+          : 'Unable to load feedback history';
+
+      _isLoading = false;
+    });
   }
+}
 
   Future<void> _submitFeedback() async {
-if (_selectedMood == null) return;
-    setState(() => _isSubmitting = true);
-
-    try {
-      if (_todayFeedback != null) {
-        // Update existing feedback
-        await _feedbackService.updateFeedback(
-          feedbackId: _todayFeedback!.id,
-          mood: _selectedMood!,
-        );
-      } else {
-        // Create new feedback
-        await _feedbackService.createFeedback(
-childId: _selectedChild.id,
-          mood: _selectedMood!,
-        );
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              isArabic
-                  ? 'تم حفظ التقييم بنجاح ✓'
-                  : 'Feedback saved successfully ✓',
-            ),
-            backgroundColor: AppColors.success,
-          ),
-        );
-        await _loadFeedbackForChild(_selectedChild.id);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              isArabic
-                  ? 'تعذّر حفظ التقييم. حاول مرة أخرى.'
-                  : 'Unable to save feedback. Please try again.',
-            ),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isSubmitting = false);
-    }
+  if (_selectedMood == null || _isSubmitting) {
+    return;
   }
 
+  setState(() {
+    _isSubmitting = true;
+  });
+
+  try {
+    late final DailyFeedbackModel savedFeedback;
+
+    if (_todayFeedback != null) {
+      savedFeedback = await _feedbackService.updateFeedback(
+        feedbackId: _todayFeedback!.id,
+        mood: _selectedMood!,
+      );
+    } else {
+      savedFeedback = await _feedbackService.createFeedback(
+        childId: _selectedChild.id,
+        mood: _selectedMood!,
+      );
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _todayFeedback = savedFeedback;
+      _selectedMood = savedFeedback.mood;
+
+      final existingIndex = _feedbackHistory.indexWhere(
+        (feedback) => feedback.id == savedFeedback.id,
+      );
+
+      if (existingIndex == -1) {
+        _feedbackHistory.insert(0, savedFeedback);
+      } else {
+        _feedbackHistory[existingIndex] = savedFeedback;
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isArabic
+              ? 'تم حفظ التقييم بنجاح ✓'
+              : 'Feedback saved successfully ✓',
+        ),
+        backgroundColor: AppColors.success,
+      ),
+    );
+  } catch (error) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isArabic
+              ? 'تعذّر حفظ التقييم. حاول مرة أخرى.'
+              : 'Unable to save feedback. Please try again.',
+        ),
+        backgroundColor: AppColors.error,
+      ),
+    );
+  } finally {
+    if (mounted) {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
