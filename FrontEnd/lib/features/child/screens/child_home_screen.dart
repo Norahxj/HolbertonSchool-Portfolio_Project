@@ -46,70 +46,97 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   final Set<String> _updatingAssignments = {};
+  Future<void> _loadTodayFeedback() async {
+  try {
+    final feedback =
+        await _feedbackService.getMyTodayFeedback();
 
-  Future<void> _loadData({bool showPageLoader = true}) async {
-    if (showPageLoader) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-    }
+    if (!mounted) return;
 
-    try {
-      final childFuture = SecureStorage.getChild();
-      final assignmentsFuture = _taskApiService.getMyAssignments();
-      final pointsFuture = _pointApiService.getMyPoints();
-      final feedbackFuture = _feedbackService.getMyTodayFeedback();
-      final results = await Future.wait([
-        childFuture,
-        assignmentsFuture,
-        pointsFuture,
-        feedbackFuture,
-      ]);
+    setState(() {
+      _todayFeedback = feedback;
+    });
+  } catch (error) {
+    debugPrint(
+      'Today feedback loading error: $error',
+    );
+  }
+}
 
-      final child = results[0] as ChildModel?;
-      final assignments = results[1] as List<TaskAssignmentModel>;
-      final points = results[2] as int;
-      final todayFeedback = results[3] as DailyFeedbackModel?;
+  Future<void> _loadData({
+  bool showPageLoader = true,
+}) async {
+  if (showPageLoader) {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+  }
 
-      if (!mounted) return;
+  try {
+    final childFuture = SecureStorage.getChild();
 
-      if (child == null) {
-        setState(() {
-          _errorMessage = widget.isArabic
-              ? 'لم نتمكن من العثور على بيانات الطفل.'
-              : 'We could not find the child\'s information.';
-          _isLoading = false;
-        });
-        return;
-      }
+    final assignmentsFuture =
+        _taskApiService.getMyCurrentWeekAssignments();
 
-      setState(() {
-        _child = child;
-        _assignments = assignments;
-        _points = points;
-        _errorMessage = null;
-        _isLoading = false;
-        _todayFeedback = todayFeedback;
-      });
-    } catch (error) {
-      if (!mounted) return;
+    final pointsFuture =
+        _pointApiService.getMyPoints();
 
+    final results = await Future.wait([
+      childFuture,
+      assignmentsFuture,
+      pointsFuture,
+    ]);
+
+    final child = results[0] as ChildModel?;
+
+    final assignments =
+        results[1] as List<TaskAssignmentModel>;
+
+    final points = results[2] as int;
+
+    if (!mounted) return;
+
+    if (child == null) {
       setState(() {
         _errorMessage = widget.isArabic
-            ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.'
-            : 'An error occurred while loading the data. Please try again.';
+            ? 'لم نتمكن من العثور على بيانات الطفل.'
+            : 'We could not find the child\'s information.';
+
         _isLoading = false;
       });
 
-      debugPrint('Child home loading error: $error');
+      return;
     }
+
+    setState(() {
+      _child = child;
+      _assignments = assignments;
+      _points = points;
+      _errorMessage = null;
+      _isLoading = false;
+    });
+
+    _loadTodayFeedback();
+  } catch (error) {
+    if (!mounted) return;
+
+    setState(() {
+      _errorMessage = widget.isArabic
+          ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.'
+          : 'An error occurred while loading the data. Please try again.';
+
+      _isLoading = false;
+    });
+
+    debugPrint('Child home loading error: $error');
   }
+}
 
   Future<void> _refreshTasksAndPoints() async {
     try {
       final results = await Future.wait([
-        _taskApiService.getMyAssignments(),
+_taskApiService.getMyCurrentWeekAssignments(),
         _pointApiService.getMyPoints(),
       ]);
 
