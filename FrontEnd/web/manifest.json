@@ -1,6 +1,6 @@
 {
-    "name": "frontend",
-    "short_name": "frontend",
+    "name": "Asalah",
+"short_name": "Asalah",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
