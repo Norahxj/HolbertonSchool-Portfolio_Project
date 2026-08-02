@@ -1,6 +1,9 @@
 class ApiConstants {
-  static String get baseUrl =>
-      "https://holbertonschool-portfolio-project-22a6.onrender.com/api/";
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue:
+        'https://holbertonschool-portfolio-project-22a6.onrender.com/api/',
+  );
 
   // Authentication
   static const String login = "auth/login";

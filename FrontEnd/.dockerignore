@@ -1,0 +1,14 @@
+.dart_tool
+build
+.git
+.github
+.idea
+.vscode
+coverage
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache
+.metadata
+README.md
+firebase-debug.log
+*.log
