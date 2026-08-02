@@ -561,7 +561,16 @@ class _SimpleChildCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              _ProgressRing(percent: progress),
+
+_ProgressRing(
+  percent: progress,
+),
+
+const SizedBox(width: 8),
+
+_ChildCardNavigationArrow(
+  isArabic: isArabic,
+),
             ],
           ),
         ),
@@ -656,6 +665,28 @@ class _ProgressRing extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ChildCardNavigationArrow extends StatelessWidget {
+  final bool isArabic;
+
+  const _ChildCardNavigationArrow({
+    required this.isArabic,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Icon(
+        isArabic
+            ? Icons.arrow_back_ios_new_rounded
+            : Icons.arrow_forward_ios_rounded,
+        size: 18,
+        color: AppColors.textSecondary,
       ),
     );
   }
