@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../child/screens/child_task_details_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/widgets/app_page_header.dart';
@@ -327,7 +327,24 @@ class _ChildTaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+  color: Colors.transparent,
+  child: InkWell(
+    borderRadius: BorderRadius.circular(18),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ChildTaskDetailsScreen(
+            assignment: assignment,
+            icon: Icons.task_alt_outlined,
+            isArabic: isArabic,
+            parentView: true,
+          ),
+        ),
+      );
+    },
+    child: Ink(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -415,6 +432,8 @@ class _ChildTaskCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }

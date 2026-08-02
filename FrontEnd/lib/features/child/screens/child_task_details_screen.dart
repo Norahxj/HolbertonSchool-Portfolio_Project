@@ -12,12 +12,14 @@ class ChildTaskDetailsScreen extends StatefulWidget {
   final TaskAssignmentModel assignment;
   final IconData icon;
   final bool isArabic;
+  final bool parentView;
 
   const ChildTaskDetailsScreen({
     super.key,
     required this.assignment,
     required this.icon,
     required this.isArabic,
+     this.parentView = false,
   });
 
   @override
@@ -477,110 +479,113 @@ class _ChildTaskDetailsScreenState extends State<ChildTaskDetailsScreen> {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    textDirection: widget.isArabic
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
-                    children: [
-                      const Icon(
-                        Icons.auto_awesome,
-                        color: AppColors.primary,
-                        size: 18,
-                      ),
+                if (!widget.parentView) ...[
+  Container(
+    padding: const EdgeInsets.all(AppSpacing.md),
+    decoration: BoxDecoration(
+      color: AppColors.primaryLight,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      textDirection: widget.isArabic
+          ? TextDirection.rtl
+          : TextDirection.ltr,
+      children: [
+        const Icon(
+          Icons.auto_awesome,
+          color: AppColors.primary,
+          size: 18,
+        ),
 
-                      const SizedBox(width: AppSpacing.sm),
+        const SizedBox(width: AppSpacing.sm),
 
-                      Expanded(
-                        child: Text(
-                          _verificationMessage,
-                          textAlign: widget.isArabic
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          textDirection: widget.isArabic
-                              ? TextDirection.rtl
-                              : TextDirection.ltr,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            height: 1.5,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+        Expanded(
+          child: Text(
+            _verificationMessage,
+            textAlign: widget.isArabic
+                ? TextAlign.right
+                : TextAlign.left,
+            textDirection: widget.isArabic
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.5,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+
+  const SizedBox(height: AppSpacing.xl),
+],
+if (!widget.parentView)
+  GestureDetector(
+    onTap: _canComplete && !_isSubmitting
+        ? _completeTask
+        : null,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: _canComplete
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: AppColors.primaryGradient,
+              )
+            : null,
+        color: _canComplete
+            ? null
+            : _statusBackground,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Center(
+        child: _isSubmitting
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
                 ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                GestureDetector(
-                  onTap: _canComplete && !_isSubmitting ? _completeTask : null,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: 56,
-                    decoration: BoxDecoration(
-                      gradient: _canComplete
-                          ? const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: AppColors.primaryGradient,
-                            )
-                          : null,
-                      color: _canComplete ? null : _statusBackground,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Center(
-                      child: _isSubmitting
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              textDirection: widget.isArabic
-                                  ? TextDirection.rtl
-                                  : TextDirection.ltr,
-                              children: [
-                                Text(
-                                  _buttonText,
-                                  textDirection: widget.isArabic
-                                      ? TextDirection.rtl
-                                      : TextDirection.ltr,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: _canComplete
-                                        ? Colors.white
-                                        : _statusColor,
-                                  ),
-                                ),
-
-                                const SizedBox(width: AppSpacing.sm),
-
-                                Icon(
-                                  _buttonIcon,
-                                  color: _canComplete
-                                      ? Colors.white
-                                      : _statusColor,
-                                  size: 20,
-                                ),
-                              ],
-                            ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                textDirection: widget.isArabic
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+                children: [
+                  Text(
+                    _buttonText,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: _canComplete
+                          ? Colors.white
+                          : _statusColor,
                     ),
                   ),
-                ),
 
-                const SizedBox(height: AppSpacing.lg),
-              ],
+                  const SizedBox(width: AppSpacing.sm),
+
+                  Icon(
+                    _buttonIcon,
+                    color: _canComplete
+                        ? Colors.white
+                        : _statusColor,
+                    size: 20,
+                  ),
+                ],
+              ),
+      ),
+    ),
+  ),
+
+const SizedBox(height: AppSpacing.lg),
+               ],     
             ),
           ),
         ),
