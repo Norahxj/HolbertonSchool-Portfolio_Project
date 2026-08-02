@@ -178,12 +178,28 @@ for (final entry in assignmentsByChild) {
         'data=${error.response?.data}',
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_readBackendMessage(error) ??
-              tr('تعذر اعتماد المهمة', 'Unable to approve the task')),
-        ),
+      final statusCode = error.response?.statusCode;
+
+String message;
+
+if (statusCode == 404) {
+  message = tr(
+    'لا يمكنك اعتماد هذه المهمة؛ يمكن اعتمادها فقط بواسطة ولي الأمر الذي أضافها.',
+    'Only the guardian who created this task can approve it.',
+  );
+} else {
+  message = _readBackendMessage(error) ??
+      tr(
+        'تعذر اعتماد المهمة',
+        'Unable to approve the task',
       );
+}
+
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text(message),
+  ),
+);
     } finally {
       if (mounted) {
         setState(() {
@@ -230,12 +246,28 @@ for (final entry in assignmentsByChild) {
         'data=${error.response?.data}',
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_readBackendMessage(error) ??
-              tr('تعذر رفض المهمة', 'Unable to reject the task')),
-        ),
+      final statusCode = error.response?.statusCode;
+
+String message;
+
+if (statusCode == 404) {
+  message = tr(
+    'لا يمكنك رفض هذه المهمة؛ يمكن رفضها فقط بواسطة ولي الأمر الذي أضافها.',
+    'Only the guardian who created this task can reject it.',
+  );
+} else {
+  message = _readBackendMessage(error) ??
+      tr(
+        'تعذر رفض المهمة',
+        'Unable to reject the task',
       );
+}
+
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text(message),
+  ),
+);
     } finally {
       if (mounted) {
         setState(() {
