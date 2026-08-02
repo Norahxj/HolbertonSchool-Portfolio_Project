@@ -26,20 +26,20 @@ class TaskAssignmentService:
     def get_current_week_assignments_for_child(self, child_id):
         today = riyadh_today()
 
-        days_from_sunday = today.weekday() + 1
+        days_since_friday = (today.weekday() - 4) % 7
 
-        if days_from_sunday == 7:
-            days_from_sunday = 0
+        week_start = today - timedelta(
+            days=days_since_friday
+        )
 
-        week_start = today - timedelta(days=days_from_sunday)
-        week_end = week_start + timedelta(days=7)
+        week_end = week_start + timedelta(days=6)
 
         return (
-            self.task_assignment_repository
-            .get_child_assignments_between_dates(
-                child_id,
-                week_start,
-                week_end,
+        self.task_assignment_repository
+        .get_child_assignments_between_dates(
+            child_id,
+            week_start,
+            week_end,
             )
         )
 
