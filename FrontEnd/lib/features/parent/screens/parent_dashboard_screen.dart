@@ -10,6 +10,7 @@ import '../repositories/parent_dashboard_repository.dart';
 import 'add_child_screen.dart';
 import 'parent_child_details_screen.dart';
 import 'task_review_screen.dart';
+import '../../../core/widgets/child_avatar.dart';
 
 class ParentDashboardScreen extends StatelessWidget {
   final bool isArabic;
@@ -483,7 +484,10 @@ class _SimpleChildCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboard = item.dashboard;
-    final progress = dashboard.progressPercentage.clamp(0, 100).round();
+
+    final progress = dashboard.progressPercentage
+        .clamp(0, 100)
+        .round();
 
     return Material(
       color: AppColors.card,
@@ -492,50 +496,71 @@ class _SimpleChildCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          constraints: const BoxConstraints(minHeight: 108),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 12,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: AppColors.border),
           ),
           child: Row(
-            // Keep points on the left and progress on the right.
-            textDirection: TextDirection.ltr,
+            textDirection:
+                isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
-              _ChildPointsBadge(points: item.points, isArabic: isArabic),
+              // العربي: يظهر يمين الكارد.
+              // الإنجليزي: يظهر يسار الكارد.
+              ChildAvatar(
+                avatarIndex: item.child.avatarIndex,
+                size: 64,
+              ),
 
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: 12),
 
               Expanded(
                 child: Column(
+  mainAxisSize: MainAxisSize.min,
+  mainAxisAlignment: MainAxisAlignment.center,
+  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       dashboard.childName,
-                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
 
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 4),
 
                     Text(
                       isArabic
                           ? '${dashboard.childAge} سنوات'
                           : '${dashboard.childAge} years old',
-                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
                     ),
+
+                    const SizedBox(height: 7),
+
+                    _ChildPointsBadge(
+                      points: item.points,
+                      isArabic: isArabic,
+                    ),
                   ],
                 ),
               ),
-
-              const SizedBox(width: AppSpacing.sm),
-
+              const SizedBox(width: 12),
               _ProgressRing(percent: progress),
             ],
           ),
@@ -544,81 +569,90 @@ class _SimpleChildCard extends StatelessWidget {
     );
   }
 }
-
 class _ChildPointsBadge extends StatelessWidget {
   final int? points;
   final bool isArabic;
 
-  const _ChildPointsBadge({required this.points, required this.isArabic});
+  const _ChildPointsBadge({
+    required this.points,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final pointsText = points?.toString() ?? '0';
+
     return Container(
-      width: 66,
-      height: 66,
-      decoration: const BoxDecoration(
-        color: AppColors.goldLight,
-        shape: BoxShape.circle,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 11,
+        vertical: 5,
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.goldLight,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        textDirection:
+            isArabic ? TextDirection.rtl : TextDirection.ltr,
         children: [
-          const Icon(Icons.auto_awesome, color: AppColors.gold, size: 15),
-
-          const SizedBox(height: 1),
-
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              points?.toString() ?? '—',
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
+          const Icon(
+            Icons.auto_awesome_rounded,
+            color: AppColors.gold,
+            size: 15,
           ),
 
+          const SizedBox(width: 6),
+
           Text(
-            isArabic ? 'نقطة' : 'Points',
-            style: const TextStyle(fontSize: 8, color: AppColors.textSecondary),
+            isArabic
+                ? '$pointsText نقطة'
+                : '$pointsText points',
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
           ),
         ],
       ),
     );
   }
 }
-
 class _ProgressRing extends StatelessWidget {
   final int percent;
 
-  const _ProgressRing({required this.percent});
+  const _ProgressRing({
+    required this.percent,
+  });
 
   @override
   Widget build(BuildContext context) {
     final safePercent = percent.clamp(0, 100);
 
     return SizedBox(
-      width: 58,
-      height: 58,
+      width: 60,
+      height: 60,
       child: Stack(
         alignment: Alignment.center,
         children: [
           SizedBox(
-            width: 58,
-            height: 58,
+            width: 60,
+            height: 60,
             child: CircularProgressIndicator(
               value: safePercent / 100,
               strokeWidth: 5,
+              strokeCap: StrokeCap.round,
               backgroundColor: AppColors.primaryLight,
-              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppColors.primary,
+              ),
             ),
           ),
-
           Text(
             '$safePercent%',
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
@@ -628,7 +662,6 @@ class _ProgressRing extends StatelessWidget {
     );
   }
 }
-
 /// The same compact button is used in both dashboard states.
 class _AddChildButton extends StatelessWidget {
   final bool isArabic;
