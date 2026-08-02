@@ -135,7 +135,7 @@ class _PointsHistoryScreenState
                     AppSpacing.lg,
                   ),
                   itemCount: history.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(
                     height: AppSpacing.md,
                   ),

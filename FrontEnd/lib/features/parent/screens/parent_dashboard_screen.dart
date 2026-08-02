@@ -222,7 +222,7 @@ class _WelcomeBanner extends StatelessWidget {
             border: Border.all(color: Colors.white, width: 2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: Colors.black.withValues(alpha:0.06),
                 blurRadius: 16,
                 offset: const Offset(0, 7),
               ),
@@ -254,10 +254,10 @@ class _WelcomeBanner extends StatelessWidget {
                           ? Alignment.centerLeft
                           : Alignment.centerRight,
                       colors: [
-                        const Color(0xFFF7F2FB).withOpacity(0.78),
-                        const Color(0xFFF1E8F8).withOpacity(0.55),
-                        const Color(0xFFE7DAF5).withOpacity(0.18),
-                        const Color(0xFFF2ECF8).withOpacity(0.18),
+                        const Color(0xFFF7F2FB).withValues(alpha:0.78),
+                        const Color(0xFFF1E8F8).withValues(alpha:0.55),
+                        const Color(0xFFE7DAF5).withValues(alpha:0.18),
+                        const Color(0xFFF2ECF8).withValues(alpha:0.18),
                       ],
                       stops: const [0.0, 0.30, 0.52, 0.75],
                     ),
@@ -286,7 +286,7 @@ class _WelcomeBanner extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.primaryDark.withOpacity(0.75),
+                            color: AppColors.primaryDark.withValues(alpha:0.75),
                           ),
                         ),
 

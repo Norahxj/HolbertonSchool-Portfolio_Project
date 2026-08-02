@@ -61,7 +61,7 @@ class _RoleCardState extends State<RoleCard> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha:0.08),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),
@@ -164,7 +164,7 @@ class _RoleCardState extends State<RoleCard> {
                                   BoxShadow(
                                     color: const Color(
                                       0xFF7047C7,
-                                    ).withOpacity(0.25),
+                                    ).withValues(alpha:0.25),
                                     blurRadius: 10,
                                     offset: const Offset(0, 6),
                                   ),
@@ -194,7 +194,7 @@ class _RoleCardState extends State<RoleCard> {
                         curve: Curves.easeOut,
                         decoration: BoxDecoration(
                           color: _isHovered
-                              ? Colors.black.withOpacity(0.055)
+                              ? Colors.black.withValues(alpha:0.055)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(28),
                         ),

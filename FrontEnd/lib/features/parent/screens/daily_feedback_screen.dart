@@ -207,8 +207,8 @@ childId: _selectedChild.id,
                                   ? 'تقييم اليوم (يمكنك التعديل)'
                                   : 'Today\'s Feedback (You Can Edit It)'
                               : isArabic
-                                  ? 'كيف كان يوم ${_selectedChild?.name ?? "الطفل"}؟'
-                                  : 'How was ${_selectedChild?.name ?? "your child"}\'s day?',
+                                  ? 'كيف كان يوم ${_selectedChild.name}؟'
+                                  : 'How was ${_selectedChild.name}\'s day?',
                           style: AppTextStyles.arabicTitle,
                           textAlign: TextAlign.center,
                         ),
@@ -316,7 +316,7 @@ childId: _selectedChild.id,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _feedbackHistory.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const SizedBox(height: AppSpacing.sm),
                       itemBuilder: (context, index) {
                         final fb = _feedbackHistory[index];

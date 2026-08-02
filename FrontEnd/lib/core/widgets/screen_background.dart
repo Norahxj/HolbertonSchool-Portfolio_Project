@@ -59,7 +59,7 @@ class _SoftCircle extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withOpacity(0.6),
+        color: AppColors.primaryLight.withValues(alpha:0.6),
         shape: BoxShape.circle,
       ),
     );

@@ -169,7 +169,7 @@ class _ChildRewardsScreenState extends State<ChildRewardsScreen> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: _rewards.length,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(height: AppSpacing.md),
                             itemBuilder: (context, index) {
                               final reward = _rewards[index];
@@ -227,7 +227,7 @@ class _RewardCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.08),
+            color: AppColors.primary.withValues(alpha:0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -241,7 +241,7 @@ class _RewardCard extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               color: isUnlocked
-                  ? Colors.white.withOpacity(0.2)
+                  ? Colors.white.withValues(alpha:0.2)
                   : AppColors.primaryLight,
               borderRadius: BorderRadius.circular(14),
             ),
@@ -334,7 +334,7 @@ class _RewardCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.gold.withOpacity(0.2),
+                color: AppColors.gold.withValues(alpha:0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(

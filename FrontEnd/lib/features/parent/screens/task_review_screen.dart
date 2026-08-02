@@ -428,7 +428,7 @@ class _ReviewTaskCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.08),
+            color: AppColors.primary.withValues(alpha:0.08),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),

@@ -202,7 +202,7 @@ class _SoftPill extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: Colors.white.withValues(alpha:0.6),
         borderRadius: BorderRadius.circular(height / 2),
       ),
     );

@@ -18,7 +18,7 @@ class LanguageToggle extends StatelessWidget {
       color: Colors.white,
       borderRadius: BorderRadius.circular(24),
       elevation: 2,
-      shadowColor: AppColors.primary.withOpacity(0.2),
+      shadowColor: AppColors.primary..withValues(alpha: 0.2),
       child: InkWell(
         borderRadius: BorderRadius.circular(24),
         onTap: onTap,
