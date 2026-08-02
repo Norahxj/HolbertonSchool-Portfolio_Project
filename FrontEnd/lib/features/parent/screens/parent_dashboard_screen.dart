@@ -148,7 +148,13 @@ class _ParentDashboardView extends StatelessWidget {
                 onClose: controller.clearError,
               ),
 
-            _SectionHeader(title: isArabic ? 'أطفالك' : 'Your children'),
+           _SectionHeader(
+  title: isArabic ? 'أطفالك' : 'Your children',
+  isArabic: isArabic,
+  onAddChild: () {
+    _openAddChild(context);
+  },
+),
 
             const SizedBox(height: AppSpacing.md),
 
@@ -160,30 +166,19 @@ class _ParentDashboardView extends StatelessWidget {
                 },
               )
             else ...[
-              ...data.children.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _SimpleChildCard(
-                    item: item,
-                    isArabic: isArabic,
-                    onTap: () {
-                      _openChildDetails(context, item);
-                    },
-                  ),
-                );
-              }),
-
-              const SizedBox(height: AppSpacing.sm),
-
-              // The same button is used before and after adding children.
-              _AddChildButton(
-                isArabic: isArabic,
-                onTap: () {
-                  _openAddChild(context);
-                },
-              ),
-            ],
-
+  ...data.children.map((item) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: _SimpleChildCard(
+        item: item,
+        isArabic: isArabic,
+        onTap: () {
+          _openChildDetails(context, item);
+        },
+      ),
+    );
+  }),
+],
             const SizedBox(height: AppSpacing.md),
 
             _TaskReviewButton(
@@ -339,19 +334,50 @@ class _WelcomeBanner extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   final String title;
+  final bool isArabic;
+  final VoidCallback onAddChild;
 
-  const _SectionHeader({required this.title});
+  const _SectionHeader({
+    required this.title,
+    required this.isArabic,
+    required this.onAddChild,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      textAlign: TextAlign.start,
-      style: AppTextStyles.arabicTitle,
+    return Row(
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.arabicTitle,
+        ),
+
+        Tooltip(
+          message: isArabic ? 'إضافة طفل' : 'Add child',
+          child: Material(
+            color: AppColors.primaryLight,
+            shape: const CircleBorder(),
+            child: InkWell(
+              onTap: onAddChild,
+              customBorder: const CircleBorder(),
+              child: const SizedBox(
+                width: 40,
+                height: 40,
+                child: Icon(
+                  Icons.add_rounded,
+                  size: 25,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
-
 class _SimpleChildCard extends StatelessWidget {
   final ParentDashboardChildItem item;
   final bool isArabic;
