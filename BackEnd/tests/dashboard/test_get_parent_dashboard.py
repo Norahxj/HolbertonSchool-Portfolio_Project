@@ -416,7 +416,7 @@ class FakeParent:
 class FakeChild:
     def __init__(
         self,
-        child_id="child-123",
+        child_id="child-id",
         name="Sara",
         age=11,
     ):
@@ -695,7 +695,7 @@ def test_service_counts_all_assignment_statuses(
 ):
     service = dashboard_routes.dashboard_service
     child = FakeChild(
-        child_id="child-123",
+        child_id="child-id",
         name="Sara",
         age=11,
     )
@@ -737,10 +737,15 @@ def test_service_counts_all_assignment_statuses(
     assert error is None
     assert dashboard == [
         {
-            "child_id": "child-123",
+            "child_id": "child-id",
             "child_name": "Sara",
             "child_age": 11,
             "week_start": date(2026, 7, 17),
+            "birth_date": None,
+            "phone": None,
+            "access_code": "123456",
+            "role": "child",
+            "avatar_index": 0,
             "week_end": date(2026, 7, 23),
             "progress_percentage": 33.3,
             "completed_tasks": 2,
