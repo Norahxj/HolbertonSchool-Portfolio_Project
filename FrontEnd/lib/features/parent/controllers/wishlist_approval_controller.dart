@@ -34,6 +34,7 @@ class WishlistApprovalController extends ChangeNotifier {
 
   final List<WishlistEntry> _pendingWishes = [];
   final List<WishlistEntry> _approvedWishes = [];
+  final List<WishlistEntry> _achievedWishes = [];
 
   bool _isLoading = true;
   bool _hasError = false;
@@ -44,10 +45,15 @@ class WishlistApprovalController extends ChangeNotifier {
 
   List<WishlistEntry> get approvedWishes => List.unmodifiable(_approvedWishes);
 
+  List<WishlistEntry> get achievedWishes => List.unmodifiable(_achievedWishes);
+
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
 
-  bool get isEmpty => _pendingWishes.isEmpty && _approvedWishes.isEmpty;
+  bool get isEmpty =>
+      _pendingWishes.isEmpty &&
+      _approvedWishes.isEmpty &&
+      _achievedWishes.isEmpty;
 
   Future<bool> loadWishes({bool showLoading = true}) async {
     if (_requestRunning) {
@@ -68,13 +74,14 @@ class WishlistApprovalController extends ChangeNotifier {
 
       final pending = <WishlistEntry>[];
       final approved = <WishlistEntry>[];
+      final achieved = <WishlistEntry>[];
 
       for (final wish in wishes) {
         final childName = wish.childName;
         final avatarIndex = wish.childAvatarIndex;
 
-        // بيانات الطفل يجب أن تأتي من endpoint العائلة.
-        // نتجاوز العنصر فقط لو كانت الاستجابة ناقصة.
+        // Child information should come from the family-wishes endpoint.
+        // Skip an item only when the response is missing that information.
         if (childName == null || avatarIndex == null) {
           continue;
         }
@@ -91,6 +98,8 @@ class WishlistApprovalController extends ChangeNotifier {
           pending.add(wishEntry);
         } else if (status == 'APPROVED') {
           approved.add(wishEntry);
+        } else if (status == 'ACHIEVED') {
+          achieved.add(wishEntry);
         }
       }
 
@@ -101,6 +110,10 @@ class WishlistApprovalController extends ChangeNotifier {
       _approvedWishes
         ..clear()
         ..addAll(approved);
+
+      _achievedWishes
+        ..clear()
+        ..addAll(achieved);
 
       return true;
     } catch (_) {
