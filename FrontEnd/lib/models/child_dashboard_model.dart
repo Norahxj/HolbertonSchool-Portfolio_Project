@@ -2,6 +2,11 @@ class ChildDashboardModel {
   final String childId;
   final String childName;
   final int childAge;
+  final String birthDate;
+final String? phone;
+final String accessCode;
+final String role;
+final int avatarIndex;
   final String weekStart;
   final String weekEnd;
   final double progressPercentage;
@@ -18,6 +23,11 @@ class ChildDashboardModel {
     required this.childId,
     required this.childName,
     required this.childAge,
+    required this.birthDate,
+this.phone,
+required this.accessCode,
+required this.role,
+required this.avatarIndex,
     required this.weekStart,
     required this.weekEnd,
     required this.progressPercentage,
@@ -36,6 +46,12 @@ class ChildDashboardModel {
       childId: json['child_id']?.toString() ?? '',
       childName: json['child_name']?.toString() ?? '',
       childAge: (json['child_age'] as num?)?.toInt() ?? 0,
+      birthDate: json['birth_date']?.toString() ?? '',
+phone: json['phone']?.toString(),
+accessCode: json['access_code']?.toString() ?? '',
+role: json['role']?.toString() ?? 'child',
+avatarIndex:
+    (json['avatar_index'] as num?)?.toInt() ?? 0,
       weekStart: json['week_start']?.toString() ?? '',
       weekEnd: json['week_end']?.toString() ?? '',
       progressPercentage:
