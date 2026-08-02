@@ -211,12 +211,8 @@ _taskApiService.getMyCurrentWeekAssignments(),
   }
 
   bool _isFinished(String status) {
-    final normalizedStatus = status.toLowerCase();
-
-    return normalizedStatus == 'approved' ||
-        normalizedStatus == 'completed' ||
-        normalizedStatus == 'pending_review';
-  }
+  return status.toUpperCase() == 'APPROVED';
+}
 
   @override
   Widget build(BuildContext context) {
