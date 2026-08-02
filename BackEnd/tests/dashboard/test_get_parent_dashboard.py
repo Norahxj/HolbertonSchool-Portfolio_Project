@@ -416,13 +416,18 @@ class FakeParent:
 class FakeChild:
     def __init__(
         self,
-        child_id="child-id",
+        child_id="child-123",
         name="Sara",
         age=11,
     ):
         self.id = child_id
         self.name = name
         self.age = age
+
+        self.birth_date = None
+        self.phone = None
+        self.access_code = "123456"
+        self.avatar_index = 0
 
 
 class FakeAssignment:
