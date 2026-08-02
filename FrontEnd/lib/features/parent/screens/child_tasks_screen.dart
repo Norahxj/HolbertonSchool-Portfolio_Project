@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../child/screens/child_task_details_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -7,8 +8,16 @@ import '../../../core/widgets/app_page_header.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../../models/task_assignment_model.dart';
 import '../controllers/parent_child_details_controller.dart';
+import '../models/parent_child_tasks_data.dart';
 
-enum ChildTaskFilter { all, active, awaitingReview, completed, rejected }
+enum ChildTaskFilter {
+  all,
+  upcoming,
+  active,
+  awaitingReview,
+  completed,
+  rejected,
+}
 
 class ChildTasksScreen extends StatelessWidget {
   final String childId;
@@ -60,6 +69,9 @@ class _ChildTasksViewState extends State<_ChildTasksView> {
       case ChildTaskFilter.all:
         return tasks;
 
+      case ChildTaskFilter.upcoming:
+        return [];
+
       case ChildTaskFilter.active:
         return tasks.where((task) => task.isPending).toList();
 
@@ -74,11 +86,26 @@ class _ChildTasksViewState extends State<_ChildTasksView> {
     }
   }
 
+  List<UpcomingTaskItem> _filteredUpcomingTasks(
+    List<UpcomingTaskItem> upcomingTasks,
+  ) {
+    if (selectedFilter == ChildTaskFilter.all ||
+        selectedFilter == ChildTaskFilter.upcoming) {
+      return upcomingTasks;
+    }
+
+    return [];
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<ParentChildDetailsController>();
 
     final filteredTasks = _filteredTasks(controller.tasks);
+
+    final filteredUpcomingTasks = _filteredUpcomingTasks(
+      controller.upcomingTasks,
+    );
 
     return Directionality(
       textDirection: widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
@@ -124,6 +151,7 @@ class _ChildTasksViewState extends State<_ChildTasksView> {
                       childId: widget.childId,
                       isArabic: widget.isArabic,
                       tasks: filteredTasks,
+                      upcomingTasks: filteredUpcomingTasks,
                       selectedFilter: selectedFilter,
                     ),
                   ],
@@ -153,6 +181,9 @@ class _TaskFilterBar extends StatelessWidget {
       case ChildTaskFilter.all:
         return isArabic ? 'الكل' : 'All';
 
+      case ChildTaskFilter.upcoming:
+        return isArabic ? 'قادمة' : 'Upcoming';
+
       case ChildTaskFilter.active:
         return isArabic ? 'نشطة' : 'Active';
 
@@ -174,11 +205,12 @@ class _TaskFilterBar extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: ChildTaskFilter.values.length,
-        separatorBuilder: (_, _) {
+        separatorBuilder: (context, index) {
           return const SizedBox(width: 8);
         },
         itemBuilder: (context, index) {
           final filter = ChildTaskFilter.values[index];
+
           final isSelected = selectedFilter == filter;
 
           return InkWell(
@@ -217,6 +249,7 @@ class _TasksSection extends StatelessWidget {
   final String childId;
   final bool isArabic;
   final List<TaskAssignmentModel> tasks;
+  final List<UpcomingTaskItem> upcomingTasks;
   final ChildTaskFilter selectedFilter;
 
   const _TasksSection({
@@ -224,19 +257,20 @@ class _TasksSection extends StatelessWidget {
     required this.childId,
     required this.isArabic,
     required this.tasks,
+    required this.upcomingTasks,
     required this.selectedFilter,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (controller.isLoading && controller.tasks.isEmpty) {
+    if (controller.isLoading && controller.hasNoTaskData) {
       return const Padding(
         padding: EdgeInsets.all(AppSpacing.lg),
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
-    if (controller.errorMessage != null && controller.tasks.isEmpty) {
+    if (controller.errorMessage != null && controller.hasNoTaskData) {
       return _TasksErrorState(
         isArabic: isArabic,
         onRetry: () {
@@ -245,11 +279,11 @@ class _TasksSection extends StatelessWidget {
       );
     }
 
-    if (controller.tasks.isEmpty) {
+    if (controller.hasNoTaskData) {
       return _TasksEmptyState(isArabic: isArabic);
     }
 
-    if (tasks.isEmpty) {
+    if (tasks.isEmpty && upcomingTasks.isEmpty) {
       return _FilteredTasksEmptyState(
         isArabic: isArabic,
         selectedFilter: selectedFilter,
@@ -257,12 +291,228 @@ class _TasksSection extends StatelessWidget {
     }
 
     return Column(
-      children: tasks.map((assignment) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-          child: _ChildTaskCard(assignment: assignment, isArabic: isArabic),
-        );
-      }).toList(),
+      children: [
+        for (final upcomingTask in upcomingTasks)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: _UpcomingTaskCard(item: upcomingTask, isArabic: isArabic),
+          ),
+
+        for (final assignment in tasks)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: _ChildTaskCard(assignment: assignment, isArabic: isArabic),
+          ),
+      ],
+    );
+  }
+}
+
+class _UpcomingTaskCard extends StatelessWidget {
+  final UpcomingTaskItem item;
+  final bool isArabic;
+
+  const _UpcomingTaskCard({required this.item, required this.isArabic});
+
+  String get _frequencyLabel {
+    final frequency = item.task.taskFrequency.toUpperCase();
+
+    if (frequency == 'WEEKLY') {
+      return isArabic ? 'أسبوعية' : 'Weekly';
+    }
+
+    return isArabic ? 'شهرية' : 'Monthly';
+  }
+
+  String get _formattedDate {
+    final date = item.nextDate;
+
+    final arabicWeekdays = [
+      '',
+      'الاثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة',
+      'السبت',
+      'الأحد',
+    ];
+
+    final englishWeekdays = [
+      '',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+
+    final arabicMonths = [
+      '',
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
+    ];
+
+    final englishMonths = [
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    final weekday = isArabic
+        ? arabicWeekdays[date.weekday]
+        : englishWeekdays[date.weekday];
+
+    final month = isArabic
+        ? arabicMonths[date.month]
+        : englishMonths[date.month];
+
+    final separator = isArabic ? '،' : ',';
+
+    return '$weekday$separator ${date.day} $month ${date.year}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.32)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: const Icon(
+              Icons.event_available_outlined,
+              color: AppColors.primaryDark,
+              size: 21,
+            ),
+          ),
+
+          const SizedBox(width: AppSpacing.md),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.task.title,
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                const SizedBox(height: 6),
+
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        isArabic ? 'قادمة' : 'Upcoming',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryDark,
+                        ),
+                      ),
+                    ),
+
+                    Text(
+                      _frequencyLabel,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 6),
+
+                Text(
+                  isArabic
+                      ? 'الموعد القادم: $_formattedDate'
+                      : 'Next date: $_formattedDate',
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: AppSpacing.sm),
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.goldLight,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.auto_awesome, size: 13, color: AppColors.gold),
+                const SizedBox(width: 4),
+                Text(
+                  '${item.task.points}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -328,112 +578,116 @@ class _ChildTaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-  color: Colors.transparent,
-  child: InkWell(
-    borderRadius: BorderRadius.circular(18),
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ChildTaskDetailsScreen(
-            assignment: assignment,
-            icon: Icons.task_alt_outlined,
-            isArabic: isArabic,
-            parentView: true,
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChildTaskDetailsScreen(
+                assignment: assignment,
+                icon: Icons.task_alt_outlined,
+                isArabic: isArabic,
+                parentView: true,
+              ),
+            ),
+          );
+        },
+        child: Ink(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                child: const Icon(
+                  Icons.task_alt_outlined,
+                  color: AppColors.primaryDark,
+                  size: 21,
+                ),
+              ),
+
+              const SizedBox(width: AppSpacing.md),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      assignment.task.title,
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _statusBackground,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _statusLabel,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: _statusColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: AppSpacing.sm),
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.goldLight,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.auto_awesome,
+                      size: 13,
+                      color: AppColors.gold,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${assignment.task.points}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      );
-    },
-    child: Ink(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(13),
-            ),
-            child: const Icon(
-              Icons.task_alt_outlined,
-              color: AppColors.primaryDark,
-              size: 21,
-            ),
-          ),
-
-          const SizedBox(width: AppSpacing.md),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  assignment.task.title,
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-
-                const SizedBox(height: 5),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _statusBackground,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    _statusLabel,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: _statusColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: AppSpacing.sm),
-
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.goldLight,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.auto_awesome, size: 13, color: AppColors.gold),
-                const SizedBox(width: 4),
-                Text(
-                  '${assignment.task.points}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      ),
       ),
     );
   }
@@ -450,6 +704,9 @@ class _FilteredTasksEmptyState extends StatelessWidget {
 
   String get message {
     switch (selectedFilter) {
+      case ChildTaskFilter.upcoming:
+        return isArabic ? 'لا توجد مهام قادمة' : 'No upcoming tasks';
+
       case ChildTaskFilter.active:
         return isArabic ? 'لا توجد مهام نشطة' : 'No active tasks';
 

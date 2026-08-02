@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../models/task_assignment_model.dart';
+import '../models/parent_child_tasks_data.dart';
 import '../repositories/parent_child_details_repository.dart';
 
 class ParentChildDetailsController extends ChangeNotifier {
@@ -10,6 +11,7 @@ class ParentChildDetailsController extends ChangeNotifier {
   ParentChildDetailsController(this._repository);
 
   List<TaskAssignmentModel> _tasks = [];
+  List<UpcomingTaskItem> _upcomingTasks = [];
 
   bool _isLoading = false;
   bool _isRefreshing = false;
@@ -19,11 +21,15 @@ class ParentChildDetailsController extends ChangeNotifier {
 
   List<TaskAssignmentModel> get tasks => _tasks;
 
+  List<UpcomingTaskItem> get upcomingTasks => _upcomingTasks;
+
   bool get isLoading => _isLoading;
 
   bool get isRefreshing => _isRefreshing;
 
   String? get errorMessage => _errorMessage;
+
+  bool get hasNoTaskData => _tasks.isEmpty && _upcomingTasks.isEmpty;
 
   Future<void> loadTasks(String childId) async {
     if (_isLoading) return;
@@ -35,7 +41,10 @@ class ParentChildDetailsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _tasks = await _repository.getChildTasks(childId);
+      final data = await _repository.getChildTasksData(childId);
+
+      _tasks = data.assignments;
+      _upcomingTasks = data.upcomingTasks;
     } on DioException catch (error) {
       _errorMessage =
           _readBackendMessage(error) ?? 'Could not load the child tasks.';
@@ -62,7 +71,10 @@ class ParentChildDetailsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _tasks = await _repository.getChildTasks(childId);
+      final data = await _repository.getChildTasksData(childId);
+
+      _tasks = data.assignments;
+      _upcomingTasks = data.upcomingTasks;
     } on DioException catch (error) {
       _errorMessage =
           _readBackendMessage(error) ?? 'Could not refresh the child tasks.';
