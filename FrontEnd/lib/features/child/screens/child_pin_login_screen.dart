@@ -165,51 +165,71 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
                 const SizedBox(height: AppSpacing.sm),
 
                 Stack(
-                  children: [
-                    Row(
-                      textDirection: TextDirection.ltr,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (int i = 0; i < 6; i++)
-                          _PinBox(digit: i < pin.length ? pin[i] : ''),
-                      ],
-                    ),
+  children: [
+    Row(
+      textDirection: TextDirection.ltr,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        for (int i = 0; i < 6; i++)
+          _PinBox(
+            digit: i < pin.length ? pin[i] : '',
+          ),
+      ],
+    ),
 
-                    Positioned.fill(
-                      child: Opacity(
-                        opacity: 0,
-                        child: TextField(
-                          controller: _pinController,
-                          focusNode: _pinFocusNode,
-                          keyboardType: TextInputType.number,
-                          textInputAction: TextInputAction.done,
-                          textDirection: TextDirection.ltr,
-                          textAlign: TextAlign.left,
-                          maxLength: 6,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(6),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              pin = value;
-                              errorMessage = null;
-                            });
-                          },
-                          onSubmitted: (_) {
-                            if (pin.length == 6) {
-                              _loginChild();
-                            }
-                          },
-                          decoration: const InputDecoration(
-                            counterText: '',
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+    Positioned.fill(
+      child: TextField(
+        controller: _pinController,
+        focusNode: _pinFocusNode,
+        keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.done,
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.left,
+        maxLength: 6,
+
+        // يسمح بالضغط المطول واللصق.
+        enableInteractiveSelection: true,
+
+        // يخفي كتابة TextField الحقيقية ويبقي المربعات ظاهرة.
+        style: const TextStyle(
+          color: Colors.transparent,
+          fontSize: 1,
+        ),
+        cursorColor: Colors.transparent,
+        showCursor: false,
+
+        autocorrect: false,
+        enableSuggestions: false,
+
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(6),
+        ],
+
+        onChanged: (value) {
+          setState(() {
+            pin = value;
+            errorMessage = null;
+          });
+        },
+
+        onSubmitted: (_) {
+          if (pin.length == 6) {
+            _loginChild();
+          }
+        },
+
+        decoration: const InputDecoration(
+          counterText: '',
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+        ),
+      ),
+    ),
+  ],
+),
 
                 if (pin.length == 6) ...[const SizedBox(height: AppSpacing.lg)],
 
