@@ -50,11 +50,14 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   final Set<String> deletingRewardIds = {};
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    _loadChildren();
-  }
+  Future.wait([
+    _loadChildren(),
+    _loadRewardSuggestions(),
+  ]);
+}
 
   @override
   void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
@@ -119,14 +122,8 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   }
 
   Future<void> _loadSelectedChildData() async {
-    final requests = <Future<void>>[_loadCurrentRewards()];
-
-    if (rewardSuggestions.isEmpty) {
-      requests.add(_loadRewardSuggestions());
-    }
-
-    await Future.wait(requests);
-  }
+  await _loadCurrentRewards();
+}
 
   Future<void> _selectChild(String childId) async {
     if (selectedChildId == childId) {
@@ -183,48 +180,41 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   }
 
   Future<void> _loadRewardSuggestions() async {
-    final childId = selectedChildId;
+  setState(() {
+    isLoadingSuggestions = true;
+    suggestionsError = null;
+  });
 
-    if (childId == null) return;
+  try {
+    final suggestions =
+        await _rewardApiService.getRewardSuggestions(
+      lang: isArabic ? 'ar' : 'en',
+      count: 5,
+    );
+
+    if (!mounted) return;
 
     setState(() {
-      isLoadingSuggestions = true;
-      suggestionsError = null;
+      rewardSuggestions = suggestions;
     });
+  } on DioException catch (error) {
+    if (!mounted) return;
 
-    try {
-      final suggestions = await _rewardApiService.getRewardSuggestions(
-        lang: isArabic ? 'ar' : 'en',
-        count: 5,
-      );
-
-      if (!mounted || selectedChildId != childId) {
-        return;
-      }
-
+    setState(() {
+      suggestionsError =
+          _readBackendMessage(error) ??
+          (isArabic
+              ? 'تعذّر تحميل المكافآت المقترحة'
+              : 'Failed to load suggested rewards');
+    });
+  } finally {
+    if (mounted) {
       setState(() {
-        rewardSuggestions = suggestions;
+        isLoadingSuggestions = false;
       });
-    } on DioException catch (error) {
-      if (!mounted || selectedChildId != childId) {
-        return;
-      }
-
-      setState(() {
-        suggestionsError =
-            _readBackendMessage(error) ??
-            (isArabic
-                ? 'تعذّر تحميل المكافآت المقترحة'
-                : 'Failed to load suggested rewards');
-      });
-    } finally {
-      if (mounted && selectedChildId == childId) {
-        setState(() {
-          isLoadingSuggestions = false;
-        });
-      }
     }
   }
+}
 
   Future<void> _openAddReward({RewardSuggestionModel? suggestion}) async {
     final childId = selectedChildId;

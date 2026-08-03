@@ -14,6 +14,7 @@ class AssignmentChildSchema(Schema):
     id = fields.String()
     name = fields.String()
     age = fields.Integer()
+    avatar_index = fields.Integer()
 
 class ChildTaskAssignmentResponseSchema(Schema):
     id = fields.String()

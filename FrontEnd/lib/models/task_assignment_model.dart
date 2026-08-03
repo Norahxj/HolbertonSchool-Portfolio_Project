@@ -1,17 +1,11 @@
-/// Represents one task assigned to a child.
-///
-/// Supported statuses:
-/// - PENDING: The child has not completed the task.
-/// - COMPLETED: Legacy status for a completed task.
-/// - PENDING_REVIEW: The child completed the task and needs parent approval.
-/// - APPROVED: The task was approved.
-/// - REJECTED: The task was rejected.
+import 'child_model.dart';
 class TaskAssignmentModel {
   final String id;
   final String status;
   final DateTime? completedAt;
   final DateTime? approvedAt;
   final AssignmentTask task;
+  final ChildModel? child;
   final DateTime assignedDate;
 
   const TaskAssignmentModel({
@@ -19,6 +13,7 @@ class TaskAssignmentModel {
     required this.status,
     this.completedAt,
     this.approvedAt,
+    this.child,
     required this.task,
     required this.assignedDate,
   });
@@ -32,6 +27,11 @@ class TaskAssignmentModel {
       task: AssignmentTask.fromJson(
         json['task'] as Map<String, dynamic>? ?? <String, dynamic>{},
       ),
+      child: json['child'] is Map<String, dynamic>
+    ? ChildModel.fromJson(
+        json['child'] as Map<String, dynamic>,
+      )
+    : null,
       assignedDate: _parseDateTime(json['assigned_date']) ?? DateTime.now(),
     );
   }

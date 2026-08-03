@@ -11,7 +11,6 @@ import '../../../core/widgets/screen_background.dart';
 import '../../../models/child_model.dart';
 import '../../../models/task_assignment_model.dart';
 import '../../../services/task_api_service.dart';
-import '../services/child_api_service.dart';
 
 class TaskReviewScreen extends StatefulWidget {
   final bool isArabic;
@@ -30,7 +29,6 @@ class _ReviewTask {
 }
 
 class _TaskReviewScreenState extends State<TaskReviewScreen> {
-  final ChildApiService _childApiService = ChildApiService();
   final TaskApiService _taskApiService = TaskApiService();
 
   List<_ReviewTask> pendingTasks = [];
@@ -58,30 +56,19 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
     });
 
     try {
-      final children = await _childApiService.getChildren();
+      final assignments =
+    await _taskApiService.getPendingReviewAssignments();
 
-      final assignmentsByChild = await Future.wait(
-        children.map((child) async {
-          final assignments = await _taskApiService.getAssignmentsForChild(
-            child.id,
-          );
-
-          return MapEntry(child, assignments);
-        }),
-      );
-
-      final reviewTasks = <_ReviewTask>[];
-
-      for (final entry in assignmentsByChild) {
-        final child = entry.key;
-        final assignments = entry.value;
-
-        for (final assignment in assignments) {
-          if (assignment.needsParentApproval) {
-            reviewTasks.add(_ReviewTask(child: child, assignment: assignment));
-          }
-        }
-      }
+final reviewTasks = assignments
+    .where((assignment) => assignment.child != null)
+    .map(
+      (assignment) => _ReviewTask(
+        child: assignment.child!,
+        assignment: assignment,
+      ),
+    )
+    .toList();
+      
 
       reviewTasks.sort((first, second) {
         final firstDate = first.assignment.completedAt;

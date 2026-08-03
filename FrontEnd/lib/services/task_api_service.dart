@@ -90,6 +90,16 @@ class TaskApiService {
     return _convertAssignments(response.data);
   }
 
+  Future<List<TaskAssignmentModel>>
+getPendingReviewAssignments() async {
+  final response =
+      await _apiService.getPendingReviewAssignments();
+
+  return _convertAssignments(response.data);
+}
+
+
+
   Future<void> completeAssignment(String assignmentId) async {
     await _apiService.completeAssignment(assignmentId);
   }

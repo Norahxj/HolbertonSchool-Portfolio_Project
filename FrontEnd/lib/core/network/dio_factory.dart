@@ -26,7 +26,7 @@ class DioFactory {
       return dio!;
     }
 
-    const timeout = Duration(minutes: 1);
+    const timeout = Duration(seconds: 25);
 
     dio = Dio(
       BaseOptions(
