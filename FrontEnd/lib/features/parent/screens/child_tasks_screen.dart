@@ -394,75 +394,127 @@ class _UpcomingTaskCard extends StatelessWidget {
     return '$weekday$separator ${date.day} $month ${date.year}';
   }
 
+  TaskAssignmentModel get _displayAssignment {
+    return TaskAssignmentModel(
+      id: '',
+      status: 'PENDING',
+      assignedDate: item.nextDate,
+      task: AssignmentTask(
+        id: item.task.id,
+        title: item.task.title,
+        description: item.task.description,
+        points: item.task.points,
+        taskFrequency: item.task.taskFrequency,
+        recurrenceDay: item.task.recurrenceDay,
+        category: item.task.category,
+        isAutoVerified: item.task.isAutoVerified,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.card,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.32)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(13),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChildTaskDetailsScreen(
+                assignment: _displayAssignment,
+                icon: Icons.event_available_outlined,
+                isArabic: isArabic,
+                parentView: true,
+              ),
             ),
-            child: const Icon(
-              Icons.event_available_outlined,
-              color: AppColors.primaryDark,
-              size: 21,
+          );
+        },
+        child: Ink(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.32),
             ),
           ),
-
-          const SizedBox(width: AppSpacing.md),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.task.title,
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(13),
                 ),
+                child: const Icon(
+                  Icons.event_available_outlined,
+                  color: AppColors.primaryDark,
+                  size: 21,
+                ),
+              ),
 
-                const SizedBox(height: 6),
+              const SizedBox(width: AppSpacing.md),
 
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        isArabic ? 'قادمة' : 'Upcoming',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryDark,
-                        ),
+                    Text(
+                      item.task.title,
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
                     ),
 
+                    const SizedBox(height: 6),
+
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryLight,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            isArabic ? 'قادمة' : 'Upcoming',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryDark,
+                            ),
+                          ),
+                        ),
+
+                        Text(
+                          _frequencyLabel,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+
                     Text(
-                      _frequencyLabel,
+                      isArabic
+                          ? 'الموعد القادم: $_formattedDate'
+                          : 'Next date: $_formattedDate',
+                      textAlign: TextAlign.start,
                       style: const TextStyle(
                         fontSize: 11,
                         color: AppColors.textSecondary,
@@ -470,48 +522,39 @@ class _UpcomingTaskCard extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
 
-                const SizedBox(height: 6),
+              const SizedBox(width: AppSpacing.sm),
 
-                Text(
-                  isArabic
-                      ? 'الموعد القادم: $_formattedDate'
-                      : 'Next date: $_formattedDate',
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textSecondary,
-                  ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.goldLight,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: AppSpacing.sm),
-
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.goldLight,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.auto_awesome, size: 13, color: AppColors.gold),
-                const SizedBox(width: 4),
-                Text(
-                  '${item.task.points}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.auto_awesome,
+                      size: 13,
+                      color: AppColors.gold,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${item.task.points}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
