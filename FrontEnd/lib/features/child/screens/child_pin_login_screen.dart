@@ -193,10 +193,11 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
         // يخفي كتابة TextField الحقيقية ويبقي المربعات ظاهرة.
         style: const TextStyle(
           color: Colors.transparent,
-          fontSize: 1,
+          fontSize: 18,
+           height: 1.2,
         ),
         cursorColor: Colors.transparent,
-        showCursor: false,
+       showCursor: true,
 
         autocorrect: false,
         enableSuggestions: false,
