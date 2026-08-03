@@ -9,14 +9,10 @@ import '../../../core/widgets/screen_background.dart';
 class FamilySettingsScreen extends StatefulWidget {
   final bool isArabic;
 
-  const FamilySettingsScreen({
-    super.key,
-    required this.isArabic,
-  });
+  const FamilySettingsScreen({super.key, required this.isArabic});
 
   @override
-  State<FamilySettingsScreen> createState() =>
-      _FamilySettingsScreenState();
+  State<FamilySettingsScreen> createState() => _FamilySettingsScreenState();
 }
 
 class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
@@ -24,10 +20,8 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
 
   bool get isArabic => widget.isArabic;
 
-  final TextEditingController familyNameController =
-      TextEditingController();
-  final TextEditingController inviteEmailController =
-      TextEditingController();
+  final TextEditingController familyNameController = TextEditingController();
+  final TextEditingController inviteEmailController = TextEditingController();
 
   bool isLoading = true;
   bool isSavingFamilyName = false;
@@ -54,25 +48,41 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
     super.dispose();
   }
 
+  String _displayFamilyName(String name) {
+    final trimmedName = name.trim();
 
-String _displayFamilyName(String name) {
-  final trimmedName = name.trim();
+    if (!isArabic) {
+      return trimmedName;
+    }
 
-  if (!isArabic) {
-    return trimmedName;
+    final lowerCaseName = trimmedName.toLowerCase();
+
+    if (lowerCaseName.endsWith(' family')) {
+      final nameWithoutFamily = trimmedName
+          .substring(0, trimmedName.length - ' family'.length)
+          .trim();
+
+      final cleanName = _removeEnglishPossessive(nameWithoutFamily);
+
+      return 'عائلة $cleanName';
+    }
+
+    if (trimmedName.startsWith('عائلة ')) {
+      final familyOwnerName = trimmedName.substring('عائلة '.length).trim();
+
+      final cleanName = _removeEnglishPossessive(familyOwnerName);
+
+      return 'عائلة $cleanName';
+    }
+
+    return _removeEnglishPossessive(trimmedName);
   }
 
-  if (trimmedName.toLowerCase().endsWith(' family')) {
-    final nameWithoutFamily = trimmedName.substring(
-      0,
-      trimmedName.length - ' family'.length,
-    ).trim();
-
-    return 'عائلة $nameWithoutFamily';
+  String _removeEnglishPossessive(String name) {
+    return name
+        .replaceFirst(RegExp(r"['’]s$", caseSensitive: false), '')
+        .trim();
   }
-
-  return trimmedName;
-}
 
   Future<void> _loadFamilyData() async {
     if (mounted) {
@@ -94,31 +104,24 @@ String _displayFamilyName(String name) {
           results[1] as List<Map<String, dynamic>>;
 
       final loadedGuardians = (familyData['guardians'] as List? ?? [])
-          .map(
-            (item) => Map<String, dynamic>.from(item as Map),
-          )
+          .map((item) => Map<String, dynamic>.from(item as Map))
           .toList();
 
       final loadedSentInvitations =
           (familyData['pending_invitations'] as List? ?? [])
-              .map(
-                (item) => Map<String, dynamic>.from(item as Map),
-              )
+              .map((item) => Map<String, dynamic>.from(item as Map))
               .toList();
 
       if (!mounted) return;
 
-      final loadedFamilyName =
-    familyData['name']?.toString() ?? '';
+      final loadedFamilyName = familyData['name']?.toString() ?? '';
 
-setState(() {
-  originalFamilyName = loadedFamilyName;
+      setState(() {
+        originalFamilyName = loadedFamilyName;
 
-  familyNameController.text =
-      _displayFamilyName(loadedFamilyName);
+        familyNameController.text = _displayFamilyName(loadedFamilyName);
 
-  currentUserId =
-      familyData['current_user_id']?.toString();
+        currentUserId = familyData['current_user_id']?.toString();
 
         guardians = loadedGuardians;
         sentInvitations = loadedSentInvitations;
@@ -152,10 +155,7 @@ setState(() {
     } catch (error) {
       if (!mounted) return;
 
-      _showMessage(
-        familyApiService.readErrorMessage(error),
-        isError: true,
-      );
+      _showMessage(familyApiService.readErrorMessage(error), isError: true);
     }
   }
 
@@ -165,32 +165,24 @@ setState(() {
 
       if (!mounted) return;
 
-      _showMessage(
-        isArabic ? 'تم رفض الدعوة' : 'Invitation rejected',
-        isError: true,
-      );
+      _showMessage(isArabic ? 'تم رفض الدعوة' : 'Invitation rejected');
 
       await _loadFamilyData();
     } catch (error) {
       if (!mounted) return;
 
-      _showMessage(
-        familyApiService.readErrorMessage(error),
-        isError: true,
-      );
+      _showMessage(familyApiService.readErrorMessage(error), isError: true);
     }
   }
 
   Future<void> _saveFamilyName() async {
-    final displayedName =
-    familyNameController.text.trim();
+    final displayedName = familyNameController.text.trim();
 
-final originalDisplayedName =
-    _displayFamilyName(originalFamilyName);
+    final originalDisplayedName = _displayFamilyName(originalFamilyName);
 
-final name = displayedName == originalDisplayedName
-    ? originalFamilyName
-    : displayedName;
+    final name = displayedName == originalDisplayedName
+        ? originalFamilyName
+        : displayedName;
 
     if (name.length < 2) {
       _showMessage(
@@ -211,18 +203,13 @@ final name = displayedName == originalDisplayedName
 
       if (!mounted) return;
 
-      _showMessage(
-        isArabic ? 'تم تحديث اسم العائلة' : 'Family name updated',
-      );
+      _showMessage(isArabic ? 'تم تحديث اسم العائلة' : 'Family name updated');
 
       await _loadFamilyData();
     } catch (error) {
       if (!mounted) return;
 
-      _showMessage(
-        familyApiService.readErrorMessage(error),
-        isError: true,
-      );
+      _showMessage(familyApiService.readErrorMessage(error), isError: true);
     } finally {
       if (mounted) {
         setState(() {
@@ -233,8 +220,7 @@ final name = displayedName == originalDisplayedName
   }
 
   Future<void> _sendInvitation() async {
-    final email =
-        inviteEmailController.text.trim().toLowerCase();
+    final email = inviteEmailController.text.trim().toLowerCase();
 
     if (email.isEmpty || !email.contains('@')) {
       _showMessage(
@@ -258,19 +244,14 @@ final name = displayedName == originalDisplayedName
       if (!mounted) return;
 
       _showMessage(
-        isArabic
-            ? 'تم إرسال الدعوة بنجاح'
-            : 'Invitation sent successfully',
+        isArabic ? 'تم إرسال الدعوة بنجاح' : 'Invitation sent successfully',
       );
 
       await _loadFamilyData();
     } catch (error) {
       if (!mounted) return;
 
-      _showMessage(
-        familyApiService.readErrorMessage(error),
-        isError: true,
-      );
+      _showMessage(familyApiService.readErrorMessage(error), isError: true);
     } finally {
       if (mounted) {
         setState(() {
@@ -280,15 +261,11 @@ final name = displayedName == originalDisplayedName
     }
   }
 
-  void _showMessage(
-    String message, {
-    bool isError = false,
-  }) {
+  void _showMessage(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor:
-            isError ? AppColors.error : AppColors.success,
+        backgroundColor: isError ? Colors.red : AppColors.success,
       ),
     );
   }
@@ -311,11 +288,7 @@ final name = displayedName == originalDisplayedName
     if (isLoading) {
       return const Scaffold(
         body: ScreenBackground(
-          child: SafeArea(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
+          child: SafeArea(child: Center(child: CircularProgressIndicator())),
         ),
       );
     }
@@ -347,9 +320,7 @@ final name = displayedName == originalDisplayedName
                     const SizedBox(height: AppSpacing.md),
                     ElevatedButton(
                       onPressed: _loadFamilyData,
-                      child: Text(
-                        isArabic ? 'إعادة المحاولة' : 'Try again',
-                      ),
+                      child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
                     ),
                   ],
                 ),
@@ -366,26 +337,20 @@ final name = displayedName == originalDisplayedName
           child: RefreshIndicator(
             onRefresh: _loadFamilyData,
             child: SingleChildScrollView(
-              physics:
-                  const AlwaysScrollableScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppPageHeader(
                     isArabic: isArabic,
-  title: isArabic
-      ? 'إعدادات العائلة'
-      : 'Family Settings',
-  onBack: () {
-    Navigator.pop(context);
-  },
-),
-                  const SizedBox(height: AppSpacing.xl),
-                  _FieldLabel(
-                    isArabic ? 'اسم العائلة' : 'Family Name',
+                    title: isArabic ? 'إعدادات العائلة' : 'Family Settings',
+                    onBack: () {
+                      Navigator.pop(context);
+                    },
                   ),
+                  const SizedBox(height: AppSpacing.xl),
+                  _FieldLabel(isArabic ? 'اسم العائلة' : 'Family Name'),
                   const SizedBox(height: AppSpacing.sm),
                   Container(
                     height: 56,
@@ -394,27 +359,20 @@ final name = displayedName == originalDisplayedName
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.inputBackground,
-                      borderRadius:
-                          BorderRadius.circular(18),
-                      border: Border.all(
-                        color: AppColors.border,
-                      ),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: Row(
                       children: [
                         const Icon(
                           Icons.edit_outlined,
                           size: 16,
-                          color:
-                              AppColors.textSecondary,
+                          color: AppColors.textSecondary,
                         ),
-                        const SizedBox(
-                          width: AppSpacing.sm,
-                        ),
+                        const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: TextField(
-                            controller:
-                                familyNameController,
+                            controller: familyNameController,
                             textAlign: isArabic
                                 ? TextAlign.right
                                 : TextAlign.left,
@@ -422,26 +380,20 @@ final name = displayedName == originalDisplayedName
                                 ? TextDirection.rtl
                                 : TextDirection.ltr,
                             style: const TextStyle(
-                              color:
-                                  AppColors.textPrimary,
+                              color: AppColors.textPrimary,
                             ),
-                            decoration:
-                                const InputDecoration(
+                            decoration: const InputDecoration(
                               border: InputBorder.none,
                               isDense: true,
-                              contentPadding:
-                                  EdgeInsets.zero,
+                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          width: AppSpacing.sm,
-                        ),
+                        const SizedBox(width: AppSpacing.sm),
                         const Icon(
                           Icons.home_outlined,
                           size: 18,
-                          color:
-                              AppColors.textSecondary,
+                          color: AppColors.textSecondary,
                         ),
                       ],
                     ),
@@ -450,109 +402,63 @@ final name = displayedName == originalDisplayedName
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TextButton.icon(
-                      onPressed: isSavingFamilyName
-                          ? null
-                          : _saveFamilyName,
+                      onPressed: isSavingFamilyName ? null : _saveFamilyName,
                       icon: isSavingFamilyName
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child:
-                                  CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Icon(
-                              Icons.save_outlined,
-                            ),
+                          : const Icon(Icons.save_outlined),
                       label: Text(
                         isSavingFamilyName
-                            ? (isArabic
-                                ? 'جارٍ الحفظ...'
-                                : 'Saving...')
-                            : (isArabic
-                                ? 'حفظ الاسم'
-                                : 'Save Name'),
+                            ? (isArabic ? 'جارٍ الحفظ...' : 'Saving...')
+                            : (isArabic ? 'حفظ الاسم' : 'Save Name'),
                       ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  _FieldLabel(
-                    isArabic
-                        ? 'أولياء الأمور'
-                        : 'Guardians',
-                  ),
+                  _FieldLabel(isArabic ? 'أولياء الأمور' : 'Guardians'),
                   const SizedBox(height: AppSpacing.sm),
                   if (guardians.isEmpty)
                     Container(
-                      padding: const EdgeInsets.all(
-                        AppSpacing.md,
-                      ),
+                      padding: const EdgeInsets.all(AppSpacing.md),
                       decoration: BoxDecoration(
                         color: AppColors.card,
-                        borderRadius:
-                            BorderRadius.circular(20),
-                        border: Border.all(
-                          color: AppColors.border,
-                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Text(
-                        isArabic
-                            ? 'لا يوجد أولياء أمور'
-                            : 'No guardians',
+                        isArabic ? 'لا يوجد أولياء أمور' : 'No guardians',
                         textAlign: TextAlign.center,
                       ),
                     )
                   else
                     ...guardians.map((guardian) {
-                      final guardianId =
-                          guardian['id']?.toString();
+                      final guardianId = guardian['id']?.toString();
 
-                      final isCurrentUser =
-                          guardianId == currentUserId;
+                      final isCurrentUser = guardianId == currentUserId;
 
                       final firstName =
-                          guardian['first_name']
-                                  ?.toString() ??
-                              '';
+                          guardian['first_name']?.toString() ?? '';
 
-                      final lastName =
-                          guardian['last_name']
-                                  ?.toString() ??
-                              '';
+                      final lastName = guardian['last_name']?.toString() ?? '';
 
                       final guardianType =
-                          guardian['guardian_type']
-                                  ?.toString() ??
-                              '';
+                          guardian['guardian_type']?.toString() ?? '';
 
                       return Padding(
-                        padding:
-                            const EdgeInsets.only(
-                          bottom: AppSpacing.sm,
-                        ),
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: _GuardianCard(
-                          name:
-                              '$firstName $lastName'
-                                  .trim(),
-                          subtitle: _guardianTypeLabel(
-  guardianType,
-),
-                          subtitleColor:
-                              isCurrentUser
-                                  ? const Color(
-                                      0xFFC08A3E,
-                                    )
-                                  : AppColors
-                                      .textSecondary,
-                          avatarColor:
-                              AppColors.primaryLight,
-                          iconColor:
-                              AppColors.primary,
+                          name: '$firstName $lastName'.trim(),
+                          subtitle: _guardianTypeLabel(guardianType),
+                          subtitleColor: isCurrentUser
+                              ? const Color(0xFFC08A3E)
+                              : AppColors.textSecondary,
+                          avatarColor: AppColors.primaryLight,
+                          iconColor: AppColors.primary,
                           tag: isCurrentUser
-                              ? _CurrentUserTag(
-                                  isArabic: isArabic,
-                                )
+                              ? _CurrentUserTag(isArabic: isArabic)
                               : const _VerifiedTag(),
                         ),
                       );
@@ -573,134 +479,93 @@ final name = displayedName == originalDisplayedName
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   Container(
-                    padding: const EdgeInsets.all(
-                      AppSpacing.md,
-                    ),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
                       color: AppColors.primaryLight,
-                      borderRadius:
-                          BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(24),
                     ),
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.stretch,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Row(
                           children: [
                             const Icon(
                               Icons.group_outlined,
-                              color:
-                                  AppColors.primaryDark,
+                              color: AppColors.primaryDark,
                               size: 20,
                             ),
-                            const SizedBox(
-                              width: AppSpacing.sm,
-                            ),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: Text(
                                 isArabic
                                     ? 'دعوة ولي أمر آخر'
                                     : 'Invite Another Guardian',
-                                textAlign:
-                                    TextAlign.right,
+                                textAlign: TextAlign.right,
                                 style: const TextStyle(
                                   fontSize: 15,
-                                  fontWeight:
-                                      FontWeight.bold,
-                                  color: AppColors
-                                      .textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: AppSpacing.md,
-                        ),
+                        const SizedBox(height: AppSpacing.md),
                         Container(
                           height: 56,
-                          padding:
-                              const EdgeInsets.symmetric(
-                            horizontal:
-                                AppSpacing.md,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors
-                                .inputBackground,
-                            borderRadius:
-                                BorderRadius.circular(
-                              18,
-                            ),
+                            color: AppColors.inputBackground,
+                            borderRadius: BorderRadius.circular(18),
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: TextField(
-                                  controller:
-                                      inviteEmailController,
-                                  keyboardType:
-                                      TextInputType
-                                          .emailAddress,
+                                  controller: inviteEmailController,
+                                  keyboardType: TextInputType.emailAddress,
                                   textAlign: isArabic
                                       ? TextAlign.right
                                       : TextAlign.left,
-                                  textDirection:
-                                      isArabic
-                                          ? TextDirection.rtl
-                                          : TextDirection.ltr,
-                                  decoration:
-                                      InputDecoration(
+                                  textDirection: isArabic
+                                      ? TextDirection.rtl
+                                      : TextDirection.ltr,
+                                  decoration: InputDecoration(
                                     hintText: isArabic
                                         ? 'البريد الإلكتروني لولي الأمر'
                                         : 'Guardian email address',
-                                    border:
-                                        InputBorder.none,
+                                    border: InputBorder.none,
                                     isDense: true,
-                                    contentPadding:
-                                        EdgeInsets.zero,
+                                    contentPadding: EdgeInsets.zero,
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: AppSpacing.sm,
-                              ),
+                              const SizedBox(width: AppSpacing.sm),
                               const Icon(
                                 Icons.mail_outline,
                                 size: 18,
-                                color: AppColors
-                                    .textSecondary,
+                                color: AppColors.textSecondary,
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: AppSpacing.md,
-                        ),
+                        const SizedBox(height: AppSpacing.md),
                         AppButton(
                           text: isSendingInvitation
-                              ? (isArabic
-                                  ? 'جارٍ الإرسال...'
-                                  : 'Sending...')
-                              : (isArabic
-                                  ? 'إرسال دعوة'
-                                  : 'Send Invitation'),
-                          onPressed:
-                              isSendingInvitation
-                                  ? () {}
-                                  : _sendInvitation,
-                          gradient:
-                              const LinearGradient(
-                            begin:
-                                Alignment.topLeft,
-                            end:
-                                Alignment.bottomRight,
-                            colors: AppColors
-                                .primaryGradient,
+                              ? (isArabic ? 'جارٍ الإرسال...' : 'Sending...')
+                              : (isArabic ? 'إرسال دعوة' : 'Send Invitation'),
+                          onPressed: isSendingInvitation
+                              ? () {}
+                              : _sendInvitation,
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: AppColors.primaryGradient,
                           ),
                         ),
-                        const SizedBox(
-                          height: AppSpacing.sm,
-                        ),
+                        const SizedBox(height: AppSpacing.sm),
                         Text(
                           isArabic
                               ? 'يجب أن يكون لدى ولي الأمر حساب مسجل مسبقًا، وستظهر الدعوة داخل حسابه'
@@ -708,8 +573,7 @@ final name = displayedName == originalDisplayedName
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: AppColors
-                                .textSecondary,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -725,7 +589,6 @@ final name = displayedName == originalDisplayedName
     );
   }
 }
-
 
 class _FieldLabel extends StatelessWidget {
   final String text;
@@ -775,21 +638,16 @@ class _GuardianCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
           tag,
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
@@ -797,17 +655,13 @@ class _GuardianCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color:
-                          AppColors.textPrimary,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: subtitleColor,
-                    ),
+                    style: TextStyle(fontSize: 12, color: subtitleColor),
                   ),
                 ],
               ),
@@ -820,11 +674,7 @@ class _GuardianCard extends StatelessWidget {
               color: avatarColor,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.person,
-              color: iconColor,
-              size: 20,
-            ),
+            child: Icon(Icons.person, color: iconColor, size: 20),
           ),
         ],
       ),
@@ -835,17 +685,12 @@ class _GuardianCard extends StatelessWidget {
 class _CurrentUserTag extends StatelessWidget {
   final bool isArabic;
 
-  const _CurrentUserTag({
-    required this.isArabic,
-  });
+  const _CurrentUserTag({required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: const Color(0xFFDDF0E1),
         borderRadius: BorderRadius.circular(16),
@@ -874,17 +719,12 @@ class _VerifiedTag extends StatelessWidget {
         color: AppColors.success,
         shape: BoxShape.circle,
       ),
-      child: const Icon(
-        Icons.check,
-        color: Colors.white,
-        size: 16,
-      ),
+      child: const Icon(Icons.check, color: Colors.white, size: 16),
     );
   }
 }
 
-class _PendingInvitationsSection
-    extends StatelessWidget {
+class _PendingInvitationsSection extends StatelessWidget {
   final List<Map<String, dynamic>> invitations;
   final bool isArabic;
 
@@ -896,26 +736,19 @@ class _PendingInvitationsSection
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _FieldLabel(
-          isArabic
-              ? 'الدعوات المرسلة المعلّقة'
-              : 'Pending Sent Invitations',
+          isArabic ? 'الدعوات المرسلة المعلّقة' : 'Pending Sent Invitations',
         ),
         const SizedBox(height: AppSpacing.sm),
         if (invitations.isEmpty)
           Container(
-            padding:
-                const EdgeInsets.all(AppSpacing.md),
+            padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.card,
-              borderRadius:
-                  BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.border,
-              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.border),
             ),
             child: Column(
               children: [
@@ -938,8 +771,7 @@ class _PendingInvitationsSection
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 12,
-                    color:
-                        AppColors.textSecondary,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -948,46 +780,27 @@ class _PendingInvitationsSection
         else
           ...invitations.map(
             (invitation) => Container(
-              margin: const EdgeInsets.only(
-                bottom: AppSpacing.sm,
-              ),
-              padding: const EdgeInsets.all(
-                AppSpacing.md,
-              ),
+              margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+              padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: AppColors.card,
-                borderRadius:
-                    BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.border,
-                ),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.schedule,
-                    color:
-                        AppColors.textSecondary,
-                  ),
-                  const SizedBox(
-                    width: AppSpacing.sm,
-                  ),
+                  const Icon(Icons.schedule, color: AppColors.textSecondary),
+                  const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          invitation[
-                                      'invited_email']
-                                  ?.toString() ??
-                              '',
+                          invitation['invited_email']?.toString() ?? '',
                           textAlign: TextAlign.right,
                           style: const TextStyle(
-                            fontWeight:
-                                FontWeight.bold,
-                            color:
-                                AppColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -998,8 +811,7 @@ class _PendingInvitationsSection
                           textAlign: TextAlign.right,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: AppColors
-                                .textSecondary,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -1032,11 +844,7 @@ class _IncomingInvitationsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _FieldLabel(
-          isArabic
-              ? 'الدعوات الواردة'
-              : 'Incoming Invitations',
-        ),
+        _FieldLabel(isArabic ? 'الدعوات الواردة' : 'Incoming Invitations'),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -1046,9 +854,7 @@ class _IncomingInvitationsSection extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.card,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.border,
-              ),
+              border: Border.all(color: AppColors.border),
             ),
             child: Column(
               children: [
@@ -1079,29 +885,22 @@ class _IncomingInvitationsSection extends StatelessWidget {
           )
         else
           ...invitations.map((invitation) {
-            final invitationId =
-                invitation['id']?.toString() ?? '';
+            final invitationId = invitation['id']?.toString() ?? '';
 
             final familyName =
                 invitation['family_name']?.toString() ??
-                    (isArabic ? 'العائلة' : 'the family');
+                (isArabic ? 'العائلة' : 'the family');
 
-            final invitedByName =
-                invitation['invited_by_name']?.toString();
-            final invitedByEmail =
-                invitation['invited_by_email']?.toString();
+            final invitedByName = invitation['invited_by_name']?.toString();
+            final invitedByEmail = invitation['invited_by_email']?.toString();
 
             return Container(
-              margin: const EdgeInsets.only(
-                bottom: AppSpacing.sm,
-              ),
+              margin: const EdgeInsets.only(bottom: AppSpacing.sm),
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.border,
-                ),
+                border: Border.all(color: AppColors.border),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1116,8 +915,7 @@ class _IncomingInvitationsSection extends StatelessWidget {
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
                               isArabic
@@ -1172,9 +970,7 @@ class _IncomingInvitationsSection extends StatelessWidget {
                           onPressed: invitationId.isEmpty
                               ? null
                               : () => onReject(invitationId),
-                          child: Text(
-                            isArabic ? 'رفض' : 'Reject',
-                          ),
+                          child: Text(isArabic ? 'رفض' : 'Reject'),
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -1183,9 +979,7 @@ class _IncomingInvitationsSection extends StatelessWidget {
                           onPressed: invitationId.isEmpty
                               ? null
                               : () => onAccept(invitationId),
-                          child: Text(
-                            isArabic ? 'قبول' : 'Accept',
-                          ),
+                          child: Text(isArabic ? 'قبول' : 'Accept'),
                         ),
                       ),
                     ],
