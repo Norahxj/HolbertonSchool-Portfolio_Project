@@ -756,9 +756,9 @@ class _AchievedWishCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0FAF4),
+        color: const Color(0xFFF7F2FF),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFB9E5C9)),
+        border: Border.all(color: const Color(0xFFD8C6FF)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -777,7 +777,7 @@ class _AchievedWishCard extends StatelessWidget {
             children: [
               _StatusTag(
                 label: isArabic ? 'تم تحقيقها' : 'Achieved',
-                backgroundColor: AppColors.success,
+                backgroundColor: AppColors.primaryDark,
                 textColor: Colors.white,
               ),
 
@@ -816,12 +816,12 @@ class _AchievedWishCard extends StatelessWidget {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDDF4E5),
+                    color: const Color(0xFFEADFFF),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.emoji_events_rounded,
-                    color: AppColors.success,
+                    color: AppColors.primaryDark,
                     size: 21,
                   ),
                 ),
@@ -857,7 +857,7 @@ class _AchievedWishCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.success,
+                      color: AppColors.primaryDark,
                     ),
                   ),
                 ],
