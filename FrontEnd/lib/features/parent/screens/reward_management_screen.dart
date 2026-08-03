@@ -50,23 +50,28 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   final Set<String> deletingRewardIds = {};
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    Future.wait([_loadChildren(), _loadRewardSuggestions()]);
-  }
+  Future.wait([
+    _loadChildren(),
+    _loadRewardSuggestions(),
+  ]);
+}
 
   @override
   void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (oldWidget.childrenVersion != widget.childrenVersion) {
-      _loadChildren();
-    }
+  _loadChildren();
+}
 
     if (oldWidget.isArabic != widget.isArabic) {
       rewardSuggestions = [];
-      _loadRewardSuggestions();
+
+      if (selectedChildId != null) {
+        _loadRewardSuggestions();
+      }
     }
   }
 
@@ -117,8 +122,8 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   }
 
   Future<void> _loadSelectedChildData() async {
-    await _loadCurrentRewards();
-  }
+  await _loadCurrentRewards();
+}
 
   Future<void> _selectChild(String childId) async {
     if (selectedChildId == childId) {
@@ -175,40 +180,41 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   }
 
   Future<void> _loadRewardSuggestions() async {
+  setState(() {
+    isLoadingSuggestions = true;
+    suggestionsError = null;
+  });
+
+  try {
+    final suggestions =
+        await _rewardApiService.getRewardSuggestions(
+      lang: isArabic ? 'ar' : 'en',
+      count: 5,
+    );
+
+    if (!mounted) return;
+
     setState(() {
-      isLoadingSuggestions = true;
-      suggestionsError = null;
+      rewardSuggestions = suggestions;
     });
+  } on DioException catch (error) {
+    if (!mounted) return;
 
-    try {
-      final suggestions = await _rewardApiService.getRewardSuggestions(
-        lang: isArabic ? 'ar' : 'en',
-        count: 5,
-      );
-
-      if (!mounted) return;
-
+    setState(() {
+      suggestionsError =
+          _readBackendMessage(error) ??
+          (isArabic
+              ? 'تعذّر تحميل المكافآت المقترحة'
+              : 'Failed to load suggested rewards');
+    });
+  } finally {
+    if (mounted) {
       setState(() {
-        rewardSuggestions = suggestions;
+        isLoadingSuggestions = false;
       });
-    } on DioException catch (error) {
-      if (!mounted) return;
-
-      setState(() {
-        suggestionsError =
-            _readBackendMessage(error) ??
-            (isArabic
-                ? 'تعذّر تحميل المكافآت المقترحة'
-                : 'Failed to load suggested rewards');
-      });
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoadingSuggestions = false;
-        });
-      }
     }
   }
+}
 
   Future<void> _openAddReward({RewardSuggestionModel? suggestion}) async {
     final childId = selectedChildId;
@@ -291,57 +297,68 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
     }
 
     final rewardIndex = currentRewards.indexWhere(
-      (item) => item.id == reward.id,
-    );
+  (item) => item.id == reward.id,
+);
 
-    setState(() {
-      deletingRewardIds.add(reward.id);
-      currentRewards.removeWhere((item) => item.id == reward.id);
-    });
+setState(() {
+  deletingRewardIds.add(reward.id);
+  currentRewards.removeWhere((item) => item.id == reward.id);
+});
 
-    try {
-      await _rewardApiService.deleteReward(reward.id);
+try {
+  await _rewardApiService.deleteReward(reward.id);
 
-      if (!mounted) return;
+  if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(isArabic ? 'تم حذف المكافأة' : 'Reward deleted'),
-        ),
-      );
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        isArabic
+            ? 'تم حذف المكافأة'
+            : 'Reward deleted',
+      ),
+    ),
+  );
     } on DioException catch (error) {
-      if (!mounted) return;
+  if (!mounted) return;
 
-      setState(() {
-        final safeIndex = rewardIndex.clamp(0, currentRewards.length);
+  setState(() {
+    final safeIndex = rewardIndex.clamp(
+      0,
+      currentRewards.length,
+    ).toInt();
 
-        currentRewards.insert(safeIndex, reward);
-      });
+    currentRewards.insert(safeIndex, reward);
+  });
 
-      final statusCode = error.response?.statusCode;
+  final statusCode = error.response?.statusCode;
+  final backendMessage = _readBackendMessage(error);
 
-      final backendMessage = _readBackendMessage(error);
+  String message;
 
-      String message;
+  if (statusCode == 404) {
+    message = isArabic
+        ? 'لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.'
+        : 'You cannot delete this reward. Only the parent who added it can delete it.';
+  } else if (backendMessage
+          ?.toLowerCase()
+          .contains('claimed') ==
+      true) {
+    message = isArabic
+        ? 'لا يمكن حذف المكافأة بعد استلامها.'
+        : 'A claimed reward cannot be deleted.';
+  } else {
+    message = isArabic
+        ? 'تعذّر حذف المكافأة. حاول مرة أخرى.'
+        : 'Failed to delete the reward. Please try again.';
+  }
 
-      if (statusCode == 404) {
-        message = isArabic
-            ? 'لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.'
-            : 'You cannot delete this reward. Only the parent who added it can delete it.';
-      } else if (backendMessage?.toLowerCase().contains('claimed') == true) {
-        message = isArabic
-            ? 'لا يمكن حذف المكافأة بعد استلامها.'
-            : 'A claimed reward cannot be deleted.';
-      } else {
-        message = isArabic
-            ? 'تعذّر حذف المكافأة. حاول مرة أخرى.'
-            : 'Failed to delete the reward. Please try again.';
-      }
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message)),
+  );
+}
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
-    } finally {
+   finally {
       if (mounted) {
         setState(() {
           deletingRewardIds.remove(reward.id);
@@ -596,137 +613,119 @@ class _CurrentRewardCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      clipBehavior: Clip.antiAlias,
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
-        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
         children: [
-          Container(
-            width: 92,
-            constraints: const BoxConstraints(minHeight: 132),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: AppColors.primaryGradient,
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
+          if (onDelete != null)
+            IconButton(
+              onPressed: isDeleting ? null : onDelete,
+              icon: isDeleting
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.delete_outline, color: AppColors.error),
             ),
-            child: const Center(
-              child: Icon(
-                Icons.card_giftcard_rounded,
-                color: Colors.white,
-                size: 34,
-              ),
-            ),
-          ),
 
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.md,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+            child: Column(
+              crossAxisAlignment: isArabic
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  reward.rewardName,
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  textDirection: isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                if (reward.description != null &&
+                    reward.description!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 4),
+
                   Text(
-                    reward.rewardName,
-                    textAlign: TextAlign.center,
+                    reward.description!,
+                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
                     textDirection: isArabic
                         ? TextDirection.rtl
                         : TextDirection.ltr,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-
-                  if (reward.description != null &&
-                      reward.description!.trim().isNotEmpty) ...[
-                    const SizedBox(height: 4),
-
-                    Text(
-                      reward.description!,
-                      textAlign: TextAlign.center,
-                      textDirection: isArabic
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: 8),
-
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(statusIcon, size: 17, color: AppColors.primary),
-
-                      const SizedBox(width: 5),
-
-                      Text(
-                        statusLabel,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.primaryDark,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 5),
-
-                  Text(
-                    isArabic
-                        ? 'ينالها طفلك يوم ${reward.unlockDayLabel}'
-                        : 'Your child receives it on ${reward.unlockDayLabel}',
-                    textAlign: TextAlign.center,
-                    textDirection: isArabic
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
-                    style: const TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
                   ),
                 ],
-              ),
+
+                const SizedBox(height: 6),
+
+                Row(
+                  mainAxisAlignment: isArabic
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      statusLabel,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.primaryDark,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(width: 4),
+
+                    Icon(statusIcon, size: 17, color: AppColors.primary),
+                  ],
+                ),
+
+                const SizedBox(height: 3),
+
+                Text(
+                  isArabic
+                      ? 'تفتح يوم ${reward.unlockDayLabel}'
+                      : 'Unlocks on ${reward.unlockDayLabel}',
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  textDirection: isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
             ),
           ),
 
-          SizedBox(
-            width: 52,
-            child: onDelete == null
-                ? const SizedBox.shrink()
-                : Center(
-                    child: IconButton(
-                      tooltip: isArabic ? 'حذف المكافأة' : 'Delete reward',
-                      onPressed: isDeleting ? null : onDelete,
-                      icon: isDeleting
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(
-                              Icons.delete_outline,
-                              color: AppColors.error,
-                            ),
-                    ),
-                  ),
+          const SizedBox(width: AppSpacing.md),
+
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(
+              Icons.card_giftcard_outlined,
+              color: AppColors.primary,
+            ),
           ),
         ],
       ),
