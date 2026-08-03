@@ -206,4 +206,9 @@ class TaskAssignmentService:
         if not success:
             return None, "update_failed"
         return assignment, None
-        
+
+    def get_pending_review_assignments_for_parent(self, parent_id):
+        return (
+        self.task_assignment_repository
+        .get_pending_review_assignments_for_parent(parent_id)
+        )

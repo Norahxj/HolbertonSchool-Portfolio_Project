@@ -550,7 +550,6 @@ class _ReviewTaskCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                flex: 2,
                 child: ElevatedButton.icon(
                   onPressed: isUpdating ? null : onApprove,
                   icon: isApproving

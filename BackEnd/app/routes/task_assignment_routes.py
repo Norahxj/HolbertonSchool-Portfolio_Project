@@ -189,3 +189,23 @@ class RejectAssignmentResource(Resource):
         if error:
             return {"error": "Failed to reject assignment"}, 500
         return parent_assignment_response_schema.dump(assignment), 200
+
+@api.route("/pending-review")
+class PendingReviewAssignmentsResource(Resource):
+
+    @jwt_required()
+    @api.response(200, "Pending review assignments retrieved successfully")
+    @api.response(403, "Parent access required")
+    def get(self):
+        user_id = get_jwt_identity()
+        claims = get_jwt()
+
+        if claims.get("role") != "parent":
+            return {"error": "Parent access required"}, 403
+
+        assignments = (
+            assignment_service
+            .get_pending_review_assignments_for_parent(user_id)
+        )
+
+        return parent_assignments_response_schema.dump(assignments), 200

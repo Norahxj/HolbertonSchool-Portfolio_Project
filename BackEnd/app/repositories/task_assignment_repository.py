@@ -123,3 +123,19 @@ class TaskAssignmentRepository:
         .order_by(TaskAssignment.approved_at.desc())
         .all()
         )
+
+    def get_pending_review_assignments_for_parent(self, parent_id):
+        return (
+        TaskAssignment.query
+        .join(TaskAssignment.task)
+        .options(
+            joinedload(TaskAssignment.task),
+            joinedload(TaskAssignment.child),
+            )
+        .filter(
+            Task.created_by == parent_id,
+            TaskAssignment.status == "PENDING_REVIEW",
+            )
+            .order_by(TaskAssignment.completed_at.desc())
+            .all()
+        )
