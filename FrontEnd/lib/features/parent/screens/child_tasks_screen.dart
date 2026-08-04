@@ -63,6 +63,83 @@ class _ChildTasksView extends StatefulWidget {
 
 class _ChildTasksViewState extends State<_ChildTasksView> {
   ChildTaskFilter selectedFilter = ChildTaskFilter.all;
+  Future<void> _confirmDeleteTask({
+  required String taskId,
+  required String taskTitle,
+}) async {
+  final shouldDelete = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: Text(
+          widget.isArabic ? 'حذف المهمة؟' : 'Delete task?',
+        ),
+        content: Text(
+          widget.isArabic
+              ? 'هل أنتِ متأكدة من حذف مهمة "$taskTitle"؟ لا يمكن التراجع عن هذا الإجراء.'
+              : 'Are you sure you want to delete "$taskTitle"? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext, false);
+            },
+            child: Text(
+              widget.isArabic ? 'إلغاء' : 'Cancel',
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext, true);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.error,
+            ),
+            child: Text(
+              widget.isArabic ? 'حذف' : 'Delete',
+            ),
+          ),
+        ],
+      );
+    },
+  );
+
+  if (shouldDelete != true || !mounted) {
+    return;
+  }
+
+  final controller = context.read<ParentChildDetailsController>();
+
+  final errorMessage = await controller.deleteTask(taskId);
+
+  if (!mounted) {
+    return;
+  }
+
+  if (errorMessage != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          widget.isArabic
+              ? 'تعذر حذف المهمة. حاولي مرة أخرى.'
+              : errorMessage,
+        ),
+      ),
+    );
+
+    return;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        widget.isArabic
+            ? 'تم حذف المهمة بنجاح'
+            : 'Task deleted successfully',
+      ),
+    ),
+  );
+}
 
   List<TaskAssignmentModel> _filteredTasks(List<TaskAssignmentModel> tasks) {
     switch (selectedFilter) {
@@ -147,13 +224,22 @@ class _ChildTasksViewState extends State<_ChildTasksView> {
                     const SizedBox(height: AppSpacing.md),
 
                     _TasksSection(
-                      controller: controller,
-                      childId: widget.childId,
-                      isArabic: widget.isArabic,
-                      tasks: filteredTasks,
-                      upcomingTasks: filteredUpcomingTasks,
-                      selectedFilter: selectedFilter,
-                    ),
+  controller: controller,
+  childId: widget.childId,
+  isArabic: widget.isArabic,
+  tasks: filteredTasks,
+  upcomingTasks: filteredUpcomingTasks,
+  selectedFilter: selectedFilter,
+  onDeleteTask: ({
+    required String taskId,
+    required String taskTitle,
+  }) {
+    return _confirmDeleteTask(
+      taskId: taskId,
+      taskTitle: taskTitle,
+    );
+  },
+),
                   ],
                 ),
               ),
@@ -175,6 +261,8 @@ class _TaskFilterBar extends StatelessWidget {
     required this.isArabic,
     required this.onSelected,
   });
+
+  
 
   String _label(ChildTaskFilter filter) {
     switch (filter) {
@@ -252,14 +340,20 @@ class _TasksSection extends StatelessWidget {
   final List<UpcomingTaskItem> upcomingTasks;
   final ChildTaskFilter selectedFilter;
 
+  final Future<void> Function({
+  required String taskId,
+  required String taskTitle,
+}) onDeleteTask;
+
   const _TasksSection({
-    required this.controller,
-    required this.childId,
-    required this.isArabic,
-    required this.tasks,
-    required this.upcomingTasks,
-    required this.selectedFilter,
-  });
+  required this.controller,
+  required this.childId,
+  required this.isArabic,
+  required this.tasks,
+  required this.upcomingTasks,
+  required this.selectedFilter,
+  required this.onDeleteTask,
+});
 
   @override
   Widget build(BuildContext context) {
@@ -295,13 +389,37 @@ class _TasksSection extends StatelessWidget {
         for (final upcomingTask in upcomingTasks)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: _UpcomingTaskCard(item: upcomingTask, isArabic: isArabic),
+            child: _UpcomingTaskCard(
+  item: upcomingTask,
+  isArabic: isArabic,
+  canDelete: controller.canDeleteTask(
+    upcomingTask.task.id,
+  ),
+  onDelete: () {
+    return onDeleteTask(
+      taskId: upcomingTask.task.id,
+      taskTitle: upcomingTask.task.title,
+    );
+  },
+),
           ),
 
         for (final assignment in tasks)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: _ChildTaskCard(assignment: assignment, isArabic: isArabic),
+            child: _ChildTaskCard(
+  assignment: assignment,
+  isArabic: isArabic,
+  canDelete: controller.canDeleteTask(
+    assignment.task.id,
+  ),
+  onDelete: () {
+    return onDeleteTask(
+      taskId: assignment.task.id,
+      taskTitle: assignment.task.title,
+    );
+  },
+),
           ),
       ],
     );
@@ -311,9 +429,15 @@ class _TasksSection extends StatelessWidget {
 class _UpcomingTaskCard extends StatelessWidget {
   final UpcomingTaskItem item;
   final bool isArabic;
+  final bool canDelete;
+final Future<void> Function() onDelete;
 
-  const _UpcomingTaskCard({required this.item, required this.isArabic});
-
+const _UpcomingTaskCard({
+  required this.item,
+  required this.isArabic,
+  required this.canDelete,
+  required this.onDelete,
+});
   String get _frequencyLabel {
     final frequency = item.task.taskFrequency.toUpperCase();
 
@@ -525,6 +649,19 @@ class _UpcomingTaskCard extends StatelessWidget {
               ),
 
               const SizedBox(width: AppSpacing.sm),
+              if (canDelete) ...[
+  IconButton(
+    onPressed: onDelete,
+    tooltip: isArabic ? 'حذف المهمة' : 'Delete task',
+    icon: const Icon(
+      Icons.delete_outline_rounded,
+      color: AppColors.error,
+      size: 21,
+    ),
+  ),
+
+  const SizedBox(width: 2),
+],
 
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
@@ -563,8 +700,15 @@ class _UpcomingTaskCard extends StatelessWidget {
 class _ChildTaskCard extends StatelessWidget {
   final TaskAssignmentModel assignment;
   final bool isArabic;
+  final bool canDelete;
+  final Future<void> Function() onDelete;
 
-  const _ChildTaskCard({required this.assignment, required this.isArabic});
+  const _ChildTaskCard({
+    required this.assignment,
+    required this.isArabic,
+    required this.canDelete,
+    required this.onDelete,
+  });
 
   String get _statusLabel {
     if (assignment.needsParentApproval) {
@@ -702,8 +846,24 @@ class _ChildTaskCard extends StatelessWidget {
 
               const SizedBox(width: AppSpacing.sm),
 
+              if (canDelete)
+                IconButton(
+                  onPressed: () async {
+                    await onDelete();
+                  },
+                  tooltip: isArabic ? 'حذف المهمة' : 'Delete task',
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: AppColors.error,
+                    size: 21,
+                  ),
+                ),
+
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 9,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.goldLight,
                   borderRadius: BorderRadius.circular(14),
@@ -735,7 +895,6 @@ class _ChildTaskCard extends StatelessWidget {
     );
   }
 }
-
 class _FilteredTasksEmptyState extends StatelessWidget {
   final bool isArabic;
   final ChildTaskFilter selectedFilter;

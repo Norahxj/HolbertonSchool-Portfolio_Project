@@ -14,8 +14,11 @@ class ParentChildTasksData {
   final List<TaskAssignmentModel> assignments;
   final List<UpcomingTaskItem> upcomingTasks;
 
+  final Set<String> deletableTaskIds;
+
   const ParentChildTasksData({
     required this.assignments,
     required this.upcomingTasks,
+    required this.deletableTaskIds,
   });
 }

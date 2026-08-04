@@ -32,6 +32,10 @@ class TaskApiService {
     return response.data;
   }
 
+  Future<void> deleteTask(String taskId) async {
+  await _apiService.deleteTask(taskId);
+}
+
   Future<List<TaskModel>> getTasksByChild(String childId) async {
     final response = await _apiService.getTasksByChild(childId);
 

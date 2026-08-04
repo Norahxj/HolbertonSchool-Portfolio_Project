@@ -65,6 +65,11 @@ abstract class ApiService {
     @Body() Map<String, dynamic> body,
   );
 
+  @DELETE('/tasks/{taskId}')
+Future<HttpResponse<dynamic>> deleteTask(
+  @Path('taskId') String taskId,
+);
+
   @GET('/tasks/child/{childId}')
   Future<HttpResponse<List<TaskModel>>> getTasksByChild(
     @Path('childId') String childId,
