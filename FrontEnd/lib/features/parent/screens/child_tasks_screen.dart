@@ -75,10 +75,10 @@ class _ChildTasksViewState extends State<_ChildTasksView> {
           widget.isArabic ? 'حذف المهمة؟' : 'Delete task?',
         ),
         content: Text(
-          widget.isArabic
-              ? 'هل أنتِ متأكدة من حذف مهمة "$taskTitle"؟ لا يمكن التراجع عن هذا الإجراء.'
-              : 'Are you sure you want to delete "$taskTitle"? This action cannot be undone.',
-        ),
+  widget.isArabic
+      ? 'سيتم حذف مهمة "$taskTitle" نهائيًا، ولا يمكن التراجع عن هذا الإجراء.'
+      : 'The task "$taskTitle" will be permanently deleted. This action cannot be undone.',
+),
         actions: [
           TextButton(
             onPressed: () {
@@ -117,18 +117,22 @@ class _ChildTasksViewState extends State<_ChildTasksView> {
   }
 
   if (errorMessage != null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          widget.isArabic
-              ? 'تعذر حذف المهمة. حاولي مرة أخرى.'
-              : errorMessage,
-        ),
-      ),
-    );
+  final message = errorMessage == 'You can only delete tasks you created.'
+      ? widget.isArabic
+          ? 'لا يمكنك حذف هذه المهمة لأنها أُنشئت بواسطة ولي أمر آخر.'
+          : 'You cannot delete this task because it was created by another parent.'
+      : widget.isArabic
+          ? 'تعذر حذف المهمة. حاولي مرة أخرى.'
+          : errorMessage;
 
-    return;
-  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+    ),
+  );
+
+  return;
+}
 
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
