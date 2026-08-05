@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/child_avatar.dart';
-import '../../models/parent_dashboard_data.dart';
+import '../models/parent_dashboard_data.dart';
 
 class DashboardChildCard extends StatelessWidget {
   final ParentDashboardChildItem item;

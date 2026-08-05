@@ -1,6 +1,6 @@
-import '../../../models/child_dashboard_model.dart';
-import '../../../models/child_model.dart';
-import '../../../models/user_model.dart';
+import '../../../../models/child_dashboard_model.dart';
+import '../../../../models/child_model.dart';
+import '../../../../models/user_model.dart';
 
 /// Combines one child with their dashboard statistics and points.
 class ParentDashboardChildItem {

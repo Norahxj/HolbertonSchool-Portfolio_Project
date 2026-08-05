@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/parent_child_details_controller.dart';
-import '../../models/parent_dashboard_data.dart';
+import '../../dashboard/models/parent_dashboard_data.dart';
 import '../repositories/parent_child_details_repository.dart';
 import '../widgets/parent_child_details_view.dart';
 

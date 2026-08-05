@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/widgets/screen_background.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/widgets/screen_background.dart';
 import '../controllers/parent_dashboard_controller.dart';
 import '../models/parent_dashboard_data.dart';
 import '../repositories/parent_dashboard_repository.dart';
-import '../add_child/screens/add_child_screen.dart';
-import '../parent_child_details/screens/parent_child_details_screen.dart';
-import '../task_review/screens/task_review_screen.dart';
-import '../dashboard/widgets/welcome_banner.dart';
-import '../dashboard/widgets/children_section_header.dart';
-import '../dashboard/widgets/dashboard_child_card.dart';
-import '../dashboard/widgets/dashboard_states.dart';
+import '../../add_child/screens/add_child_screen.dart';
+import '../../parent_child_details/screens/parent_child_details_screen.dart';
+import '../../task_review/screens/task_review_screen.dart';
+import '../widgets/welcome_banner.dart';
+import '../widgets/children_section_header.dart';
+import '../widgets/dashboard_child_card.dart';
+import '../widgets/dashboard_states.dart';
 
 class ParentDashboardScreen extends StatelessWidget {
   final bool isArabic;
