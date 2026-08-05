@@ -36,8 +36,7 @@ class TaskScheduleStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Column(
       children: [
@@ -59,9 +58,7 @@ class TaskScheduleStep extends StatelessWidget {
               : 'The task is completed once a week',
           isSelected: selectedFrequency == 1,
           onTap: () => onFrequencyChanged(1),
-          child: selectedFrequency == 1
-              ? _buildWeeklyDays(isArabic)
-              : null,
+          child: selectedFrequency == 1 ? _buildWeeklyDays(isArabic) : null,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -73,9 +70,7 @@ class TaskScheduleStep extends StatelessWidget {
               : 'The task is completed once a month',
           isSelected: selectedFrequency == 2,
           onTap: () => onFrequencyChanged(2),
-          child: selectedFrequency == 2
-              ? _buildMonthlyDays(isArabic)
-              : null,
+          child: selectedFrequency == 2 ? _buildMonthlyDays(isArabic) : null,
         ),
 
         if (frequencyError != null) ...[
@@ -103,9 +98,7 @@ class TaskScheduleStep extends StatelessWidget {
         : selectedWeeklyDay;
 
     return SelectableOptions(
-      title: isArabic
-          ? 'اختر يوم الأسبوع'
-          : 'Select a day of the week',
+      title: isArabic ? 'اختر يوم الأسبوع' : 'Select a day of the week',
       options: displayedWeekDays,
       selected: displayedSelectedDay,
       onSelected: (selectedDay) {
@@ -120,9 +113,7 @@ class TaskScheduleStep extends StatelessWidget {
 
   Widget _buildMonthlyDays(bool isArabic) {
     return SelectableOptions(
-      title: isArabic
-          ? 'اختر تاريخ التكرار'
-          : 'Select the recurrence date',
+      title: isArabic ? 'اختر تاريخ التكرار' : 'Select the recurrence date',
       options: monthlyDays.map((day) => '$day').toList(),
       selected: '$selectedMonthlyDay',
       onSelected: (day) {

@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -10,8 +9,7 @@ class ParentDashboardController extends ChangeNotifier {
 
   ParentDashboardController(this._repository);
 
-  bool get isArabic =>
-      PlatformDispatcher.instance.locale.languageCode == 'ar';
+  bool get isArabic => PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   ParentDashboardData? _data;
 

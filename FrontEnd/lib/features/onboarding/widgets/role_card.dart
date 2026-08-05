@@ -55,13 +55,10 @@ class _RoleCardState extends State<RoleCard> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(28),
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 2,
-                  ),
+                  border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha:0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),
@@ -92,11 +89,7 @@ class _RoleCardState extends State<RoleCard> {
                                 widget.imagePath,
                                 fit: BoxFit.contain,
                                 alignment: Alignment.center,
-                                errorBuilder: (
-                                  context,
-                                  error,
-                                  stackTrace,
-                                ) {
+                                errorBuilder: (context, error, stackTrace) {
                                   return const Center(
                                     child: Icon(
                                       Icons.broken_image_outlined,
@@ -164,23 +157,23 @@ class _RoleCardState extends State<RoleCard> {
                                   BoxShadow(
                                     color: const Color(
                                       0xFF7047C7,
-                                    ).withValues(alpha:0.25),
+                                    ).withValues(alpha: 0.25),
                                     blurRadius: 10,
                                     offset: const Offset(0, 6),
                                   ),
                                 ],
                               ),
                               child: Directionality(
-  textDirection: TextDirection.ltr,
-  child: Transform.flip(
-    flipX: !widget.isArabic,
-    child: const Icon(
-      Icons.arrow_back_rounded,
-      color: Colors.white,
-      size: 27,
-    ),
-  ),
-),
+                                textDirection: TextDirection.ltr,
+                                child: Transform.flip(
+                                  flipX: !widget.isArabic,
+                                  child: const Icon(
+                                    Icons.arrow_back_rounded,
+                                    color: Colors.white,
+                                    size: 27,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -194,7 +187,7 @@ class _RoleCardState extends State<RoleCard> {
                         curve: Curves.easeOut,
                         decoration: BoxDecoration(
                           color: _isHovered
-                              ? Colors.black.withValues(alpha:0.055)
+                              ? Colors.black.withValues(alpha: 0.055)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(28),
                         ),

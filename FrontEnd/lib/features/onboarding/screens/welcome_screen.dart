@@ -30,8 +30,9 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 Align(
-                  alignment:
-                      isArabic ? Alignment.centerLeft : Alignment.centerRight,
+                  alignment: isArabic
+                      ? Alignment.centerLeft
+                      : Alignment.centerRight,
                   child: LanguageToggle(
                     isArabic: isArabic,
                     onTap: onLanguageToggle,
@@ -191,10 +192,7 @@ class _SoftPill extends StatelessWidget {
   final double width;
   final double height;
 
-  const _SoftPill({
-    required this.width,
-    required this.height,
-  });
+  const _SoftPill({required this.width, required this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +200,7 @@ class _SoftPill extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha:0.6),
+        color: Colors.white.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(height / 2),
       ),
     );

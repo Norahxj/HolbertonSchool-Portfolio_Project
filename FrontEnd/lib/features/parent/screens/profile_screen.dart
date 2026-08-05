@@ -11,10 +11,7 @@ import '../../../services/user_api_service.dart';
 class ProfileScreen extends StatefulWidget {
   final bool isArabic;
 
-  const ProfileScreen({
-    super.key,
-    required this.isArabic,
-  });
+  const ProfileScreen({super.key, required this.isArabic});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -153,9 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (phone.isEmpty) {
       _showMessage(
-        isArabic
-            ? 'يرجى إدخال رقم الجوال.'
-            : 'Please enter a phone number.',
+        isArabic ? 'يرجى إدخال رقم الجوال.' : 'Please enter a phone number.',
       );
       return;
     }
@@ -174,9 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             isArabic
@@ -193,9 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       _showMessage(
         _readBackendMessage(error) ??
-            (isArabic
-                ? 'تعذّر حفظ التغييرات.'
-                : 'Unable to save changes.'),
+            (isArabic ? 'تعذّر حفظ التغييرات.' : 'Unable to save changes.'),
       );
 
       debugPrint(
@@ -297,11 +288,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       AppPageHeader(
                         isArabic: isArabic,
-  title: isArabic ? 'الملف الشخصي' : 'Profile',
-  onBack: () {
-    Navigator.pop(context);
-  },
-),
+                        title: isArabic ? 'الملف الشخصي' : 'Profile',
+                        onBack: () {
+                          Navigator.pop(context);
+                        },
+                      ),
 
                       const SizedBox(height: AppSpacing.xl),
 
@@ -323,9 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.xl),
 
-                      _FieldLabel(
-                        isArabic ? 'الاسم الأول' : 'First Name',
-                      ),
+                      _FieldLabel(isArabic ? 'الاسم الأول' : 'First Name'),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -337,9 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      _FieldLabel(
-                        isArabic ? 'اسم العائلة' : 'Last Name',
-                      ),
+                      _FieldLabel(isArabic ? 'اسم العائلة' : 'Last Name'),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -351,9 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      _FieldLabel(
-                        isArabic ? 'البريد الإلكتروني' : 'Email',
-                      ),
+                      _FieldLabel(isArabic ? 'البريد الإلكتروني' : 'Email'),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -366,9 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      _FieldLabel(
-                        isArabic ? 'رقم الجوال' : 'Phone Number',
-                      ),
+                      _FieldLabel(isArabic ? 'رقم الجوال' : 'Phone Number'),
 
                       const SizedBox(height: AppSpacing.sm),
 
@@ -444,7 +427,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
 
 class _FieldLabel extends StatelessWidget {
   final String text;

@@ -25,8 +25,8 @@ class ParentChildDetailsController extends ChangeNotifier {
   List<UpcomingTaskItem> get upcomingTasks => _upcomingTasks;
 
   bool canDeleteTask(String taskId) {
-  return _deletableTaskIds.contains(taskId);
-}
+    return _deletableTaskIds.contains(taskId);
+  }
 
   bool get isLoading => _isLoading;
 
@@ -95,40 +95,40 @@ class ParentChildDetailsController extends ChangeNotifier {
     }
   }
 
+  Future<String?> deleteTask(String taskId) async {
+    final childId = _childId;
 
-Future<String?> deleteTask(String taskId) async {
-  final childId = _childId;
+    if (childId == null) {
+      return 'Could not identify the child.';
+    }
 
-  if (childId == null) {
-    return 'Could not identify the child.';
+    // حماية إضافية في الفرونت.
+    if (!_deletableTaskIds.contains(taskId)) {
+      return 'You can only delete tasks you created.';
+    }
+
+    try {
+      await _repository.deleteTask(taskId);
+
+      final data = await _repository.getChildTasksData(childId);
+
+      _tasks = data.assignments;
+      _upcomingTasks = data.upcomingTasks;
+      _deletableTaskIds = data.deletableTaskIds;
+      _errorMessage = null;
+
+      notifyListeners();
+
+      return null;
+    } on DioException catch (error) {
+      return _readBackendMessage(error) ?? 'Could not delete the task.';
+    } catch (error) {
+      debugPrint('Deleting task failed: $error');
+
+      return 'Could not delete the task.';
+    }
   }
 
-  // حماية إضافية في الفرونت.
-  if (!_deletableTaskIds.contains(taskId)) {
-    return 'You can only delete tasks you created.';
-  }
-
-  try {
-    await _repository.deleteTask(taskId);
-
-    final data = await _repository.getChildTasksData(childId);
-
-    _tasks = data.assignments;
-    _upcomingTasks = data.upcomingTasks;
-    _deletableTaskIds = data.deletableTaskIds;
-    _errorMessage = null;
-
-    notifyListeners();
-
-    return null;
-  } on DioException catch (error) {
-    return _readBackendMessage(error) ?? 'Could not delete the task.';
-  } catch (error) {
-    debugPrint('Deleting task failed: $error');
-
-    return 'Could not delete the task.';
-  }
-}
   String? _readBackendMessage(DioException error) {
     final responseData = error.response?.data;
 

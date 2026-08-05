@@ -54,9 +54,7 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AppNavigationController(
-        initialIndex: widget.initialIndex,
-      ),
+      create: (_) => AppNavigationController(initialIndex: widget.initialIndex),
       child: _ParentNavigationView(
         isArabic: _isArabic,
         onLanguageToggle: _toggleLanguage,
@@ -64,6 +62,7 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
     );
   }
 }
+
 class _ParentNavigationView extends StatelessWidget {
   final bool isArabic;
   final VoidCallback onLanguageToggle;
@@ -119,33 +118,31 @@ class _ParentNavigationView extends StatelessWidget {
       // Tasks tab:
       // Restore the original Add Task flow.
       navigation.isLoaded(0)
-          ?AddTaskScreen(
-  resetVersion: navigation.reselectionVersionFor(0),
-  childrenVersion: navigation.childrenVersion,
-  isArabic: isArabic,
-  onLanguageToggle: onLanguageToggle,
-)
+          ? AddTaskScreen(
+              resetVersion: navigation.reselectionVersionFor(0),
+              childrenVersion: navigation.childrenVersion,
+              isArabic: isArabic,
+              onLanguageToggle: onLanguageToggle,
+            )
           : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
-    ? RewardManagementScreen(
-  isArabic: isArabic,
-  childrenVersion: navigation.childrenVersion,
-)
-    : const SizedBox.shrink(),
+          ? RewardManagementScreen(
+              isArabic: isArabic,
+              childrenVersion: navigation.childrenVersion,
+            )
+          : const SizedBox.shrink(),
 
       navigation.isLoaded(2)
           ? ParentDashboardScreen(
-  isArabic: isArabic,
-  onChildrenChanged: navigation.notifyChildrenChanged,
-)
+              isArabic: isArabic,
+              onChildrenChanged: navigation.notifyChildrenChanged,
+            )
           : const SizedBox.shrink(),
 
       navigation.isLoaded(3)
-    ? WishlistApprovalScreen(
-        isArabic: isArabic,
-      )
-    : const SizedBox.shrink(),
+          ? WishlistApprovalScreen(isArabic: isArabic)
+          : const SizedBox.shrink(),
 
       navigation.isLoaded(4)
           ? MoreSettingsScreen(

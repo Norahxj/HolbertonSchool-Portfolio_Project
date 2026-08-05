@@ -21,8 +21,7 @@ class _AsalahAppState extends State<AsalahApp> {
   ///
   /// We use it when the refresh token expires so that we can close
   /// any opened screens and return the user to the welcome screen.
-  final GlobalKey<NavigatorState> _navigatorKey =
-      GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   bool _isLoading = true;
   bool _isLoggedIn = false;
@@ -85,9 +84,7 @@ class _AsalahAppState extends State<AsalahApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      _navigatorKey.currentState?.popUntil(
-        (route) => route.isFirst,
-      );
+      _navigatorKey.currentState?.popUntil((route) => route.isFirst);
     });
   }
 
@@ -142,8 +139,7 @@ class _AsalahAppState extends State<AsalahApp> {
         }
 
         final directionWrapped = Directionality(
-          textDirection:
-              isArabic ? TextDirection.rtl : TextDirection.ltr,
+          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
           child: child,
         );
 
@@ -184,11 +180,7 @@ class _AsalahAppState extends State<AsalahApp> {
   /// or when the authentication state changes.
   Widget _buildHomeScreen() {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (!_isLoggedIn) {
@@ -199,10 +191,7 @@ class _AsalahAppState extends State<AsalahApp> {
     }
 
     if (_isChild) {
-      return ChildNav(
-        isArabic: isArabic,
-        onLanguageToggle: _toggleLanguage,
-      );
+      return ChildNav(isArabic: isArabic, onLanguageToggle: _toggleLanguage);
     }
 
     return ParentMainScreen(

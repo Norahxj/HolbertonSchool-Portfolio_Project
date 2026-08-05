@@ -18,9 +18,7 @@ class AppBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arabic =
-        isArabic ??
-        Directionality.of(context) == TextDirection.rtl;
+    final arabic = isArabic ?? Directionality.of(context) == TextDirection.rtl;
 
     return Material(
       color: backgroundColor,
@@ -32,10 +30,8 @@ class AppBackButton extends StatelessWidget {
           width: 44,
           height: 44,
           child: Icon(
-            arabic
-                ? Icons.arrow_forward_rounded
-                : Icons.arrow_back_rounded,
-                textDirection: TextDirection.ltr,
+            arabic ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+            textDirection: TextDirection.ltr,
             size: 18,
             color: iconColor,
           ),

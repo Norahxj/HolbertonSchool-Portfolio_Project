@@ -50,21 +50,18 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   final Set<String> deletingRewardIds = {};
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  Future.wait([
-    _loadChildren(),
-    _loadRewardSuggestions(),
-  ]);
-}
+    Future.wait([_loadChildren(), _loadRewardSuggestions()]);
+  }
 
   @override
   void didUpdateWidget(covariant RewardManagementScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.childrenVersion != widget.childrenVersion) {
-  _loadChildren();
-}
+      _loadChildren();
+    }
 
     if (oldWidget.isArabic != widget.isArabic) {
       rewardSuggestions = [];
@@ -122,8 +119,8 @@ void initState() {
   }
 
   Future<void> _loadSelectedChildData() async {
-  await _loadCurrentRewards();
-}
+    await _loadCurrentRewards();
+  }
 
   Future<void> _selectChild(String childId) async {
     if (selectedChildId == childId) {
@@ -180,41 +177,40 @@ void initState() {
   }
 
   Future<void> _loadRewardSuggestions() async {
-  setState(() {
-    isLoadingSuggestions = true;
-    suggestionsError = null;
-  });
-
-  try {
-    final suggestions =
-        await _rewardApiService.getRewardSuggestions(
-      lang: isArabic ? 'ar' : 'en',
-      count: 5,
-    );
-
-    if (!mounted) return;
-
     setState(() {
-      rewardSuggestions = suggestions;
+      isLoadingSuggestions = true;
+      suggestionsError = null;
     });
-  } on DioException catch (error) {
-    if (!mounted) return;
 
-    setState(() {
-      suggestionsError =
-          _readBackendMessage(error) ??
-          (isArabic
-              ? 'تعذّر تحميل المكافآت المقترحة'
-              : 'Failed to load suggested rewards');
-    });
-  } finally {
-    if (mounted) {
+    try {
+      final suggestions = await _rewardApiService.getRewardSuggestions(
+        lang: isArabic ? 'ar' : 'en',
+        count: 5,
+      );
+
+      if (!mounted) return;
+
       setState(() {
-        isLoadingSuggestions = false;
+        rewardSuggestions = suggestions;
       });
+    } on DioException catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        suggestionsError =
+            _readBackendMessage(error) ??
+            (isArabic
+                ? 'تعذّر تحميل المكافآت المقترحة'
+                : 'Failed to load suggested rewards');
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingSuggestions = false;
+        });
+      }
     }
   }
-}
 
   Future<void> _openAddReward({RewardSuggestionModel? suggestion}) async {
     final childId = selectedChildId;
@@ -297,68 +293,56 @@ void initState() {
     }
 
     final rewardIndex = currentRewards.indexWhere(
-  (item) => item.id == reward.id,
-);
+      (item) => item.id == reward.id,
+    );
 
-setState(() {
-  deletingRewardIds.add(reward.id);
-  currentRewards.removeWhere((item) => item.id == reward.id);
-});
+    setState(() {
+      deletingRewardIds.add(reward.id);
+      currentRewards.removeWhere((item) => item.id == reward.id);
+    });
 
-try {
-  await _rewardApiService.deleteReward(reward.id);
+    try {
+      await _rewardApiService.deleteReward(reward.id);
 
-  if (!mounted) return;
+      if (!mounted) return;
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        isArabic
-            ? 'تم حذف المكافأة'
-            : 'Reward deleted',
-      ),
-    ),
-  );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic ? 'تم حذف المكافأة' : 'Reward deleted'),
+        ),
+      );
     } on DioException catch (error) {
-  if (!mounted) return;
+      if (!mounted) return;
 
-  setState(() {
-    final safeIndex = rewardIndex.clamp(
-      0,
-      currentRewards.length,
-    ).toInt();
+      setState(() {
+        final safeIndex = rewardIndex.clamp(0, currentRewards.length).toInt();
 
-    currentRewards.insert(safeIndex, reward);
-  });
+        currentRewards.insert(safeIndex, reward);
+      });
 
-  final statusCode = error.response?.statusCode;
-  final backendMessage = _readBackendMessage(error);
+      final statusCode = error.response?.statusCode;
+      final backendMessage = _readBackendMessage(error);
 
-  String message;
+      String message;
 
-  if (statusCode == 404) {
-    message = isArabic
-        ? 'لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.'
-        : 'You cannot delete this reward. Only the parent who added it can delete it.';
-  } else if (backendMessage
-          ?.toLowerCase()
-          .contains('claimed') ==
-      true) {
-    message = isArabic
-        ? 'لا يمكن حذف المكافأة بعد استلامها.'
-        : 'A claimed reward cannot be deleted.';
-  } else {
-    message = isArabic
-        ? 'تعذّر حذف المكافأة. حاول مرة أخرى.'
-        : 'Failed to delete the reward. Please try again.';
-  }
+      if (statusCode == 404) {
+        message = isArabic
+            ? 'لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.'
+            : 'You cannot delete this reward. Only the parent who added it can delete it.';
+      } else if (backendMessage?.toLowerCase().contains('claimed') == true) {
+        message = isArabic
+            ? 'لا يمكن حذف المكافأة بعد استلامها.'
+            : 'A claimed reward cannot be deleted.';
+      } else {
+        message = isArabic
+            ? 'تعذّر حذف المكافأة. حاول مرة أخرى.'
+            : 'Failed to delete the reward. Please try again.';
+      }
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message)),
-  );
-}
-
-   finally {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } finally {
       if (mounted) {
         setState(() {
           deletingRewardIds.remove(reward.id);

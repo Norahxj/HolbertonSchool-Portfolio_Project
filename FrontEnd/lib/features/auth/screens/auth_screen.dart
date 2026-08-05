@@ -233,36 +233,36 @@ class _AuthScreenState extends State<AuthScreen> {
       if (!mounted) return;
 
       if (response.response.statusCode == 200 ||
-    response.response.statusCode == 201) {
-  firstNameController.clear();
-  familyNameController.clear();
-  registerEmailController.clear();
-  phoneController.clear();
-  registerPasswordController.clear();
-  confirmPasswordController.clear();
+          response.response.statusCode == 201) {
+        firstNameController.clear();
+        familyNameController.clear();
+        registerEmailController.clear();
+        phoneController.clear();
+        registerPasswordController.clear();
+        confirmPasswordController.clear();
 
-  if (!mounted) return;
+        if (!mounted) return;
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        _isArabic
-            ? 'تم إنشاء الحساب بنجاح'
-            : 'Account created successfully',
-      ),
-    ),
-  );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _isArabic
+                  ? 'تم إنشاء الحساب بنجاح'
+                  : 'Account created successfully',
+            ),
+          ),
+        );
 
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (_) => ParentMainScreen(
-        isArabic: _isArabic,
-        onLanguageToggle: widget.onLanguageToggle,
-      ),
-    ),
-  );
-}
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ParentMainScreen(
+              isArabic: _isArabic,
+              onLanguageToggle: widget.onLanguageToggle,
+            ),
+          ),
+        );
+      }
     } on DioException catch (error) {
       if (!mounted) return;
 
@@ -386,7 +386,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha:0.10),
+                        color: AppColors.primary.withValues(alpha: 0.10),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),

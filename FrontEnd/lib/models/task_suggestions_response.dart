@@ -3,9 +3,7 @@ import 'package:frontend/models/task_suggestion_model.dart';
 class TaskSuggestionsResponse {
   final List<TaskSuggestionModel> suggestions;
 
-  TaskSuggestionsResponse({
-    required this.suggestions,
-  });
+  TaskSuggestionsResponse({required this.suggestions});
 
   factory TaskSuggestionsResponse.fromJson(Map<String, dynamic> json) {
     return TaskSuggestionsResponse(
@@ -16,8 +14,6 @@ class TaskSuggestionsResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'suggestions': suggestions.map((e) => e.toJson()).toList(),
-    };
+    return {'suggestions': suggestions.map((e) => e.toJson()).toList()};
   }
 }

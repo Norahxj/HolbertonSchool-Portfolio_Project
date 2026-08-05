@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_spacing.dart';
@@ -22,10 +21,7 @@ class TaskTypeStep extends StatelessWidget {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     final types = [
-      (
-        Icons.mosque_outlined,
-        isArabic ? 'المهام الثقافية' : 'Cultural Tasks',
-      ),
+      (Icons.mosque_outlined, isArabic ? 'المهام الثقافية' : 'Cultural Tasks'),
       (
         Icons.shopping_bag_outlined,
         isArabic ? 'المهام اليومية' : 'Daily Tasks',
@@ -34,10 +30,7 @@ class TaskTypeStep extends StatelessWidget {
         Icons.menu_book_outlined,
         isArabic ? 'المهام الدينية' : 'Religious Tasks',
       ),
-      (
-        Icons.credit_card,
-        isArabic ? 'المهام المالية' : 'Financial Tasks',
-      ),
+      (Icons.credit_card, isArabic ? 'المهام المالية' : 'Financial Tasks'),
     ];
 
     return Column(
@@ -46,8 +39,7 @@ class TaskTypeStep extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: types.length,
-          gridDelegate:
-              const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: AppSpacing.md,
             mainAxisSpacing: AppSpacing.md,

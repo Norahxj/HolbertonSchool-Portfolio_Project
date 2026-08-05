@@ -13,10 +13,7 @@ import '../../../core/widgets/app_text_field.dart';
 class AddChildScreen extends StatefulWidget {
   final bool isArabic;
 
-  const AddChildScreen({
-    super.key,
-    required this.isArabic,
-  });
+  const AddChildScreen({super.key, required this.isArabic});
 
   @override
   State<AddChildScreen> createState() => _AddChildScreenState();
@@ -24,11 +21,10 @@ class AddChildScreen extends StatefulWidget {
 
 class _AddChildScreenState extends State<AddChildScreen> {
   final ChildApiService childApiService = ChildApiService();
-  
 
   String tr(String arabic, String english) {
-  return widget.isArabic ? arabic : english;
-}
+    return widget.isArabic ? arabic : english;
+  }
 
   int selectedAvatarIndex = 0;
 
@@ -76,10 +72,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
   String get _dateLabel {
     if (selectedDate == null) {
-      return tr(
-        'تاريخ الميلاد',
-        'Date of birth',
-      );
+      return tr('تاريخ الميلاد', 'Date of birth');
     }
 
     final date = selectedDate!;
@@ -111,10 +104,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
     if (name.isEmpty) {
       setState(() {
-        nameError = tr(
-          'اسم الطفل مطلوب',
-          'Child name is required',
-        );
+        nameError = tr('اسم الطفل مطلوب', 'Child name is required');
       });
 
       return;
@@ -146,10 +136,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
 
     if (selectedDate == null) {
       setState(() {
-        birthDateError = tr(
-          'تاريخ الميلاد مطلوب',
-          'Date of birth is required',
-        );
+        birthDateError = tr('تاريخ الميلاد مطلوب', 'Date of birth is required');
       });
 
       return;
@@ -188,10 +175,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            tr(
-              'تمت إضافة الطفل بنجاح',
-              'Child added successfully',
-            ),
+            tr('تمت إضافة الطفل بنجاح', 'Child added successfully'),
           ),
         ),
       );
@@ -316,24 +300,21 @@ class _AddChildScreenState extends State<AddChildScreen> {
             child: Column(
               children: [
                 Align(
-  alignment: widget.isArabic
-      ? Alignment.centerRight
-      : Alignment.centerLeft,
-   child:AppBackButton(
-  isArabic: widget.isArabic,
-  onTap: () {
-    Navigator.pop(context);
-  },
-),
-),
+                  alignment: widget.isArabic
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: AppBackButton(
+                    isArabic: widget.isArabic,
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
 
                 const SizedBox(height: AppSpacing.lg),
 
                 Text(
-                  tr(
-                    'إضافة طفل',
-                    'Add Child',
-                  ),
+                  tr('إضافة طفل', 'Add Child'),
                   style: AppTextStyles.arabicTitle,
                   textAlign: TextAlign.center,
                 ),
@@ -352,10 +333,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 const SizedBox(height: AppSpacing.xl),
 
                 Text(
-                  tr(
-                    'اختر صورة رمزية',
-                    'Choose an avatar',
-                  ),
+                  tr('اختر صورة رمزية', 'Choose an avatar'),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -368,63 +346,57 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                   _AvatarOption(
-  imagePath: 'assets/avatars/avatar_boy_1v.jpg',
-  backgroundColor: const Color(0xFFD9F0DD),
-  isSelected: selectedAvatarIndex == 0,
-  onTap: () {
-    setState(() {
-      selectedAvatarIndex = 0;
-    });
-  },
-),
+                    _AvatarOption(
+                      imagePath: 'assets/avatars/avatar_boy_1v.jpg',
+                      backgroundColor: const Color(0xFFD9F0DD),
+                      isSelected: selectedAvatarIndex == 0,
+                      onTap: () {
+                        setState(() {
+                          selectedAvatarIndex = 0;
+                        });
+                      },
+                    ),
 
-_AvatarOption(
-  imagePath: 'assets/avatars/avatar_boy_2v.jpg',
-  backgroundColor: const Color(0xFFD7E9F7),
-  isSelected: selectedAvatarIndex == 1,
-  onTap: () {
-    setState(() {
-      selectedAvatarIndex = 1;
-    });
-  },
-),
+                    _AvatarOption(
+                      imagePath: 'assets/avatars/avatar_boy_2v.jpg',
+                      backgroundColor: const Color(0xFFD7E9F7),
+                      isSelected: selectedAvatarIndex == 1,
+                      onTap: () {
+                        setState(() {
+                          selectedAvatarIndex = 1;
+                        });
+                      },
+                    ),
 
-_AvatarOption(
-  imagePath: 'assets/avatars/avatar_girl_1v.jpg',
-  backgroundColor: AppColors.primaryLight,
-  isSelected: selectedAvatarIndex == 2,
-  onTap: () {
-    setState(() {
-      selectedAvatarIndex = 2;
-    });
-  },
-),
+                    _AvatarOption(
+                      imagePath: 'assets/avatars/avatar_girl_1v.jpg',
+                      backgroundColor: AppColors.primaryLight,
+                      isSelected: selectedAvatarIndex == 2,
+                      onTap: () {
+                        setState(() {
+                          selectedAvatarIndex = 2;
+                        });
+                      },
+                    ),
 
-_AvatarOption(
-  imagePath: 'assets/avatars/avatar_girl_2v.jpg',
-  backgroundColor: const Color(0xFFFBE3EA),
-  isSelected: selectedAvatarIndex == 3,
-  onTap: () {
-    setState(() {
-      selectedAvatarIndex = 3;
-    });
-  },
-),
+                    _AvatarOption(
+                      imagePath: 'assets/avatars/avatar_girl_2v.jpg',
+                      backgroundColor: const Color(0xFFFBE3EA),
+                      isSelected: selectedAvatarIndex == 3,
+                      onTap: () {
+                        setState(() {
+                          selectedAvatarIndex = 3;
+                        });
+                      },
+                    ),
                   ],
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
 
                 AppTextField(
-                  label: tr(
-                    'اسم الطفل',
-                    'Child name',
-                  ),
-                  hint: tr(
-                    'اسم الطفل',
-                    'Child name',
-                  ),
+                  label: tr('اسم الطفل', 'Child name'),
+                  hint: tr('اسم الطفل', 'Child name'),
                   icon: Icons.person_outline,
                   controller: nameController,
                   errorText: nameError,
@@ -448,8 +420,9 @@ _AvatarOption(
                           : Alignment.centerLeft,
                       child: Text(
                         birthDateError!,
-                        textAlign:
-                            widget.isArabic ? TextAlign.right : TextAlign.left,
+                        textAlign: widget.isArabic
+                            ? TextAlign.right
+                            : TextAlign.left,
                         style: const TextStyle(
                           color: AppColors.error,
                           fontSize: 12,
@@ -475,33 +448,21 @@ _AvatarOption(
                 const SizedBox(height: AppSpacing.md),
 
                 AppTextField(
-  label: tr(
-    'رقم الجوال (اختياري)',
-    'Phone number (optional)',
-  ),
-  hint: tr(
-    '05XXXXXXXX',
-    '05XXXXXXXX',
-  ),
-  icon: Icons.phone_outlined,
-  controller: phoneController,
-  keyboardType: TextInputType.phone,
-  errorText: phoneError,
-  isArabic: widget.isArabic,
-),
+                  label: tr('رقم الجوال (اختياري)', 'Phone number (optional)'),
+                  hint: tr('05XXXXXXXX', '05XXXXXXXX'),
+                  icon: Icons.phone_outlined,
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  errorText: phoneError,
+                  isArabic: widget.isArabic,
+                ),
 
                 const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
                   text: isLoading
-                      ? tr(
-                          'جاري الحفظ...',
-                          'Saving...',
-                        )
-                      : tr(
-                          'حفظ',
-                          'Save',
-                        ),
+                      ? tr('جاري الحفظ...', 'Saving...')
+                      : tr('حفظ', 'Save'),
                   onPressed: isLoading ? null : _saveChild,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
@@ -519,8 +480,6 @@ _AvatarOption(
     );
   }
 }
-
-
 
 class _AvatarOption extends StatelessWidget {
   final String imagePath;
@@ -547,14 +506,8 @@ class _AvatarOption extends StatelessWidget {
           color: backgroundColor,
           shape: BoxShape.circle,
           border: isSelected
-              ? Border.all(
-                  color: AppColors.primary,
-                  width: 3,
-                )
-              : Border.all(
-                  color: Colors.transparent,
-                  width: 3,
-                ),
+              ? Border.all(color: AppColors.primary, width: 3)
+              : Border.all(color: Colors.transparent, width: 3),
         ),
         child: ClipOval(
           child: Image.asset(

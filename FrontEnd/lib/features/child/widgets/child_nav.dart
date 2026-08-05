@@ -24,9 +24,9 @@ class ChildNav extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => AppNavigationController(initialIndex: 0),
       child: _ChildNavigationView(
-  isArabic: isArabic,
-  onLanguageToggle: onLanguageToggle,
-),
+        isArabic: isArabic,
+        onLanguageToggle: onLanguageToggle,
+      ),
     );
   }
 }
@@ -72,37 +72,30 @@ class _ChildNavigationView extends StatelessWidget {
   ];
 
   @override
-Widget build(BuildContext context) {
-  final navigation = context.watch<AppNavigationController>();
+  Widget build(BuildContext context) {
+    final navigation = context.watch<AppNavigationController>();
 
-  final currentIsArabic =
-      Directionality.of(context) == TextDirection.rtl;
+    final currentIsArabic = Directionality.of(context) == TextDirection.rtl;
 
-  final pages = <Widget>[
+    final pages = <Widget>[
       navigation.isLoaded(0)
-    ? ChildHomeScreen(
-  isArabic: currentIsArabic,
-  onLanguageToggle: onLanguageToggle,
-)
-    : const SizedBox.shrink(),
+          ? ChildHomeScreen(
+              isArabic: currentIsArabic,
+              onLanguageToggle: onLanguageToggle,
+            )
+          : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
-    ? ChildWishlistScreen(
-        isArabic: currentIsArabic,
-      )
-    : const SizedBox.shrink(),
+          ? ChildWishlistScreen(isArabic: currentIsArabic)
+          : const SizedBox.shrink(),
 
-navigation.isLoaded(2)
-    ? ChildRewardsScreen(
-        isArabic: currentIsArabic,
-      )
-    : const SizedBox.shrink(),
+      navigation.isLoaded(2)
+          ? ChildRewardsScreen(isArabic: currentIsArabic)
+          : const SizedBox.shrink(),
 
-navigation.isLoaded(3)
-    ? ChildProgressScreen(
-        isArabic: currentIsArabic,
-      )
-    : const SizedBox.shrink(),
+      navigation.isLoaded(3)
+          ? ChildProgressScreen(isArabic: currentIsArabic)
+          : const SizedBox.shrink(),
     ];
 
     return Scaffold(

@@ -90,10 +90,7 @@ class AuthApiService {
     required String email,
     required String password,
   }) async {
-    final response = await _api.login({
-      'email': email,
-      'password': password,
-    });
+    final response = await _api.login({'email': email, 'password': password});
 
     final accessToken = response.data['access_token'];
     final refreshToken = response.data['refresh_token'];
@@ -104,10 +101,7 @@ class AuthApiService {
       );
     }
 
-    await saveTokens(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    );
+    await saveTokens(accessToken: accessToken, refreshToken: refreshToken);
 
     return response;
   }
@@ -139,21 +133,14 @@ class AuthApiService {
       );
     }
 
-    await saveTokens(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    );
+    await saveTokens(accessToken: accessToken, refreshToken: refreshToken);
 
     return response;
   }
 
   /// Logs in a child, saves the returned tokens, and stores child information.
-  Future<dynamic> childLogin({
-    required String accessCode,
-  }) async {
-    final response = await _api.childLogin({
-      'access_code': accessCode,
-    });
+  Future<dynamic> childLogin({required String accessCode}) async {
+    final response = await _api.childLogin({'access_code': accessCode});
 
     final accessToken = response.data['access_token'];
     final refreshToken = response.data['refresh_token'];
@@ -171,14 +158,9 @@ class AuthApiService {
       );
     }
 
-    await saveTokens(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    );
+    await saveTokens(accessToken: accessToken, refreshToken: refreshToken);
 
-    await SecureStorage.saveChild(
-      Map<String, dynamic>.from(childData),
-    );
+    await SecureStorage.saveChild(Map<String, dynamic>.from(childData));
 
     return response;
   }

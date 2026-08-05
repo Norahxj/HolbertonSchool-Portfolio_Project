@@ -15,24 +15,22 @@ class ParentChildDetailsRepository {
   /// 2. Weekly and monthly tasks whose next assignment is still in the future.
   Future<ParentChildTasksData> getChildTasksData(String childId) async {
     final results = await Future.wait([
-  _taskApiService.getAssignmentsForChild(childId),
+      _taskApiService.getAssignmentsForChild(childId),
 
-  // جميع المهام المرتبطة بالطفل، سواء أنشأها الأب أو الأم.
-  _taskApiService.getTasksByChild(childId),
+      // جميع المهام المرتبطة بالطفل، سواء أنشأها الأب أو الأم.
+      _taskApiService.getTasksByChild(childId),
 
-  // المهام التي أنشأها المستخدم المسجل حاليًا فقط.
-  _taskApiService.getTasks(),
-]);
+      // المهام التي أنشأها المستخدم المسجل حاليًا فقط.
+      _taskApiService.getTasks(),
+    ]);
 
-final assignments = List<TaskAssignmentModel>.from(results[0]);
+    final assignments = List<TaskAssignmentModel>.from(results[0]);
 
-final taskDefinitions = List<TaskModel>.from(results[1]);
+    final taskDefinitions = List<TaskModel>.from(results[1]);
 
-final currentParentTasks = List<TaskModel>.from(results[2]);
+    final currentParentTasks = List<TaskModel>.from(results[2]);
 
-final deletableTaskIds = currentParentTasks
-    .map((task) => task.id)
-    .toSet();
+    final deletableTaskIds = currentParentTasks.map((task) => task.id).toSet();
 
     // Display the newest generated assignments first.
     assignments.sort((first, second) {
@@ -70,15 +68,16 @@ final deletableTaskIds = currentParentTasks
     });
 
     return ParentChildTasksData(
-  assignments: assignments,
-  upcomingTasks: upcomingTasks,
-  deletableTaskIds: deletableTaskIds,
-);
+      assignments: assignments,
+      upcomingTasks: upcomingTasks,
+      deletableTaskIds: deletableTaskIds,
+    );
   }
 
-Future<void> deleteTask(String taskId) async {
-  await _taskApiService.deleteTask(taskId);
-}
+  Future<void> deleteTask(String taskId) async {
+    await _taskApiService.deleteTask(taskId);
+  }
+
   DateTime _riyadhToday() {
     final riyadhNow = DateTime.now().toUtc().add(const Duration(hours: 3));
 

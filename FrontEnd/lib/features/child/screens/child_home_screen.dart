@@ -47,96 +47,88 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
   String? _errorMessage;
   final Set<String> _updatingAssignments = {};
   Future<void> _loadTodayFeedback() async {
-  try {
-    final feedback =
-        await _feedbackService.getMyTodayFeedback();
+    try {
+      final feedback = await _feedbackService.getMyTodayFeedback();
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      _todayFeedback = feedback;
-    });
-  } catch (error) {
-    debugPrint(
-      'Today feedback loading error: $error',
-    );
-  }
-}
-
-  Future<void> _loadData({
-  bool showPageLoader = true,
-}) async {
-  if (showPageLoader) {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+      setState(() {
+        _todayFeedback = feedback;
+      });
+    } catch (error) {
+      debugPrint('Today feedback loading error: $error');
+    }
   }
 
-  try {
-    final childFuture = SecureStorage.getChild();
+  Future<void> _loadData({bool showPageLoader = true}) async {
+    if (showPageLoader) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
-    final assignmentsFuture =
-        _taskApiService.getMyCurrentWeekAssignments();
+    try {
+      final childFuture = SecureStorage.getChild();
 
-    final pointsFuture =
-        _pointApiService.getMyPoints();
+      final assignmentsFuture = _taskApiService.getMyCurrentWeekAssignments();
 
-    final results = await Future.wait([
-      childFuture,
-      assignmentsFuture,
-      pointsFuture,
-    ]);
+      final pointsFuture = _pointApiService.getMyPoints();
 
-    final child = results[0] as ChildModel?;
+      final results = await Future.wait([
+        childFuture,
+        assignmentsFuture,
+        pointsFuture,
+      ]);
 
-    final assignments =
-        results[1] as List<TaskAssignmentModel>;
+      final child = results[0] as ChildModel?;
 
-    final points = results[2] as int;
+      final assignments = results[1] as List<TaskAssignmentModel>;
 
-    if (!mounted) return;
+      final points = results[2] as int;
 
-    if (child == null) {
+      if (!mounted) return;
+
+      if (child == null) {
+        setState(() {
+          _errorMessage = widget.isArabic
+              ? 'لم نتمكن من العثور على بيانات الطفل.'
+              : 'We could not find the child\'s information.';
+
+          _isLoading = false;
+        });
+
+        return;
+      }
+
+      setState(() {
+        _child = child;
+        _assignments = assignments;
+        _points = points;
+        _errorMessage = null;
+        _isLoading = false;
+      });
+
+      _loadTodayFeedback();
+    } catch (error) {
+      if (!mounted) return;
+
       setState(() {
         _errorMessage = widget.isArabic
-            ? 'لم نتمكن من العثور على بيانات الطفل.'
-            : 'We could not find the child\'s information.';
+            ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.'
+            : 'An error occurred while loading the data. Please try again.';
 
         _isLoading = false;
       });
 
-      return;
+      debugPrint('Child home loading error: $error');
     }
-
-    setState(() {
-      _child = child;
-      _assignments = assignments;
-      _points = points;
-      _errorMessage = null;
-      _isLoading = false;
-    });
-
-    _loadTodayFeedback();
-  } catch (error) {
-    if (!mounted) return;
-
-    setState(() {
-      _errorMessage = widget.isArabic
-          ? 'حدث خطأ أثناء تحميل البيانات. حاول مرة أخرى.'
-          : 'An error occurred while loading the data. Please try again.';
-
-      _isLoading = false;
-    });
-
-    debugPrint('Child home loading error: $error');
   }
-}
 
   Future<void> _refreshTasksAndPoints() async {
     try {
       final results = await Future.wait([
-_taskApiService.getMyCurrentWeekAssignments(),
+        _taskApiService.getMyCurrentWeekAssignments(),
         _pointApiService.getMyPoints(),
       ]);
 
@@ -211,8 +203,8 @@ _taskApiService.getMyCurrentWeekAssignments(),
   }
 
   bool _isFinished(String status) {
-  return status.toUpperCase() == 'APPROVED';
-}
+    return status.toUpperCase() == 'APPROVED';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -251,30 +243,30 @@ _taskApiService.getMyCurrentWeekAssignments(),
       body: ScreenBackground(
         child: Column(
           children: [
-           RepaintBoundary(
-  child: _HomeHeader(
-    childName: _child!.name,
-    avatarIndex: _child!.avatarIndex,
-    points: _points,
-    completedTasks: completedCount,
-    totalTasks: _assignments.length,
-    isArabic: widget.isArabic,
-    onSettingsPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ChildSettingsScreen(
-            childName: _child!.name,
-            avatarIndex: _child!.avatarIndex,
-            isArabic: widget.isArabic,
-            onLanguageToggle: widget.onLanguageToggle,
-            onLogout: _logout,
-          ),
-        ),
-      );
-    },
-  ),
-),
+            RepaintBoundary(
+              child: _HomeHeader(
+                childName: _child!.name,
+                avatarIndex: _child!.avatarIndex,
+                points: _points,
+                completedTasks: completedCount,
+                totalTasks: _assignments.length,
+                isArabic: widget.isArabic,
+                onSettingsPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChildSettingsScreen(
+                        childName: _child!.name,
+                        avatarIndex: _child!.avatarIndex,
+                        isArabic: widget.isArabic,
+                        onLanguageToggle: widget.onLanguageToggle,
+                        onLogout: _logout,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => _loadData(showPageLoader: false),
@@ -674,10 +666,10 @@ class _HeaderMetric extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withValues(alpha:0.75)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.75)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.07),
+            color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 16,
             offset: const Offset(0, 7),
           ),
@@ -690,7 +682,7 @@ class _HeaderMetric extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: iconColor.withValues(alpha:0.13),
+              color: iconColor.withValues(alpha: 0.13),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: iconColor, size: 19),
@@ -803,10 +795,10 @@ class _DailyFeedbackCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withValues(alpha:0.18)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.18)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: const Offset(0, 5),
           ),
@@ -908,10 +900,10 @@ class _DailyGoalCard extends StatelessWidget {
           colors: [AppColors.goldLight, Color(0xFFFFF9E7)],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.gold.withValues(alpha:0.35)),
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.35)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.gold.withValues(alpha:0.12),
+            color: AppColors.gold.withValues(alpha: 0.12),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -1068,12 +1060,12 @@ class _AssignmentCard extends StatelessWidget {
             color: AppColors.card,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: category.color.withValues(alpha:0.28),
+              color: category.color.withValues(alpha: 0.28),
               width: 1.3,
             ),
             boxShadow: [
               BoxShadow(
-                color: category.color.withValues(alpha:0.10),
+                color: category.color.withValues(alpha: 0.10),
                 blurRadius: 16,
                 offset: const Offset(0, 7),
               ),
@@ -1248,7 +1240,7 @@ class _EmptyTasksCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.skyLight,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: AppColors.sky.withValues(alpha:0.25)),
+        border: Border.all(color: AppColors.sky.withValues(alpha: 0.25)),
       ),
       child: Column(
         children: [

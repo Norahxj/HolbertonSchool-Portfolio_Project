@@ -24,9 +24,7 @@ class AppPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arabic =
-        isArabic ??
-        Directionality.of(context) == TextDirection.rtl;
+    final arabic = isArabic ?? Directionality.of(context) == TextDirection.rtl;
 
     final backButton = AppBackButton(
       onTap: onBack,
@@ -38,25 +36,17 @@ class AppPageHeader extends StatelessWidget {
     return Row(
       textDirection: TextDirection.ltr,
       children: [
-        if (!arabic)
-          backButton
-        else
-          const SizedBox(width: 44),
+        if (!arabic) backButton else const SizedBox(width: 44),
 
         Expanded(
           child: Text(
             title,
             textAlign: TextAlign.center,
-            style: AppTextStyles.arabicTitle.copyWith(
-              color: titleColor,
-            ),
+            style: AppTextStyles.arabicTitle.copyWith(color: titleColor),
           ),
         ),
 
-        if (arabic)
-          backButton
-        else
-          const SizedBox(width: 44),
+        if (arabic) backButton else const SizedBox(width: 44),
       ],
     );
   }

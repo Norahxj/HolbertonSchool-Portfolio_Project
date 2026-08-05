@@ -99,7 +99,7 @@ class _ChildSettingsScreenState extends State<ChildSettingsScreen> {
     return Directionality(
       textDirection: _isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
-         backgroundColor: AppColors.background,
+        backgroundColor: AppColors.background,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,

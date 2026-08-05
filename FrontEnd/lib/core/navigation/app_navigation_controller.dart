@@ -44,8 +44,9 @@ class AppNavigationController extends ChangeNotifier {
 
     notifyListeners();
   }
+
   void notifyChildrenChanged() {
-  _childrenVersion++;
-  notifyListeners();
-}
+    _childrenVersion++;
+    notifyListeners();
+  }
 }

@@ -9,7 +9,6 @@ class TaskTextField extends StatelessWidget {
   final int maxLines;
   final String? errorText;
 
-
   const TaskTextField({
     super.key,
     required this.label,
@@ -18,7 +17,6 @@ class TaskTextField extends StatelessWidget {
     this.maxLines = 1,
     this.errorText,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +27,7 @@ class TaskTextField extends StatelessWidget {
           alignment: Alignment.centerRight,
           child: Text(
             label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -45,12 +41,8 @@ class TaskTextField extends StatelessWidget {
             errorText: errorText,
             filled: true,
             fillColor: AppColors.inputBackground,
-            contentPadding: const EdgeInsets.all(
-              AppSpacing.md,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
+            contentPadding: const EdgeInsets.all(AppSpacing.md),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
           ),
         ),
       ],

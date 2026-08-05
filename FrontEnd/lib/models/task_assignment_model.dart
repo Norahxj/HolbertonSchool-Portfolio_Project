@@ -1,4 +1,5 @@
 import 'child_model.dart';
+
 class TaskAssignmentModel {
   final String id;
   final String status;
@@ -28,10 +29,8 @@ class TaskAssignmentModel {
         json['task'] as Map<String, dynamic>? ?? <String, dynamic>{},
       ),
       child: json['child'] is Map<String, dynamic>
-    ? ChildModel.fromJson(
-        json['child'] as Map<String, dynamic>,
-      )
-    : null,
+          ? ChildModel.fromJson(json['child'] as Map<String, dynamic>)
+          : null,
       assignedDate: _parseDateTime(json['assigned_date']) ?? DateTime.now(),
     );
   }

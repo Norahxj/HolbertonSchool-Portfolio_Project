@@ -15,9 +15,7 @@ class TaskValidation {
 
   static String? validateCategory(String? category) {
     if (category == null || category.isEmpty) {
-      return isArabic
-          ? 'اختر الفئة أولاً'
-          : 'Please select a category first';
+      return isArabic ? 'اختر الفئة أولاً' : 'Please select a category first';
     }
 
     return null;
@@ -25,18 +23,14 @@ class TaskValidation {
 
   static String? validateTitle(String title) {
     if (title.trim().isEmpty) {
-      return isArabic
-          ? 'اسم المهمة مطلوب'
-          : 'Task name is required';
+      return isArabic ? 'اسم المهمة مطلوب' : 'Task name is required';
     }
     return null;
   }
 
   static String? validateDescription(String description) {
     if (description.trim().isEmpty) {
-      return isArabic
-          ? 'الوصف مطلوب'
-          : 'Description is required';
+      return isArabic ? 'الوصف مطلوب' : 'Description is required';
     }
     return null;
   }

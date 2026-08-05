@@ -56,19 +56,15 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
     });
 
     try {
-      final assignments =
-    await _taskApiService.getPendingReviewAssignments();
+      final assignments = await _taskApiService.getPendingReviewAssignments();
 
-final reviewTasks = assignments
-    .where((assignment) => assignment.child != null)
-    .map(
-      (assignment) => _ReviewTask(
-        child: assignment.child!,
-        assignment: assignment,
-      ),
-    )
-    .toList();
-      
+      final reviewTasks = assignments
+          .where((assignment) => assignment.child != null)
+          .map(
+            (assignment) =>
+                _ReviewTask(child: assignment.child!, assignment: assignment),
+          )
+          .toList();
 
       reviewTasks.sort((first, second) {
         final firstDate = first.assignment.completedAt;

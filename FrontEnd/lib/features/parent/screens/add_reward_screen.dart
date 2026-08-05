@@ -129,11 +129,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            message ??
-                _text(
-                  'تعذّر حفظ المكافأة',
-                  'Could not save the reward',
-                ),
+            message ?? _text('تعذّر حفظ المكافأة', 'Could not save the reward'),
           ),
         ),
       );
@@ -183,8 +179,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
       body: ScreenBackground(
         child: SafeArea(
           child: Directionality(
-            textDirection:
-                isArabic ? TextDirection.rtl : TextDirection.ltr,
+            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
@@ -192,19 +187,13 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                 children: [
                   AppPageHeader(
                     isArabic: isArabic,
-                    title: _text(
-                      'مكافأة جديدة',
-                      'New Reward',
-                    ),
+                    title: _text('مكافأة جديدة', 'New Reward'),
                   ),
 
                   const SizedBox(height: AppSpacing.xl),
 
                   _FieldLabel(
-                    text: _text(
-                      'اسم المكافأة',
-                      'Reward name',
-                    ),
+                    text: _text('اسم المكافأة', 'Reward name'),
                     isArabic: isArabic,
                   ),
 
@@ -223,10 +212,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                   const SizedBox(height: AppSpacing.lg),
 
                   _FieldLabel(
-                    text: _text(
-                      'وصف المكافأة',
-                      'Reward description',
-                    ),
+                    text: _text('وصف المكافأة', 'Reward description'),
                     isArabic: isArabic,
                   ),
 
@@ -245,10 +231,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                   const SizedBox(height: AppSpacing.lg),
 
                   _FieldLabel(
-                    text: _text(
-                      'يوم إتاحة المكافأة',
-                      'Reward unlock day',
-                    ),
+                    text: _text('يوم إتاحة المكافأة', 'Reward unlock day'),
                     isArabic: isArabic,
                   ),
 
@@ -259,9 +242,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                     runSpacing: AppSpacing.sm,
                     alignment: WrapAlignment.start,
                     children: [
-                      for (int index = 0;
-                          index < weekDays.length;
-                          index++)
+                      for (int index = 0; index < weekDays.length; index++)
                         _DayChip(
                           label: weekDays[index],
                           isSelected: selectedUnlockDay == index,
@@ -300,8 +281,9 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
                               'The reward will become available to the child '
                                   'every ${weekDays[selectedUnlockDay]}.',
                             ),
-                            textAlign:
-                                isArabic ? TextAlign.right : TextAlign.left,
+                            textAlign: isArabic
+                                ? TextAlign.right
+                                : TextAlign.left,
                             textDirection: isArabic
                                 ? TextDirection.rtl
                                 : TextDirection.ltr,
@@ -345,20 +327,15 @@ class _FieldLabel extends StatelessWidget {
   final String text;
   final bool isArabic;
 
-  const _FieldLabel({
-    required this.text,
-    required this.isArabic,
-  });
+  const _FieldLabel({required this.text, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment:
-          isArabic ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
       child: Text(
         text,
-        textDirection:
-            isArabic ? TextDirection.rtl : TextDirection.ltr,
+        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -390,8 +367,7 @@ class _RewardTextField extends StatelessWidget {
       controller: controller,
       maxLines: maxLines,
       textAlign: isArabic ? TextAlign.right : TextAlign.left,
-      textDirection:
-          isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       decoration: InputDecoration(
         hintText: hint,
         errorText: errorText,
@@ -404,10 +380,7 @@ class _RewardTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -415,10 +388,7 @@ class _RewardTextField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: AppColors.error,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
         ),
       ),
     );
@@ -441,14 +411,9 @@ class _DayChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary
-              : AppColors.primaryLight,
+          color: isSelected ? AppColors.primary : AppColors.primaryLight,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -456,9 +421,7 @@ class _DayChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: isSelected
-                ? Colors.white
-                : AppColors.primaryDark,
+            color: isSelected ? Colors.white : AppColors.primaryDark,
           ),
         ),
       ),

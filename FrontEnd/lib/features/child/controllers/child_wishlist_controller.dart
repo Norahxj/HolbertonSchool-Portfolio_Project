@@ -8,10 +8,8 @@ class ChildWishlistController extends ChangeNotifier {
   ChildWishlistController({
     WishlistApiService? wishlistApiService,
     PointApiService? pointApiService,
-  })  : _wishlistApiService =
-            wishlistApiService ?? WishlistApiService(),
-        _pointApiService =
-            pointApiService ?? PointApiService();
+  }) : _wishlistApiService = wishlistApiService ?? WishlistApiService(),
+       _pointApiService = pointApiService ?? PointApiService();
 
   final WishlistApiService _wishlistApiService;
   final PointApiService _pointApiService;
@@ -29,9 +27,7 @@ class ChildWishlistController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
 
-  Future<bool> loadData({
-    bool showLoading = true,
-  }) async {
+  Future<bool> loadData({bool showLoading = true}) async {
     if (_requestRunning) {
       return true;
     }
@@ -76,9 +72,7 @@ class ChildWishlistController extends ChangeNotifier {
     try {
       await _wishlistApiService.deleteWish(wishId);
 
-      _wishes.removeWhere(
-        (wish) => wish.id == wishId,
-      );
+      _wishes.removeWhere((wish) => wish.id == wishId);
 
       _notify();
       return true;

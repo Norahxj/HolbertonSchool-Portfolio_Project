@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_rtl_align.dart';
 import '../../../core/constants/app_colors.dart';
@@ -37,17 +36,14 @@ class TaskDetailsStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TaskTextField(
           label: isArabic ? 'اسم المهمة' : 'Task Name',
-          hint: isArabic
-              ? 'مثال: ترتيب سريرك'
-              : 'Example: Make your bed',
+          hint: isArabic ? 'مثال: ترتيب سريرك' : 'Example: Make your bed',
           controller: nameController,
           errorText: titleError,
         ),
@@ -107,10 +103,7 @@ class TaskDetailsStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.md),
 
-        TrustChildCard(
-          value: trustChild,
-          onChanged: onTrustChanged,
-        ),
+        TrustChildCard(value: trustChild, onChanged: onTrustChanged),
       ],
     );
   }

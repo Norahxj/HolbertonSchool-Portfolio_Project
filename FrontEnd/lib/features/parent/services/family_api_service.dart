@@ -7,8 +7,7 @@ import '../../../core/network/dio_factory.dart';
 class FamilyApiService {
   final Dio _dio = DioFactory.getDio();
 
-  bool get isArabic =>
-      PlatformDispatcher.instance.locale.languageCode == 'ar';
+  bool get isArabic => PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   Future<Map<String, dynamic>> getFamilyDetails() async {
     final response = await _dio.get('/family/me');
@@ -17,10 +16,7 @@ class FamilyApiService {
   }
 
   Future<Map<String, dynamic>> updateFamilyName(String name) async {
-    final response = await _dio.put(
-      '/family/me',
-      data: {'name': name.trim()},
-    );
+    final response = await _dio.put('/family/me', data: {'name': name.trim()});
 
     return Map<String, dynamic>.from(response.data as Map);
   }
@@ -39,21 +35,15 @@ class FamilyApiService {
 
     final data = response.data as List;
 
-    return data
-        .map((item) => Map<String, dynamic>.from(item as Map))
-        .toList();
+    return data.map((item) => Map<String, dynamic>.from(item as Map)).toList();
   }
 
   Future<void> acceptInvitation(String invitationId) async {
-    await _dio.put(
-      '/family/invitations/$invitationId/accept',
-    );
+    await _dio.put('/family/invitations/$invitationId/accept');
   }
 
   Future<void> rejectInvitation(String invitationId) async {
-    await _dio.put(
-      '/family/invitations/$invitationId/reject',
-    );
+    await _dio.put('/family/invitations/$invitationId/reject');
   }
 
   String readErrorMessage(Object error) {

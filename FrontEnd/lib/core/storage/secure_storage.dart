@@ -51,10 +51,7 @@ class SecureStorage {
   static Future<void> saveAccessToken(String token) async {
     await _ensureInitialized();
 
-    await _storage.write(
-      key: _accessTokenKey,
-      value: token,
-    );
+    await _storage.write(key: _accessTokenKey, value: token);
 
     _accessToken = token;
   }
@@ -62,10 +59,7 @@ class SecureStorage {
   static Future<void> saveRefreshToken(String token) async {
     await _ensureInitialized();
 
-    await _storage.write(
-      key: _refreshTokenKey,
-      value: token,
-    );
+    await _storage.write(key: _refreshTokenKey, value: token);
 
     _refreshToken = token;
   }
@@ -83,10 +77,7 @@ class SecureStorage {
   static Future<void> saveChild(Map<String, dynamic> child) async {
     await _ensureInitialized();
 
-    await _storage.write(
-      key: _childKey,
-      value: jsonEncode(child),
-    );
+    await _storage.write(key: _childKey, value: jsonEncode(child));
 
     _child = ChildModel.fromJson(child);
   }
@@ -132,9 +123,7 @@ class SecureStorage {
       }
 
       if (decoded is Map) {
-        return ChildModel.fromJson(
-          Map<String, dynamic>.from(decoded),
-        );
+        return ChildModel.fromJson(Map<String, dynamic>.from(decoded));
       }
     } catch (_) {
       return null;

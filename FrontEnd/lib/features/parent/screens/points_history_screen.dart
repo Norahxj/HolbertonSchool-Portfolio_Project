@@ -20,14 +20,11 @@ class PointsHistoryScreen extends StatefulWidget {
   });
 
   @override
-  State<PointsHistoryScreen> createState() =>
-      _PointsHistoryScreenState();
+  State<PointsHistoryScreen> createState() => _PointsHistoryScreenState();
 }
 
-class _PointsHistoryScreenState
-    extends State<PointsHistoryScreen> {
-  final PointsHistoryApiService _service =
-      PointsHistoryApiService();
+class _PointsHistoryScreenState extends State<PointsHistoryScreen> {
+  final PointsHistoryApiService _service = PointsHistoryApiService();
 
   late Future<List<PointsHistoryModel>> _historyFuture;
 
@@ -37,15 +34,11 @@ class _PointsHistoryScreenState
   void initState() {
     super.initState();
 
-    _historyFuture = _service.getChildHistory(
-      widget.childId,
-    );
+    _historyFuture = _service.getChildHistory(widget.childId);
   }
 
   Future<void> _reloadHistory() async {
-    final future = _service.getChildHistory(
-      widget.childId,
-    );
+    final future = _service.getChildHistory(widget.childId);
 
     setState(() {
       _historyFuture = future;
@@ -57,8 +50,7 @@ class _PointsHistoryScreenState
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection:
-          isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: PreferredSize(
@@ -86,40 +78,26 @@ class _PointsHistoryScreenState
           child: FutureBuilder<List<PointsHistoryModel>>(
             future: _historyFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState ==
-                  ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
               }
 
               if (snapshot.hasError) {
-                return _ErrorState(
-                  isArabic: isArabic,
-                  onRetry: _reloadHistory,
-                );
+                return _ErrorState(isArabic: isArabic, onRetry: _reloadHistory);
               }
 
-              final history =
-                  snapshot.data ?? <PointsHistoryModel>[];
+              final history = snapshot.data ?? <PointsHistoryModel>[];
 
               if (history.isEmpty) {
                 return RefreshIndicator(
                   onRefresh: _reloadHistory,
                   child: ListView(
-                    physics:
-                        const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(
-                      AppSpacing.lg,
-                    ),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     children: [
                       SizedBox(
-                        height:
-                            MediaQuery.sizeOf(context).height *
-                                0.55,
-                        child: _EmptyState(
-                          isArabic: isArabic,
-                        ),
+                        height: MediaQuery.sizeOf(context).height * 0.55,
+                        child: _EmptyState(isArabic: isArabic),
                       ),
                     ],
                   ),
@@ -129,16 +107,11 @@ class _PointsHistoryScreenState
               return RefreshIndicator(
                 onRefresh: _reloadHistory,
                 child: ListView.separated(
-                  physics:
-                      const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(
-                    AppSpacing.lg,
-                  ),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   itemCount: history.length,
                   separatorBuilder: (_, _) =>
-                      const SizedBox(
-                    height: AppSpacing.md,
-                  ),
+                      const SizedBox(height: AppSpacing.md),
                   itemBuilder: (context, index) {
                     return _HistoryCard(
                       item: history[index],
@@ -159,34 +132,24 @@ class _HistoryCard extends StatelessWidget {
   final PointsHistoryModel item;
   final bool isArabic;
 
-  const _HistoryCard({
-    required this.item,
-    required this.isArabic,
-  });
+  const _HistoryCard({required this.item, required this.isArabic});
 
   bool get isAdded => item.points >= 0;
 
   String get _title {
     if (item.taskAssignment != null) {
-      final taskTitle =
-          item.taskAssignment!.task.title;
+      final taskTitle = item.taskAssignment!.task.title;
 
-      return isArabic
-          ? 'إكمال مهمة: $taskTitle'
-          : 'Task completed: $taskTitle';
+      return isArabic ? 'إكمال مهمة: $taskTitle' : 'Task completed: $taskTitle';
     }
 
     if (item.wishlist != null) {
       final wishName = item.wishlist!.name;
 
-      return isArabic
-          ? 'تحقيق أمنية: $wishName'
-          : 'Wish achieved: $wishName';
+      return isArabic ? 'تحقيق أمنية: $wishName' : 'Wish achieved: $wishName';
     }
 
-    return isArabic
-        ? 'تحديث في النقاط'
-        : 'Points update';
+    return isArabic ? 'تحديث في النقاط' : 'Points update';
   }
 
   String get _date {
@@ -197,8 +160,7 @@ class _HistoryCard extends StatelessWidget {
     final year = date.year.toString();
 
     final hour = date.hour.toString().padLeft(2, '0');
-    final minute =
-        date.minute.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
 
     return '$day/$month/$year  $hour:$minute';
   }
@@ -206,15 +168,11 @@ class _HistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(
-        AppSpacing.md,
-      ),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -222,29 +180,20 @@ class _HistoryCard extends StatelessWidget {
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: isAdded
-                  ? AppColors.primaryLight
-                  : AppColors.goldLight,
+              color: isAdded ? AppColors.primaryLight : AppColors.goldLight,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
-              isAdded
-                  ? Icons.add_circle_outline
-                  : Icons.card_giftcard,
-              color: isAdded
-                  ? AppColors.primary
-                  : AppColors.gold,
+              isAdded ? Icons.add_circle_outline : Icons.card_giftcard,
+              color: isAdded ? AppColors.primary : AppColors.gold,
             ),
           ),
 
-          const SizedBox(
-            width: AppSpacing.md,
-          ),
+          const SizedBox(width: AppSpacing.md),
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   _title,
@@ -268,18 +217,14 @@ class _HistoryCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(
-            width: AppSpacing.sm,
-          ),
+          const SizedBox(width: AppSpacing.sm),
 
           Text(
             '${isAdded ? '+' : ''}${item.points}',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: isAdded
-                  ? AppColors.primary
-                  : AppColors.error,
+              color: isAdded ? AppColors.primary : AppColors.error,
             ),
           ),
         ],
@@ -291,9 +236,7 @@ class _HistoryCard extends StatelessWidget {
 class _EmptyState extends StatelessWidget {
   final bool isArabic;
 
-  const _EmptyState({
-    required this.isArabic,
-  });
+  const _EmptyState({required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -301,20 +244,12 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.history,
-            size: 58,
-            color: AppColors.textSecondary,
-          ),
+          const Icon(Icons.history, size: 58, color: AppColors.textSecondary),
 
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
+          const SizedBox(height: AppSpacing.md),
 
           Text(
-            isArabic
-                ? 'لا يوجد سجل نقاط حتى الآن'
-                : 'No points history yet',
+            isArabic ? 'لا يوجد سجل نقاط حتى الآن' : 'No points history yet',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 16,
@@ -323,18 +258,14 @@ class _EmptyState extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(
-            height: AppSpacing.sm,
-          ),
+          const SizedBox(height: AppSpacing.sm),
 
           Text(
             isArabic
                 ? 'ستظهر هنا النقاط المكتسبة والمخصومة.'
                 : 'Earned and deducted points will appear here.',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-            ),
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -346,10 +277,7 @@ class _ErrorState extends StatelessWidget {
   final bool isArabic;
   final Future<void> Function() onRetry;
 
-  const _ErrorState({
-    required this.isArabic,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.isArabic, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -362,22 +290,14 @@ class _ErrorState extends StatelessWidget {
                 ? 'تعذّر تحميل سجل النقاط.'
                 : 'Could not load points history.',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.error,
-            ),
+            style: const TextStyle(color: AppColors.error),
           ),
 
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
+          const SizedBox(height: AppSpacing.md),
 
           ElevatedButton(
             onPressed: onRetry,
-            child: Text(
-              isArabic
-                  ? 'إعادة المحاولة'
-                  : 'Try again',
-            ),
+            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
           ),
         ],
       ),

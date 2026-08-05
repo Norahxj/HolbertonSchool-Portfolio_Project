@@ -41,11 +41,9 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
     _loadData();
   }
 
-  bool _isApprovedAssignment(
-  TaskAssignmentModel assignment,
-) {
-  return assignment.normalizedStatus == 'APPROVED';
-}
+  bool _isApprovedAssignment(TaskAssignmentModel assignment) {
+    return assignment.normalizedStatus == 'APPROVED';
+  }
 
   Future<void> _loadData() async {
     setState(() {
@@ -86,26 +84,24 @@ class _ChildProgressScreenState extends State<ChildProgressScreen> {
     }
   }
 
-  DateTime? _completionDate(
-  TaskAssignmentModel assignment,
-) {
-  if (!_isApprovedAssignment(assignment)) {
-    return null;
-  }
+  DateTime? _completionDate(TaskAssignmentModel assignment) {
+    if (!_isApprovedAssignment(assignment)) {
+      return null;
+    }
 
-  return assignment.approvedAt?.toLocal() ??
-      assignment.completedAt?.toLocal();
-}
+    return assignment.approvedAt?.toLocal() ??
+        assignment.completedAt?.toLocal();
+  }
 
   List<TaskAssignmentModel> get _weeklyAssignments {
     return _assignments;
   }
 
   int get _weeklyCompleted {
-  return _weeklyAssignments.where((assignment) {
-    return _isApprovedAssignment(assignment);
-  }).length;
-}
+    return _weeklyAssignments.where((assignment) {
+      return _isApprovedAssignment(assignment);
+    }).length;
+  }
 
   int get _weeklyPercent {
     if (_weeklyAssignments.isEmpty) {

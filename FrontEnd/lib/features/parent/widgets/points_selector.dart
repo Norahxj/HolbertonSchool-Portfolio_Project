@@ -16,8 +16,7 @@ class PointsSelector extends StatelessWidget {
     required this.onDecrease,
   });
 
-  bool get isArabic =>
-      PlatformDispatcher.instance.locale.languageCode == 'ar';
+  bool get isArabic => PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   @override
   Widget build(BuildContext context) {
@@ -26,37 +25,24 @@ class PointsSelector extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.auto_awesome,
-            color: AppColors.gold,
-          ),
+          const Icon(Icons.auto_awesome, color: AppColors.gold),
 
           const SizedBox(width: AppSpacing.xs),
 
           Text(
             isArabic ? '$points نقطة' : '$points points',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
 
           const Spacer(),
 
-          IconButton(
-            onPressed: onDecrease,
-            icon: const Icon(Icons.remove),
-          ),
+          IconButton(onPressed: onDecrease, icon: const Icon(Icons.remove)),
 
-          IconButton(
-            onPressed: onIncrease,
-            icon: const Icon(Icons.add),
-          ),
+          IconButton(onPressed: onIncrease, icon: const Icon(Icons.add)),
         ],
       ),
     );

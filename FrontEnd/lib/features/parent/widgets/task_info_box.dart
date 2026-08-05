@@ -5,12 +5,7 @@ import 'package:frontend/core/constants/app_spacing.dart';
 class InfoBox extends StatelessWidget {
   final String text;
 
-
-  const InfoBox({
-    super.key,
-    required this.text,
-  });
-
+  const InfoBox({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +28,7 @@ class InfoBox extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          const Icon(
-            Icons.auto_awesome,
-            color: AppColors.primary,
-            size: 18,
-          ),
+          const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
         ],
       ),
     );

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+
 class ErrorText extends StatelessWidget {
   final String text;
 
-
   const ErrorText(this.text, {super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +11,7 @@ class ErrorText extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.red,
-          fontSize: 12,
-        ),
+        style: const TextStyle(color: Colors.red, fontSize: 12),
       ),
     );
   }

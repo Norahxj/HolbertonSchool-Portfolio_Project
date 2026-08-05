@@ -14,8 +14,7 @@ class TrustChildCard extends StatelessWidget {
     required this.onChanged,
   });
 
-  bool get isArabic =>
-      PlatformDispatcher.instance.locale.languageCode == 'ar';
+  bool get isArabic => PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +29,7 @@ class TrustChildCard extends StatelessWidget {
         contentPadding: EdgeInsets.zero,
         controlAffinity: ListTileControlAffinity.leading,
         title: Align(
-          alignment:
-              isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
             isArabic
                 ? 'هل تثق بجدية طفلك في هذه المهمة؟'
@@ -40,8 +38,7 @@ class TrustChildCard extends StatelessWidget {
           ),
         ),
         subtitle: Align(
-          alignment:
-              isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
           child: Text(
             isArabic
                 ? 'إذا وثقت، ستُعتمد المهمة تلقائيًا'

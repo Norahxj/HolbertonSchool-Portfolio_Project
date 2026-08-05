@@ -45,9 +45,7 @@ class ChooseChildStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (children.isEmpty) {
@@ -149,9 +147,7 @@ class ChooseChildStep extends StatelessWidget {
 
   Widget _buildChildrenCards() {
     return Directionality(
-      textDirection: isArabic
-          ? TextDirection.rtl
-          : TextDirection.ltr,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Wrap(
         alignment: WrapAlignment.start,
         spacing: AppSpacing.md,
@@ -174,9 +170,7 @@ class ChooseChildStep extends StatelessWidget {
 
   Widget _buildSuggestionsSection() {
     if (isLoadingSuggestions) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (selectedCategory == null) {
@@ -185,9 +179,7 @@ class ChooseChildStep extends StatelessWidget {
 
     if (suggestions.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.only(
-          top: AppSpacing.md,
-        ),
+        padding: const EdgeInsets.only(top: AppSpacing.md),
         child: Center(
           child: Text(
             isArabic
@@ -204,9 +196,7 @@ class ChooseChildStep extends StatelessWidget {
       children: [
         Text(
           isArabic ? 'المقترحات' : 'Suggestions',
-          textAlign: isArabic
-              ? TextAlign.right
-              : TextAlign.left,
+          textAlign: isArabic ? TextAlign.right : TextAlign.left,
           style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -216,41 +206,33 @@ class ChooseChildStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.md),
 
-        ...suggestions.map(
-          (suggestion) {
-            return Card(
-              margin: const EdgeInsets.only(
-                bottom: AppSpacing.sm,
+        ...suggestions.map((suggestion) {
+          return Card(
+            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: ListTile(
+              title: Text(
+                suggestion.title,
+                textAlign: isArabic ? TextAlign.right : TextAlign.left,
               ),
-              child: ListTile(
-                title: Text(
-                  suggestion.title,
-                  textAlign: isArabic
-                      ? TextAlign.right
-                      : TextAlign.left,
-                ),
-                subtitle: Text(
-                  suggestion.description,
-                  textAlign: isArabic
-                      ? TextAlign.right
-                      : TextAlign.left,
-                ),
-                trailing: Text(
-                  isArabic
-                      ? '${suggestion.points} نقطة'
-                      : '${suggestion.points} points',
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  onSuggestionSelected(suggestion);
-                },
+              subtitle: Text(
+                suggestion.description,
+                textAlign: isArabic ? TextAlign.right : TextAlign.left,
               ),
-            );
-          },
-        ),
+              trailing: Text(
+                isArabic
+                    ? '${suggestion.points} نقطة'
+                    : '${suggestion.points} points',
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                onSuggestionSelected(suggestion);
+              },
+            ),
+          );
+        }),
       ],
     );
   }

@@ -14,7 +14,7 @@ import '../../../core/widgets/app_page_header.dart';
 /// editing. The history list shows all past feedback entries.
 class DailyFeedbackScreen extends StatefulWidget {
   final ChildModel child;
-   final bool isArabic;
+  final bool isArabic;
 
   const DailyFeedbackScreen({
     super.key,
@@ -42,165 +42,161 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   bool get isArabic => widget.isArabic;
 
   bool _isSameDay(DateTime first, DateTime second) {
-  return first.year == second.year &&
-      first.month == second.month &&
-      first.day == second.day;
-}
+    return first.year == second.year &&
+        first.month == second.month &&
+        first.day == second.day;
+  }
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  _selectedChild = widget.child;
+    _selectedChild = widget.child;
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _loadFeedbackForChild(_selectedChild.id);
-  });
-}
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadFeedbackForChild(_selectedChild.id);
+    });
+  }
 
-  
   Future<void> _loadFeedbackForChild(String childId) async {
-  setState(() {
-    _isLoading = true;
-    _error = null;
-  });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
-  try {
-    final history =
-        await _feedbackService.getFeedbackForChild(childId);
-history.sort(
-  (first, second) =>
-      second.feedbackDate.compareTo(first.feedbackDate),
-);
-    if (!mounted) return;
+    try {
+      final history = await _feedbackService.getFeedbackForChild(childId);
+      history.sort(
+        (first, second) => second.feedbackDate.compareTo(first.feedbackDate),
+      );
+      if (!mounted) return;
 
-    final today = DateTime.now();
+      final today = DateTime.now();
 
-    DailyFeedbackModel? todayFeedback;
+      DailyFeedbackModel? todayFeedback;
 
-    for (final feedback in history) {
-      if (_isSameDay(feedback.feedbackDate, today)) {
-        todayFeedback = feedback;
-        break;
+      for (final feedback in history) {
+        if (_isSameDay(feedback.feedbackDate, today)) {
+          todayFeedback = feedback;
+          break;
+        }
       }
-    }
 
-    setState(() {
-      _feedbackHistory = history;
-      _todayFeedback = todayFeedback;
-      _selectedMood = todayFeedback?.mood;
-      _isLoading = false;
-    });
-  } catch (error) {
-    if (!mounted) return;
-
-    setState(() {
-      _error = isArabic
-          ? 'تعذّر تحميل سجل التقييم'
-          : 'Unable to load feedback history';
-
-      _isLoading = false;
-    });
-  }
-}
-
-  Future<void> _submitFeedback() async {
-  if (_selectedMood == null || _isSubmitting) {
-    return;
-  }
-
-  setState(() {
-    _isSubmitting = true;
-  });
-
-  try {
-    late final DailyFeedbackModel savedFeedback;
-
-    if (_todayFeedback != null) {
-      savedFeedback = await _feedbackService.updateFeedback(
-        feedbackId: _todayFeedback!.id,
-        mood: _selectedMood!,
-      );
-    } else {
-      savedFeedback = await _feedbackService.createFeedback(
-        childId: _selectedChild.id,
-        mood: _selectedMood!,
-      );
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      _todayFeedback = savedFeedback;
-      _selectedMood = savedFeedback.mood;
-
-      final existingIndex = _feedbackHistory.indexWhere(
-        (feedback) => feedback.id == savedFeedback.id,
-      );
-
-      if (existingIndex == -1) {
-        _feedbackHistory.insert(0, savedFeedback);
-      } else {
-        _feedbackHistory[existingIndex] = savedFeedback;
-      }
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isArabic
-              ? 'تم حفظ التقييم بنجاح ✓'
-              : 'Feedback saved successfully ✓',
-        ),
-        backgroundColor: AppColors.success,
-      ),
-    );
-  } catch (error) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isArabic
-              ? 'تعذّر حفظ التقييم. حاول مرة أخرى.'
-              : 'Unable to save feedback. Please try again.',
-        ),
-        backgroundColor: AppColors.error,
-      ),
-    );
-  } finally {
-    if (mounted) {
       setState(() {
-        _isSubmitting = false;
+        _feedbackHistory = history;
+        _todayFeedback = todayFeedback;
+        _selectedMood = todayFeedback?.mood;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        _error = isArabic
+            ? 'تعذّر تحميل سجل التقييم'
+            : 'Unable to load feedback history';
+
+        _isLoading = false;
       });
     }
   }
-}
+
+  Future<void> _submitFeedback() async {
+    if (_selectedMood == null || _isSubmitting) {
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      late final DailyFeedbackModel savedFeedback;
+
+      if (_todayFeedback != null) {
+        savedFeedback = await _feedbackService.updateFeedback(
+          feedbackId: _todayFeedback!.id,
+          mood: _selectedMood!,
+        );
+      } else {
+        savedFeedback = await _feedbackService.createFeedback(
+          childId: _selectedChild.id,
+          mood: _selectedMood!,
+        );
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _todayFeedback = savedFeedback;
+        _selectedMood = savedFeedback.mood;
+
+        final existingIndex = _feedbackHistory.indexWhere(
+          (feedback) => feedback.id == savedFeedback.id,
+        );
+
+        if (existingIndex == -1) {
+          _feedbackHistory.insert(0, savedFeedback);
+        } else {
+          _feedbackHistory[existingIndex] = savedFeedback;
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isArabic
+                ? 'تم حفظ التقييم بنجاح ✓'
+                : 'Feedback saved successfully ✓',
+          ),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isArabic
+                ? 'تعذّر حفظ التقييم. حاول مرة أخرى.'
+                : 'Unable to save feedback. Please try again.',
+          ),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: PreferredSize(
-  preferredSize: const Size.fromHeight(76),
-  child: SafeArea(
-    bottom: false,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.sm,
+        preferredSize: const Size.fromHeight(76),
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.sm,
+            ),
+            child: AppPageHeader(
+              isArabic: isArabic,
+              title: isArabic ? 'التقييم اليومي' : 'Daily Feedback',
+              onBack: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
       ),
-      child: AppPageHeader(
-         isArabic: isArabic,
-        title: isArabic
-            ? 'التقييم اليومي'
-            : 'Daily Feedback',
-        onBack: () {
-          Navigator.pop(context);
-        },
-      ),
-    ),
-  ),
-),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -212,11 +208,9 @@ history.sort(
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () {
-  _loadFeedbackForChild(_selectedChild.id);
-},
-                    child: Text(
-                      isArabic ? 'إعادة المحاولة' : 'Try Again',
-                    ),
+                      _loadFeedbackForChild(_selectedChild.id);
+                    },
+                    child: Text(isArabic ? 'إعادة المحاولة' : 'Try Again'),
                   ),
                 ],
               ),
@@ -226,8 +220,6 @@ history.sort(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  
-
                   // ── Today's mood picker ────────────────────────────────
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.lg),
@@ -241,11 +233,11 @@ history.sort(
                         Text(
                           _todayFeedback != null
                               ? isArabic
-                                  ? 'تقييم اليوم (يمكنك التعديل)'
-                                  : 'Today\'s Feedback (You Can Edit It)'
+                                    ? 'تقييم اليوم (يمكنك التعديل)'
+                                    : 'Today\'s Feedback (You Can Edit It)'
                               : isArabic
-                                  ? 'كيف كان يوم ${_selectedChild.name}؟'
-                                  : 'How was ${_selectedChild.name}\'s day?',
+                              ? 'كيف كان يوم ${_selectedChild.name}؟'
+                              : 'How was ${_selectedChild.name}\'s day?',
                           style: AppTextStyles.arabicTitle,
                           textAlign: TextAlign.center,
                         ),
@@ -324,11 +316,11 @@ history.sort(
                               : Text(
                                   _todayFeedback != null
                                       ? isArabic
-                                          ? 'تحديث التقييم'
-                                          : 'Update Feedback'
+                                            ? 'تحديث التقييم'
+                                            : 'Update Feedback'
                                       : isArabic
-                                          ? 'حفظ التقييم'
-                                          : 'Save Feedback',
+                                      ? 'حفظ التقييم'
+                                      : 'Save Feedback',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,

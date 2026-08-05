@@ -28,9 +28,7 @@ class ChildCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 100,
-        padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.sm,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(20),
@@ -45,10 +43,7 @@ class ChildCard extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                ChildAvatar(
-                  avatarIndex: avatarIndex,
-                  size: 48,
-                ),
+                ChildAvatar(avatarIndex: avatarIndex, size: 48),
                 if (isSelected)
                   Positioned(
                     top: -2,
@@ -71,9 +66,7 @@ class ChildCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.xs,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
               child: Text(
                 name,
                 maxLines: 1,

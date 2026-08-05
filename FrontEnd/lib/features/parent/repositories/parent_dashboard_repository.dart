@@ -17,16 +17,13 @@ class ParentDashboardRepository {
     UserApiService? userApiService,
     DashboardApiService? dashboardApiService,
     ChildApiService? childApiService,
-  })  : _userApiService = userApiService ?? UserApiService(),
-        _dashboardApiService =
-            dashboardApiService ?? DashboardApiService(),
-        _childApiService =
-            childApiService ?? ChildApiService();
+  }) : _userApiService = userApiService ?? UserApiService(),
+       _dashboardApiService = dashboardApiService ?? DashboardApiService(),
+       _childApiService = childApiService ?? ChildApiService();
 
   Future<ParentDashboardData> getDashboardData() async {
     final userFuture = _userApiService.getCurrentUser();
-    final dashboardsFuture =
-        _dashboardApiService.getDashboard();
+    final dashboardsFuture = _dashboardApiService.getDashboard();
 
     final user = await userFuture;
     final dashboards = await dashboardsFuture;
@@ -40,8 +37,7 @@ class ParentDashboardRepository {
         age: dashboard.childAge,
         accessCode: dashboard.accessCode,
         role: dashboard.role,
-        weeklyProgress:
-            dashboard.progressPercentage.round(),
+        weeklyProgress: dashboard.progressPercentage.round(),
         avatarIndex: dashboard.avatarIndex,
       );
 
@@ -52,10 +48,7 @@ class ParentDashboardRepository {
       );
     }).toList();
 
-    return ParentDashboardData(
-      user: user,
-      children: childItems,
-    );
+    return ParentDashboardData(user: user, children: childItems);
   }
 
   Future<void> deleteChild(String childId) async {

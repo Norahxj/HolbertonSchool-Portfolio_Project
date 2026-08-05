@@ -296,7 +296,7 @@ class _ProfileHeader extends StatelessWidget {
               AppPageHeader(
                 title: child.name,
                 titleColor: Colors.white,
-                buttonBackgroundColor: Colors.white.withValues(alpha:0.18),
+                buttonBackgroundColor: Colors.white.withValues(alpha: 0.18),
                 buttonIconColor: Colors.white,
                 onBack: () {
                   Navigator.pop(context);
@@ -347,7 +347,7 @@ class _WeeklyProgressCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha:0.08),
+            color: AppColors.primary.withValues(alpha: 0.08),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -456,9 +456,9 @@ class _JoinCodeCard extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: AppColors.primaryLight.withValues(alpha:0.5),
+            color: AppColors.primaryLight.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.primary.withValues(alpha:0.3)),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
           ),
           child: Row(
             textDirection: TextDirection.ltr,
@@ -606,7 +606,7 @@ class _TaskItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha:0.06),
+            color: AppColors.primary.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

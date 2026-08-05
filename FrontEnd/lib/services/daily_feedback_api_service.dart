@@ -16,9 +16,7 @@ class DailyFeedbackApiService {
       'child_id': childId,
       'mood': mood,
     });
-    return DailyFeedbackModel.fromJson(
-      response.data as Map<String, dynamic>,
-    );
+    return DailyFeedbackModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   /// Parent: get all feedback entries for a specific child.
@@ -27,8 +25,7 @@ class DailyFeedbackApiService {
     final List<dynamic> data = response.data as List<dynamic>;
     return data
         .map(
-          (json) =>
-              DailyFeedbackModel.fromJson(json as Map<String, dynamic>),
+          (json) => DailyFeedbackModel.fromJson(json as Map<String, dynamic>),
         )
         .toList();
   }
@@ -38,9 +35,7 @@ class DailyFeedbackApiService {
     try {
       final response = await _apiService.getTodayFeedback(childId);
       if (response.data == null) return null;
-      return DailyFeedbackModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return DailyFeedbackModel.fromJson(response.data as Map<String, dynamic>);
     } catch (_) {
       return null;
     }
@@ -51,36 +46,32 @@ class DailyFeedbackApiService {
     required String feedbackId,
     required String mood,
   }) async {
-    final response = await _apiService.updateDailyFeedback(
-      feedbackId,
-      {'mood': mood},
-    );
-    return DailyFeedbackModel.fromJson(
-      response.data as Map<String, dynamic>,
-    );
-  }
-/// Child: get today's feedback only.
-Future<DailyFeedbackModel?> getMyTodayFeedback() async {
-  final response = await _apiService.getMyTodayDailyFeedback();
-
-  final data = response.data;
-
-  if (data == null) {
-    return null;
+    final response = await _apiService.updateDailyFeedback(feedbackId, {
+      'mood': mood,
+    });
+    return DailyFeedbackModel.fromJson(response.data as Map<String, dynamic>);
   }
 
-  return DailyFeedbackModel.fromJson(
-    data as Map<String, dynamic>,
-  );
-}
+  /// Child: get today's feedback only.
+  Future<DailyFeedbackModel?> getMyTodayFeedback() async {
+    final response = await _apiService.getMyTodayDailyFeedback();
+
+    final data = response.data;
+
+    if (data == null) {
+      return null;
+    }
+
+    return DailyFeedbackModel.fromJson(data as Map<String, dynamic>);
+  }
+
   /// Child: get my own feedback history.
   Future<List<DailyFeedbackModel>> getMyFeedback() async {
     final response = await _apiService.getMyDailyFeedback();
     final List<dynamic> data = response.data as List<dynamic>;
     return data
         .map(
-          (json) =>
-              DailyFeedbackModel.fromJson(json as Map<String, dynamic>),
+          (json) => DailyFeedbackModel.fromJson(json as Map<String, dynamic>),
         )
         .toList();
   }
