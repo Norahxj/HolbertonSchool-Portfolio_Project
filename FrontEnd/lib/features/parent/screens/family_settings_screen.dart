@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../core/widgets/app_page_header.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/widgets/screen_background.dart';
-import '../family_settings/widgets/pending_invitations_section.dart';
-import '../family_settings/widgets/incoming_invitations_section.dart';
-import '../family_settings/widgets/invite_guardian_section.dart';
 import 'package:provider/provider.dart';
 import '../family_settings/controllers/family_settings_controller.dart';
-import '../family_settings/widgets/family_name_section.dart';
-import '../family_settings/widgets/guardians_section.dart';
+import '../family_settings/widgets/family_settings_view.dart';
 
 class FamilySettingsScreen extends StatefulWidget {
   final bool isArabic;
@@ -143,135 +136,35 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant FamilySettingsScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isArabic == widget.isArabic) {
+      return;
+    }
+
+    _controller.updateLanguage(widget.isArabic);
+
+    familyNameController.text = _controller.displayFamilyName(
+      _controller.originalFamilyName,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: _controller,
-      child: Builder(
-        builder: (context) {
-          final controller = context.watch<FamilySettingsController>();
-
-          if (controller.isLoading) {
-            return const Scaffold(
-              body: ScreenBackground(
-                child: SafeArea(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            );
-          }
-
-          if (controller.pageError != null) {
-            return Scaffold(
-              body: ScreenBackground(
-                child: SafeArea(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            color: Colors.red,
-                            size: 42,
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          Text(
-                            controller.pageError!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 15,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          ElevatedButton(
-                            onPressed: controller.loadFamilyData,
-                            child: Text(
-                              isArabic ? 'إعادة المحاولة' : 'Try again',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          return Scaffold(
-            body: ScreenBackground(
-              child: SafeArea(
-                child: RefreshIndicator(
-                  onRefresh: controller.loadFamilyData,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(AppSpacing.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        AppPageHeader(
-                          isArabic: isArabic,
-                          title: isArabic
-                              ? 'إعدادات العائلة'
-                              : 'Family Settings',
-                          onBack: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-
-                        const SizedBox(height: AppSpacing.xl),
-
-                        FamilyNameSection(
-                          isArabic: isArabic,
-                          controller: familyNameController,
-                          isSaving: controller.isSavingFamilyName,
-                          onSave: _saveFamilyName,
-                        ),
-
-                        const SizedBox(height: AppSpacing.xl),
-
-                        GuardiansSection(
-                          isArabic: isArabic,
-                          guardians: controller.guardians,
-                          currentUserId: controller.currentUserId,
-                          guardianTypeLabel: controller.guardianTypeLabel,
-                        ),
-
-                        const SizedBox(height: AppSpacing.xl),
-
-                        PendingInvitationsSection(
-                          invitations: controller.sentInvitations,
-                          isArabic: isArabic,
-                        ),
-
-                        const SizedBox(height: AppSpacing.xl),
-
-                        IncomingInvitationsSection(
-                          invitations: controller.incomingInvitations,
-                          onAccept: _acceptInvitation,
-                          onReject: _rejectInvitation,
-                          isArabic: isArabic,
-                        ),
-
-                        const SizedBox(height: AppSpacing.xl),
-
-                        InviteGuardianSection(
-                          isArabic: isArabic,
-                          controller: inviteEmailController,
-                          isSending: controller.isSendingInvitation,
-                          onSend: _sendInvitation,
-                        ),
-
-                        const SizedBox(height: AppSpacing.lg),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
+      child: FamilySettingsView(
+        isArabic: isArabic,
+        familyNameController: familyNameController,
+        inviteEmailController: inviteEmailController,
+        onReload: _loadFamilyData,
+        onSaveFamilyName: _saveFamilyName,
+        onSendInvitation: _sendInvitation,
+        onAcceptInvitation: _acceptInvitation,
+        onRejectInvitation: _rejectInvitation,
+        onBack: () {
+          Navigator.pop(context);
         },
       ),
     );

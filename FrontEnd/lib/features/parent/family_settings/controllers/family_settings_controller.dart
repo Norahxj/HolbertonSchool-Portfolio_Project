@@ -52,7 +52,7 @@ class FamilySettingsController extends ChangeNotifier {
   List<Map<String, dynamic>> get incomingInvitations =>
       List.unmodifiable(_incomingInvitations);
 
-  Future<void> updateLanguage(bool isArabic) async {
+  void updateLanguage(bool isArabic) {
     if (_isArabic == isArabic) {
       return;
     }
@@ -61,58 +61,70 @@ class FamilySettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> loadFamilyData() async {
+  Future<String?> loadFamilyData({
+  bool showLoading = true,
+}) async {
+  if (showLoading) {
     _isLoading = true;
-    _pageError = null;
+  }
+
+  _pageError = null;
+  notifyListeners();
+
+  try {
+    final results = await Future.wait([
+      _familyApiService.getFamilyDetails(),
+      _familyApiService.getIncomingInvitations(),
+    ]);
+
+    final familyData = results[0] as Map<String, dynamic>;
+
+    final loadedIncomingInvitations =
+        results[1] as List<Map<String, dynamic>>;
+
+    final loadedGuardians = (familyData['guardians'] as List? ?? [])
+        .map((item) => Map<String, dynamic>.from(item as Map))
+        .toList();
+
+    final loadedSentInvitations =
+        (familyData['pending_invitations'] as List? ?? [])
+            .map((item) => Map<String, dynamic>.from(item as Map))
+            .toList();
+
+    _originalFamilyName = familyData['name']?.toString() ?? '';
+    _currentUserId = familyData['current_user_id']?.toString();
+
+    _guardians
+      ..clear()
+      ..addAll(loadedGuardians);
+
+    _sentInvitations
+      ..clear()
+      ..addAll(loadedSentInvitations);
+
+    _incomingInvitations
+      ..clear()
+      ..addAll(loadedIncomingInvitations);
+
+    if (showLoading) {
+      _isLoading = false;
+    }
+
     notifyListeners();
 
-    try {
-      final results = await Future.wait([
-        _familyApiService.getFamilyDetails(),
-        _familyApiService.getIncomingInvitations(),
-      ]);
+    return null;
+  } catch (error) {
+    _pageError = _familyApiService.readErrorMessage(error);
 
-      final familyData = results[0] as Map<String, dynamic>;
-
-      final loadedIncomingInvitations =
-          results[1] as List<Map<String, dynamic>>;
-
-      final loadedGuardians = (familyData['guardians'] as List? ?? [])
-          .map((item) => Map<String, dynamic>.from(item as Map))
-          .toList();
-
-      final loadedSentInvitations =
-          (familyData['pending_invitations'] as List? ?? [])
-              .map((item) => Map<String, dynamic>.from(item as Map))
-              .toList();
-
-      _originalFamilyName = familyData['name']?.toString() ?? '';
-      _currentUserId = familyData['current_user_id']?.toString();
-
-      _guardians
-        ..clear()
-        ..addAll(loadedGuardians);
-
-      _sentInvitations
-        ..clear()
-        ..addAll(loadedSentInvitations);
-
-      _incomingInvitations
-        ..clear()
-        ..addAll(loadedIncomingInvitations);
-
+    if (showLoading) {
       _isLoading = false;
-      notifyListeners();
-
-      return null;
-    } catch (error) {
-      _pageError = _familyApiService.readErrorMessage(error);
-      _isLoading = false;
-      notifyListeners();
-
-      return _pageError;
     }
+
+    notifyListeners();
+
+    return _pageError;
   }
+}
 
   Future<String?> saveFamilyName(String displayedName) async {
     final trimmedName = displayedName.trim();
@@ -134,8 +146,7 @@ class FamilySettingsController extends ChangeNotifier {
 
     try {
       await _familyApiService.updateFamilyName(name);
-      await loadFamilyData();
-
+      await loadFamilyData(showLoading: false);
       return null;
     } catch (error) {
       return _familyApiService.readErrorMessage(error);
@@ -159,7 +170,7 @@ class FamilySettingsController extends ChangeNotifier {
 
     try {
       await _familyApiService.inviteParent(normalizedEmail);
-      await loadFamilyData();
+      await loadFamilyData(showLoading: false);
 
       return null;
     } catch (error) {
@@ -222,8 +233,7 @@ class FamilySettingsController extends ChangeNotifier {
   Future<String?> acceptInvitation(String invitationId) async {
     try {
       await _familyApiService.acceptInvitation(invitationId);
-      await loadFamilyData();
-
+      await loadFamilyData(showLoading: false);
       return null;
     } catch (error) {
       return _familyApiService.readErrorMessage(error);
@@ -233,7 +243,7 @@ class FamilySettingsController extends ChangeNotifier {
   Future<String?> rejectInvitation(String invitationId) async {
     try {
       await _familyApiService.rejectInvitation(invitationId);
-      await loadFamilyData();
+      await loadFamilyData(showLoading: false);
 
       return null;
     } catch (error) {
