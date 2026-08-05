@@ -36,8 +36,6 @@ class RewardManagementController extends ChangeNotifier {
   List<RewardSuggestionModel> get rewardSuggestions =>
       List.unmodifiable(_rewardSuggestions);
 
-  Set<String> get deletingRewardIds => Set.unmodifiable(_deletingRewardIds);
-
   String? _selectedChildId;
 
   String? get selectedChildId => _selectedChildId;
