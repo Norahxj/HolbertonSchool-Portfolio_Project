@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../models/wish_model.dart';
-import '../../../services/wishlist_api_service.dart';
+import '../../../../models/wish_model.dart';
+import '../../../../services/wishlist_api_service.dart';
 
 class WishlistEntry {
   final WishModel wish;

@@ -1,34 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/widgets/app_refresh_indicator.dart';
-import '../../../core/widgets/screen_background.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/widgets/app_refresh_indicator.dart';
+import '../../../../core/widgets/screen_background.dart';
 import '../controllers/wishlist_approval_controller.dart';
-import '../wishlist/widgets/pending_wish_card.dart';
-import '../wishlist/widgets/achieved_wish_card.dart';
-import '../wishlist/widgets/approved_wish_card.dart';
-import '../wishlist/widgets/wishlist_states.dart';
+import 'achieved_wish_card.dart';
+import 'approved_wish_card.dart';
+import 'pending_wish_card.dart';
+import 'wishlist_states.dart';
 
-class WishlistApprovalScreen extends StatelessWidget {
+class WishlistApprovalView extends StatelessWidget {
   final bool isArabic;
 
-  const WishlistApprovalScreen({super.key, required this.isArabic});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => WishlistApprovalController()..loadWishes(),
-      child: _WishlistApprovalView(isArabic: isArabic),
-    );
-  }
-}
-
-class _WishlistApprovalView extends StatelessWidget {
-  final bool isArabic;
-
-  const _WishlistApprovalView({required this.isArabic});
+  const WishlistApprovalView({super.key, required this.isArabic});
 
   Future<void> _refresh(BuildContext context) async {
     final success = await context.read<WishlistApprovalController>().refresh();
@@ -90,7 +77,9 @@ class _WishlistApprovalView extends StatelessWidget {
       body: ScreenBackground(
         child: SafeArea(
           child: AppRefreshIndicator(
-            onRefresh: () => _refresh(context),
+            onRefresh: () {
+              return _refresh(context);
+            },
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -125,9 +114,7 @@ class _WishlistApprovalView extends StatelessWidget {
                   else if (controller.hasError && controller.isEmpty)
                     WishlistErrorState(
                       isArabic: isArabic,
-                      onRetry: () {
-                        controller.loadWishes();
-                      },
+                      onRetry: controller.loadWishes,
                     )
                   else if (controller.isEmpty)
                     WishlistEmptyState(isArabic: isArabic)
@@ -150,6 +137,7 @@ class _WishlistApprovalView extends StatelessWidget {
                           _rejectWish(context, entry.wish.id);
                         },
                       ),
+
                       const SizedBox(height: AppSpacing.md),
                     ],
 
@@ -167,6 +155,7 @@ class _WishlistApprovalView extends StatelessWidget {
                             entry.wish.targetPoints ??
                             0,
                       ),
+
                       const SizedBox(height: AppSpacing.md),
                     ],
 
@@ -178,6 +167,7 @@ class _WishlistApprovalView extends StatelessWidget {
                         wishTitle: entry.wish.name,
                         points: entry.wish.targetPoints ?? 0,
                       ),
+
                       const SizedBox(height: AppSpacing.md),
                     ],
                   ],
