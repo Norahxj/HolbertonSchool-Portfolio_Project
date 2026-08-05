@@ -8,11 +8,11 @@ import '../../../../core/widgets/app_back_button.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/screen_background.dart';
-import '../controllers/edit_child_controller.dart';
+import '../../add_child/controllers/add_child_controller.dart';
 import '../../child_form/widgets/avatar_option.dart';
 import '../../child_form/widgets/birth_date_field.dart';
 
-class EditChildView extends StatelessWidget {
+class AddChildView extends StatelessWidget {
   final bool isArabic;
   final TextEditingController nameController;
   final TextEditingController phoneController;
@@ -20,7 +20,7 @@ class EditChildView extends StatelessWidget {
   final VoidCallback onPickDate;
   final Future<void> Function() onSave;
 
-  const EditChildView({
+  const AddChildView({
     super.key,
     required this.isArabic,
     required this.nameController,
@@ -36,7 +36,7 @@ class EditChildView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<EditChildController>();
+    final controller = context.watch<AddChildController>();
 
     return Directionality(
       textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
@@ -57,7 +57,7 @@ class EditChildView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.lg),
 
                   Text(
-                    _tr('تعديل بيانات الطفل', 'Edit Child Information'),
+                    _tr('إضافة طفل', 'Add Child'),
                     style: AppTextStyles.arabicTitle,
                     textAlign: TextAlign.center,
                   ),
@@ -66,8 +66,8 @@ class EditChildView extends StatelessWidget {
 
                   Text(
                     _tr(
-                      'عدّل معلومات الطفل ثم اضغط حفظ',
-                      'Update the child information, then save',
+                      'أضف معلومات طفلك لبدء رحلته',
+                      'Add your child’s information to begin their journey',
                     ),
                     style: AppTextStyles.body,
                     textAlign: TextAlign.center,
@@ -97,6 +97,7 @@ class EditChildView extends StatelessWidget {
                           controller.selectAvatar(0);
                         },
                       ),
+
                       AvatarOption(
                         imagePath: 'assets/avatars/avatar_boy_2v.jpg',
                         backgroundColor: const Color(0xFFD7E9F7),
@@ -105,6 +106,7 @@ class EditChildView extends StatelessWidget {
                           controller.selectAvatar(1);
                         },
                       ),
+
                       AvatarOption(
                         imagePath: 'assets/avatars/avatar_girl_1v.jpg',
                         backgroundColor: AppColors.primaryLight,
@@ -113,6 +115,7 @@ class EditChildView extends StatelessWidget {
                           controller.selectAvatar(2);
                         },
                       ),
+
                       AvatarOption(
                         imagePath: 'assets/avatars/avatar_girl_2v.jpg',
                         backgroundColor: const Color(0xFFFBE3EA),
@@ -152,6 +155,9 @@ class EditChildView extends StatelessWidget {
                             : Alignment.centerLeft,
                         child: Text(
                           controller.birthDateError!,
+                          textAlign: isArabic
+                              ? TextAlign.right
+                              : TextAlign.left,
                           style: const TextStyle(
                             color: AppColors.error,
                             fontSize: 12,
@@ -160,14 +166,28 @@ class EditChildView extends StatelessWidget {
                       ),
                     ),
 
+                  const SizedBox(height: AppSpacing.xs),
+
+                  Text(
+                    _tr(
+                      'يفتح التقويم لاختيار التاريخ',
+                      'Open the calendar to select a date',
+                    ),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+
                   const SizedBox(height: AppSpacing.md),
 
                   AppTextField(
-                    label: _tr('رقم الجوال', 'Phone number'),
-                    hint: _tr(
+                    label: _tr(
                       'رقم الجوال (اختياري)',
                       'Phone number (optional)',
                     ),
+                    hint: '05XXXXXXXX',
                     icon: Icons.phone_outlined,
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
@@ -179,8 +199,8 @@ class EditChildView extends StatelessWidget {
 
                   AppButton(
                     text: controller.isSaving
-                        ? _tr('جارٍ الحفظ...', 'Saving...')
-                        : _tr('حفظ التعديلات', 'Save Changes'),
+                        ? _tr('جاري الحفظ...', 'Saving...')
+                        : _tr('حفظ', 'Save'),
                     onPressed: controller.isSaving ? null : onSave,
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,

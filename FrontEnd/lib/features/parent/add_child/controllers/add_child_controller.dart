@@ -1,24 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../models/child_model.dart';
 import '../../services/child_api_service.dart';
 
-class EditChildController extends ChangeNotifier {
+class AddChildController extends ChangeNotifier {
   final ChildApiService _childApiService;
 
-  EditChildController({
-    required this.child,
-    required this.isArabic,
-    ChildApiService? childApiService,
-  }) : _childApiService = childApiService ?? ChildApiService(),
-       _selectedAvatarIndex = child.avatarIndex,
-       _selectedBirthDate = DateTime.tryParse(child.birthDate);
+  AddChildController({required this.isArabic, ChildApiService? childApiService})
+    : _childApiService = childApiService ?? ChildApiService();
 
-  final ChildModel child;
   final bool isArabic;
 
-  int _selectedAvatarIndex;
+  int _selectedAvatarIndex = 0;
 
   int get selectedAvatarIndex => _selectedAvatarIndex;
 
@@ -164,17 +157,14 @@ class EditChildController extends ChangeNotifier {
     return true;
   }
 
-  Future<ChildModel?> saveChanges({
-    required String name,
-    required String phone,
-  }) async {
+  Future<bool> saveChild({required String name, required String phone}) async {
     final trimmedName = name.trim();
     final trimmedPhone = phone.trim();
 
     final isValid = validateFields(name: trimmedName, phone: trimmedPhone);
 
     if (!isValid || _isSaving) {
-      return null;
+      return false;
     }
 
     _isSaving = true;
@@ -182,16 +172,17 @@ class EditChildController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      return await _childApiService.updateChild(
-        childId: child.id,
+      await _childApiService.addChild(
         name: trimmedName,
         birthDate: _formatBirthDate(_selectedBirthDate!),
         avatarIndex: _selectedAvatarIndex,
         phone: trimmedPhone.isEmpty ? null : trimmedPhone,
       );
+
+      return true;
     } on DioException catch (error) {
       debugPrint(
-        'Update child failed: '
+        'Add child failed: '
         '${error.response?.statusCode} '
         '${error.response?.data}',
       );
@@ -201,19 +192,19 @@ class EditChildController extends ChangeNotifier {
       if (_nameError == null &&
           _phoneError == null &&
           _birthDateError == null) {
-        _errorMessage = _readUpdateErrorMessage(error);
+        _errorMessage = _readAddChildErrorMessage(error);
       }
 
-      return null;
+      return false;
     } catch (error) {
-      debugPrint('Unexpected update child error: $error');
+      debugPrint('Unexpected add child error: $error');
 
       _errorMessage = tr(
-        'حدث خطأ غير متوقع أثناء تعديل الطفل.',
-        'An unexpected error occurred while updating the child.',
+        'حدث خطأ غير متوقع أثناء إضافة الطفل.',
+        'An unexpected error occurred while adding the child.',
       );
 
-      return null;
+      return false;
     } finally {
       _isSaving = false;
       notifyListeners();
@@ -234,16 +225,18 @@ class EditChildController extends ChangeNotifier {
     }
 
     _nameError = _firstError(errors['name']);
+
     _phoneError = _firstError(errors['phone']);
+
     _birthDateError = _firstError(errors['birth_date']);
   }
 
-  String _readUpdateErrorMessage(DioException error) {
+  String _readAddChildErrorMessage(DioException error) {
     final responseData = error.response?.data;
 
     var message = tr(
-      'تعذّر تعديل بيانات الطفل. حاولي مرة أخرى.',
-      'Could not update the child. Please try again.',
+      'تعذر إضافة الطفل. حاولي مرة أخرى.',
+      'Could not add the child. Please try again.',
     );
 
     if (responseData is! Map) {
@@ -252,27 +245,44 @@ class EditChildController extends ChangeNotifier {
 
     final backendMessage = responseData['error'] ?? responseData['message'];
 
+    if (backendMessage is! String || backendMessage.trim().isEmpty) {
+      return message;
+    }
+
     switch (backendMessage) {
       case 'Phone number already used':
-        message = tr(
+        return tr(
           'رقم الجوال مستخدم بالفعل.',
           'This phone number is already in use.',
         );
 
-      case 'Child not found':
-        message = tr('لم يتم العثور على الطفل.', 'The child was not found.');
-
-      case 'Parent access required':
-        message = tr(
-          'تعديل بيانات الطفل متاح لولي الأمر فقط.',
-          'Only parents can update child information.',
+      case 'Parent is not assigned to a family':
+        return tr(
+          'حساب ولي الأمر غير مرتبط بأسرة.',
+          'The parent account is not linked to a family.',
         );
 
-      case 'Failed to update child':
-        message = tr('تعذّر حفظ التعديلات.', 'Could not save the changes.');
-    }
+      case 'Parent access required':
+        return tr(
+          'إضافة الأطفال متاحة لولي الأمر فقط.',
+          'Only parents can add children.',
+        );
 
-    return message;
+      case 'Parent not found':
+        return tr(
+          'تعذّر العثور على حساب ولي الأمر.',
+          'The parent account could not be found.',
+        );
+
+      case 'Could not create child':
+        return tr(
+          'تعذّر إنشاء حساب الطفل.',
+          'Could not create the child account.',
+        );
+
+      default:
+        return backendMessage;
+    }
   }
 
   String _formatBirthDate(DateTime date) {

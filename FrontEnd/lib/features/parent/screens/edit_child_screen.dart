@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../edit_child/widgets/edit_child_view.dart';
 import '../../../models/child_model.dart';
 import '../edit_child/controllers/edit_child_controller.dart';
+
 class EditChildScreen extends StatefulWidget {
   final ChildModel child;
   final bool isArabic;
@@ -104,19 +105,19 @@ class _EditChildScreenState extends State<EditChildScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return ChangeNotifierProvider.value(
-    value: _controller,
-    child: EditChildView(
-      isArabic: widget.isArabic,
-      nameController: nameController,
-      phoneController: phoneController,
-      onBack: () {
-        Navigator.pop(context);
-      },
-      onPickDate: _pickDate,
-      onSave: _saveChanges,
-    ),
-  );
-}
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: _controller,
+      child: EditChildView(
+        isArabic: widget.isArabic,
+        nameController: nameController,
+        phoneController: phoneController,
+        onBack: () {
+          Navigator.pop(context);
+        },
+        onPickDate: _pickDate,
+        onSave: _saveChanges,
+      ),
+    );
+  }
 }
