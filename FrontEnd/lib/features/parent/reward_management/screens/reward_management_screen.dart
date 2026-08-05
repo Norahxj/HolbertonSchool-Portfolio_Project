@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../models/reward_model.dart';
 import '../../../../models/reward_suggestion_model.dart';
-import '../../screens/add_reward_screen.dart';
+import '../screens/add_reward_screen.dart';
 import 'package:provider/provider.dart';
 import '../controllers/reward_management_controller.dart';
 import '../widgets/reward_management_view.dart';
