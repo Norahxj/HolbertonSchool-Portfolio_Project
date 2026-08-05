@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../controllers/parent_dashboard_controller.dart';
@@ -12,6 +11,7 @@ import 'task_review_screen.dart';
 import '../dashboard/widgets/welcome_banner.dart';
 import '../dashboard/widgets/children_section_header.dart';
 import '../dashboard/widgets/child_card.dart';
+import '../dashboard/widgets/dashboard_states.dart';
 
 class ParentDashboardScreen extends StatelessWidget {
   final bool isArabic;
@@ -125,7 +125,7 @@ class _ParentDashboardView extends StatelessWidget {
     }
 
     if (data == null) {
-      return _DashboardErrorState(
+      return DashboardErrorState(
         message:
             controller.errorMessage ??
             (isArabic
@@ -157,7 +157,7 @@ class _ParentDashboardView extends StatelessWidget {
             const SizedBox(height: AppSpacing.xl),
 
             if (controller.errorMessage != null)
-              _DashboardErrorBanner(
+              DashboardErrorBanner(
                 message: controller.errorMessage!,
                 onClose: controller.clearError,
               ),
@@ -177,7 +177,7 @@ class _ParentDashboardView extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
 
             if (data.children.isEmpty)
-              _NoChildrenState(
+              DashboardNoChildrenState(
                 isArabic: isArabic,
                 onAddChild: () {
                   _openAddChild(context);
@@ -201,165 +201,6 @@ class _ParentDashboardView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// The same compact button is used in both dashboard states.
-class _AddChildButton extends StatelessWidget {
-  final bool isArabic;
-  final VoidCallback onTap;
-
-  const _AddChildButton({required this.isArabic, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton.icon(
-        onPressed: onTap,
-        icon: const Icon(Icons.add, size: 20),
-        label: Text(
-          isArabic ? 'إضافة طفل' : 'Add child',
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryLight,
-          foregroundColor: AppColors.primary,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          minimumSize: Size.zero,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.sm,
-          ),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: const StadiumBorder(),
-        ),
-      ),
-    );
-  }
-}
-
-class _NoChildrenState extends StatelessWidget {
-  final bool isArabic;
-  final VoidCallback onAddChild;
-
-  const _NoChildrenState({required this.isArabic, required this.onAddChild});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.family_restroom_rounded,
-            size: 48,
-            color: AppColors.primary,
-          ),
-
-          const SizedBox(height: AppSpacing.md),
-
-          Text(
-            isArabic ? 'لا يوجد أطفال بعد' : 'No children added yet',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-
-          const SizedBox(height: AppSpacing.md),
-
-          _AddChildButton(isArabic: isArabic, onTap: onAddChild),
-        ],
-      ),
-    );
-  }
-}
-
-class _DashboardErrorBanner extends StatelessWidget {
-  final String message;
-  final VoidCallback onClose;
-
-  const _DashboardErrorBanner({required this.message, required this.onClose});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF9DEDE),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onClose,
-            icon: const Icon(Icons.close, size: 18, color: AppColors.error),
-          ),
-
-          Expanded(
-            child: Text(
-              message,
-              textAlign: TextAlign.start,
-              style: const TextStyle(fontSize: 12, color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DashboardErrorState extends StatelessWidget {
-  final String message;
-  final bool isArabic;
-  final Future<void> Function() onRetry;
-
-  const _DashboardErrorState({
-    required this.message,
-    required this.isArabic,
-    required this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      children: [
-        const SizedBox(height: 140),
-
-        const Icon(
-          Icons.dashboard_outlined,
-          size: 52,
-          color: AppColors.primary,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: AppColors.error),
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        Center(
-          child: ElevatedButton(
-            onPressed: onRetry,
-            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
-          ),
-        ),
-      ],
     );
   }
 }
