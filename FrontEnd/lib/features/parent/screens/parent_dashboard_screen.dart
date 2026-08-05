@@ -10,7 +10,7 @@ import 'parent_child_details_screen.dart';
 import 'task_review_screen.dart';
 import '../dashboard/widgets/welcome_banner.dart';
 import '../dashboard/widgets/children_section_header.dart';
-import '../dashboard/widgets/child_card.dart';
+import '../dashboard/widgets/dashboard_child_card.dart';
 import '../dashboard/widgets/dashboard_states.dart';
 
 class ParentDashboardScreen extends StatelessWidget {
@@ -187,7 +187,7 @@ class _ParentDashboardView extends StatelessWidget {
               ...data.children.map((item) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                  child: ChildCard(
+                  child: DashboardChildCard(
                     item: item,
                     isArabic: isArabic,
                     onTap: () {
