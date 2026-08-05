@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../add_child/widgets/add_child_view.dart';
-import '../add_child/controllers/add_child_controller.dart';
+import '../widgets/add_child_view.dart';
+import '../controllers/add_child_controller.dart';
 
 class AddChildScreen extends StatefulWidget {
   final bool isArabic;

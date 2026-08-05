@@ -1,7 +1,7 @@
-import '../../../models/task_assignment_model.dart';
-import '../../../models/task_model.dart';
-import '../../../services/task_api_service.dart';
-import '../models/parent_child_tasks_data.dart';
+import '../../../../models/task_assignment_model.dart';
+import '../../../../models/task_model.dart';
+import '../../../../services/task_api_service.dart';
+import '../../models/parent_child_tasks_data.dart';
 
 /// Handles the task data required by the parent's child-details screens.
 class ParentChildDetailsRepository {

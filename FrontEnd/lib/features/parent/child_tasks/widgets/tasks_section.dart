@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../models/task_assignment_model.dart';
-import '../../controllers/parent_child_details_controller.dart';
+import '../../parent_child_details/controllers/parent_child_details_controller.dart';
 import '../../models/parent_child_tasks_data.dart';
 import 'child_task_card.dart';
 import 'task_filter_bar.dart';

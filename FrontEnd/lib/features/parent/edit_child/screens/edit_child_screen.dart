@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../edit_child/widgets/edit_child_view.dart';
-import '../../../models/child_model.dart';
-import '../edit_child/controllers/edit_child_controller.dart';
+import '../widgets/edit_child_view.dart';
+import '../../../../models/child_model.dart';
+import '../controllers/edit_child_controller.dart';
 
 class EditChildScreen extends StatefulWidget {
   final ChildModel child;

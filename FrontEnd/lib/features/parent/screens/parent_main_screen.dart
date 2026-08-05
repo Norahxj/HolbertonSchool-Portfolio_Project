@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
 import 'add_task_screen.dart';
-import 'more_settings_screen.dart';
+import '../more_settings/screens/more_settings_screen.dart';
 import 'parent_dashboard_screen.dart';
-import 'reward_management_screen.dart';
+import '../reward_management/screens/reward_management_screen.dart';
 import 'wishlist_approval_screen.dart';
 
 class ParentMainScreen extends StatefulWidget {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../models/reward_model.dart';
-import '../../../models/reward_suggestion_model.dart';
-import 'add_reward_screen.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../models/reward_model.dart';
+import '../../../../models/reward_suggestion_model.dart';
+import '../../screens/add_reward_screen.dart';
 import 'package:provider/provider.dart';
-import '../reward_management/controllers/reward_management_controller.dart';
-import '../reward_management/widgets/reward_management_view.dart';
+import '../controllers/reward_management_controller.dart';
+import '../widgets/reward_management_view.dart';
 
 class RewardManagementScreen extends StatefulWidget {
   final bool isArabic;

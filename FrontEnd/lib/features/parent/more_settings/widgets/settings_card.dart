@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../screens/family_settings_screen.dart';
+import '../../family_settings/screens/family_settings_screen.dart';
 import 'language_setting_row.dart';
 
 class SettingsCard extends StatelessWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/constants/app_colors.dart';
-import '../controllers/parent_child_details_controller.dart';
-import '../child_tasks/widgets/child_tasks_view.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../parent_child_details/controllers/parent_child_details_controller.dart';
+import '../widgets/child_tasks_view.dart';
 
 class ChildTasksScreen extends StatelessWidget {
   final String childId;

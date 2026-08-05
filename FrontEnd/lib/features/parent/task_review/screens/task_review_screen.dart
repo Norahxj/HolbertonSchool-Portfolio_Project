@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../task_review/widgets/task_review_view.dart';
-import '../task_review/controllers/task_review_controller.dart';
-import '../task_review/models/review_task.dart';
+import '../widgets/task_review_view.dart';
+import '../controllers/task_review_controller.dart';
+import '../models/review_task.dart';
 
 class TaskReviewScreen extends StatefulWidget {
   final bool isArabic;

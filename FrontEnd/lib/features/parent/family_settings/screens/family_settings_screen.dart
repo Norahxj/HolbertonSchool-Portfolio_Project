@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_colors.dart';
 import 'package:provider/provider.dart';
-import '../family_settings/controllers/family_settings_controller.dart';
-import '../family_settings/widgets/family_settings_view.dart';
+import '../controllers/family_settings_controller.dart';
+import '../widgets/family_settings_view.dart';
 
 class FamilySettingsScreen extends StatefulWidget {
   final bool isArabic;

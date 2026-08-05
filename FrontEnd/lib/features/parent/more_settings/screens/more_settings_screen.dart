@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../models/user_model.dart';
-import '../more_settings/controllers/more_settings_controller.dart';
-import '../more_settings/widgets/more_settings_view.dart';
-import 'profile_screen.dart';
+import '../../../../models/user_model.dart';
+import '../controllers/more_settings_controller.dart';
+import '../widgets/more_settings_view.dart';
+import '../../screens/profile_screen.dart';
 
 class MoreSettingsScreen extends StatefulWidget {
   final bool isArabic;
