@@ -11,6 +11,8 @@ import '../../../services/reward_api_service.dart';
 import '../services/child_api_service.dart';
 import '../widgets/child_card.dart';
 import 'add_reward_screen.dart';
+import '../reward_management/widgets/reward_states.dart';
+import '../reward_management/widgets/current_reward_card.dart';
 
 class RewardManagementScreen extends StatefulWidget {
   final bool isArabic;
@@ -396,12 +398,12 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
                   if (isLoadingChildren)
                     const Center(child: CircularProgressIndicator())
                   else if (childrenError != null)
-                    _ErrorMessage(
+                    RewardErrorMessage(
                       message: childrenError!,
                       onRetry: _loadChildren,
                     )
                   else if (children.isEmpty)
-                    _EmptyMessage(
+                    RewardEmptyMessage(
                       message: isArabic
                           ? 'لا يوجد أطفال بعد. أضف طفلًا أولًا.'
                           : 'No children yet. Add a child first.',
@@ -457,12 +459,12 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
                         ),
                       )
                     else if (rewardsError != null)
-                      _ErrorMessage(
+                      RewardErrorMessage(
                         message: rewardsError!,
                         onRetry: _loadCurrentRewards,
                       )
                     else if (currentRewards.isEmpty)
-                      _EmptyMessage(
+                      RewardEmptyMessage(
                         message: isArabic
                             ? 'لا توجد مكافآت لهذا الطفل حتى الآن'
                             : 'This child has no rewards yet',
@@ -473,7 +475,7 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
                           final isClaimed =
                               reward.status.toUpperCase() == 'CLAIMED';
 
-                          return _CurrentRewardCard(
+                          return CurrentRewardCard(
                             reward: reward,
                             isArabic: isArabic,
                             isDeleting: deletingRewardIds.contains(reward.id),
@@ -506,7 +508,7 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
                   const SizedBox(height: AppSpacing.sm),
 
                   if (selectedChildId == null)
-                    _EmptyMessage(
+                    RewardEmptyMessage(
                       message: isArabic
                           ? 'اختر طفلًا أولًا لعرض المكافآت المقترحة'
                           : 'Select a child first to view suggested rewards',
@@ -519,7 +521,7 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
                       ),
                     )
                   else if (suggestionsError != null)
-                    _ErrorMessage(
+                    RewardErrorMessage(
                       message: suggestionsError!,
                       onRetry: _loadRewardSuggestions,
                     )
@@ -548,170 +550,6 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _CurrentRewardCard extends StatelessWidget {
-  final RewardModel reward;
-  final bool isArabic;
-  final bool isDeleting;
-  final VoidCallback? onDelete;
-
-  const _CurrentRewardCard({
-    required this.reward,
-    required this.isArabic,
-    required this.isDeleting,
-    required this.onDelete,
-  });
-
-  String get statusLabel {
-    switch (reward.status.toUpperCase()) {
-      case 'UNLOCKED':
-        return isArabic ? 'متاحة' : 'Unlocked';
-
-      case 'CLAIMED':
-        return isArabic ? 'تم استلامها' : 'Claimed';
-
-      default:
-        return isArabic ? 'مقفلة' : 'Locked';
-    }
-  }
-
-  IconData get statusIcon {
-    switch (reward.status.toUpperCase()) {
-      case 'UNLOCKED':
-        return Icons.lock_open_outlined;
-
-      case 'CLAIMED':
-        return Icons.check_circle_outline;
-
-      default:
-        return Icons.lock_outline;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
-        children: [
-          if (onDelete != null)
-            IconButton(
-              onPressed: isDeleting ? null : onDelete,
-              icon: isDeleting
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.delete_outline, color: AppColors.error),
-            ),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: isArabic
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                Text(
-                  reward.rewardName,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-
-                if (reward.description != null &&
-                    reward.description!.trim().isNotEmpty) ...[
-                  const SizedBox(height: 4),
-
-                  Text(
-                    reward.description!,
-                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                    textDirection: isArabic
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-
-                const SizedBox(height: 6),
-
-                Row(
-                  mainAxisAlignment: isArabic
-                      ? MainAxisAlignment.end
-                      : MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      statusLabel,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: AppColors.primaryDark,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(width: 4),
-
-                    Icon(statusIcon, size: 17, color: AppColors.primary),
-                  ],
-                ),
-
-                const SizedBox(height: 3),
-
-                Text(
-                  isArabic
-                      ? 'تفتح يوم ${reward.unlockDayLabel}'
-                      : 'Unlocks on ${reward.unlockDayLabel}',
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: AppSpacing.md),
-
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.card_giftcard_outlined,
-              color: AppColors.primary,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -872,56 +710,6 @@ class _AddRewardButton extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _EmptyMessage extends StatelessWidget {
-  final String message;
-
-  const _EmptyMessage({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
-      ),
-    );
-  }
-}
-
-class _ErrorMessage extends StatelessWidget {
-  final String message;
-  final Future<void> Function() onRetry;
-
-  const _ErrorMessage({required this.message, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    return Column(
-      children: [
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: AppColors.error, fontSize: 13),
-        ),
-
-        TextButton(
-          onPressed: onRetry,
-          child: Text(isArabic ? 'إعادة المحاولة' : 'Retry'),
-        ),
-      ],
     );
   }
 }
