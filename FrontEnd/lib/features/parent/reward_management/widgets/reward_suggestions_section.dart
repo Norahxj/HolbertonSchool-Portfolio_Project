@@ -4,13 +4,13 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../models/reward_suggestion_model.dart';
 
-class RewardSuggestionsSection  extends StatelessWidget {
+class RewardSuggestionsSection extends StatelessWidget {
   final List<RewardSuggestionModel> suggestions;
   final bool isArabic;
 
   final ValueChanged<RewardSuggestionModel> onSuggestionTap;
 
-  const RewardSuggestionsSection ({
+  const RewardSuggestionsSection({
     super.key,
     required this.suggestions,
     required this.isArabic,

@@ -61,70 +61,68 @@ class FamilySettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> loadFamilyData({
-  bool showLoading = true,
-}) async {
-  if (showLoading) {
-    _isLoading = true;
-  }
-
-  _pageError = null;
-  notifyListeners();
-
-  try {
-    final results = await Future.wait([
-      _familyApiService.getFamilyDetails(),
-      _familyApiService.getIncomingInvitations(),
-    ]);
-
-    final familyData = results[0] as Map<String, dynamic>;
-
-    final loadedIncomingInvitations =
-        results[1] as List<Map<String, dynamic>>;
-
-    final loadedGuardians = (familyData['guardians'] as List? ?? [])
-        .map((item) => Map<String, dynamic>.from(item as Map))
-        .toList();
-
-    final loadedSentInvitations =
-        (familyData['pending_invitations'] as List? ?? [])
-            .map((item) => Map<String, dynamic>.from(item as Map))
-            .toList();
-
-    _originalFamilyName = familyData['name']?.toString() ?? '';
-    _currentUserId = familyData['current_user_id']?.toString();
-
-    _guardians
-      ..clear()
-      ..addAll(loadedGuardians);
-
-    _sentInvitations
-      ..clear()
-      ..addAll(loadedSentInvitations);
-
-    _incomingInvitations
-      ..clear()
-      ..addAll(loadedIncomingInvitations);
-
+  Future<String?> loadFamilyData({bool showLoading = true}) async {
     if (showLoading) {
-      _isLoading = false;
+      _isLoading = true;
     }
 
+    _pageError = null;
     notifyListeners();
 
-    return null;
-  } catch (error) {
-    _pageError = _familyApiService.readErrorMessage(error);
+    try {
+      final results = await Future.wait([
+        _familyApiService.getFamilyDetails(),
+        _familyApiService.getIncomingInvitations(),
+      ]);
 
-    if (showLoading) {
-      _isLoading = false;
+      final familyData = results[0] as Map<String, dynamic>;
+
+      final loadedIncomingInvitations =
+          results[1] as List<Map<String, dynamic>>;
+
+      final loadedGuardians = (familyData['guardians'] as List? ?? [])
+          .map((item) => Map<String, dynamic>.from(item as Map))
+          .toList();
+
+      final loadedSentInvitations =
+          (familyData['pending_invitations'] as List? ?? [])
+              .map((item) => Map<String, dynamic>.from(item as Map))
+              .toList();
+
+      _originalFamilyName = familyData['name']?.toString() ?? '';
+      _currentUserId = familyData['current_user_id']?.toString();
+
+      _guardians
+        ..clear()
+        ..addAll(loadedGuardians);
+
+      _sentInvitations
+        ..clear()
+        ..addAll(loadedSentInvitations);
+
+      _incomingInvitations
+        ..clear()
+        ..addAll(loadedIncomingInvitations);
+
+      if (showLoading) {
+        _isLoading = false;
+      }
+
+      notifyListeners();
+
+      return null;
+    } catch (error) {
+      _pageError = _familyApiService.readErrorMessage(error);
+
+      if (showLoading) {
+        _isLoading = false;
+      }
+
+      notifyListeners();
+
+      return _pageError;
     }
-
-    notifyListeners();
-
-    return _pageError;
   }
-}
 
   Future<String?> saveFamilyName(String displayedName) async {
     final trimmedName = displayedName.trim();

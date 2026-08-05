@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../models/user_model.dart';
 
-
 class ProfileBanner extends StatelessWidget {
   final UserModel user;
   final bool isArabic;

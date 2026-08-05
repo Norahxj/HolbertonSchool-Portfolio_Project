@@ -23,9 +23,7 @@ class GuardiansSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FamilyFieldLabel(
-          text: isArabic ? 'أولياء الأمور' : 'Guardians',
-        ),
+        FamilyFieldLabel(text: isArabic ? 'أولياء الأمور' : 'Guardians'),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -48,19 +46,14 @@ class GuardiansSection extends StatelessWidget {
 
             final isCurrentUser = guardianId == currentUserId;
 
-            final firstName =
-                guardian['first_name']?.toString() ?? '';
+            final firstName = guardian['first_name']?.toString() ?? '';
 
-            final lastName =
-                guardian['last_name']?.toString() ?? '';
+            final lastName = guardian['last_name']?.toString() ?? '';
 
-            final guardianType =
-                guardian['guardian_type']?.toString() ?? '';
+            final guardianType = guardian['guardian_type']?.toString() ?? '';
 
             return Padding(
-              padding: const EdgeInsets.only(
-                bottom: AppSpacing.sm,
-              ),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: GuardianCard(
                 name: '$firstName $lastName'.trim(),
                 subtitle: guardianTypeLabel(guardianType),

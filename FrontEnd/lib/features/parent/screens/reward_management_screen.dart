@@ -6,6 +6,7 @@ import 'add_reward_screen.dart';
 import 'package:provider/provider.dart';
 import '../reward_management/controllers/reward_management_controller.dart';
 import '../reward_management/widgets/reward_management_view.dart';
+
 class RewardManagementScreen extends StatefulWidget {
   final bool isArabic;
   final int childrenVersion;

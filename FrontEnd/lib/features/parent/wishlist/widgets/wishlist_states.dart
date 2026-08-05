@@ -22,16 +22,12 @@ class WishlistErrorState extends StatelessWidget {
                 ? 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.'
                 : 'An error occurred while loading wishes. Please try again.',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.error,
-            ),
+            style: const TextStyle(color: AppColors.error),
           ),
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: onRetry,
-            child: Text(
-              isArabic ? 'إعادة المحاولة' : 'Try Again',
-            ),
+            child: Text(isArabic ? 'إعادة المحاولة' : 'Try Again'),
           ),
         ],
       ),
@@ -42,10 +38,7 @@ class WishlistErrorState extends StatelessWidget {
 class WishlistEmptyState extends StatelessWidget {
   final bool isArabic;
 
-  const WishlistEmptyState({
-    super.key,
-    required this.isArabic,
-  });
+  const WishlistEmptyState({super.key, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +48,7 @@ class WishlistEmptyState extends StatelessWidget {
         child: Text(
           isArabic ? 'لا توجد أمنيات بعد.' : 'No wishes yet.',
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 16,
-            color: AppColors.textSecondary,
-          ),
+          style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
         ),
       ),
     );

@@ -23,17 +23,13 @@ class FamilyNameSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FamilyFieldLabel(
-          text: isArabic ? 'اسم العائلة' : 'Family Name',
-        ),
+        FamilyFieldLabel(text: isArabic ? 'اسم العائلة' : 'Family Name'),
 
         const SizedBox(height: AppSpacing.sm),
 
         Container(
           height: 56,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           decoration: BoxDecoration(
             color: AppColors.inputBackground,
             borderRadius: BorderRadius.circular(18),
@@ -52,13 +48,11 @@ class FamilyNameSection extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
-                  textAlign:
-                      isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection:
-                      isArabic ? TextDirection.rtl : TextDirection.ltr,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                  ),
+                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  textDirection: isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  style: const TextStyle(color: AppColors.textPrimary),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     isDense: true,
@@ -88,9 +82,7 @@ class FamilyNameSection extends StatelessWidget {
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.save_outlined),
             label: Text(

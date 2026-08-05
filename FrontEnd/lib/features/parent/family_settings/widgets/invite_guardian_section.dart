@@ -41,9 +41,7 @@ class InviteGuardianSection extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  isArabic
-                      ? 'دعوة ولي أمر آخر'
-                      : 'Invite Another Guardian',
+                  isArabic ? 'دعوة ولي أمر آخر' : 'Invite Another Guardian',
                   textAlign: TextAlign.right,
                   style: const TextStyle(
                     fontSize: 15,
@@ -59,9 +57,7 @@ class InviteGuardianSection extends StatelessWidget {
 
           Container(
             height: 56,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.inputBackground,
               borderRadius: BorderRadius.circular(18),
@@ -72,9 +68,7 @@ class InviteGuardianSection extends StatelessWidget {
                   child: TextField(
                     controller: controller,
                     keyboardType: TextInputType.emailAddress,
-                    textAlign: isArabic
-                        ? TextAlign.right
-                        : TextAlign.left,
+                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
                     textDirection: isArabic
                         ? TextDirection.rtl
                         : TextDirection.ltr,

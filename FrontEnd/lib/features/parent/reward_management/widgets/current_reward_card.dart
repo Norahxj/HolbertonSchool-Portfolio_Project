@@ -11,7 +11,7 @@ class CurrentRewardCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const CurrentRewardCard({
-     super.key,
+    super.key,
     required this.reward,
     required this.isArabic,
     required this.isDeleting,
