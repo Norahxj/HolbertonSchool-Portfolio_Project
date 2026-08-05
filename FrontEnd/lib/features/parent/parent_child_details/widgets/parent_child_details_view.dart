@@ -11,7 +11,7 @@ import '../../models/parent_dashboard_data.dart';
 import '../../child_tasks/screens/child_tasks_screen.dart';
 import '../../daily_feedback/screens/daily_feedback_screen.dart';
 import '../../edit_child/screens/edit_child_screen.dart';
-import '../../screens/points_history_screen.dart';
+import '../../points_history/screens/points_history_screen.dart';
 import 'child_access_code_card.dart';
 import 'child_details_navigation_card.dart';
 import 'information_card.dart';
