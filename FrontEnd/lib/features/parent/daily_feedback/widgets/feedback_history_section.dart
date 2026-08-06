@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/daily_feedback_model.dart';
 import 'daily_feedback_mood.dart';
 
 class FeedbackHistorySection extends StatelessWidget {
   final List<DailyFeedbackModel> feedbackHistory;
-  final bool isArabic;
 
   const FeedbackHistorySection({
     super.key,
     required this.feedbackHistory,
-    required this.isArabic,
   });
 
   @override
@@ -26,7 +25,7 @@ class FeedbackHistorySection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          isArabic ? 'سجل التقييمات' : 'Feedback History',
+          context.l10n.feedbackHistory,
           style: AppTextStyles.arabicTitle,
         ),
 
@@ -37,13 +36,17 @@ class FeedbackHistorySection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: feedbackHistory.length,
           separatorBuilder: (_, _) {
-            return const SizedBox(height: AppSpacing.sm);
+            return const SizedBox(
+              height: AppSpacing.sm,
+            );
           },
           itemBuilder: (context, index) {
             final feedback = feedbackHistory[index];
 
             return Container(
-              padding: const EdgeInsets.all(AppSpacing.md),
+              padding: const EdgeInsets.all(
+                AppSpacing.md,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(16),
@@ -51,34 +54,47 @@ class FeedbackHistorySection extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    DailyFeedbackMood.emoji(feedback.mood),
-                    style: const TextStyle(fontSize: 28),
+                    DailyFeedbackMood.emoji(
+                      feedback.mood,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 28,
+                    ),
                   ),
 
-                  const SizedBox(width: AppSpacing.md),
+                  const SizedBox(
+                    width: AppSpacing.md,
+                  ),
 
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: isArabic
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
                       children: [
                         Text(
                           DailyFeedbackMood.label(
+                            context: context,
                             mood: feedback.mood,
-                            isArabic: isArabic,
                           ),
+                          textAlign: TextAlign.start,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color:
+                                AppColors.textPrimary,
                           ),
                         ),
 
+                        const SizedBox(height: 2),
+
                         Text(
-                          DailyFeedbackMood.formatDate(feedback.feedbackDate),
+                          DailyFeedbackMood.formatDate(
+                            feedback.feedbackDate,
+                          ),
+                          textAlign: TextAlign.start,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: AppColors.textSecondary,
+                            color:
+                                AppColors.textSecondary,
                           ),
                         ),
                       ],

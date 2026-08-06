@@ -4,17 +4,17 @@ import '../../../../models/child_model.dart';
 import '../../../../models/daily_feedback_model.dart';
 import '../../../../services/daily_feedback_api_service.dart';
 
+enum DailyFeedbackErrorCode { loadFeedback, saveFeedback }
+
 class DailyFeedbackController extends ChangeNotifier {
   final DailyFeedbackApiService _feedbackService;
 
   DailyFeedbackController({
     required this.child,
-    required this.isArabic,
     DailyFeedbackApiService? feedbackService,
   }) : _feedbackService = feedbackService ?? DailyFeedbackApiService();
 
   final ChildModel child;
-  final bool isArabic;
 
   final List<DailyFeedbackModel> _feedbackHistory = [];
 
@@ -37,13 +37,9 @@ class DailyFeedbackController extends ChangeNotifier {
 
   bool get isSubmitting => _isSubmitting;
 
-  String? _errorMessage;
+  DailyFeedbackErrorCode? _errorCode;
 
-  String? get errorMessage => _errorMessage;
-
-  String tr(String arabic, String english) {
-    return isArabic ? arabic : english;
-  }
+  DailyFeedbackErrorCode? get errorCode => _errorCode;
 
   void selectMood(String mood) {
     if (_selectedMood == mood) {
@@ -56,7 +52,7 @@ class DailyFeedbackController extends ChangeNotifier {
 
   Future<void> loadFeedback() async {
     _isLoading = true;
-    _errorMessage = null;
+    _errorCode = null;
     notifyListeners();
 
     try {
@@ -86,10 +82,7 @@ class DailyFeedbackController extends ChangeNotifier {
     } catch (error) {
       debugPrint('Loading daily feedback failed: $error');
 
-      _errorMessage = tr(
-        'تعذّر تحميل سجل التقييم',
-        'Unable to load feedback history',
-      );
+      _errorCode = DailyFeedbackErrorCode.loadFeedback;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -138,11 +131,8 @@ class DailyFeedbackController extends ChangeNotifier {
     } catch (error) {
       debugPrint('Saving daily feedback failed: $error');
 
-      return DailyFeedbackSubmitResult(
-        errorMessage: tr(
-          'تعذّر حفظ التقييم. حاول مرة أخرى.',
-          'Unable to save feedback. Please try again.',
-        ),
+      return const DailyFeedbackSubmitResult(
+        errorCode: DailyFeedbackErrorCode.saveFeedback,
       );
     } finally {
       _isSubmitting = false;
@@ -159,9 +149,9 @@ class DailyFeedbackController extends ChangeNotifier {
 
 class DailyFeedbackSubmitResult {
   final DailyFeedbackModel? feedback;
-  final String? errorMessage;
+  final DailyFeedbackErrorCode? errorCode;
 
-  const DailyFeedbackSubmitResult({this.feedback, this.errorMessage});
+  const DailyFeedbackSubmitResult({this.feedback, this.errorCode});
 
   bool get isSuccess => feedback != null;
 }

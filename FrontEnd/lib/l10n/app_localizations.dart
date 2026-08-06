@@ -667,6 +667,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reward unlock day'**
   String get rewardUnlockDayLabel;
+
+  /// No description provided for @failedToLoadFeedbackHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load feedback history'**
+  String get failedToLoadFeedbackHistory;
+
+  /// No description provided for @failedToSaveFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to save feedback. Please try again.'**
+  String get failedToSaveFeedback;
+
+  /// No description provided for @feedbackSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback saved successfully ✓'**
+  String get feedbackSavedSuccessfully;
+
+  /// No description provided for @dailyFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Feedback'**
+  String get dailyFeedback;
+
+  /// No description provided for @feedbackHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback History'**
+  String get feedbackHistory;
+
+  /// No description provided for @todayFeedbackEditable.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Feedback (You Can Edit It)'**
+  String get todayFeedbackEditable;
+
+  /// No description provided for @howWasChildDay.
+  ///
+  /// In en, this message translates to:
+  /// **'How was {childName}\'s day?'**
+  String howWasChildDay(String childName);
+
+  /// No description provided for @updateFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Feedback'**
+  String get updateFeedback;
+
+  /// No description provided for @saveFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Feedback'**
+  String get saveFeedback;
+
+  /// No description provided for @moodHappy.
+  ///
+  /// In en, this message translates to:
+  /// **'Happy'**
+  String get moodHappy;
+
+  /// No description provided for @moodProud.
+  ///
+  /// In en, this message translates to:
+  /// **'Proud'**
+  String get moodProud;
+
+  /// No description provided for @moodGreat.
+  ///
+  /// In en, this message translates to:
+  /// **'Great'**
+  String get moodGreat;
+
+  /// No description provided for @moodLoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Loved'**
+  String get moodLoved;
+
+  /// No description provided for @moodStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get moodStrong;
+
+  /// No description provided for @moodStar.
+  ///
+  /// In en, this message translates to:
+  /// **'Star'**
+  String get moodStar;
 }
 
 class _AppLocalizationsDelegate

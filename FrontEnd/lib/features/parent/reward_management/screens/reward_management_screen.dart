@@ -16,11 +16,15 @@ class RewardManagementScreen extends StatefulWidget {
   const RewardManagementScreen({super.key, this.childrenVersion = 0});
 
   @override
-  State<RewardManagementScreen> createState() => _RewardManagementScreenState();
+  State<RewardManagementScreen> createState() {
+    return _RewardManagementScreenState();
+  }
 }
 
 class _RewardManagementScreenState extends State<RewardManagementScreen> {
   late final RewardManagementController _controller;
+
+  bool _didInitialize = false;
 
   @override
   void initState() {
@@ -35,12 +39,17 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
 
     final languageCode = Localizations.localeOf(context).languageCode;
 
-    if (_controller.languageCode != languageCode) {
+    if (!_didInitialize) {
+      _didInitialize = true;
+
       _controller.updateLanguage(languageCode);
+      _controller.initialize();
+
+      return;
     }
 
-    if (_controller.isLoadingChildren && _controller.children.isEmpty) {
-      _controller.initialize();
+    if (_controller.languageCode != languageCode) {
+      _controller.updateLanguage(languageCode);
     }
   }
 
@@ -56,6 +65,7 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   @override
   void dispose() {
     _controller.dispose();
+
     super.dispose();
   }
 
@@ -79,17 +89,19 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
       return;
     }
 
-    if (saved == true) {
-      await _controller.loadCurrentRewards();
-
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.rewardAddedSuccessfully)),
-      );
+    if (saved != true) {
+      return;
     }
+
+    await _controller.loadCurrentRewards();
+
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.rewardAddedSuccessfully)),
+    );
   }
 
   Future<void> _deleteReward(RewardModel reward) async {

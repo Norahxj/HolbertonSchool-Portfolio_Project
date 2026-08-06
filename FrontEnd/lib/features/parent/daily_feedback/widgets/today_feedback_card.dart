@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/daily_feedback_model.dart';
 import 'mood_option_card.dart';
 
 class TodayFeedbackCard extends StatelessWidget {
   final String childName;
-  final bool isArabic;
   final DailyFeedbackModel? todayFeedback;
   final String? selectedMood;
   final bool isSubmitting;
@@ -18,7 +18,6 @@ class TodayFeedbackCard extends StatelessWidget {
   const TodayFeedbackCard({
     super.key,
     required this.childName,
-    required this.isArabic,
     required this.todayFeedback,
     required this.selectedMood,
     required this.isSubmitting,
@@ -28,6 +27,16 @@ class TodayFeedbackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    final title = todayFeedback != null
+        ? l10n.todayFeedbackEditable
+        : l10n.howWasChildDay(childName);
+
+    final buttonLabel = todayFeedback != null
+        ? l10n.updateFeedback
+        : l10n.saveFeedback;
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -38,13 +47,7 @@ class TodayFeedbackCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            todayFeedback != null
-                ? (isArabic
-                      ? 'تقييم اليوم (يمكنك التعديل)'
-                      : 'Today\'s Feedback (You Can Edit It)')
-                : (isArabic
-                      ? 'كيف كان يوم $childName؟'
-                      : 'How was $childName\'s day?'),
+            title,
             style: AppTextStyles.arabicTitle,
             textAlign: TextAlign.center,
           ),
@@ -58,7 +61,6 @@ class TodayFeedbackCard extends StatelessWidget {
             children: kMoodValues.map((mood) {
               return MoodOptionCard(
                 mood: mood,
-                isArabic: isArabic,
                 isSelected: selectedMood == mood,
                 onTap: () {
                   onMoodSelected(mood);
@@ -88,9 +90,7 @@ class TodayFeedbackCard extends StatelessWidget {
                     ),
                   )
                 : Text(
-                    todayFeedback != null
-                        ? (isArabic ? 'تحديث التقييم' : 'Update Feedback')
-                        : (isArabic ? 'حفظ التقييم' : 'Save Feedback'),
+                    buttonLabel,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,

@@ -30,9 +30,7 @@ class ChildDetailsNavigationCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.border,
-          ),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
@@ -43,10 +41,7 @@ class ChildDetailsNavigationCard extends StatelessWidget {
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: AppColors.primary,
-              ),
+              child: Icon(icon, color: AppColors.primary),
             ),
 
             const SizedBox(width: AppSpacing.md),

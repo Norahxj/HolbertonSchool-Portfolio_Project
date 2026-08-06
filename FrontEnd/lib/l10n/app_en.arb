@@ -136,5 +136,27 @@
   }
 },
 "saveReward": "Save Reward",
-"rewardUnlockDayLabel": "Reward unlock day"
+"rewardUnlockDayLabel": "Reward unlock day",
+"failedToLoadFeedbackHistory": "Unable to load feedback history",
+"failedToSaveFeedback": "Unable to save feedback. Please try again.",
+"feedbackSavedSuccessfully": "Feedback saved successfully ✓",
+"dailyFeedback": "Daily Feedback",
+"feedbackHistory": "Feedback History",
+"todayFeedbackEditable": "Today's Feedback (You Can Edit It)",
+"howWasChildDay": "How was {childName}'s day?",
+"@howWasChildDay": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"updateFeedback": "Update Feedback",
+"saveFeedback": "Save Feedback",
+"moodHappy": "Happy",
+"moodProud": "Proud",
+"moodGreat": "Great",
+"moodLoved": "Loved",
+"moodStrong": "Strong",
+"moodStar": "Star"
 }

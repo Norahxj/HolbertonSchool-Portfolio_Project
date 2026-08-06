@@ -317,4 +317,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardUnlockDayLabel => 'Reward unlock day';
+
+  @override
+  String get failedToLoadFeedbackHistory => 'Unable to load feedback history';
+
+  @override
+  String get failedToSaveFeedback =>
+      'Unable to save feedback. Please try again.';
+
+  @override
+  String get feedbackSavedSuccessfully => 'Feedback saved successfully ✓';
+
+  @override
+  String get dailyFeedback => 'Daily Feedback';
+
+  @override
+  String get feedbackHistory => 'Feedback History';
+
+  @override
+  String get todayFeedbackEditable => 'Today\'s Feedback (You Can Edit It)';
+
+  @override
+  String howWasChildDay(String childName) {
+    return 'How was $childName\'s day?';
+  }
+
+  @override
+  String get updateFeedback => 'Update Feedback';
+
+  @override
+  String get saveFeedback => 'Save Feedback';
+
+  @override
+  String get moodHappy => 'Happy';
+
+  @override
+  String get moodProud => 'Proud';
+
+  @override
+  String get moodGreat => 'Great';
+
+  @override
+  String get moodLoved => 'Loved';
+
+  @override
+  String get moodStrong => 'Strong';
+
+  @override
+  String get moodStar => 'Star';
 }

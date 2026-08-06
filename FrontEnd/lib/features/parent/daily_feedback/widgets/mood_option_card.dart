@@ -5,14 +5,12 @@ import 'daily_feedback_mood.dart';
 
 class MoodOptionCard extends StatelessWidget {
   final String mood;
-  final bool isArabic;
   final bool isSelected;
   final VoidCallback onTap;
 
   const MoodOptionCard({
     super.key,
     required this.mood,
-    required this.isArabic,
     required this.isSelected,
     required this.onTap,
   });
@@ -40,9 +38,11 @@ class MoodOptionCard extends StatelessWidget {
               DailyFeedbackMood.emoji(mood),
               style: const TextStyle(fontSize: 28),
             ),
+
             const SizedBox(height: 4),
+
             Text(
-              DailyFeedbackMood.label(mood: mood, isArabic: isArabic),
+              DailyFeedbackMood.label(context: context, mood: mood),
               style: TextStyle(
                 fontSize: 10,
                 color: isSelected ? AppColors.primary : AppColors.textSecondary,

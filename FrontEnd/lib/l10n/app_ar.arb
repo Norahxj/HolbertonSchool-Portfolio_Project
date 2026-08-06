@@ -136,5 +136,27 @@
   }
 },
 "saveReward": "حفظ المكافأة",
-"rewardUnlockDayLabel": "يوم إتاحة المكافأة"
+"rewardUnlockDayLabel": "يوم إتاحة المكافأة",
+"failedToLoadFeedbackHistory": "تعذّر تحميل سجل التقييم",
+"failedToSaveFeedback": "تعذّر حفظ التقييم. حاول مرة أخرى.",
+"feedbackSavedSuccessfully": "تم حفظ التقييم بنجاح ✓",
+"dailyFeedback": "التقييم اليومي",
+"feedbackHistory": "سجل التقييمات",
+"todayFeedbackEditable": "تقييم اليوم (يمكنك التعديل)",
+"howWasChildDay": "كيف كان يوم {childName}؟",
+"@howWasChildDay": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"updateFeedback": "تحديث التقييم",
+"saveFeedback": "حفظ التقييم",
+"moodHappy": "سعيد",
+"moodProud": "فخور",
+"moodGreat": "رائع",
+"moodLoved": "محبوب",
+"moodStrong": "قوي",
+"moodStar": "نجم"
 }

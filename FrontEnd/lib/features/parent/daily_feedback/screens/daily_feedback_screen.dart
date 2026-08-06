@@ -2,37 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/child_model.dart';
 import '../controllers/daily_feedback_controller.dart';
+import '../utils/daily_feedback_localization.dart';
 import '../widgets/daily_feedback_view.dart';
 
 class DailyFeedbackScreen extends StatefulWidget {
   final ChildModel child;
-  final bool isArabic;
 
-  const DailyFeedbackScreen({
-    super.key,
-    required this.child,
-    required this.isArabic,
-  });
+  const DailyFeedbackScreen({super.key, required this.child});
 
   @override
-  State<DailyFeedbackScreen> createState() => _DailyFeedbackScreenState();
+  State<DailyFeedbackScreen> createState() {
+    return _DailyFeedbackScreenState();
+  }
 }
 
 class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   late final DailyFeedbackController _controller;
 
-  bool get isArabic => widget.isArabic;
-
   @override
   void initState() {
     super.initState();
 
-    _controller = DailyFeedbackController(
-      child: widget.child,
-      isArabic: widget.isArabic,
-    )..loadFeedback();
+    _controller = DailyFeedbackController(child: widget.child)..loadFeedback();
   }
 
   @override
@@ -49,7 +43,7 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
     }
 
     if (!result.isSuccess) {
-      final message = result.errorMessage;
+      final message = result.errorCode?.localized(context);
 
       if (message != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,9 +56,7 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          isArabic ? 'تم حفظ التقييم بنجاح ✓' : 'Feedback saved successfully ✓',
-        ),
+        content: Text(context.l10n.feedbackSavedSuccessfully),
         backgroundColor: AppColors.success,
       ),
     );
@@ -75,7 +67,6 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: DailyFeedbackView(
-        isArabic: isArabic,
         onSubmit: _submitFeedback,
         onBack: () {
           Navigator.pop(context);

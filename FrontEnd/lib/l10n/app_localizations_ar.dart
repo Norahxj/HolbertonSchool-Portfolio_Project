@@ -307,4 +307,51 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rewardUnlockDayLabel => 'يوم إتاحة المكافأة';
+
+  @override
+  String get failedToLoadFeedbackHistory => 'تعذّر تحميل سجل التقييم';
+
+  @override
+  String get failedToSaveFeedback => 'تعذّر حفظ التقييم. حاول مرة أخرى.';
+
+  @override
+  String get feedbackSavedSuccessfully => 'تم حفظ التقييم بنجاح ✓';
+
+  @override
+  String get dailyFeedback => 'التقييم اليومي';
+
+  @override
+  String get feedbackHistory => 'سجل التقييمات';
+
+  @override
+  String get todayFeedbackEditable => 'تقييم اليوم (يمكنك التعديل)';
+
+  @override
+  String howWasChildDay(String childName) {
+    return 'كيف كان يوم $childName؟';
+  }
+
+  @override
+  String get updateFeedback => 'تحديث التقييم';
+
+  @override
+  String get saveFeedback => 'حفظ التقييم';
+
+  @override
+  String get moodHappy => 'سعيد';
+
+  @override
+  String get moodProud => 'فخور';
+
+  @override
+  String get moodGreat => 'رائع';
+
+  @override
+  String get moodLoved => 'محبوب';
+
+  @override
+  String get moodStrong => 'قوي';
+
+  @override
+  String get moodStar => 'نجم';
 }

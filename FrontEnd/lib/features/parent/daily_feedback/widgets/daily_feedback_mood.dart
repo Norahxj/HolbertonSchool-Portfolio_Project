@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/localization/localization_extension.dart';
+
 class DailyFeedbackMood {
   static String emoji(String mood) {
     switch (mood) {
@@ -18,20 +22,28 @@ class DailyFeedbackMood {
     }
   }
 
-  static String label({required String mood, required bool isArabic}) {
+  static String label({required BuildContext context, required String mood}) {
+    final l10n = context.l10n;
+
     switch (mood) {
       case 'HAPPY':
-        return isArabic ? 'سعيد' : 'Happy';
+        return l10n.moodHappy;
+
       case 'PROUD':
-        return isArabic ? 'فخور' : 'Proud';
+        return l10n.moodProud;
+
       case 'GREAT':
-        return isArabic ? 'رائع' : 'Great';
+        return l10n.moodGreat;
+
       case 'LOVE':
-        return isArabic ? 'محبوب' : 'Loved';
+        return l10n.moodLoved;
+
       case 'STRONG':
-        return isArabic ? 'قوي' : 'Strong';
+        return l10n.moodStrong;
+
       case 'STAR':
-        return isArabic ? 'نجم' : 'Star';
+        return l10n.moodStar;
+
       default:
         return mood;
     }

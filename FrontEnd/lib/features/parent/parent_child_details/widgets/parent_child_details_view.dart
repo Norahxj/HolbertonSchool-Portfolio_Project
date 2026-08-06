@@ -263,10 +263,8 @@ class ParentChildDetailsView extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => DailyFeedbackScreen(
-                              child: item.child,
-                              isArabic: isArabic,
-                            ),
+                            builder: (_) =>
+                                DailyFeedbackScreen(child: item.child),
                           ),
                         );
                       },
