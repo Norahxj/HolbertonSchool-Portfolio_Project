@@ -6,19 +6,50 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../widgets/role_card.dart';
 import '../../auth/screens/auth_screen.dart';
 import '../../child/screens/child_pin_login_screen.dart';
+import '../widgets/role_card.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final bool isArabic;
   final VoidCallback onLanguageToggle;
+  final Future<void> Function() onParentAuthenticated;
 
   const WelcomeScreen({
     super.key,
     required this.isArabic,
     required this.onLanguageToggle,
+    required this.onParentAuthenticated,
   });
+
+  void _openParentAuthentication(BuildContext context) {
+    Navigator.push<void>(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return AuthScreen(
+            isArabic: isArabic,
+            onLanguageToggle: onLanguageToggle,
+            onAuthenticated: onParentAuthenticated,
+          );
+        },
+      ),
+    );
+  }
+
+  void _openChildLogin(BuildContext context) {
+    Navigator.push<void>(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return ChildPinLoginScreen(
+            isArabic: isArabic,
+            onLanguageToggle: onLanguageToggle,
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,52 +61,48 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 Align(
-                  alignment: isArabic
-                      ? Alignment.centerLeft
-                      : Alignment.centerRight,
+                  alignment: AlignmentDirectional.centerEnd,
                   child: LanguageToggle(
                     isArabic: isArabic,
                     onTap: onLanguageToggle,
                   ),
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 Stack(
                   alignment: Alignment.center,
                   clipBehavior: Clip.none,
                   children: [
-                    Positioned(
+                    const PositionedDirectional(
                       top: 0,
-                      left: 4,
+                      start: 4,
                       child: _SoftPill(width: 74, height: 22),
                     ),
-                    Positioned(
+                    const PositionedDirectional(
                       top: 50,
-                      right: 0,
+                      end: 0,
                       child: _SoftPill(width: 58, height: 20),
                     ),
-                    Positioned(
+                    const PositionedDirectional(
                       top: -8,
-                      right: 56,
+                      end: 56,
                       child: Icon(
                         Icons.auto_awesome,
                         size: 26,
                         color: AppColors.gold,
                       ),
                     ),
-                    Positioned(
+                    const PositionedDirectional(
                       top: 34,
-                      left: 40,
+                      start: 40,
                       child: Icon(
                         Icons.auto_awesome,
                         size: 14,
                         color: AppColors.primary,
                       ),
                     ),
-                    Positioned(
+                    const PositionedDirectional(
                       bottom: 6,
-                      right: 30,
+                      end: 30,
                       child: Icon(
                         Icons.auto_awesome,
                         size: 16,
@@ -98,17 +125,13 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 Text(
                   AppStrings.welcomeTitle(isArabic),
                   style: AppTextStyles.arabicTitle,
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: AppSpacing.sm),
-
                 Text(
                   isArabic
                       ? 'حيثُ تُبنى القيم وتُكافئ الإنجازات'
@@ -121,63 +144,36 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 Text(
                   AppStrings.welcomeSubtitle(isArabic),
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 60),
-
-                Column(
-                  children: [
-                    RoleCard(
-                      imagePath: 'assets/role_selection/parent1.png',
-                      title: isArabic ? 'ولي أمر' : 'Parent',
-                      description: isArabic
-                          ? 'إدارة أطفالك ومتابعة المهام والمكافآت'
-                          : 'Manage your children, tasks, and rewards',
-                      isArabic: isArabic,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AuthScreen(
-                              isArabic: isArabic,
-                              onLanguageToggle: onLanguageToggle,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    RoleCard(
-                      imagePath: 'assets/role_selection/child.png',
-                      title: isArabic ? 'طفل' : 'Child',
-                      description: isArabic
-                          ? 'أنجز المهام واجمع النقاط واحصل على المكافآت'
-                          : 'Complete tasks, earn points, and unlock rewards',
-                      isArabic: isArabic,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChildPinLoginScreen(
-                              isArabic: isArabic,
-                              onLanguageToggle: onLanguageToggle,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                RoleCard(
+                  imagePath: 'assets/role_selection/parent1.png',
+                  title: isArabic ? 'ولي أمر' : 'Parent',
+                  description: isArabic
+                      ? 'إدارة أطفالك ومتابعة المهام والمكافآت'
+                      : 'Manage your children, tasks, and rewards',
+                  isArabic: isArabic,
+                  onTap: () {
+                    _openParentAuthentication(context);
+                  },
                 ),
-
+                const SizedBox(height: AppSpacing.md),
+                RoleCard(
+                  imagePath: 'assets/role_selection/child.png',
+                  title: isArabic ? 'طفل' : 'Child',
+                  description: isArabic
+                      ? 'أنجز المهام واجمع النقاط واحصل على المكافآت'
+                      : 'Complete tasks, earn points, and unlock rewards',
+                  isArabic: isArabic,
+                  onTap: () {
+                    _openChildLogin(context);
+                  },
+                ),
                 const SizedBox(height: AppSpacing.md),
               ],
             ),

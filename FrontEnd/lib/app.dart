@@ -24,6 +24,8 @@ class AsalahApp extends StatefulWidget {
 class _AsalahAppState extends State<AsalahApp> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+  final AuthApiService _authApiService = AuthApiService();
+
   bool _isLoading = true;
   bool _isLoggedIn = false;
   bool _isChild = false;
@@ -34,13 +36,58 @@ class _AsalahAppState extends State<AsalahApp> {
 
     DioFactory.onSessionExpired = _handleSessionExpired;
 
-    _checkLogin();
+    _loadSession();
   }
 
-  Future<void> _checkLogin() async {
-    final isLoggedIn = await AuthApiService().isLoggedIn();
+  Future<void> _loadSession() async {
+    if (!_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
 
-    bool isChild = false;
+    try {
+      final isLoggedIn = await _authApiService.isLoggedIn();
+
+      var isChild = false;
+
+      if (isLoggedIn) {
+        final childData = await SecureStorage.getChild();
+
+        isChild = childData != null;
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _isLoggedIn = isLoggedIn;
+        _isChild = isChild;
+        _isLoading = false;
+      });
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Loading authentication session failed: '
+        '$error\n$stackTrace',
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _isLoggedIn = false;
+        _isChild = false;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _handleAuthenticated() async {
+    final isLoggedIn = await _authApiService.isLoggedIn();
+
+    var isChild = false;
 
     if (isLoggedIn) {
       final childData = await SecureStorage.getChild();
@@ -57,6 +104,8 @@ class _AsalahAppState extends State<AsalahApp> {
       _isChild = isChild;
       _isLoading = false;
     });
+
+    _returnToRootRoute();
   }
 
   void _markLoggedOut() {
@@ -70,6 +119,14 @@ class _AsalahAppState extends State<AsalahApp> {
       _isLoading = false;
     });
 
+    _returnToRootRoute();
+  }
+
+  Future<void> _handleSessionExpired() async {
+    _markLoggedOut();
+  }
+
+  void _returnToRootRoute() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
@@ -79,14 +136,9 @@ class _AsalahAppState extends State<AsalahApp> {
     });
   }
 
-  Future<void> _handleSessionExpired() async {
-    _markLoggedOut();
-  }
-
   @override
   void dispose() {
     DioFactory.onSessionExpired = null;
-
     super.dispose();
   }
 
@@ -141,16 +193,14 @@ class _AsalahAppState extends State<AsalahApp> {
           },
         );
       },
-      home: _buildHomeScreen(context),
+      home: _buildHomeScreen(localeController: localeController),
     );
   }
 
-  Widget _buildHomeScreen(BuildContext context) {
+  Widget _buildHomeScreen({required LocaleController localeController}) {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
-    final localeController = context.read<LocaleController>();
 
     final isArabic = localeController.locale.languageCode == 'ar';
 
@@ -158,6 +208,7 @@ class _AsalahAppState extends State<AsalahApp> {
       return WelcomeScreen(
         isArabic: isArabic,
         onLanguageToggle: localeController.toggleLocale,
+        onParentAuthenticated: _handleAuthenticated,
       );
     }
 

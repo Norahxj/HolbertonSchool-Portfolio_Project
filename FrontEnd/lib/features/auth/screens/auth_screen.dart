@@ -11,20 +11,23 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
-import '../../parent/screens/parent_main_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isArabic;
   final VoidCallback onLanguageToggle;
+  final Future<void> Function() onAuthenticated;
 
   const AuthScreen({
     super.key,
     required this.isArabic,
     required this.onLanguageToggle,
+    required this.onAuthenticated,
   });
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<AuthScreen> createState() {
+    return _AuthScreenState();
+  }
 }
 
 class _AuthScreenState extends State<AuthScreen> {
@@ -72,6 +75,14 @@ class _AuthScreenState extends State<AuthScreen> {
 
     // Start with the language received from the previous screen.
     _isArabic = widget.isArabic;
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -145,18 +156,9 @@ class _AuthScreenState extends State<AuthScreen> {
       if (!mounted) return;
 
       if (response.response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isArabic ? 'تم تسجيل الدخول بنجاح' : 'Login successful',
-            ),
-          ),
-        );
+        _showMessage(_isArabic ? 'تم تسجيل الدخول بنجاح' : 'Login successful');
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const ParentMainScreen()),
-        );
+        await widget.onAuthenticated();
       }
     } on DioException catch (error) {
       if (!mounted) return;
@@ -248,10 +250,7 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         );
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const ParentMainScreen()),
-        );
+        await widget.onAuthenticated();
       }
     } on DioException catch (error) {
       if (!mounted) return;
