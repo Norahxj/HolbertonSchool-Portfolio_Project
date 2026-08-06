@@ -1,0 +1,73 @@
+{
+  "@@locale": "ar",
+
+  "appName": "أصالة",
+  "arabic": "العربية",
+  "english": "الإنجليزية",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "back": "رجوع",
+  "next": "التالي",
+  "retry": "إعادة المحاولة",
+  "loading": "جارٍ التحميل...",
+  "saving": "جارٍ الحفظ...",
+
+  "addTask": "إضافة مهمة",
+  "taskDetails": "تفاصيل المهمة",
+  "saveTask": "حفظ المهمة",
+  "taskName": "اسم المهمة",
+  "taskDescription": "الوصف",
+  "taskFrequency": "تكرار المهمة",
+  "taskType": "نوع المهمة",
+  "noorPoints": "نقاط نور",
+
+  "daily": "يوميًا",
+  "weekly": "مرة في الأسبوع",
+  "monthly": "شهريًا",
+
+  "chooseChildSubtitle": "لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)",
+  "taskDetailsSubtitle": "أضيفي تفاصيل المهمة وحددي تكرارها",
+
+  "selectChildFirst": "اختر طفلًا أولًا لتفعيل أنواع المهام",
+  "chooseTaskType": "اختر نوع المهمة",
+  "noChildrenYet": "لا يوجد أطفال بعد. الرجاء إضافة طفل أولًا.",
+
+  "culturalTasks": "المهام الثقافية",
+  "dailyTasks": "المهام اليومية",
+  "religiousTasks": "المهام الدينية",
+  "financialTasks": "المهام المالية",
+
+  "quickAdd": "إضافة سريعة",
+  "unableToLoadSuggestions": "تعذّر تحميل المهام المقترحة",
+  "noSuggestions": "لا توجد مهام مقترحة حاليًا",
+
+  "taskNameExample": "مثال: ترتيب سريرك",
+  "taskDescriptionHint": "صف المهمة باختصار...",
+
+  "chooseWeekDay": "اختر يوم الأسبوع",
+  "chooseMonthDay": "اختر يوم الشهر",
+  "chooseRepeatDate": "اختر تاريخ التكرار",
+
+  "sunday": "الأحد",
+  "monday": "الإثنين",
+  "tuesday": "الثلاثاء",
+  "wednesday": "الأربعاء",
+  "thursday": "الخميس",
+  "friday": "الجمعة",
+  "saturday": "السبت",
+
+  "pointsValue": "{points} نقطة",
+  "@pointsValue": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "taskNameRequired": "اسم المهمة مطلوب",
+  "descriptionRequired": "الوصف مطلوب",
+  "selectAtLeastOneChild": "الرجاء اختيار طفل واحد على الأقل",
+  "selectTaskTypeError": "الرجاء اختيار نوع المهمة",
+  "pointsRangeError": "عدد النقاط يجب أن يكون بين 1 و100"
+}

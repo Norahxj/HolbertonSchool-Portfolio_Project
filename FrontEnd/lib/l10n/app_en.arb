@@ -1,0 +1,73 @@
+{
+  "@@locale": "en",
+
+  "appName": "Asalah",
+  "arabic": "Arabic",
+  "english": "English",
+  "save": "Save",
+  "cancel": "Cancel",
+  "back": "Back",
+  "next": "Next",
+  "retry": "Try Again",
+  "loading": "Loading...",
+  "saving": "Saving...",
+
+  "addTask": "Add Task",
+  "taskDetails": "Task Details",
+  "saveTask": "Save Task",
+  "taskName": "Task Name",
+  "taskDescription": "Description",
+  "taskFrequency": "Task Frequency",
+  "taskType": "Task Type",
+  "noorPoints": "Noor Points",
+
+  "daily": "Daily",
+  "weekly": "Once a Week",
+  "monthly": "Monthly",
+
+  "chooseChildSubtitle": "Who is this task for? (You can select more than one child)",
+  "taskDetailsSubtitle": "Add the task details and choose how often it repeats",
+
+  "selectChildFirst": "Select a child first to enable task types",
+  "chooseTaskType": "Choose a task type",
+  "noChildrenYet": "No children yet. Please add a child first.",
+
+  "culturalTasks": "Cultural Tasks",
+  "dailyTasks": "Daily Tasks",
+  "religiousTasks": "Religious Tasks",
+  "financialTasks": "Financial Tasks",
+
+  "quickAdd": "Quick Add",
+  "unableToLoadSuggestions": "Unable to load suggested tasks",
+  "noSuggestions": "No suggested tasks available right now",
+
+  "taskNameExample": "Example: Make your bed",
+  "taskDescriptionHint": "Briefly describe the task...",
+
+  "chooseWeekDay": "Choose a day of the week",
+  "chooseMonthDay": "Choose a day of the month",
+  "chooseRepeatDate": "Choose the repeat date",
+
+  "sunday": "Sunday",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+
+  "pointsValue": "{points} points",
+  "@pointsValue": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "taskNameRequired": "Task name is required",
+  "descriptionRequired": "Description is required",
+  "selectAtLeastOneChild": "Please select at least one child",
+  "selectTaskTypeError": "Please select a task type",
+  "pointsRangeError": "Points must be between 1 and 100"
+}
