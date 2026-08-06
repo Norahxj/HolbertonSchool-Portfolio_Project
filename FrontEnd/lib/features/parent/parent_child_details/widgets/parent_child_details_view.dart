@@ -7,16 +7,19 @@ import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/child_avatar.dart';
 import '../../../../core/widgets/screen_background.dart';
-import '../../dashboard/controllers/parent_dashboard_controller.dart';
-import '../../dashboard/models/parent_dashboard_data.dart';
+import '../../../../models/child_model.dart';
 import '../controllers/parent_child_details_controller.dart';
 import 'child_access_code_card.dart';
 import 'child_details_navigation_card.dart';
 import 'information_card.dart';
 
 class ParentChildDetailsView extends StatelessWidget {
-  final ParentDashboardChildItem item;
+  final ChildModel child;
+  final int? points;
+  final int progressPercentage;
+
   final VoidCallback onBack;
+  final VoidCallback onCopyAccessCode;
   final VoidCallback onPointsHistoryTap;
   final VoidCallback onDailyFeedbackTap;
   final VoidCallback onTasksTap;
@@ -25,8 +28,11 @@ class ParentChildDetailsView extends StatelessWidget {
 
   const ParentChildDetailsView({
     super.key,
-    required this.item,
+    required this.child,
+    required this.points,
+    required this.progressPercentage,
     required this.onBack,
+    required this.onCopyAccessCode,
     required this.onPointsHistoryTap,
     required this.onDailyFeedbackTap,
     required this.onTasksTap,
@@ -36,15 +42,9 @@ class ParentChildDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final detailsController = context.watch<ParentChildDetailsController>();
+    final controller = context.watch<ParentChildDetailsController>();
 
-    final isDeleting = context.select<ParentDashboardController, bool>((
-      controller,
-    ) {
-      return controller.isDeletingChild(item.child.id);
-    });
-
-    final progress = item.dashboard.progressPercentage.clamp(0, 100).round();
+    final progress = progressPercentage.clamp(0, 100);
 
     final l10n = context.l10n;
 
@@ -61,7 +61,7 @@ class ParentChildDetailsView extends StatelessWidget {
         child: SafeArea(
           top: false,
           child: RefreshIndicator(
-            onRefresh: detailsController.refresh,
+            onRefresh: controller.refresh,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -70,15 +70,13 @@ class ParentChildDetailsView extends StatelessWidget {
                 children: [
                   Center(
                     child: ChildAvatar(
-                      avatarIndex: item.child.avatarIndex,
+                      avatarIndex: child.avatarIndex,
                       size: 92,
                     ),
                   ),
-
                   const SizedBox(height: AppSpacing.md),
-
                   Text(
-                    item.child.name,
+                    child.name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 22,
@@ -86,31 +84,25 @@ class ParentChildDetailsView extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-
                   const SizedBox(height: 4),
-
                   Text(
-                    l10n.childAgeYears(item.child.age),
+                    l10n.childAgeYears(child.age),
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: AppColors.textSecondary),
                   ),
-
                   const SizedBox(height: AppSpacing.xl),
-
                   Row(
                     children: [
                       Expanded(
                         child: InformationCard(
                           icon: Icons.auto_awesome,
-                          value: '${item.points ?? '—'}',
+                          value: points?.toString() ?? '—',
                           label: l10n.noorPoints,
                           iconColor: AppColors.gold,
                           backgroundColor: AppColors.goldLight,
                         ),
                       ),
-
                       const SizedBox(width: AppSpacing.md),
-
                       Expanded(
                         child: InformationCard(
                           icon: Icons.trending_up,
@@ -122,46 +114,43 @@ class ParentChildDetailsView extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: AppSpacing.xl),
-
-                  ChildAccessCodeCard(accessCode: item.child.accessCode),
-
+                  ChildAccessCodeCard(
+                    accessCode: child.accessCode,
+                    onCopy: onCopyAccessCode,
+                  ),
                   const SizedBox(height: AppSpacing.xl),
-
                   ChildDetailsNavigationCard(
                     icon: Icons.history,
                     title: l10n.noorPointsHistory,
                     subtitle: l10n.viewPointsHistory,
                     onTap: onPointsHistoryTap,
                   ),
-
                   const SizedBox(height: AppSpacing.xl),
-
                   ChildDetailsNavigationCard(
                     icon: Icons.sentiment_satisfied_alt,
                     title: l10n.dailyFeedback,
-                    subtitle: l10n.rateChildDayAndViewHistory(item.child.name),
+                    subtitle: l10n.rateChildDayAndViewHistory(child.name),
                     backgroundColor: Colors.white,
                     onTap: onDailyFeedbackTap,
                   ),
-
                   const SizedBox(height: AppSpacing.xl),
-
                   ChildDetailsNavigationCard(
                     icon: Icons.task_alt_outlined,
                     title: l10n.tasks,
-                    subtitle: l10n.viewChildTasks(item.child.name),
+                    subtitle: l10n.viewChildTasks(child.name),
                     onTap: onTasksTap,
                   ),
-
                   const SizedBox(height: AppSpacing.xl),
-
                   TextButton.icon(
-                    onPressed: onEditChildTap,
+                    onPressed: controller.isDeletingChild
+                        ? null
+                        : onEditChildTap,
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsetsDirectional.symmetric(
+                        vertical: 16,
+                      ),
                     ),
                     icon: const Icon(Icons.edit_outlined),
                     label: Text(
@@ -169,18 +158,19 @@ class ParentChildDetailsView extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-
                   const Divider(color: AppColors.border),
-
                   const SizedBox(height: AppSpacing.md),
-
                   TextButton.icon(
-                    onPressed: isDeleting ? null : onDeleteChildTap,
+                    onPressed: controller.isDeletingChild
+                        ? null
+                        : onDeleteChildTap,
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.error,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsetsDirectional.symmetric(
+                        vertical: 16,
+                      ),
                     ),
-                    icon: isDeleting
+                    icon: controller.isDeletingChild
                         ? const SizedBox(
                             width: 18,
                             height: 18,
@@ -191,7 +181,9 @@ class ParentChildDetailsView extends StatelessWidget {
                           )
                         : const Icon(Icons.delete_outline),
                     label: Text(
-                      isDeleting ? l10n.deleting : l10n.deleteChild,
+                      controller.isDeletingChild
+                          ? l10n.deleting
+                          : l10n.deleteChild,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

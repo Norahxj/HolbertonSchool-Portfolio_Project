@@ -58,6 +58,7 @@ class TaskFilterBar extends StatelessWidget {
         },
         itemBuilder: (context, index) {
           final filter = ChildTaskFilter.values[index];
+
           final isSelected = selectedFilter == filter;
 
           return InkWell(
@@ -67,7 +68,10 @@ class TaskFilterBar extends StatelessWidget {
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 160),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
+              padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: 15,
+                vertical: 9,
+              ),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primary : AppColors.card,
                 borderRadius: BorderRadius.circular(22),

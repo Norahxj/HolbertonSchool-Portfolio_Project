@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/parent_child_details_controller.dart';
+import '../models/parent_child_details_action_result.dart';
 
 extension ParentChildDetailsErrorLocalization on ParentChildDetailsErrorCode {
   String localized(BuildContext context) {
@@ -22,6 +22,21 @@ extension ParentChildDetailsErrorLocalization on ParentChildDetailsErrorCode {
 
       case ParentChildDetailsErrorCode.deleteTask:
         return l10n.failedToDeleteTask;
+
+      case ParentChildDetailsErrorCode.deleteChild:
+        return l10n.failedToDeleteChild;
+
+      case ParentChildDetailsErrorCode.childNotFound:
+        return l10n.childNotFoundForFamily;
+
+      case ParentChildDetailsErrorCode.parentNotFound:
+        return l10n.parentAccountNotFound;
+
+      case ParentChildDetailsErrorCode.parentAccessRequired:
+        return l10n.parentAccessRequired;
+
+      case ParentChildDetailsErrorCode.deleteChildRelatedData:
+        return l10n.failedToDeleteChildRelatedData;
     }
   }
 }

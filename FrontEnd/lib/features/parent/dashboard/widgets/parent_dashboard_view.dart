@@ -4,9 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/screen_background.dart';
-import '../../child_form/screens/child_form_screen.dart';
-import '../../parent_child_details/screens/parent_child_details_screen.dart';
-import '../../task_review/screens/task_review_screen.dart';
 import '../controllers/parent_dashboard_controller.dart';
 import '../models/parent_dashboard_data.dart';
 import '../utils/parent_dashboard_localization.dart';
@@ -16,93 +13,21 @@ import 'dashboard_states.dart';
 import 'welcome_banner.dart';
 
 class ParentDashboardView extends StatelessWidget {
-  final VoidCallback onChildrenChanged;
+  final VoidCallback onAddChild;
+  final VoidCallback onReviewTasks;
+  final ValueChanged<ParentDashboardChildItem> onChildTap;
 
   const ParentDashboardView({
     super.key,
-    required this.onChildrenChanged,
+    required this.onAddChild,
+    required this.onReviewTasks,
+    required this.onChildTap,
   });
-
-  Future<void> _openAddChild(BuildContext context) async {
-    final controller = context.read<ParentDashboardController>();
-
-    final wasAdded = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return const ChildFormScreen.add();
-        },
-      ),
-    );
-
-    if (!context.mounted) {
-      return;
-    }
-
-    if (wasAdded != true) {
-      return;
-    }
-
-    await controller.refresh();
-
-    if (!context.mounted) {
-      return;
-    }
-
-    onChildrenChanged();
-  }
-
-  Future<void> _openTaskReview(BuildContext context) async {
-    final controller = context.read<ParentDashboardController>();
-
-    await Navigator.push<void>(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return const TaskReviewScreen();
-        },
-      ),
-    );
-
-    if (!context.mounted) {
-      return;
-    }
-
-    await controller.refresh();
-  }
-
-  Future<void> _openChildDetails(
-    BuildContext context,
-    ParentDashboardChildItem item,
-  ) async {
-    final controller = context.read<ParentDashboardController>();
-
-    final wasUpdated = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return ChangeNotifierProvider.value(
-            value: controller,
-            child: ParentChildDetailsScreen(
-              item: item,
-            ),
-          );
-        },
-      ),
-    );
-
-    if (!context.mounted) {
-      return;
-    }
-
-    if (wasUpdated == true) {
-      await controller.refresh();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<ParentDashboardController>();
+
     final data = controller.data;
 
     return Scaffold(
@@ -126,20 +51,15 @@ class ParentDashboardView extends StatelessWidget {
     required ParentDashboardData? data,
   }) {
     if (controller.isLoading && data == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     final errorMessage =
-        controller.backendMessage ??
-        controller.errorCode?.localized(context);
+        controller.backendMessage ?? controller.errorCode?.localized(context);
 
     if (data == null) {
       return DashboardErrorState(
-        message:
-            errorMessage ??
-            context.l10n.failedToLoadDashboard,
+        message: errorMessage ?? context.l10n.failedToLoadDashboard,
         onRetry: controller.loadDashboard,
       );
     }
@@ -148,7 +68,7 @@ class ParentDashboardView extends StatelessWidget {
       onRefresh: controller.refresh,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(
+        padding: const EdgeInsetsDirectional.fromSTEB(
           AppSpacing.lg,
           AppSpacing.lg,
           AppSpacing.lg,
@@ -162,58 +82,36 @@ class ParentDashboardView extends StatelessWidget {
                   '${data.user.firstName} '
                   '${data.user.lastName}',
             ),
-
-            const SizedBox(
-              height: AppSpacing.xl,
-            ),
-
-            if (errorMessage != null)
+            const SizedBox(height: AppSpacing.xl),
+            if (errorMessage != null) ...[
               DashboardErrorBanner(
                 message: errorMessage,
                 onClose: controller.clearError,
               ),
-
+              const SizedBox(height: AppSpacing.md),
+            ],
             ChildrenSectionHeader(
               pendingReviewCount: data.pendingReviewCount,
-              onAddChild: () {
-                _openAddChild(context);
-              },
-              onReviewTasks: () {
-                _openTaskReview(context);
-              },
+              onAddChild: onAddChild,
+              onReviewTasks: onReviewTasks,
             ),
-
-            const SizedBox(
-              height: AppSpacing.md,
-            ),
-
+            const SizedBox(height: AppSpacing.md),
             if (data.children.isEmpty)
-              DashboardNoChildrenState(
-                onAddChild: () {
-                  _openAddChild(context);
-                },
-              )
+              DashboardNoChildrenState(onAddChild: onAddChild)
             else
-              ...data.children.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.only(
+              for (final item in data.children)
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(
                     bottom: AppSpacing.md,
                   ),
                   child: DashboardChildCard(
                     item: item,
                     onTap: () {
-                      _openChildDetails(
-                        context,
-                        item,
-                      );
+                      onChildTap(item);
                     },
                   ),
-                );
-              }),
-
-            const SizedBox(
-              height: AppSpacing.lg,
-            ),
+                ),
+            const SizedBox(height: AppSpacing.lg),
           ],
         ),
       ),

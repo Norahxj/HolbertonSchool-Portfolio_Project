@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -7,23 +6,18 @@ import '../../../../core/localization/localization_extension.dart';
 
 class ChildAccessCodeCard extends StatelessWidget {
   final String accessCode;
+  final VoidCallback? onCopy;
 
-  const ChildAccessCodeCard({super.key, required this.accessCode});
-
-  Future<void> _copyCode(BuildContext context) async {
-    await Clipboard.setData(ClipboardData(text: accessCode));
-
-    if (!context.mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(context.l10n.childAccessCodeCopied)));
-  }
+  const ChildAccessCodeCard({
+    super.key,
+    required this.accessCode,
+    required this.onCopy,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final hasAccessCode = accessCode.trim().isNotEmpty;
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -46,9 +40,7 @@ class ChildAccessCodeCard extends StatelessWidget {
               size: 22,
             ),
           ),
-
           const SizedBox(width: AppSpacing.md),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,11 +53,9 @@ class ChildAccessCodeCard extends StatelessWidget {
                     color: AppColors.textSecondary,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 SelectableText(
-                  accessCode.isEmpty ? '—' : accessCode,
+                  hasAccessCode ? accessCode : '—',
                   textDirection: TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 21,
@@ -77,14 +67,9 @@ class ChildAccessCodeCard extends StatelessWidget {
               ],
             ),
           ),
-
           IconButton(
             tooltip: context.l10n.copyCode,
-            onPressed: accessCode.isEmpty
-                ? null
-                : () {
-                    _copyCode(context);
-                  },
+            onPressed: hasAccessCode ? onCopy : null,
             icon: const Icon(Icons.copy_rounded, color: AppColors.primary),
           ),
         ],

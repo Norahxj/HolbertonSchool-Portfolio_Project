@@ -13,21 +13,6 @@ extension ParentDashboardErrorLocalization on ParentDashboardErrorCode {
 
       case ParentDashboardErrorCode.refreshDashboard:
         return l10n.failedToRefreshDashboard;
-
-      case ParentDashboardErrorCode.deleteChild:
-        return l10n.failedToDeleteChild;
-
-      case ParentDashboardErrorCode.childNotFound:
-        return l10n.childNotFoundForFamily;
-
-      case ParentDashboardErrorCode.parentNotFound:
-        return l10n.parentAccountNotFound;
-
-      case ParentDashboardErrorCode.parentAccessRequired:
-        return l10n.parentAccessRequired;
-
-      case ParentDashboardErrorCode.deleteChildRelatedData:
-        return l10n.failedToDeleteChildRelatedData;
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -6,17 +7,16 @@ import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../../../../models/task_assignment_model.dart';
-import '../../parent_child_details/controllers/parent_child_details_controller.dart';
-import '../../parent_child_details/models/parent_child_tasks_data.dart';
+import '../controllers/child_tasks_controller.dart';
+import '../models/upcoming_child_task.dart';
 import 'task_filter_bar.dart';
 import 'tasks_section.dart';
 
 class ChildTasksView extends StatefulWidget {
-  final String childId;
   final String childName;
-  final ParentChildDetailsController controller;
+  final VoidCallback onBack;
   final ValueChanged<TaskAssignmentModel> onAssignmentTap;
-  final ValueChanged<UpcomingTaskItem> onUpcomingTaskTap;
+  final ValueChanged<UpcomingChildTask> onUpcomingTaskTap;
 
   final Future<void> Function({
     required String taskId,
@@ -26,9 +26,8 @@ class ChildTasksView extends StatefulWidget {
 
   const ChildTasksView({
     super.key,
-    required this.childId,
     required this.childName,
-    required this.controller,
+    required this.onBack,
     required this.onAssignmentTap,
     required this.onUpcomingTaskTap,
     required this.onDeleteTask,
@@ -41,15 +40,15 @@ class ChildTasksView extends StatefulWidget {
 }
 
 class _ChildTasksViewState extends State<ChildTasksView> {
-  ChildTaskFilter selectedFilter = ChildTaskFilter.all;
+  ChildTaskFilter _selectedFilter = ChildTaskFilter.all;
 
   List<TaskAssignmentModel> _filteredTasks(List<TaskAssignmentModel> tasks) {
-    switch (selectedFilter) {
+    switch (_selectedFilter) {
       case ChildTaskFilter.all:
         return tasks;
 
       case ChildTaskFilter.upcoming:
-        return [];
+        return const [];
 
       case ChildTaskFilter.active:
         return tasks.where((task) => task.isPending).toList();
@@ -65,24 +64,24 @@ class _ChildTasksViewState extends State<ChildTasksView> {
     }
   }
 
-  List<UpcomingTaskItem> _filteredUpcomingTasks(
-    List<UpcomingTaskItem> upcomingTasks,
+  List<UpcomingChildTask> _filteredUpcomingTasks(
+    List<UpcomingChildTask> upcomingTasks,
   ) {
-    if (selectedFilter == ChildTaskFilter.all ||
-        selectedFilter == ChildTaskFilter.upcoming) {
+    if (_selectedFilter == ChildTaskFilter.all ||
+        _selectedFilter == ChildTaskFilter.upcoming) {
       return upcomingTasks;
     }
 
-    return [];
+    return const [];
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredTasks = _filteredTasks(widget.controller.tasks);
+    final controller = context.watch<ChildTasksController>();
 
-    final filteredUpcomingTasks = _filteredUpcomingTasks(
-      widget.controller.upcomingTasks,
-    );
+    final tasks = _filteredTasks(controller.tasks);
+
+    final upcomingTasks = _filteredUpcomingTasks(controller.upcomingTasks);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -93,16 +92,14 @@ class _ChildTasksViewState extends State<ChildTasksView> {
         toolbarHeight: 80,
         title: AppPageHeader(
           title: context.l10n.childTasksTitle(widget.childName),
-          onBack: () {
-            Navigator.pop(context);
-          },
+          onBack: widget.onBack,
         ),
       ),
       body: ScreenBackground(
         child: SafeArea(
           top: false,
           child: RefreshIndicator(
-            onRefresh: widget.controller.refresh,
+            onRefresh: controller.refresh,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -110,22 +107,19 @@ class _ChildTasksViewState extends State<ChildTasksView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TaskFilterBar(
-                    selectedFilter: selectedFilter,
+                    selectedFilter: _selectedFilter,
                     onSelected: (filter) {
                       setState(() {
-                        selectedFilter = filter;
+                        _selectedFilter = filter;
                       });
                     },
                   ),
-
                   const SizedBox(height: AppSpacing.md),
-
                   TasksSection(
-                    controller: widget.controller,
-                    childId: widget.childId,
-                    tasks: filteredTasks,
-                    upcomingTasks: filteredUpcomingTasks,
-                    selectedFilter: selectedFilter,
+                    controller: controller,
+                    tasks: tasks,
+                    upcomingTasks: upcomingTasks,
+                    selectedFilter: _selectedFilter,
                     onAssignmentTap: widget.onAssignmentTap,
                     onUpcomingTaskTap: widget.onUpcomingTaskTap,
                     onDeleteTask: widget.onDeleteTask,

@@ -2,7 +2,6 @@ import '../../../../models/child_dashboard_model.dart';
 import '../../../../models/child_model.dart';
 import '../../../../models/user_model.dart';
 
-/// Combines one child with their dashboard statistics and points.
 class ParentDashboardChildItem {
   final ChildModel child;
   final ChildDashboardModel dashboard;
@@ -15,7 +14,6 @@ class ParentDashboardChildItem {
   });
 }
 
-/// Contains all data needed by the parent dashboard.
 class ParentDashboardData {
   final UserModel user;
   final List<ParentDashboardChildItem> children;

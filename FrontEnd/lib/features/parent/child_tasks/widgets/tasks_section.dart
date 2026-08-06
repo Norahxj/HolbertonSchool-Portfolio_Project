@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../models/task_assignment_model.dart';
-import '../../parent_child_details/controllers/parent_child_details_controller.dart';
-import '../../parent_child_details/models/parent_child_tasks_data.dart';
+import '../controllers/child_tasks_controller.dart';
+import '../models/upcoming_child_task.dart';
 import 'child_task_card.dart';
 import 'task_filter_bar.dart';
 import 'task_states.dart';
 import 'upcoming_task_card.dart';
 
 class TasksSection extends StatelessWidget {
-  final ParentChildDetailsController controller;
-  final String childId;
+  final ChildTasksController controller;
   final List<TaskAssignmentModel> tasks;
-  final List<UpcomingTaskItem> upcomingTasks;
+  final List<UpcomingChildTask> upcomingTasks;
   final ChildTaskFilter selectedFilter;
   final ValueChanged<TaskAssignmentModel> onAssignmentTap;
-  final ValueChanged<UpcomingTaskItem> onUpcomingTaskTap;
+  final ValueChanged<UpcomingChildTask> onUpcomingTaskTap;
 
   final Future<void> Function({
     required String taskId,
@@ -27,7 +26,6 @@ class TasksSection extends StatelessWidget {
   const TasksSection({
     super.key,
     required this.controller,
-    required this.childId,
     required this.tasks,
     required this.upcomingTasks,
     required this.selectedFilter,
@@ -49,11 +47,7 @@ class TasksSection extends StatelessWidget {
         controller.errorCode != null || controller.backendMessage != null;
 
     if (hasError && controller.hasNoTaskData) {
-      return TasksErrorState(
-        onRetry: () {
-          controller.loadTasks(childId);
-        },
-      );
+      return TasksErrorState(onRetry: controller.refresh);
     }
 
     if (controller.hasNoTaskData) {
@@ -68,10 +62,11 @@ class TasksSection extends StatelessWidget {
       children: [
         for (final upcomingTask in upcomingTasks)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
             child: UpcomingTaskCard(
               item: upcomingTask,
               canDelete: controller.canDeleteTask(upcomingTask.task.id),
+              isDeleting: controller.isDeletingTask(upcomingTask.task.id),
               onTap: () {
                 onUpcomingTaskTap(upcomingTask);
               },
@@ -83,13 +78,13 @@ class TasksSection extends StatelessWidget {
               },
             ),
           ),
-
         for (final assignment in tasks)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
             child: ChildTaskCard(
               assignment: assignment,
               canDelete: controller.canDeleteTask(assignment.task.id),
+              isDeleting: controller.isDeletingTask(assignment.task.id),
               onTap: () {
                 onAssignmentTap(assignment);
               },

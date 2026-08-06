@@ -27,65 +27,60 @@ class DashboardChildCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
-        child: Container(
+        child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 108),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              ChildAvatar(avatarIndex: item.child.avatarIndex, size: 64),
-
-              const SizedBox(width: 12),
-
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dashboard.childName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+          child: Ink(
+            padding: const EdgeInsetsDirectional.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                ChildAvatar(avatarIndex: item.child.avatarIndex, size: 64),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        dashboard.childName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(height: 4),
-
-                    Text(
-                      context.l10n.childAgeYears(dashboard.childAge),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
+                      const SizedBox(height: 4),
+                      Text(
+                        context.l10n.childAgeYears(dashboard.childAge),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(height: 5),
-
-                    _ChildPointsBadge(points: item.points),
-                  ],
+                      const SizedBox(height: 5),
+                      _ChildPointsBadge(points: item.points),
+                    ],
+                  ),
                 ),
-              ),
-
-              const SizedBox(width: 12),
-
-              _ProgressRing(percent: progress),
-
-              const SizedBox(width: 8),
-
-              const _ChildCardNavigationArrow(),
-            ],
+                const SizedBox(width: 12),
+                _ProgressRing(percent: progress),
+                const SizedBox(width: 8),
+                const _ChildCardNavigationArrow(),
+              ],
+            ),
           ),
         ),
       ),
@@ -103,7 +98,10 @@ class _ChildPointsBadge extends StatelessWidget {
     final safePoints = points ?? 0;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 11,
+        vertical: 5,
+      ),
       decoration: BoxDecoration(
         color: AppColors.goldLight,
         borderRadius: BorderRadius.circular(20),
@@ -116,9 +114,7 @@ class _ChildPointsBadge extends StatelessWidget {
             color: AppColors.gold,
             size: 14,
           ),
-
           const SizedBox(width: 5),
-
           Text(
             context.l10n.pointsCount(safePoints),
             style: const TextStyle(
@@ -161,7 +157,6 @@ class _ProgressRing extends StatelessWidget {
               ),
             ),
           ),
-
           Text(
             '$safePercent%',
             textDirection: TextDirection.ltr,
@@ -182,17 +177,11 @@ class _ChildCardNavigationArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-
-    return Directionality(
+    return const Icon(
+      Icons.arrow_forward_ios_rounded,
       textDirection: TextDirection.ltr,
-      child: Icon(
-        isRtl
-            ? Icons.arrow_back_ios_new_rounded
-            : Icons.arrow_forward_ios_rounded,
-        size: 18,
-        color: AppColors.textSecondary,
-      ),
+      size: 18,
+      color: AppColors.textSecondary,
     );
   }
 }

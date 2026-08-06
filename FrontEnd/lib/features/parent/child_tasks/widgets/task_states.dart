@@ -73,9 +73,7 @@ class TasksEmptyState extends StatelessWidget {
             size: 40,
             color: AppColors.textSecondary,
           ),
-
           const SizedBox(height: AppSpacing.sm),
-
           Text(
             context.l10n.childHasNoTasks,
             textAlign: TextAlign.center,
@@ -91,7 +89,7 @@ class TasksEmptyState extends StatelessWidget {
 }
 
 class TasksErrorState extends StatelessWidget {
-  final VoidCallback onRetry;
+  final Future<void> Function() onRetry;
 
   const TasksErrorState({super.key, required this.onRetry});
 
@@ -108,18 +106,19 @@ class TasksErrorState extends StatelessWidget {
       child: Column(
         children: [
           const Icon(Icons.error_outline, size: 38, color: AppColors.error),
-
           const SizedBox(height: AppSpacing.sm),
-
           Text(
             context.l10n.failedToLoadTasks,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
           ),
-
           const SizedBox(height: AppSpacing.md),
-
-          ElevatedButton(onPressed: onRetry, child: Text(context.l10n.retry)),
+          ElevatedButton(
+            onPressed: () {
+              onRetry();
+            },
+            child: Text(context.l10n.retry),
+          ),
         ],
       ),
     );

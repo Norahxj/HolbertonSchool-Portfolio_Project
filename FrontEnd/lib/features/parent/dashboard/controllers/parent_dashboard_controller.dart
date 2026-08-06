@@ -4,27 +4,19 @@ import 'package:flutter/foundation.dart';
 import '../models/parent_dashboard_data.dart';
 import '../repositories/parent_dashboard_repository.dart';
 
-enum ParentDashboardErrorCode {
-  loadDashboard,
-  refreshDashboard,
-  deleteChild,
-  childNotFound,
-  parentNotFound,
-  parentAccessRequired,
-  deleteChildRelatedData,
-}
+enum ParentDashboardErrorCode { loadDashboard, refreshDashboard }
 
 class ParentDashboardController extends ChangeNotifier {
   final ParentDashboardRepository _repository;
 
-  ParentDashboardController(this._repository);
+  ParentDashboardController({ParentDashboardRepository? repository})
+    : _repository = repository ?? ParentDashboardRepository();
 
   ParentDashboardData? _data;
 
   bool _isLoading = false;
   bool _isRefreshing = false;
-
-  String? _deletingChildId;
+  bool _isDisposed = false;
 
   ParentDashboardErrorCode? _errorCode;
   String? _backendMessage;
@@ -35,17 +27,13 @@ class ParentDashboardController extends ChangeNotifier {
 
   bool get isRefreshing => _isRefreshing;
 
-  String? get deletingChildId => _deletingChildId;
-
-  ParentDashboardErrorCode? get errorCode => _errorCode;
+  ParentDashboardErrorCode? get errorCode {
+    return _errorCode;
+  }
 
   String? get backendMessage => _backendMessage;
 
   bool get hasData => _data != null;
-
-  bool isDeletingChild(String childId) {
-    return _deletingChildId == childId;
-  }
 
   Future<void> loadDashboard() async {
     if (_isLoading) {
@@ -54,20 +42,24 @@ class ParentDashboardController extends ChangeNotifier {
 
     _isLoading = true;
     _clearError();
-    notifyListeners();
+    _notify();
 
     try {
       _data = await _repository.getDashboardData();
     } on DioException catch (error) {
-      _backendMessage = _readBackendMessage(error);
-      _errorCode = ParentDashboardErrorCode.loadDashboard;
-    } catch (error) {
       _errorCode = ParentDashboardErrorCode.loadDashboard;
 
-      debugPrint('Loading parent dashboard failed: $error');
+      _backendMessage = _readBackendMessage(error);
+    } catch (error, stackTrace) {
+      _errorCode = ParentDashboardErrorCode.loadDashboard;
+
+      debugPrint(
+        'Loading parent dashboard failed: '
+        '$error\n$stackTrace',
+      );
     } finally {
       _isLoading = false;
-      notifyListeners();
+      _notify();
     }
   }
 
@@ -78,63 +70,24 @@ class ParentDashboardController extends ChangeNotifier {
 
     _isRefreshing = true;
     _clearError();
-    notifyListeners();
+    _notify();
 
     try {
       _data = await _repository.getDashboardData();
     } on DioException catch (error) {
-      _backendMessage = _readBackendMessage(error);
-      _errorCode = ParentDashboardErrorCode.refreshDashboard;
-    } catch (error) {
       _errorCode = ParentDashboardErrorCode.refreshDashboard;
 
-      debugPrint('Refreshing parent dashboard failed: $error');
+      _backendMessage = _readBackendMessage(error);
+    } catch (error, stackTrace) {
+      _errorCode = ParentDashboardErrorCode.refreshDashboard;
+
+      debugPrint(
+        'Refreshing parent dashboard failed: '
+        '$error\n$stackTrace',
+      );
     } finally {
       _isRefreshing = false;
-      notifyListeners();
-    }
-  }
-
-  Future<bool> deleteChild(String childId) async {
-    if (_deletingChildId != null) {
-      return false;
-    }
-
-    _deletingChildId = childId;
-    _clearError();
-    notifyListeners();
-
-    try {
-      await _repository.deleteChild(childId);
-
-      final currentData = _data;
-
-      if (currentData != null) {
-        final remainingChildren = currentData.children.where((item) {
-          return item.child.id != childId;
-        }).toList();
-
-        _data = ParentDashboardData(
-          user: currentData.user,
-          children: remainingChildren,
-        );
-      }
-
-      return true;
-    } on DioException catch (error) {
-      _backendMessage = _readBackendMessage(error);
-      _errorCode = _mapDeleteError(_backendMessage);
-
-      return false;
-    } catch (error) {
-      _errorCode = ParentDashboardErrorCode.deleteChild;
-
-      debugPrint('Deleting child failed: $error');
-
-      return false;
-    } finally {
-      _deletingChildId = null;
-      notifyListeners();
+      _notify();
     }
   }
 
@@ -144,7 +97,7 @@ class ParentDashboardController extends ChangeNotifier {
     }
 
     _clearError();
-    notifyListeners();
+    _notify();
   }
 
   void _clearError() {
@@ -152,33 +105,37 @@ class ParentDashboardController extends ChangeNotifier {
     _backendMessage = null;
   }
 
-  ParentDashboardErrorCode _mapDeleteError(String? backendMessage) {
-    switch (backendMessage) {
-      case 'Child not found':
-        return ParentDashboardErrorCode.childNotFound;
-
-      case 'Parent not found':
-        return ParentDashboardErrorCode.parentNotFound;
-
-      case 'Parent access required':
-        return ParentDashboardErrorCode.parentAccessRequired;
-
-      case 'Failed to delete child and related data':
-        return ParentDashboardErrorCode.deleteChildRelatedData;
-
-      default:
-        return ParentDashboardErrorCode.deleteChild;
-    }
-  }
-
   String? _readBackendMessage(DioException error) {
     final responseData = error.response?.data;
 
-    if (responseData is Map) {
-      return responseData['error']?.toString() ??
-          responseData['message']?.toString();
+    if (responseData is! Map) {
+      return null;
     }
 
-    return null;
+    final errorMessage = responseData['error']?.toString().trim();
+
+    if (errorMessage != null && errorMessage.isNotEmpty) {
+      return errorMessage;
+    }
+
+    final message = responseData['message']?.toString().trim();
+
+    if (message == null || message.isEmpty) {
+      return null;
+    }
+
+    return message;
+  }
+
+  void _notify() {
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 }

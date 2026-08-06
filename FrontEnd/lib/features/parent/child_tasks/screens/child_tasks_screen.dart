@@ -5,67 +5,55 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/task_assignment_model.dart';
 import '../../../child/screens/child_task_details_screen.dart';
-import '../../parent_child_details/controllers/parent_child_details_controller.dart';
-import '../../parent_child_details/models/parent_child_tasks_data.dart';
-import '../../parent_child_details/utils/parent_child_details_localization.dart';
+import '../controllers/child_tasks_controller.dart';
+import '../models/child_task_action_result.dart';
+import '../models/upcoming_child_task.dart';
+import '../utils/child_tasks_localization.dart';
 import '../widgets/child_tasks_view.dart';
 
-class ChildTasksScreen extends StatelessWidget {
+class ChildTasksScreen extends StatefulWidget {
   final String childId;
   final String childName;
-  final ParentChildDetailsController controller;
 
   const ChildTasksScreen({
     super.key,
     required this.childId,
     required this.childName,
-    required this.controller,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: controller,
-      child: _ChildTasksCoordinator(
-        childId: childId,
-        childName: childName,
-      ),
-    );
+  State<ChildTasksScreen> createState() {
+    return _ChildTasksScreenState();
   }
 }
 
-class _ChildTasksCoordinator extends StatefulWidget {
-  final String childId;
-  final String childName;
-
-  const _ChildTasksCoordinator({
-    required this.childId,
-    required this.childName,
-  });
+class _ChildTasksScreenState extends State<ChildTasksScreen> {
+  late final ChildTasksController _controller;
 
   @override
-  State<_ChildTasksCoordinator> createState() {
-    return _ChildTasksCoordinatorState();
-  }
-}
+  void initState() {
+    super.initState();
 
-class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
+    _controller = ChildTasksController()..loadTasks(widget.childId);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   Future<void> _confirmDeleteTask({
     required String taskId,
     required String taskTitle,
   }) async {
-    final l10n = context.l10n;
-
-    final shouldDelete = await showDialog<bool>(
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(
-            l10n.deleteTaskTitle,
-            textAlign: TextAlign.start,
-          ),
+          title: Text(context.l10n.deleteTaskTitle, textAlign: TextAlign.start),
           content: Text(
-            l10n.deleteTaskConfirmation(taskTitle),
+            context.l10n.deleteTaskConfirmation(taskTitle),
             textAlign: TextAlign.start,
           ),
           actions: [
@@ -73,64 +61,42 @@ class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
               onPressed: () {
                 Navigator.pop(dialogContext, false);
               },
-              child: Text(l10n.cancel),
+              child: Text(context.l10n.cancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext, true);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.error,
-              ),
-              child: Text(l10n.delete),
+              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              child: Text(context.l10n.delete),
             ),
           ],
         );
       },
     );
 
-    if (shouldDelete != true || !mounted) {
+    if (confirmed != true || !mounted) {
       return;
     }
 
-    final controller =
-        context.read<ParentChildDetailsController>();
-
-    final result = await controller.deleteTask(taskId);
+    final result = await _controller.deleteTask(taskId);
 
     if (!mounted) {
       return;
     }
 
     if (!result.isSuccess) {
-      final message =
-          result.backendMessage ??
-          result.errorCode?.localized(context) ??
-          context.l10n.failedToDeleteTask;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-
+      _showActionError(result);
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.l10n.taskDeletedSuccessfully,
-        ),
-      ),
-    );
+    _showMessage(context.l10n.taskDeletedSuccessfully);
   }
 
-  void _openAssignmentDetails(
-    TaskAssignmentModel assignment,
-  ) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
+  void _openAssignmentDetails(TaskAssignmentModel assignment) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
-    Navigator.push(
+    Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) {
@@ -145,11 +111,8 @@ class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
     );
   }
 
-  void _openUpcomingTaskDetails(
-    UpcomingTaskItem item,
-  ) {
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
+  void _openUpcomingTaskDetails(UpcomingChildTask item) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     final assignment = TaskAssignmentModel(
       id: '',
@@ -167,7 +130,7 @@ class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
       ),
     );
 
-    Navigator.push(
+    Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) {
@@ -182,26 +145,38 @@ class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
     );
   }
 
+  void _showActionError(ChildTaskActionResult result) {
+    final message =
+        result.backendMessage ??
+        result.errorCode?.localized(context) ??
+        context.l10n.failedToDeleteTask;
+
+    _showMessage(message);
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _goBack() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller =
-        context.watch<ParentChildDetailsController>();
-
-    return ChildTasksView(
-      childId: widget.childId,
-      childName: widget.childName,
-      controller: controller,
-      onAssignmentTap: _openAssignmentDetails,
-      onUpcomingTaskTap: _openUpcomingTaskDetails,
-      onDeleteTask: ({
-        required String taskId,
-        required String taskTitle,
-      }) {
-        return _confirmDeleteTask(
-          taskId: taskId,
-          taskTitle: taskTitle,
-        );
-      },
+    return ChangeNotifierProvider.value(
+      value: _controller,
+      child: ChildTasksView(
+        childName: widget.childName,
+        onBack: _goBack,
+        onAssignmentTap: _openAssignmentDetails,
+        onUpcomingTaskTap: _openUpcomingTaskDetails,
+        onDeleteTask: _confirmDeleteTask,
+      ),
     );
   }
 }

@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../models/child_model.dart';
 import '../../child_form/screens/child_form_screen.dart';
 import '../../child_tasks/screens/child_tasks_screen.dart';
 import '../../daily_feedback/screens/daily_feedback_screen.dart';
-import '../../dashboard/controllers/parent_dashboard_controller.dart';
-import '../../dashboard/models/parent_dashboard_data.dart';
-import '../../dashboard/utils/parent_dashboard_localization.dart';
 import '../../points_history/screens/points_history_screen.dart';
 import '../controllers/parent_child_details_controller.dart';
-import '../repositories/parent_child_details_repository.dart';
+import '../models/parent_child_details_action_result.dart';
+import '../utils/parent_child_details_localization.dart';
 import '../widgets/parent_child_details_view.dart';
 
 class ParentChildDetailsScreen extends StatefulWidget {
-  final ParentDashboardChildItem item;
+  final ChildModel child;
+  final int? points;
+  final int progressPercentage;
 
   const ParentChildDetailsScreen({
     super.key,
-    required this.item,
+    required this.child,
+    required this.points,
+    required this.progressPercentage,
   });
 
   @override
@@ -28,17 +32,14 @@ class ParentChildDetailsScreen extends StatefulWidget {
   }
 }
 
-class _ParentChildDetailsScreenState
-    extends State<ParentChildDetailsScreen> {
+class _ParentChildDetailsScreenState extends State<ParentChildDetailsScreen> {
   late final ParentChildDetailsController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = ParentChildDetailsController(
-      ParentChildDetailsRepository(),
-    )..loadTasks(widget.item.child.id);
+    _controller = ParentChildDetailsController()..loadTasks(widget.child.id);
   }
 
   @override
@@ -47,20 +48,17 @@ class _ParentChildDetailsScreenState
     super.dispose();
   }
 
-  Future<void> _confirmDelete() async {
-    final l10n = context.l10n;
-    final childName = widget.item.child.name;
-
+  Future<void> _confirmDeleteChild() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
           title: Text(
-            l10n.deleteChildConfirmationTitle(childName),
+            context.l10n.deleteChildConfirmationTitle(widget.child.name),
             textAlign: TextAlign.start,
           ),
           content: Text(
-            l10n.deleteChildConfirmationDescription,
+            context.l10n.deleteChildConfirmationDescription,
             textAlign: TextAlign.start,
           ),
           actions: [
@@ -68,16 +66,14 @@ class _ParentChildDetailsScreenState
               onPressed: () {
                 Navigator.pop(dialogContext, false);
               },
-              child: Text(l10n.cancel),
+              child: Text(context.l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
                 Navigator.pop(dialogContext, true);
               },
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.error,
-              ),
-              child: Text(l10n.delete),
+              style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+              child: Text(context.l10n.delete),
             ),
           ],
         );
@@ -88,75 +84,63 @@ class _ParentChildDetailsScreenState
       return;
     }
 
-    final dashboardController =
-        context.read<ParentDashboardController>();
-
-    final deleted = await dashboardController.deleteChild(
-      widget.item.child.id,
-    );
+    final result = await _controller.deleteChild();
 
     if (!mounted) {
       return;
     }
 
-    if (deleted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.childDeletedSuccessfully,
-          ),
-        ),
-      );
-
-      Navigator.pop(context, true);
+    if (!result.isSuccess) {
+      _showActionError(result);
       return;
     }
 
-    final message =
-        dashboardController.backendMessage ??
-        dashboardController.errorCode?.localized(context) ??
-        context.l10n.failedToDeleteChild;
+    _showMessage(context.l10n.childDeletedSuccessfully);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    Navigator.pop(context, true);
   }
 
   Future<void> _openEditChild() async {
-    final updatedChild = await Navigator.push(
+    final updatedChild = await Navigator.push<ChildModel>(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return ChildFormScreen.edit(
-            child: widget.item.child,
-          );
+          return ChildFormScreen.edit(child: widget.child);
         },
       ),
     );
 
-    if (updatedChild == null || !mounted) {
-      return;
-    }
-
-    await context.read<ParentDashboardController>().refresh();
-
-    if (!mounted) {
+    if (!mounted || updatedChild == null) {
       return;
     }
 
     Navigator.pop(context, true);
   }
 
+  Future<void> _copyAccessCode() async {
+    final accessCode = widget.child.accessCode;
+
+    if (accessCode.trim().isEmpty) {
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: accessCode));
+
+    if (!mounted) {
+      return;
+    }
+
+    _showMessage(context.l10n.childAccessCodeCopied);
+  }
+
   void _openPointsHistory() {
-    Navigator.push(
+    Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) {
           return PointsHistoryScreen(
-            childId: widget.item.child.id,
-            childName: widget.item.child.name,
+            childId: widget.child.id,
+            childName: widget.child.name,
           );
         },
       ),
@@ -164,31 +148,49 @@ class _ParentChildDetailsScreenState
   }
 
   void _openDailyFeedback() {
-    Navigator.push(
+    Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return DailyFeedbackScreen(
-            child: widget.item.child,
-          );
+          return DailyFeedbackScreen(child: widget.child);
         },
       ),
     );
   }
 
   void _openTasks() {
-    Navigator.push(
+    Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) {
           return ChildTasksScreen(
-            childId: widget.item.child.id,
-            childName: widget.item.child.name,
-            controller: _controller,
+            childId: widget.child.id,
+            childName: widget.child.name,
           );
         },
       ),
     );
+  }
+
+  void _showActionError(ParentChildDetailsActionResult result) {
+    final message =
+        result.backendMessage ??
+        result.errorCode?.localized(context) ??
+        context.l10n.failedToDeleteChild;
+
+    _showMessage(message);
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _goBack() {
+    Navigator.pop(context);
   }
 
   @override
@@ -196,15 +198,16 @@ class _ParentChildDetailsScreenState
     return ChangeNotifierProvider.value(
       value: _controller,
       child: ParentChildDetailsView(
-        item: widget.item,
-        onBack: () {
-          Navigator.pop(context);
-        },
+        child: widget.child,
+        points: widget.points,
+        progressPercentage: widget.progressPercentage,
+        onBack: _goBack,
+        onCopyAccessCode: _copyAccessCode,
         onPointsHistoryTap: _openPointsHistory,
         onDailyFeedbackTap: _openDailyFeedback,
         onTasksTap: _openTasks,
         onEditChildTap: _openEditChild,
-        onDeleteChildTap: _confirmDelete,
+        onDeleteChildTap: _confirmDeleteChild,
       ),
     );
   }

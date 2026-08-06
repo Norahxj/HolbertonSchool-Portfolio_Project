@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'dart:ui' as ui;
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
-import '../../parent_child_details/models/parent_child_tasks_data.dart';
+import '../models/upcoming_child_task.dart';
 
 class UpcomingTaskCard extends StatelessWidget {
-  final UpcomingTaskItem item;
+  final UpcomingChildTask item;
   final bool canDelete;
+  final bool isDeleting;
   final VoidCallback onTap;
   final Future<void> Function() onDelete;
 
@@ -16,12 +17,13 @@ class UpcomingTaskCard extends StatelessWidget {
     super.key,
     required this.item,
     required this.canDelete,
+    required this.isDeleting,
     required this.onTap,
     required this.onDelete,
   });
 
   String _frequencyLabel(BuildContext context) {
-    final frequency = item.task.taskFrequency.toUpperCase();
+    final frequency = item.task.taskFrequency.trim().toUpperCase();
 
     if (frequency == 'WEEKLY') {
       return context.l10n.weekly;
@@ -42,7 +44,7 @@ class UpcomingTaskCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: onTap,
+        onTap: isDeleting ? null : onTap,
         child: Ink(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -67,9 +69,7 @@ class UpcomingTaskCard extends StatelessWidget {
                   size: 21,
                 ),
               ),
-
               const SizedBox(width: AppSpacing.md),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,22 +77,22 @@ class UpcomingTaskCard extends StatelessWidget {
                     Text(
                       item.task.title,
                       textAlign: TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
-
                     const SizedBox(height: 6),
-
                     Wrap(
                       spacing: 6,
                       runSpacing: 6,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: const EdgeInsetsDirectional.symmetric(
                             horizontal: 8,
                             vertical: 4,
                           ),
@@ -109,7 +109,6 @@ class UpcomingTaskCard extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         Text(
                           _frequencyLabel(context),
                           style: const TextStyle(
@@ -119,9 +118,7 @@ class UpcomingTaskCard extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 6),
-
                     Text(
                       context.l10n.nextTaskDate(_formattedDate(context)),
                       textAlign: TextAlign.start,
@@ -133,51 +130,72 @@ class UpcomingTaskCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(width: AppSpacing.sm),
-
               if (canDelete) ...[
                 IconButton(
-                  onPressed: onDelete,
+                  onPressed: isDeleting
+                      ? null
+                      : () {
+                          onDelete();
+                        },
                   tooltip: context.l10n.deleteTask,
-                  icon: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: AppColors.error,
-                    size: 21,
-                  ),
+                  icon: isDeleting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.error,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.delete_outline_rounded,
+                          color: AppColors.error,
+                          size: 21,
+                        ),
                 ),
                 const SizedBox(width: 2),
               ],
-
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.goldLight,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome,
-                      size: 13,
-                      color: AppColors.gold,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${item.task.points}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _UpcomingPointsBadge(points: item.task.points),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _UpcomingPointsBadge extends StatelessWidget {
+  final int points;
+
+  const _UpcomingPointsBadge({required this.points});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 9,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.goldLight,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.auto_awesome, size: 13, color: AppColors.gold),
+          const SizedBox(width: 4),
+          Text(
+            '$points',
+            textDirection: ui.TextDirection.ltr,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
       ),
     );
   }

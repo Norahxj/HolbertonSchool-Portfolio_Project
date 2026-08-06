@@ -1,20 +1,16 @@
 import '../../../../models/task_assignment_model.dart';
 import '../../../../models/task_model.dart';
 import '../../../../services/task_api_service.dart';
-import '../../services/child_api_service.dart';
-import '../models/parent_child_tasks_data.dart';
+import '../models/child_tasks_data.dart';
+import '../models/upcoming_child_task.dart';
 
-class ParentChildDetailsRepository {
+class ChildTasksRepository {
   final TaskApiService _taskApiService;
-  final ChildApiService _childApiService;
 
-  ParentChildDetailsRepository({
-    TaskApiService? taskApiService,
-    ChildApiService? childApiService,
-  }) : _taskApiService = taskApiService ?? TaskApiService(),
-       _childApiService = childApiService ?? ChildApiService();
+  ChildTasksRepository({TaskApiService? taskApiService})
+    : _taskApiService = taskApiService ?? TaskApiService();
 
-  Future<ParentChildTasksData> getChildTasksData(String childId) async {
+  Future<ChildTasksData> getChildTasksData(String childId) async {
     final results = await Future.wait([
       _taskApiService.getAssignmentsForChild(childId),
       _taskApiService.getTasksByChild(childId),
@@ -34,7 +30,7 @@ class ParentChildDetailsRepository {
     });
 
     final today = _riyadhToday();
-    final upcomingTasks = <UpcomingTaskItem>[];
+    final upcomingTasks = <UpcomingChildTask>[];
 
     for (final task in taskDefinitions) {
       final nextDate = _nextOccurrence(task: task, today: today);
@@ -49,7 +45,7 @@ class ParentChildDetailsRepository {
       });
 
       if (nextDate.isAfter(today) || !hasAssignmentForNextDate) {
-        upcomingTasks.add(UpcomingTaskItem(task: task, nextDate: nextDate));
+        upcomingTasks.add(UpcomingChildTask(task: task, nextDate: nextDate));
       }
     }
 
@@ -57,7 +53,7 @@ class ParentChildDetailsRepository {
       return first.nextDate.compareTo(second.nextDate);
     });
 
-    return ParentChildTasksData(
+    return ChildTasksData(
       assignments: assignments,
       upcomingTasks: upcomingTasks,
       deletableTaskIds: deletableTaskIds,
@@ -66,10 +62,6 @@ class ParentChildDetailsRepository {
 
   Future<void> deleteTask(String taskId) {
     return _taskApiService.deleteTask(taskId);
-  }
-
-  Future<void> deleteChild(String childId) {
-    return _childApiService.deleteChild(childId);
   }
 
   DateTime _riyadhToday() {
@@ -82,7 +74,7 @@ class ParentChildDetailsRepository {
     required TaskModel task,
     required DateTime today,
   }) {
-    final frequency = task.taskFrequency.toUpperCase();
+    final frequency = task.taskFrequency.trim().toUpperCase();
 
     final recurrenceDay = task.recurrenceDay;
 
@@ -90,15 +82,16 @@ class ParentChildDetailsRepository {
       return null;
     }
 
-    if (frequency == 'WEEKLY') {
-      return _nextWeeklyDate(recurrenceDay: recurrenceDay, today: today);
-    }
+    switch (frequency) {
+      case 'WEEKLY':
+        return _nextWeeklyDate(recurrenceDay: recurrenceDay, today: today);
 
-    if (frequency == 'MONTHLY') {
-      return _nextMonthlyDate(recurrenceDay: recurrenceDay, today: today);
-    }
+      case 'MONTHLY':
+        return _nextMonthlyDate(recurrenceDay: recurrenceDay, today: today);
 
-    return null;
+      default:
+        return null;
+    }
   }
 
   DateTime? _nextWeeklyDate({

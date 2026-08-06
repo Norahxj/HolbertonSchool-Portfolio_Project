@@ -23,7 +23,6 @@ class ChildrenSectionHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(context.l10n.yourChildren, style: AppTextStyles.arabicTitle),
-
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -32,9 +31,7 @@ class ChildrenSectionHeader extends StatelessWidget {
               icon: Icons.add_rounded,
               onTap: onAddChild,
             ),
-
             const SizedBox(width: AppSpacing.sm),
-
             _ReviewTasksHeaderButton(
               count: pendingReviewCount,
               onTap: onReviewTasks,
@@ -86,8 +83,6 @@ class _ReviewTasksHeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-
     return Tooltip(
       message: context.l10n.reviewTasks,
       child: Stack(
@@ -110,12 +105,10 @@ class _ReviewTasksHeaderButton extends StatelessWidget {
               ),
             ),
           ),
-
           if (count > 0)
-            Positioned(
+            PositionedDirectional(
               top: -2,
-              right: isRtl ? null : -2,
-              left: isRtl ? -2 : null,
+              end: -2,
               child: Container(
                 width: 11,
                 height: 11,
