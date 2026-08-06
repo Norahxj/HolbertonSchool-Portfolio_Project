@@ -6,7 +6,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/screen_background.dart';
-import '../../widgets/child_card.dart';
+import 'child_card.dart';
 import '../controllers/add_task_controller.dart';
 import 'frequency_card.dart';
 import 'points_button.dart';

@@ -7,7 +7,7 @@ import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../../../../models/reward_model.dart';
 import '../../../../models/reward_suggestion_model.dart';
-import '../../widgets/child_card.dart';
+import '../../add_task/widgets/child_card.dart';
 import '../controllers/reward_management_controller.dart';
 import 'add_reward_button.dart';
 import 'current_reward_card.dart';
