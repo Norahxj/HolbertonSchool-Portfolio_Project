@@ -1,47 +1,32 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
-import '../services/family_api_service.dart';
-
-enum FamilySettingsErrorCode {
-  loadFamilyData,
-  familyNameTooShort,
-  invalidInvitationEmail,
-  updateFamilyName,
-  sendInvitation,
-  acceptInvitation,
-  rejectInvitation,
-  invitedUserNotFound,
-  cannotInviteYourself,
-  userAlreadyInFamily,
-  guardianTypeAlreadyExists,
-  invitationAlreadyPending,
-  familyNotFound,
-  invalidEnteredData,
-}
-
-class FamilySettingsActionResult {
-  final bool isSuccess;
-  final FamilySettingsErrorCode? errorCode;
-  final String? backendMessage;
-
-  const FamilySettingsActionResult({
-    this.isSuccess = false,
-    this.errorCode,
-    this.backendMessage,
-  });
-}
+import '../models/family_guardian.dart';
+import '../models/family_invitation.dart';
+import '../models/family_settings_errors.dart';
+import '../models/family_settings_result.dart';
+import '../repositories/family_settings_repository.dart';
+import '../utils/family_name_formatter.dart';
+import '../utils/family_settings_error_mapper.dart';
+import '../utils/family_settings_validator.dart';
 
 class FamilySettingsController extends ChangeNotifier {
-  final FamilyApiService _familyApiService;
+  final FamilySettingsRepository _repository;
 
-  FamilySettingsController({
-    FamilyApiService? familyApiService,
-  }) : _familyApiService = familyApiService ?? FamilyApiService();
+  FamilySettingsController({FamilySettingsRepository? repository})
+    : _repository = repository ?? FamilySettingsRepository();
 
-  bool _isLoading = true;
+  final List<FamilyGuardian> _guardians = [];
+  final List<FamilyInvitation> _sentInvitations = [];
+  final List<FamilyInvitation> _incomingInvitations = [];
+
+  final Set<String> _processingInvitationIds = {};
+
+  bool _isLoading = false;
   bool _isSavingFamilyName = false;
   bool _isSendingInvitation = false;
+  bool _loadRequestRunning = false;
+  bool _isDisposed = false;
 
   FamilySettingsErrorCode? _pageErrorCode;
   String? _pageBackendMessage;
@@ -49,35 +34,39 @@ class FamilySettingsController extends ChangeNotifier {
   String? _currentUserId;
   String _originalFamilyName = '';
 
-  final Set<String> _processingInvitationIds = {};
-
-  final List<Map<String, dynamic>> _guardians = [];
-  final List<Map<String, dynamic>> _sentInvitations = [];
-  final List<Map<String, dynamic>> _incomingInvitations = [];
-
   bool get isLoading => _isLoading;
 
-  bool get isSavingFamilyName => _isSavingFamilyName;
+  bool get isSavingFamilyName {
+    return _isSavingFamilyName;
+  }
 
-  bool get isSendingInvitation => _isSendingInvitation;
+  bool get isSendingInvitation {
+    return _isSendingInvitation;
+  }
 
   FamilySettingsErrorCode? get pageErrorCode => _pageErrorCode;
 
-  String? get pageBackendMessage => _pageBackendMessage;
+  String? get pageBackendMessage {
+    return _pageBackendMessage;
+  }
 
-  String? get currentUserId => _currentUserId;
+  String? get currentUserId {
+    return _currentUserId;
+  }
 
-  String get originalFamilyName => _originalFamilyName;
+  String get originalFamilyName {
+    return _originalFamilyName;
+  }
 
-  List<Map<String, dynamic>> get guardians {
+  List<FamilyGuardian> get guardians {
     return List.unmodifiable(_guardians);
   }
 
-  List<Map<String, dynamic>> get sentInvitations {
+  List<FamilyInvitation> get sentInvitations {
     return List.unmodifiable(_sentInvitations);
   }
 
-  List<Map<String, dynamic>> get incomingInvitations {
+  List<FamilyInvitation> get incomingInvitations {
     return List.unmodifiable(_incomingInvitations);
   }
 
@@ -85,395 +74,234 @@ class FamilySettingsController extends ChangeNotifier {
     return _processingInvitationIds.contains(invitationId);
   }
 
-  Future<void> loadFamilyData({
-    bool showLoading = true,
-  }) async {
+  Future<void> loadFamilyData({bool showLoading = true}) async {
+    if (_loadRequestRunning) {
+      return;
+    }
+
+    _loadRequestRunning = true;
+
     if (showLoading) {
       _isLoading = true;
     }
 
     _clearPageError();
-    notifyListeners();
+    _notify();
 
     try {
-      final results = await Future.wait([
-        _familyApiService.getFamilyDetails(),
-        _familyApiService.getIncomingInvitations(),
-      ]);
+      final data = await _repository.getFamilySettingsData();
 
-      final familyData = Map<String, dynamic>.from(
-        results[0] as Map,
-      );
+      _originalFamilyName = data.family.name;
 
-      final loadedIncomingInvitations = (results[1] as List).map((item) {
-        return Map<String, dynamic>.from(item as Map);
-      }).toList();
-
-      final loadedGuardians =
-          (familyData['guardians'] as List? ?? []).map((item) {
-        return Map<String, dynamic>.from(item as Map);
-      }).toList();
-
-      final loadedSentInvitations =
-          (familyData['pending_invitations'] as List? ?? []).map((item) {
-        return Map<String, dynamic>.from(item as Map);
-      }).toList();
-
-      _originalFamilyName = familyData['name']?.toString() ?? '';
-
-      _currentUserId = familyData['current_user_id']?.toString();
+      _currentUserId = data.family.currentUserId;
 
       _guardians
         ..clear()
-        ..addAll(loadedGuardians);
+        ..addAll(data.family.guardians);
 
       _sentInvitations
         ..clear()
-        ..addAll(loadedSentInvitations);
+        ..addAll(data.family.sentInvitations);
 
       _incomingInvitations
         ..clear()
-        ..addAll(loadedIncomingInvitations);
+        ..addAll(data.incomingInvitations);
     } on DioException catch (error) {
+      _pageErrorCode =
+          FamilySettingsErrorMapper.mapError(error) ??
+          FamilySettingsErrorCode.loadFamilyData;
+
+      _pageBackendMessage = FamilySettingsErrorMapper.readUnknownMessage(error);
+
       debugPrint(
         'Loading family settings failed: '
         'status=${error.response?.statusCode}, '
         'data=${error.response?.data}',
       );
-
-      _pageErrorCode =
-          _readErrorCode(error) ??
-          FamilySettingsErrorCode.loadFamilyData;
-
-      _pageBackendMessage = _readUnknownBackendMessage(error);
-    } catch (error) {
-      debugPrint('Loading family settings failed: $error');
-
+    } catch (error, stackTrace) {
       _pageErrorCode = FamilySettingsErrorCode.loadFamilyData;
-    } finally {
-      if (showLoading) {
-        _isLoading = false;
-      }
 
-      notifyListeners();
+      debugPrint(
+        'Loading family settings failed: '
+        '$error\n$stackTrace',
+      );
+    } finally {
+      _isLoading = false;
+      _loadRequestRunning = false;
+      _notify();
     }
   }
 
   Future<FamilySettingsActionResult> saveFamilyName(
     String displayedName,
   ) async {
-    final trimmedName = displayedName.trim();
+    if (_isSavingFamilyName) {
+      return const FamilySettingsActionResult.ignored();
+    }
 
-    final name = _normalizeFamilyNameForSaving(
-      displayedName: trimmedName,
+    final normalizedName = FamilyNameFormatter.normalizeForSaving(
+      displayedName: displayedName,
       originalName: _originalFamilyName,
     );
 
-    if (name.length < 2) {
-      return const FamilySettingsActionResult(
-        errorCode: FamilySettingsErrorCode.familyNameTooShort,
-      );
-    }
+    final validationError = FamilySettingsValidator.validateFamilyName(
+      normalizedName,
+    );
 
-    if (_isSavingFamilyName) {
-      return const FamilySettingsActionResult();
+    if (validationError != null) {
+      return FamilySettingsActionResult.failure(errorCode: validationError);
     }
 
     _isSavingFamilyName = true;
-    notifyListeners();
+    _notify();
 
     try {
-      await _familyApiService.updateFamilyName(name);
+      await _repository.updateFamilyName(normalizedName);
+
       await loadFamilyData(showLoading: false);
 
-      return const FamilySettingsActionResult(
-        isSuccess: true,
-      );
+      return const FamilySettingsActionResult.success();
     } on DioException catch (error) {
+      return FamilySettingsActionResult.failure(
+        errorCode:
+            FamilySettingsErrorMapper.mapError(error) ??
+            FamilySettingsErrorCode.updateFamilyName,
+        backendMessage: FamilySettingsErrorMapper.readUnknownMessage(error),
+      );
+    } catch (error, stackTrace) {
       debugPrint(
         'Updating family name failed: '
-        'status=${error.response?.statusCode}, '
-        'data=${error.response?.data}',
+        '$error\n$stackTrace',
       );
 
-      return FamilySettingsActionResult(
-        errorCode:
-            _readErrorCode(error) ??
-            FamilySettingsErrorCode.updateFamilyName,
-        backendMessage: _readUnknownBackendMessage(error),
-      );
-    } catch (error) {
-      debugPrint('Updating family name failed: $error');
-
-      return const FamilySettingsActionResult(
+      return const FamilySettingsActionResult.failure(
         errorCode: FamilySettingsErrorCode.updateFamilyName,
       );
     } finally {
       _isSavingFamilyName = false;
-      notifyListeners();
+      _notify();
     }
   }
 
-  Future<FamilySettingsActionResult> sendInvitation(
-    String email,
-  ) async {
-    final normalizedEmail = email.trim().toLowerCase();
-
-    if (!_isValidEmail(normalizedEmail)) {
-      return const FamilySettingsActionResult(
-        errorCode: FamilySettingsErrorCode.invalidInvitationEmail,
-      );
+  Future<FamilySettingsActionResult> sendInvitation(String email) async {
+    if (_isSendingInvitation) {
+      return const FamilySettingsActionResult.ignored();
     }
 
-    if (_isSendingInvitation) {
-      return const FamilySettingsActionResult();
+    final normalizedEmail = email.trim().toLowerCase();
+
+    final validationError = FamilySettingsValidator.validateInvitationEmail(
+      normalizedEmail,
+    );
+
+    if (validationError != null) {
+      return FamilySettingsActionResult.failure(errorCode: validationError);
     }
 
     _isSendingInvitation = true;
-    notifyListeners();
+    _notify();
 
     try {
-      await _familyApiService.inviteParent(normalizedEmail);
+      await _repository.sendInvitation(normalizedEmail);
+
       await loadFamilyData(showLoading: false);
 
-      return const FamilySettingsActionResult(
-        isSuccess: true,
-      );
+      return const FamilySettingsActionResult.success();
     } on DioException catch (error) {
-      debugPrint(
-        'Sending family invitation failed: '
-        'status=${error.response?.statusCode}, '
-        'data=${error.response?.data}',
-      );
-
-      return FamilySettingsActionResult(
+      return FamilySettingsActionResult.failure(
         errorCode:
-            _readErrorCode(error) ??
+            FamilySettingsErrorMapper.mapError(error) ??
             FamilySettingsErrorCode.sendInvitation,
-        backendMessage: _readUnknownBackendMessage(error),
+        backendMessage: FamilySettingsErrorMapper.readUnknownMessage(error),
       );
-    } catch (error) {
-      debugPrint('Sending family invitation failed: $error');
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Sending invitation failed: '
+        '$error\n$stackTrace',
+      );
 
-      return const FamilySettingsActionResult(
+      return const FamilySettingsActionResult.failure(
         errorCode: FamilySettingsErrorCode.sendInvitation,
       );
     } finally {
       _isSendingInvitation = false;
-      notifyListeners();
+      _notify();
     }
   }
 
-  Future<FamilySettingsActionResult> acceptInvitation(
-    String invitationId,
-  ) async {
+  Future<FamilySettingsActionResult> acceptInvitation(String invitationId) {
     return _processInvitation(
       invitationId: invitationId,
       action: () {
-        return _familyApiService.acceptInvitation(invitationId);
+        return _repository.acceptInvitation(invitationId);
       },
-      fallbackErrorCode: FamilySettingsErrorCode.acceptInvitation,
+      fallbackError: FamilySettingsErrorCode.acceptInvitation,
     );
   }
 
-  Future<FamilySettingsActionResult> rejectInvitation(
-    String invitationId,
-  ) async {
+  Future<FamilySettingsActionResult> rejectInvitation(String invitationId) {
     return _processInvitation(
       invitationId: invitationId,
       action: () {
-        return _familyApiService.rejectInvitation(invitationId);
+        return _repository.rejectInvitation(invitationId);
       },
-      fallbackErrorCode: FamilySettingsErrorCode.rejectInvitation,
+      fallbackError: FamilySettingsErrorCode.rejectInvitation,
     );
-  }
-
-  void clearPageError() {
-    if (_pageErrorCode == null && _pageBackendMessage == null) {
-      return;
-    }
-
-    _clearPageError();
-    notifyListeners();
   }
 
   Future<FamilySettingsActionResult> _processInvitation({
     required String invitationId,
     required Future<void> Function() action,
-    required FamilySettingsErrorCode fallbackErrorCode,
+    required FamilySettingsErrorCode fallbackError,
   }) async {
     if (invitationId.isEmpty ||
         _processingInvitationIds.contains(invitationId)) {
-      return const FamilySettingsActionResult();
+      return const FamilySettingsActionResult.ignored();
     }
 
     _processingInvitationIds.add(invitationId);
-    notifyListeners();
+
+    _notify();
 
     try {
       await action();
+
       await loadFamilyData(showLoading: false);
 
-      return const FamilySettingsActionResult(
-        isSuccess: true,
-      );
+      return const FamilySettingsActionResult.success();
     } on DioException catch (error) {
+      return FamilySettingsActionResult.failure(
+        errorCode: FamilySettingsErrorMapper.mapError(error) ?? fallbackError,
+        backendMessage: FamilySettingsErrorMapper.readUnknownMessage(error),
+      );
+    } catch (error, stackTrace) {
       debugPrint(
-        'Processing family invitation failed: '
-        'status=${error.response?.statusCode}, '
-        'data=${error.response?.data}',
+        'Processing invitation failed: '
+        '$error\n$stackTrace',
       );
 
-      return FamilySettingsActionResult(
-        errorCode: _readErrorCode(error) ?? fallbackErrorCode,
-        backendMessage: _readUnknownBackendMessage(error),
-      );
-    } catch (error) {
-      debugPrint('Processing family invitation failed: $error');
-
-      return FamilySettingsActionResult(
-        errorCode: fallbackErrorCode,
-      );
+      return FamilySettingsActionResult.failure(errorCode: fallbackError);
     } finally {
       _processingInvitationIds.remove(invitationId);
-      notifyListeners();
+
+      _notify();
     }
-  }
-
-  FamilySettingsErrorCode? _readErrorCode(
-    DioException error,
-  ) {
-    final backendMessage = _readBackendMessage(error);
-
-    switch (backendMessage) {
-      case 'Invited email does not belong to an existing user':
-        return FamilySettingsErrorCode.invitedUserNotFound;
-
-      case 'You cannot invite yourself':
-        return FamilySettingsErrorCode.cannotInviteYourself;
-
-      case 'User is already in your family':
-        return FamilySettingsErrorCode.userAlreadyInFamily;
-
-      case 'This family already has this guardian type':
-        return FamilySettingsErrorCode.guardianTypeAlreadyExists;
-
-      case 'An invitation is already pending for this email':
-        return FamilySettingsErrorCode.invitationAlreadyPending;
-
-      case 'Current user is not assigned to a family':
-      case 'Family not found':
-        return FamilySettingsErrorCode.familyNotFound;
-    }
-
-    final data = error.response?.data;
-
-    if (data is Map && data['errors'] != null) {
-      return FamilySettingsErrorCode.invalidEnteredData;
-    }
-
-    return null;
-  }
-
-  String? _readUnknownBackendMessage(
-    DioException error,
-  ) {
-    final backendMessage = _readBackendMessage(error);
-
-    const knownMessages = {
-      'Invited email does not belong to an existing user',
-      'You cannot invite yourself',
-      'User is already in your family',
-      'This family already has this guardian type',
-      'An invitation is already pending for this email',
-      'Current user is not assigned to a family',
-      'Family not found',
-    };
-
-    if (backendMessage == null ||
-        backendMessage.trim().isEmpty ||
-        knownMessages.contains(backendMessage)) {
-      return null;
-    }
-
-    return backendMessage;
-  }
-
-  String? _readBackendMessage(
-    DioException error,
-  ) {
-    final data = error.response?.data;
-
-    if (data is! Map) {
-      return null;
-    }
-
-    final backendError = data['error']?.toString();
-
-    if (backendError != null && backendError.trim().isNotEmpty) {
-      return backendError;
-    }
-
-    return data['message']?.toString();
-  }
-
-  String _normalizeFamilyNameForSaving({
-    required String displayedName,
-    required String originalName,
-  }) {
-    final normalizedOriginal = _removeFamilyPrefixAndSuffix(
-      originalName,
-    );
-
-    final normalizedDisplayed = _removeFamilyPrefixAndSuffix(
-      displayedName,
-    );
-
-    if (normalizedDisplayed == normalizedOriginal) {
-      return originalName.trim();
-    }
-
-    return normalizedDisplayed;
-  }
-
-  String _removeFamilyPrefixAndSuffix(String value) {
-    var result = value.trim();
-
-    result = result.replaceFirst(
-      RegExp(
-        r'^عائلة\s+',
-        caseSensitive: false,
-      ),
-      '',
-    );
-
-    result = result.replaceFirst(
-      RegExp(
-        r'\s+family$',
-        caseSensitive: false,
-      ),
-      '',
-    );
-
-    result = result.replaceFirst(
-      RegExp(
-        r"['’]s$",
-        caseSensitive: false,
-      ),
-      '',
-    );
-
-    return result.trim();
-  }
-
-  bool _isValidEmail(String email) {
-    return RegExp(
-      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-    ).hasMatch(email);
   }
 
   void _clearPageError() {
     _pageErrorCode = null;
     _pageBackendMessage = null;
+  }
+
+  void _notify() {
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 }

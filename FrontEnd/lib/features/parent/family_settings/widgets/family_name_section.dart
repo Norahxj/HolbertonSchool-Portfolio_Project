@@ -22,9 +22,7 @@ class FamilyNameSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FamilyFieldLabel(
-          text: context.l10n.familyName,
-        ),
+        FamilyFieldLabel(text: context.l10n.familyName),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -45,15 +43,11 @@ class FamilyNameSection extends StatelessWidget {
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.save_outlined),
             label: Text(
-              isSaving
-                  ? context.l10n.saving
-                  : context.l10n.saveFamilyName,
+              isSaving ? context.l10n.saving : context.l10n.saveFamilyName,
             ),
           ),
         ),

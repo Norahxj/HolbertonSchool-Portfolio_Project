@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../models/family_guardian.dart';
 import '../utils/family_settings_localization.dart';
 import 'guardian_components.dart';
 
 class GuardiansSection extends StatelessWidget {
-  final List<Map<String, dynamic>> guardians;
+  final List<FamilyGuardian> guardians;
   final String? currentUserId;
 
   const GuardiansSection({
@@ -22,9 +23,7 @@ class GuardiansSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FamilyFieldLabel(text: context.l10n.guardians),
-
         const SizedBox(height: AppSpacing.sm),
-
         if (guardians.isEmpty)
           Container(
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -36,33 +35,22 @@ class GuardiansSection extends StatelessWidget {
             child: Text(context.l10n.noGuardians, textAlign: TextAlign.center),
           )
         else
-          ...guardians.map((guardian) {
-            final guardianId = guardian['id']?.toString();
-
-            final isCurrentUser = guardianId == currentUserId;
-
-            final firstName = guardian['first_name']?.toString() ?? '';
-
-            final lastName = guardian['last_name']?.toString() ?? '';
-
-            final guardianType = guardian['guardian_type']?.toString() ?? '';
-
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          for (final guardian in guardians)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
               child: GuardianCard(
-                name: '$firstName $lastName'.trim(),
-                subtitle: guardianType.guardianTypeLabel(context),
-                subtitleColor: isCurrentUser
+                name: guardian.fullName,
+                subtitle: guardian.guardianType.guardianTypeLabel(context),
+                subtitleColor: guardian.id == currentUserId
                     ? const Color(0xFFC08A3E)
                     : AppColors.textSecondary,
                 avatarColor: AppColors.primaryLight,
                 iconColor: AppColors.primary,
-                tag: isCurrentUser
+                tag: guardian.id == currentUserId
                     ? const CurrentUserTag()
                     : const VerifiedTag(),
               ),
-            );
-          }),
+            ),
       ],
     );
   }

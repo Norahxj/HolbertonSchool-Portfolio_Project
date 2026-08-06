@@ -42,78 +42,84 @@ class FamilySettingsView extends StatelessWidget {
     final controller = context.watch<FamilySettingsController>();
 
     final pageError =
-        controller.pageErrorCode?.localized(context) ??
-        controller.pageBackendMessage;
+        controller.pageBackendMessage ??
+        controller.pageErrorCode?.localized(context);
 
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
-          child: controller.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : pageError != null
-              ? _FamilySettingsErrorState(
-                  message: pageError,
-                  onRetry: onReload,
-                )
-              : AppRefreshIndicator(
-                  onRefresh: onReload,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(AppSpacing.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        AppPageHeader(
-                          title: context.l10n.familySettings,
-                          onBack: onBack,
-                        ),
+          child: _buildContent(
+            context: context,
+            controller: controller,
+            pageError: pageError,
+          ),
+        ),
+      ),
+    );
+  }
 
-                        const SizedBox(height: AppSpacing.xl),
+  Widget _buildContent({
+    required BuildContext context,
+    required FamilySettingsController controller,
+    required String? pageError,
+  }) {
+    if (controller.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-                        FamilyNameSection(
-                          controller: familyNameController,
-                          isSaving: controller.isSavingFamilyName,
-                          onSave: onSaveFamilyName,
-                        ),
+    if (pageError != null) {
+      return _FamilySettingsErrorState(message: pageError, onRetry: onReload);
+    }
 
-                        const SizedBox(height: AppSpacing.xl),
+    return AppRefreshIndicator(
+      onRefresh: onReload,
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppPageHeader(title: context.l10n.familySettings, onBack: onBack),
 
-                        GuardiansSection(
-                          guardians: controller.guardians,
-                          currentUserId: controller.currentUserId,
-                        ),
+            const SizedBox(height: AppSpacing.xl),
 
-                        const SizedBox(height: AppSpacing.xl),
+            FamilyNameSection(
+              controller: familyNameController,
+              isSaving: controller.isSavingFamilyName,
+              onSave: onSaveFamilyName,
+            ),
 
-                        PendingInvitationsSection(
-                          invitations: controller.sentInvitations,
-                        ),
+            const SizedBox(height: AppSpacing.xl),
 
-                        const SizedBox(height: AppSpacing.xl),
+            GuardiansSection(
+              guardians: controller.guardians,
+              currentUserId: controller.currentUserId,
+            ),
 
-                        IncomingInvitationsSection(
-                          invitations: controller.incomingInvitations,
-                          isProcessingInvitation:
-                              controller.isProcessingInvitation,
-                          onAccept: onAcceptInvitation,
-                          onReject: onRejectInvitation,
-                        ),
+            const SizedBox(height: AppSpacing.xl),
 
-                        const SizedBox(height: AppSpacing.xl),
+            PendingInvitationsSection(invitations: controller.sentInvitations),
 
-                        InviteGuardianSection(
-                          controller: inviteEmailController,
-                          isSending: controller.isSendingInvitation,
-                          onSend: onSendInvitation,
-                        ),
+            const SizedBox(height: AppSpacing.xl),
 
-                        const SizedBox(height: AppSpacing.lg),
-                      ],
-                    ),
-                  ),
-                ),
+            IncomingInvitationsSection(
+              invitations: controller.incomingInvitations,
+              isProcessingInvitation: controller.isProcessingInvitation,
+              onAccept: onAcceptInvitation,
+              onReject: onRejectInvitation,
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+
+            InviteGuardianSection(
+              controller: inviteEmailController,
+              isSending: controller.isSendingInvitation,
+              onSend: onSendInvitation,
+            ),
+
+            const SizedBox(height: AppSpacing.lg),
+          ],
         ),
       ),
     );
@@ -137,11 +143,7 @@ class _FamilySettingsErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline,
-              color: AppColors.error,
-              size: 42,
-            ),
+            const Icon(Icons.error_outline, color: AppColors.error, size: 42),
 
             const SizedBox(height: AppSpacing.md),
 

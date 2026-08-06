@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../controllers/family_settings_controller.dart';
+import '../models/family_settings_result.dart';
 import '../utils/family_settings_localization.dart';
 import '../widgets/family_settings_view.dart';
 
@@ -19,9 +20,9 @@ class FamilySettingsScreen extends StatefulWidget {
 class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   late final FamilySettingsController _controller;
 
-  final TextEditingController familyNameController = TextEditingController();
+  late final TextEditingController _familyNameController;
 
-  final TextEditingController inviteEmailController = TextEditingController();
+  late final TextEditingController _inviteEmailController;
 
   @override
   void initState() {
@@ -29,14 +30,18 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
 
     _controller = FamilySettingsController();
 
+    _familyNameController = TextEditingController();
+
+    _inviteEmailController = TextEditingController();
+
     _loadFamilyData();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    familyNameController.dispose();
-    inviteEmailController.dispose();
+    _familyNameController.dispose();
+    _inviteEmailController.dispose();
 
     super.dispose();
   }
@@ -48,7 +53,47 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
       return;
     }
 
-    _updateDisplayedFamilyName();
+    _syncFamilyNameField();
+  }
+
+  Future<void> _saveFamilyName() async {
+    FocusScope.of(context).unfocus();
+
+    final result = await _controller.saveFamilyName(_familyNameController.text);
+
+    if (!mounted) {
+      return;
+    }
+
+    if (!result.isSuccess) {
+      _showResultError(result);
+      return;
+    }
+
+    _syncFamilyNameField();
+
+    _showMessage(context.l10n.familyNameUpdatedSuccessfully);
+  }
+
+  Future<void> _sendInvitation() async {
+    FocusScope.of(context).unfocus();
+
+    final result = await _controller.sendInvitation(
+      _inviteEmailController.text,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (!result.isSuccess) {
+      _showResultError(result);
+      return;
+    }
+
+    _inviteEmailController.clear();
+
+    _showMessage(context.l10n.invitationSentSuccessfully);
   }
 
   Future<void> _acceptInvitation(String invitationId) async {
@@ -63,7 +108,7 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
       return;
     }
 
-    _updateDisplayedFamilyName();
+    _syncFamilyNameField();
 
     _showMessage(context.l10n.invitationAcceptedSuccessfully);
   }
@@ -83,63 +128,37 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
     _showMessage(context.l10n.invitationRejectedSuccessfully);
   }
 
-  Future<void> _saveFamilyName() async {
-    final result = await _controller.saveFamilyName(familyNameController.text);
-
-    if (!mounted) {
-      return;
-    }
-
-    if (!result.isSuccess) {
-      _showResultError(result);
-      return;
-    }
-
-    _updateDisplayedFamilyName();
-
-    _showMessage(context.l10n.familyNameUpdatedSuccessfully);
-  }
-
-  Future<void> _sendInvitation() async {
-    final result = await _controller.sendInvitation(inviteEmailController.text);
-
-    if (!mounted) {
-      return;
-    }
-
-    if (!result.isSuccess) {
-      _showResultError(result);
-      return;
-    }
-
-    inviteEmailController.clear();
-
-    _showMessage(context.l10n.invitationSentSuccessfully);
-  }
-
-  void _updateDisplayedFamilyName() {
-    familyNameController.text = displayLocalizedFamilyName(
+  void _syncFamilyNameField() {
+    _familyNameController.text = displayLocalizedFamilyName(
       context,
       _controller.originalFamilyName,
     );
   }
 
   void _showResultError(FamilySettingsActionResult result) {
-  _showMessage(
-    result.errorCode?.localized(context) ??
+    final message =
+        result.errorCode?.localized(context) ??
         result.backendMessage ??
-        context.l10n.familySettingsGenericError,
-    isError: true,
-  );
-}
+        context.l10n.familySettingsGenericError;
+
+    _showMessage(message, isError: true);
+  }
 
   void _showMessage(String message, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? AppColors.error : AppColors.success,
-      ),
-    );
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: isError ? AppColors.error : AppColors.success,
+        ),
+      );
+  }
+
+  void _goBack() {
+    Navigator.pop(context);
   }
 
   @override
@@ -147,16 +166,14 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: FamilySettingsView(
-        familyNameController: familyNameController,
-        inviteEmailController: inviteEmailController,
+        familyNameController: _familyNameController,
+        inviteEmailController: _inviteEmailController,
         onReload: _loadFamilyData,
         onSaveFamilyName: _saveFamilyName,
         onSendInvitation: _sendInvitation,
         onAcceptInvitation: _acceptInvitation,
         onRejectInvitation: _rejectInvitation,
-        onBack: () {
-          Navigator.pop(context);
-        },
+        onBack: _goBack,
       ),
     );
   }

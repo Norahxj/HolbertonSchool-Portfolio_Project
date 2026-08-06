@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../models/family_invitation.dart';
 import 'guardian_components.dart';
 
 class PendingInvitationsSection extends StatelessWidget {
-  final List<Map<String, dynamic>> invitations;
+  final List<FamilyInvitation> invitations;
 
   const PendingInvitationsSection({super.key, required this.invitations});
 
@@ -16,17 +17,12 @@ class PendingInvitationsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FamilyFieldLabel(text: context.l10n.pendingSentInvitations),
-
         const SizedBox(height: AppSpacing.sm),
-
         if (invitations.isEmpty)
           const _EmptyPendingInvitations()
         else
-          ...invitations.map((invitation) {
-            final invitedEmail = invitation['invited_email']?.toString() ?? '';
-
-            return _PendingInvitationCard(invitedEmail: invitedEmail);
-          }),
+          for (final invitation in invitations)
+            _PendingInvitationCard(invitedEmail: invitation.invitedEmail),
       ],
     );
   }
@@ -55,9 +51,7 @@ class _EmptyPendingInvitations extends StatelessWidget {
               color: AppColors.textPrimary,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Text(
             context.l10n.pendingInvitationsDescription,
             textAlign: TextAlign.center,
@@ -80,7 +74,7 @@ class _PendingInvitationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      margin: const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -90,9 +84,7 @@ class _PendingInvitationCard extends StatelessWidget {
       child: Row(
         children: [
           const Icon(Icons.schedule, color: AppColors.textSecondary),
-
           const SizedBox(width: AppSpacing.sm),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,9 +98,7 @@ class _PendingInvitationCard extends StatelessWidget {
                     color: AppColors.textPrimary,
                   ),
                 ),
-
                 const SizedBox(height: 2),
-
                 Text(
                   context.l10n.waitingForInvitationAcceptance,
                   textAlign: TextAlign.start,

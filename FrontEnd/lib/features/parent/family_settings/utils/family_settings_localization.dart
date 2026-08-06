@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/family_settings_controller.dart';
+import '../models/family_settings_errors.dart';
+import 'family_name_formatter.dart';
 
 extension FamilySettingsErrorLocalization on FamilySettingsErrorCode {
   String localized(BuildContext context) {
@@ -69,41 +70,12 @@ extension FamilyGuardianLocalization on String {
   }
 }
 
-String displayLocalizedFamilyName(
-  BuildContext context,
-  String name,
-) {
-  final trimmedName = name.trim();
+String displayLocalizedFamilyName(BuildContext context, String name) {
+  final cleanName = FamilyNameFormatter.removeFamilyDecoration(name);
 
-  if (trimmedName.isEmpty) {
-    return trimmedName;
+  if (cleanName.isEmpty) {
+    return '';
   }
 
-  var cleanName = trimmedName.replaceFirst(
-    RegExp(
-      r'\s+family$',
-      caseSensitive: false,
-    ),
-    '',
-  );
-
-  cleanName = cleanName.replaceFirst(
-    RegExp(
-      r'^عائلة\s+',
-      caseSensitive: false,
-    ),
-    '',
-  );
-
-  cleanName = cleanName.replaceFirst(
-    RegExp(
-      r"['’]s$",
-      caseSensitive: false,
-    ),
-    '',
-  );
-
-  return context.l10n.familyNameDisplay(
-    cleanName.trim(),
-  );
+  return context.l10n.familyNameDisplay(cleanName);
 }
