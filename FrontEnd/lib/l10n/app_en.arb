@@ -390,5 +390,50 @@
       "type": "String"
     }
   }
-}
+},
+"unableToLoadReviewTasks": "Unable to load tasks for review.",
+"unableToApproveTask": "Unable to accept the task.",
+"onlyTaskCreatorCanApprove": "Only the guardian who created this task can accept it.",
+"unableToSendTaskForRetry": "Unable to send the task back for another try.",
+"onlyTaskCreatorCanRequestRetry": "Only the guardian who created this task can send it back for another try.",
+"completedRecently": "Completed recently",
+"completedAt": "Completed at {time}",
+"@completedAt": {
+  "placeholders": {
+    "time": {
+      "type": "String"
+    }
+  }
+},
+"taskReview": "Task review",
+"reviewCompletedTasks": "Review your children’s completed tasks",
+"pendingReview": "Pending review",
+"tasksCount": "{count} tasks",
+"@tasksCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"acceptTask": "Accept",
+"tryAgain": "Try again",
+"noTasksPendingReview": "No tasks are pending review",
+"taskAcceptedSuccessfully": "Task accepted: \"{taskTitle}\"",
+"@taskAcceptedSuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskSentForRetrySuccessfully": "Task sent back for another try: \"{taskTitle}\"",
+"@taskSentForRetrySuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskReviewGenericError": "An unexpected error occurred while reviewing the task."
 }

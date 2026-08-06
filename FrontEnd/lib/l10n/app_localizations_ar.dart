@@ -787,4 +787,65 @@ class AppLocalizationsAr extends AppLocalizations {
   String familyNameDisplay(String name) {
     return 'عائلة $name';
   }
+
+  @override
+  String get unableToLoadReviewTasks => 'تعذّر تحميل المهام للمراجعة.';
+
+  @override
+  String get unableToApproveTask => 'تعذّر قبول المهمة.';
+
+  @override
+  String get onlyTaskCreatorCanApprove =>
+      'يمكن قبول المهمة فقط بواسطة ولي الأمر الذي أضافها.';
+
+  @override
+  String get unableToSendTaskForRetry => 'تعذّر إرسال المهمة لإعادة المحاولة.';
+
+  @override
+  String get onlyTaskCreatorCanRequestRetry =>
+      'يمكن إرسال المهمة لإعادة المحاولة فقط بواسطة ولي الأمر الذي أضافها.';
+
+  @override
+  String get completedRecently => 'أُنجزت مؤخرًا';
+
+  @override
+  String completedAt(String time) {
+    return 'أُنجزت في $time';
+  }
+
+  @override
+  String get taskReview => 'مراجعة المهام';
+
+  @override
+  String get reviewCompletedTasks => 'راجع ما أنجزه أطفالك';
+
+  @override
+  String get pendingReview => 'بانتظار المراجعة';
+
+  @override
+  String tasksCount(int count) {
+    return '$count مهام';
+  }
+
+  @override
+  String get acceptTask => 'قبول';
+
+  @override
+  String get tryAgain => 'إعادة المحاولة';
+
+  @override
+  String get noTasksPendingReview => 'لا توجد مهام بانتظار المراجعة';
+
+  @override
+  String taskAcceptedSuccessfully(String taskTitle) {
+    return 'تم قبول مهمة \"$taskTitle\"';
+  }
+
+  @override
+  String taskSentForRetrySuccessfully(String taskTitle) {
+    return 'تم إرسال المهمة لإعادة المحاولة: \"$taskTitle\"';
+  }
+
+  @override
+  String get taskReviewGenericError => 'حدث خطأ غير متوقع أثناء مراجعة المهمة.';
 }

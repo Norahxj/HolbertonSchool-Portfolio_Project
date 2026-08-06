@@ -390,5 +390,50 @@
       "type": "String"
     }
   }
-}
+},
+"unableToLoadReviewTasks": "تعذّر تحميل المهام للمراجعة.",
+"unableToApproveTask": "تعذّر قبول المهمة.",
+"onlyTaskCreatorCanApprove": "يمكن قبول المهمة فقط بواسطة ولي الأمر الذي أضافها.",
+"unableToSendTaskForRetry": "تعذّر إرسال المهمة لإعادة المحاولة.",
+"onlyTaskCreatorCanRequestRetry": "يمكن إرسال المهمة لإعادة المحاولة فقط بواسطة ولي الأمر الذي أضافها.",
+"completedRecently": "أُنجزت مؤخرًا",
+"completedAt": "أُنجزت في {time}",
+"@completedAt": {
+  "placeholders": {
+    "time": {
+      "type": "String"
+    }
+  }
+},
+"taskReview": "مراجعة المهام",
+"reviewCompletedTasks": "راجع ما أنجزه أطفالك",
+"pendingReview": "بانتظار المراجعة",
+"tasksCount": "{count} مهام",
+"@tasksCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"acceptTask": "قبول",
+"tryAgain": "إعادة المحاولة",
+"noTasksPendingReview": "لا توجد مهام بانتظار المراجعة",
+"taskAcceptedSuccessfully": "تم قبول مهمة \"{taskTitle}\"",
+"@taskAcceptedSuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskSentForRetrySuccessfully": "تم إرسال المهمة لإعادة المحاولة: \"{taskTitle}\"",
+"@taskSentForRetrySuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskReviewGenericError": "حدث خطأ غير متوقع أثناء مراجعة المهمة."
 }

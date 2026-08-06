@@ -1543,6 +1543,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name} Family'**
   String familyNameDisplay(String name);
+
+  /// No description provided for @unableToLoadReviewTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load tasks for review.'**
+  String get unableToLoadReviewTasks;
+
+  /// No description provided for @unableToApproveTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to accept the task.'**
+  String get unableToApproveTask;
+
+  /// No description provided for @onlyTaskCreatorCanApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the guardian who created this task can accept it.'**
+  String get onlyTaskCreatorCanApprove;
+
+  /// No description provided for @unableToSendTaskForRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to send the task back for another try.'**
+  String get unableToSendTaskForRetry;
+
+  /// No description provided for @onlyTaskCreatorCanRequestRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the guardian who created this task can send it back for another try.'**
+  String get onlyTaskCreatorCanRequestRetry;
+
+  /// No description provided for @completedRecently.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed recently'**
+  String get completedRecently;
+
+  /// No description provided for @completedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed at {time}'**
+  String completedAt(String time);
+
+  /// No description provided for @taskReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Task review'**
+  String get taskReview;
+
+  /// No description provided for @reviewCompletedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Review your children’s completed tasks'**
+  String get reviewCompletedTasks;
+
+  /// No description provided for @pendingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending review'**
+  String get pendingReview;
+
+  /// No description provided for @tasksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tasks'**
+  String tasksCount(int count);
+
+  /// No description provided for @acceptTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get acceptTask;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @noTasksPendingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks are pending review'**
+  String get noTasksPendingReview;
+
+  /// No description provided for @taskAcceptedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Task accepted: \"{taskTitle}\"'**
+  String taskAcceptedSuccessfully(String taskTitle);
+
+  /// No description provided for @taskSentForRetrySuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Task sent back for another try: \"{taskTitle}\"'**
+  String taskSentForRetrySuccessfully(String taskTitle);
+
+  /// No description provided for @taskReviewGenericError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred while reviewing the task.'**
+  String get taskReviewGenericError;
 }
 
 class _AppLocalizationsDelegate

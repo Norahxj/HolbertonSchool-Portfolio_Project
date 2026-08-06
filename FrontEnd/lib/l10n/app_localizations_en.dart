@@ -808,4 +808,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String familyNameDisplay(String name) {
     return '$name Family';
   }
+
+  @override
+  String get unableToLoadReviewTasks => 'Unable to load tasks for review.';
+
+  @override
+  String get unableToApproveTask => 'Unable to accept the task.';
+
+  @override
+  String get onlyTaskCreatorCanApprove =>
+      'Only the guardian who created this task can accept it.';
+
+  @override
+  String get unableToSendTaskForRetry =>
+      'Unable to send the task back for another try.';
+
+  @override
+  String get onlyTaskCreatorCanRequestRetry =>
+      'Only the guardian who created this task can send it back for another try.';
+
+  @override
+  String get completedRecently => 'Completed recently';
+
+  @override
+  String completedAt(String time) {
+    return 'Completed at $time';
+  }
+
+  @override
+  String get taskReview => 'Task review';
+
+  @override
+  String get reviewCompletedTasks => 'Review your children’s completed tasks';
+
+  @override
+  String get pendingReview => 'Pending review';
+
+  @override
+  String tasksCount(int count) {
+    return '$count tasks';
+  }
+
+  @override
+  String get acceptTask => 'Accept';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get noTasksPendingReview => 'No tasks are pending review';
+
+  @override
+  String taskAcceptedSuccessfully(String taskTitle) {
+    return 'Task accepted: \"$taskTitle\"';
+  }
+
+  @override
+  String taskSentForRetrySuccessfully(String taskTitle) {
+    return 'Task sent back for another try: \"$taskTitle\"';
+  }
+
+  @override
+  String get taskReviewGenericError =>
+      'An unexpected error occurred while reviewing the task.';
 }

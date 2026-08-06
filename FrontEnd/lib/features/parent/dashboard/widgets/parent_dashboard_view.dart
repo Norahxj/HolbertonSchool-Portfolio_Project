@@ -57,17 +57,11 @@ class ParentDashboardView extends StatelessWidget {
 
   Future<void> _openTaskReview(BuildContext context) async {
     final controller = context.read<ParentDashboardController>();
-
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
-
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return TaskReviewScreen(
-            isArabic: isArabic,
-          );
+          return const TaskReviewScreen();
         },
       ),
     );

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../../core/widgets/child_avatar.dart';
-import '../models/review_task.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/child_avatar.dart';
+import '../models/review_task.dart';
 
 class PendingHeader extends StatelessWidget {
   final int count;
-  final bool isArabic;
 
-  const PendingHeader({super.key, required this.count, required this.isArabic});
+  const PendingHeader({super.key, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class PendingHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          isArabic ? 'بانتظار المراجعة' : 'Pending review',
+          context.l10n.pendingReview,
           style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -34,7 +35,7 @@ class PendingHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            isArabic ? '$count مهام' : '$count tasks',
+            context.l10n.tasksCount(count),
             style: const TextStyle(
               color: AppColors.primaryDark,
               fontWeight: FontWeight.bold,
@@ -49,20 +50,16 @@ class PendingHeader extends StatelessWidget {
 
 class ReviewTaskCard extends StatelessWidget {
   final ReviewTask item;
-  final bool isArabic;
   final String timeText;
-
   final bool isUpdating;
   final bool isApproving;
   final bool isRetrying;
-
   final VoidCallback onApprove;
   final VoidCallback onRetry;
 
   const ReviewTaskCard({
     super.key,
     required this.item,
-    required this.isArabic,
     required this.timeText,
     required this.isUpdating,
     required this.isApproving,
@@ -180,7 +177,7 @@ class ReviewTaskCard extends StatelessWidget {
                           ),
                         )
                       : const Icon(Icons.check_rounded),
-                  label: Text(isArabic ? 'مقبولة' : 'Accepted'),
+                  label: Text(context.l10n.acceptTask),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(56),
                     elevation: 0,
@@ -211,7 +208,7 @@ class ReviewTaskCard extends StatelessWidget {
                         )
                       : const Icon(Icons.refresh_rounded),
                   label: Text(
-                    isArabic ? 'إعادة المحاولة' : 'Try Again',
+                    context.l10n.tryAgain,
                     textAlign: TextAlign.center,
                   ),
                   style: OutlinedButton.styleFrom(
@@ -233,9 +230,7 @@ class ReviewTaskCard extends StatelessWidget {
 }
 
 class EmptyCard extends StatelessWidget {
-  final bool isArabic;
-
-  const EmptyCard({super.key, required this.isArabic});
+  const EmptyCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -257,9 +252,7 @@ class EmptyCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           Text(
-            isArabic
-                ? 'لا توجد مهام بانتظار المراجعة'
-                : 'No tasks are pending review',
+            context.l10n.noTasksPendingReview,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
@@ -274,13 +267,11 @@ class EmptyCard extends StatelessWidget {
 
 class TaskReviewErrorCard extends StatelessWidget {
   final String message;
-  final bool isArabic;
   final Future<void> Function() onRetry;
 
   const TaskReviewErrorCard({
     super.key,
     required this.message,
-    required this.isArabic,
     required this.onRetry,
   });
 
@@ -303,10 +294,7 @@ class TaskReviewErrorCard extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.sm),
 
-          TextButton(
-            onPressed: onRetry,
-            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
-          ),
+          TextButton(onPressed: onRetry, child: Text(context.l10n.retry)),
         ],
       ),
     );

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/task_review_view.dart';
+
+import '../../../../core/localization/localization_extension.dart';
 import '../controllers/task_review_controller.dart';
 import '../models/review_task.dart';
+import '../utils/task_review_localization.dart';
+import '../widgets/task_review_view.dart';
 
 class TaskReviewScreen extends StatefulWidget {
-  final bool isArabic;
-
-  const TaskReviewScreen({super.key, required this.isArabic});
+  const TaskReviewScreen({super.key});
 
   @override
-  State<TaskReviewScreen> createState() => _TaskReviewScreenState();
+  State<TaskReviewScreen> createState() {
+    return _TaskReviewScreenState();
+  }
 }
 
 class _TaskReviewScreenState extends State<TaskReviewScreen> {
@@ -20,8 +23,7 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
   void initState() {
     super.initState();
 
-    _controller = TaskReviewController(isArabic: widget.isArabic)
-      ..loadPendingTasks();
+    _controller = TaskReviewController()..loadPendingTasks();
   }
 
   @override
@@ -30,58 +32,57 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
     super.dispose();
   }
 
-  String tr(String arabic, String english) {
-    return widget.isArabic ? arabic : english;
-  }
-
   Future<void> _approveTask(ReviewTask item) async {
-    final errorMessage = await _controller.approveTask(item);
+    final result = await _controller.approveTask(item);
 
     if (!mounted) {
       return;
     }
 
-    if (errorMessage != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
-
+    if (!result.isSuccess) {
+      _showActionError(result);
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '${tr('تم قبول مهمة ', 'Task accepted: ')}'
-          '"${item.assignment.task.title}"',
+          context.l10n.taskAcceptedSuccessfully(item.assignment.task.title),
         ),
       ),
     );
   }
 
   Future<void> _sendBackForRetry(ReviewTask item) async {
-    final errorMessage = await _controller.sendBackForRetry(item);
+    final result = await _controller.sendBackForRetry(item);
 
     if (!mounted) {
       return;
     }
 
-    if (errorMessage != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
-
+    if (!result.isSuccess) {
+      _showActionError(result);
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '${tr('تم إرسال المهمة لإعادة المحاولة: ', 'Task sent back for another try: ')}'
-          '"${item.assignment.task.title}"',
+          context.l10n.taskSentForRetrySuccessfully(item.assignment.task.title),
         ),
       ),
     );
+  }
+
+  void _showActionError(TaskReviewActionResult result) {
+    final message =
+        result.backendMessage ??
+        result.errorCode?.localized(context) ??
+        context.l10n.taskReviewGenericError;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -89,7 +90,6 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: TaskReviewView(
-        isArabic: widget.isArabic,
         onApprove: _approveTask,
         onRetry: _sendBackForRetry,
         onBack: () {

@@ -4,41 +4,73 @@ import 'package:flutter/material.dart';
 import '../../../../services/task_api_service.dart';
 import '../models/review_task.dart';
 
+enum TaskReviewErrorCode {
+  loadTasks,
+  approveTask,
+  approveNotAllowed,
+  retryTask,
+  retryNotAllowed,
+}
+
+class TaskReviewActionResult {
+  final bool isSuccess;
+  final TaskReviewErrorCode? errorCode;
+  final String? backendMessage;
+
+  const TaskReviewActionResult({
+    this.isSuccess = false,
+    this.errorCode,
+    this.backendMessage,
+  });
+}
+
 class TaskReviewController extends ChangeNotifier {
   final TaskApiService _taskApiService;
 
-  TaskReviewController({required this.isArabic, TaskApiService? taskApiService})
+  TaskReviewController({TaskApiService? taskApiService})
     : _taskApiService = taskApiService ?? TaskApiService();
-
-  final bool isArabic;
 
   final List<ReviewTask> _pendingTasks = [];
 
-  List<ReviewTask> get pendingTasks => List.unmodifiable(_pendingTasks);
-
   bool _isLoading = true;
+
+  TaskReviewErrorCode? _errorCode;
+  String? _backendMessage;
+
+  String? _updatingAssignmentId;
+  TaskReviewAction? _updatingAction;
+
+  List<ReviewTask> get pendingTasks {
+    return List.unmodifiable(_pendingTasks);
+  }
 
   bool get isLoading => _isLoading;
 
-  String? _errorMessage;
+  TaskReviewErrorCode? get errorCode => _errorCode;
 
-  String? get errorMessage => _errorMessage;
+  String? get backendMessage => _backendMessage;
 
-  String? _updatingAssignmentId;
+  bool isUpdating(String assignmentId) {
+    return _updatingAssignmentId == assignmentId;
+  }
 
-  String? get updatingAssignmentId => _updatingAssignmentId;
+  bool isApproving(String assignmentId) {
+    return isUpdating(assignmentId) &&
+        _updatingAction == TaskReviewAction.approve;
+  }
 
-  String? _updatingAction;
-
-  String? get updatingAction => _updatingAction;
-
-  String tr(String arabic, String english) {
-    return isArabic ? arabic : english;
+  bool isRetrying(String assignmentId) {
+    return isUpdating(assignmentId) &&
+        _updatingAction == TaskReviewAction.retry;
   }
 
   Future<void> loadPendingTasks() async {
+    if (_isLoading && _pendingTasks.isNotEmpty) {
+      return;
+    }
+
     _isLoading = true;
-    _errorMessage = null;
+    _clearPageError();
     notifyListeners();
 
     try {
@@ -46,10 +78,9 @@ class TaskReviewController extends ChangeNotifier {
 
       final reviewTasks = assignments
           .where((assignment) => assignment.child != null)
-          .map(
-            (assignment) =>
-                ReviewTask(child: assignment.child!, assignment: assignment),
-          )
+          .map((assignment) {
+            return ReviewTask(child: assignment.child!, assignment: assignment);
+          })
           .toList();
 
       reviewTasks.sort((first, second) {
@@ -81,38 +112,33 @@ class TaskReviewController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      _errorMessage =
-          _readBackendMessage(error) ??
-          tr('تعذر تحميل المهام', 'Unable to load tasks');
+      _backendMessage = _readBackendMessage(error);
+      _errorCode = TaskReviewErrorCode.loadTasks;
     } catch (error) {
       debugPrint('Review loading failed: $error');
 
-      _errorMessage = tr('تعذر تحميل المهام', 'Unable to load tasks');
+      _errorCode = TaskReviewErrorCode.loadTasks;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<String?> approveTask(ReviewTask item) async {
+  Future<TaskReviewActionResult> approveTask(ReviewTask item) async {
     if (_updatingAssignmentId != null) {
-      return null;
+      return const TaskReviewActionResult();
     }
 
     _updatingAssignmentId = item.assignment.id;
-    _updatingAction = 'approve';
+    _updatingAction = TaskReviewAction.approve;
     notifyListeners();
 
     try {
       await _taskApiService.approveAssignment(item.assignment.id);
 
-      _pendingTasks.removeWhere(
-        (task) => task.assignment.id == item.assignment.id,
-      );
+      _removeTask(item.assignment.id);
 
-      notifyListeners();
-
-      return null;
+      return const TaskReviewActionResult(isSuccess: true);
     } on DioException catch (error) {
       debugPrint(
         'Approval failed: '
@@ -120,47 +146,41 @@ class TaskReviewController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      final statusCode = error.response?.statusCode;
-
-      if (statusCode == 404) {
-        return tr(
-          'لا يمكنك قبول هذه المهمة؛ يمكن قبولها فقط بواسطة ولي الأمر الذي أضافها.',
-          'Only the guardian who created this task can accept it.',
-        );
-      }
-
-      return _readBackendMessage(error) ??
-          tr('تعذر قبول المهمة', 'Unable to accept the task');
+      return TaskReviewActionResult(
+        errorCode: error.response?.statusCode == 404
+            ? TaskReviewErrorCode.approveNotAllowed
+            : TaskReviewErrorCode.approveTask,
+        backendMessage: error.response?.statusCode == 404
+            ? null
+            : _readBackendMessage(error),
+      );
     } catch (error) {
       debugPrint('Approval failed: $error');
 
-      return tr('تعذر قبول المهمة', 'Unable to accept the task');
+      return const TaskReviewActionResult(
+        errorCode: TaskReviewErrorCode.approveTask,
+      );
     } finally {
-      _updatingAssignmentId = null;
-      _updatingAction = null;
+      _clearUpdatingState();
       notifyListeners();
     }
   }
 
-  Future<String?> sendBackForRetry(ReviewTask item) async {
+  Future<TaskReviewActionResult> sendBackForRetry(ReviewTask item) async {
     if (_updatingAssignmentId != null) {
-      return null;
+      return const TaskReviewActionResult();
     }
 
     _updatingAssignmentId = item.assignment.id;
-    _updatingAction = 'retry';
+    _updatingAction = TaskReviewAction.retry;
     notifyListeners();
 
     try {
       await _taskApiService.rejectAssignment(item.assignment.id);
 
-      _pendingTasks.removeWhere(
-        (task) => task.assignment.id == item.assignment.id,
-      );
+      _removeTask(item.assignment.id);
 
-      notifyListeners();
-
-      return null;
+      return const TaskReviewActionResult(isSuccess: true);
     } on DioException catch (error) {
       debugPrint(
         'Retry request failed: '
@@ -168,57 +188,38 @@ class TaskReviewController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      final statusCode = error.response?.statusCode;
-
-      if (statusCode == 404) {
-        return tr(
-          'لا يمكنك إرسال هذه المهمة لإعادة المحاولة؛ يمكن ذلك فقط بواسطة ولي الأمر الذي أضافها.',
-          'Only the guardian who created this task can send it back for another try.',
-        );
-      }
-
-      return _readBackendMessage(error) ??
-          tr(
-            'تعذر إرسال المهمة لإعادة المحاولة',
-            'Unable to send the task back for another try',
-          );
+      return TaskReviewActionResult(
+        errorCode: error.response?.statusCode == 404
+            ? TaskReviewErrorCode.retryNotAllowed
+            : TaskReviewErrorCode.retryTask,
+        backendMessage: error.response?.statusCode == 404
+            ? null
+            : _readBackendMessage(error),
+      );
     } catch (error) {
       debugPrint('Retry request failed: $error');
 
-      return tr(
-        'تعذر إرسال المهمة لإعادة المحاولة',
-        'Unable to send the task back for another try',
+      return const TaskReviewActionResult(
+        errorCode: TaskReviewErrorCode.retryTask,
       );
     } finally {
-      _updatingAssignmentId = null;
-      _updatingAction = null;
+      _clearUpdatingState();
       notifyListeners();
     }
   }
 
-  bool isUpdating(String assignmentId) {
-    return _updatingAssignmentId == assignmentId;
+  void _removeTask(String assignmentId) {
+    _pendingTasks.removeWhere((task) => task.assignment.id == assignmentId);
   }
 
-  bool isApproving(String assignmentId) {
-    return isUpdating(assignmentId) && _updatingAction == 'approve';
+  void _clearUpdatingState() {
+    _updatingAssignmentId = null;
+    _updatingAction = null;
   }
 
-  bool isRetrying(String assignmentId) {
-    return isUpdating(assignmentId) && _updatingAction == 'retry';
-  }
-
-  String formatCompletedTime(DateTime? completedAt) {
-    if (completedAt == null) {
-      return tr('أُنجزت مؤخرًا', 'Completed recently');
-    }
-
-    final date = completedAt.toLocal();
-
-    final hour = date.hour.toString().padLeft(2, '0');
-    final minute = date.minute.toString().padLeft(2, '0');
-
-    return tr('أُنجزت في $hour:$minute', 'Completed at $hour:$minute');
+  void _clearPageError() {
+    _errorCode = null;
+    _backendMessage = null;
   }
 
   String? _readBackendMessage(DioException error) {
@@ -231,3 +232,5 @@ class TaskReviewController extends ChangeNotifier {
     return null;
   }
 }
+
+enum TaskReviewAction { approve, retry }
