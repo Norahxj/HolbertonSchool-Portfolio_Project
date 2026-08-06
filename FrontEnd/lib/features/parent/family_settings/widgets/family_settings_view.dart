@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_page_header.dart';
+import '../../../../core/widgets/app_refresh_indicator.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/family_settings_controller.dart';
 import '../utils/family_settings_localization.dart';
@@ -40,119 +41,126 @@ class FamilySettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<FamilySettingsController>();
 
-    if (controller.isLoading) {
-      return const Scaffold(
-        body: ScreenBackground(
-          child: SafeArea(child: Center(child: CircularProgressIndicator())),
-        ),
-      );
-    }
-
     final pageError =
-        controller.pageBackendMessage ??
-        controller.pageErrorCode?.localized(context);
-
-    if (pageError != null) {
-      return Scaffold(
-        body: ScreenBackground(
-          child: SafeArea(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: AppColors.error,
-                      size: 42,
-                    ),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    Text(
-                      pageError,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 15,
-                      ),
-                    ),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    ElevatedButton(
-                      onPressed: onReload,
-                      child: Text(context.l10n.retry),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+        controller.pageErrorCode?.localized(context) ??
+        controller.pageBackendMessage;
 
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: onReload,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppPageHeader(
-                    title: context.l10n.familySettings,
-                    onBack: onBack,
+          child: controller.isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : pageError != null
+              ? _FamilySettingsErrorState(
+                  message: pageError,
+                  onRetry: onReload,
+                )
+              : AppRefreshIndicator(
+                  onRefresh: onReload,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppPageHeader(
+                          title: context.l10n.familySettings,
+                          onBack: onBack,
+                        ),
+
+                        const SizedBox(height: AppSpacing.xl),
+
+                        FamilyNameSection(
+                          controller: familyNameController,
+                          isSaving: controller.isSavingFamilyName,
+                          onSave: onSaveFamilyName,
+                        ),
+
+                        const SizedBox(height: AppSpacing.xl),
+
+                        GuardiansSection(
+                          guardians: controller.guardians,
+                          currentUserId: controller.currentUserId,
+                        ),
+
+                        const SizedBox(height: AppSpacing.xl),
+
+                        PendingInvitationsSection(
+                          invitations: controller.sentInvitations,
+                        ),
+
+                        const SizedBox(height: AppSpacing.xl),
+
+                        IncomingInvitationsSection(
+                          invitations: controller.incomingInvitations,
+                          isProcessingInvitation:
+                              controller.isProcessingInvitation,
+                          onAccept: onAcceptInvitation,
+                          onReject: onRejectInvitation,
+                        ),
+
+                        const SizedBox(height: AppSpacing.xl),
+
+                        InviteGuardianSection(
+                          controller: inviteEmailController,
+                          isSending: controller.isSendingInvitation,
+                          onSend: onSendInvitation,
+                        ),
+
+                        const SizedBox(height: AppSpacing.lg),
+                      ],
+                    ),
                   ),
+                ),
+        ),
+      ),
+    );
+  }
+}
 
-                  const SizedBox(height: AppSpacing.xl),
+class _FamilySettingsErrorState extends StatelessWidget {
+  final String message;
+  final Future<void> Function() onRetry;
 
-                  FamilyNameSection(
-                    controller: familyNameController,
-                    isSaving: controller.isSavingFamilyName,
-                    onSave: onSaveFamilyName,
-                  ),
+  const _FamilySettingsErrorState({
+    required this.message,
+    required this.onRetry,
+  });
 
-                  const SizedBox(height: AppSpacing.xl),
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              color: AppColors.error,
+              size: 42,
+            ),
 
-                  GuardiansSection(
-                    guardians: controller.guardians,
-                    currentUserId: controller.currentUserId,
-                  ),
+            const SizedBox(height: AppSpacing.md),
 
-                  const SizedBox(height: AppSpacing.xl),
-
-                  PendingInvitationsSection(
-                    invitations: controller.sentInvitations,
-                  ),
-
-                  const SizedBox(height: AppSpacing.xl),
-
-                  IncomingInvitationsSection(
-                    invitations: controller.incomingInvitations,
-                    isProcessingInvitation: controller.isProcessingInvitation,
-                    onAccept: onAcceptInvitation,
-                    onReject: onRejectInvitation,
-                  ),
-
-                  const SizedBox(height: AppSpacing.xl),
-
-                  InviteGuardianSection(
-                    controller: inviteEmailController,
-                    isSending: controller.isSendingInvitation,
-                    onSend: onSendInvitation,
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-                ],
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
               ),
             ),
-          ),
+
+            const SizedBox(height: AppSpacing.md),
+
+            ElevatedButton(
+              onPressed: onRetry,
+              child: Text(context.l10n.tryAgain),
+            ),
+          ],
         ),
       ),
     );

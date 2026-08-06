@@ -15,7 +15,6 @@ import 'avatar_option.dart';
 import 'birth_date_field.dart';
 
 class ChildFormView extends StatelessWidget {
-  final bool isEditMode;
   final TextEditingController nameController;
   final TextEditingController phoneController;
   final VoidCallback onBack;
@@ -24,7 +23,6 @@ class ChildFormView extends StatelessWidget {
 
   const ChildFormView({
     super.key,
-    required this.isEditMode,
     required this.nameController,
     required this.phoneController,
     required this.onBack,
@@ -36,17 +34,13 @@ class ChildFormView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<ChildFormController>();
 
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
+    final isEditMode = controller.isEditMode;
 
-    final nameError =
-        controller.nameErrorCode?.localized(context);
+    final nameError = controller.nameErrorCode?.localized(context);
 
-    final birthDateError =
-        controller.birthDateErrorCode?.localized(context);
+    final birthDateError = controller.birthDateErrorCode?.localized(context);
 
-    final phoneError =
-        controller.phoneErrorCode?.localized(context);
+    final phoneError = controller.phoneErrorCode?.localized(context);
 
     return Scaffold(
       body: ScreenBackground(
@@ -56,11 +50,8 @@ class ChildFormView extends StatelessWidget {
             child: Column(
               children: [
                 Align(
-                  alignment: isArabic
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: AppBackButton(
-                    isArabic: isArabic,
                     onTap: onBack,
                   ),
                 ),
@@ -102,47 +93,33 @@ class ChildFormView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     AvatarOption(
-                      imagePath:
-                          'assets/avatars/avatar_boy_1v.jpg',
-                      backgroundColor:
-                          const Color(0xFFD9F0DD),
-                      isSelected:
-                          controller.selectedAvatarIndex == 0,
+                      imagePath: 'assets/avatars/avatar_boy_1v.jpg',
+                      backgroundColor: const Color(0xFFD9F0DD),
+                      isSelected: controller.selectedAvatarIndex == 0,
                       onTap: () {
                         controller.selectAvatar(0);
                       },
                     ),
-
                     AvatarOption(
-                      imagePath:
-                          'assets/avatars/avatar_boy_2v.jpg',
-                      backgroundColor:
-                          const Color(0xFFD7E9F7),
-                      isSelected:
-                          controller.selectedAvatarIndex == 1,
+                      imagePath: 'assets/avatars/avatar_boy_2v.jpg',
+                      backgroundColor: const Color(0xFFD7E9F7),
+                      isSelected: controller.selectedAvatarIndex == 1,
                       onTap: () {
                         controller.selectAvatar(1);
                       },
                     ),
-
                     AvatarOption(
-                      imagePath:
-                          'assets/avatars/avatar_girl_1v.jpg',
+                      imagePath: 'assets/avatars/avatar_girl_1v.jpg',
                       backgroundColor: AppColors.primaryLight,
-                      isSelected:
-                          controller.selectedAvatarIndex == 2,
+                      isSelected: controller.selectedAvatarIndex == 2,
                       onTap: () {
                         controller.selectAvatar(2);
                       },
                     ),
-
                     AvatarOption(
-                      imagePath:
-                          'assets/avatars/avatar_girl_2v.jpg',
-                      backgroundColor:
-                          const Color(0xFFFBE3EA),
-                      isSelected:
-                          controller.selectedAvatarIndex == 3,
+                      imagePath: 'assets/avatars/avatar_girl_2v.jpg',
+                      backgroundColor: const Color(0xFFFBE3EA),
+                      isSelected: controller.selectedAvatarIndex == 3,
                       onTap: () {
                         controller.selectAvatar(3);
                       },
@@ -166,8 +143,7 @@ class ChildFormView extends StatelessWidget {
                   label:
                       controller.formattedBirthDate ??
                       context.l10n.dateOfBirth,
-                  hasValue:
-                      controller.selectedBirthDate != null,
+                  hasValue: controller.selectedBirthDate != null,
                   onTap: onPickDate,
                 ),
 
@@ -175,9 +151,7 @@ class ChildFormView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Align(
-                      alignment: isArabic
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+                      alignment: AlignmentDirectional.centerStart,
                       child: Text(
                         birthDateError,
                         textAlign: TextAlign.start,
@@ -208,6 +182,7 @@ class ChildFormView extends StatelessWidget {
                   icon: Icons.phone_outlined,
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
+                  textDirection: TextDirection.ltr,
                   errorText: phoneError,
                 ),
 
@@ -219,8 +194,7 @@ class ChildFormView extends StatelessWidget {
                       : isEditMode
                       ? context.l10n.saveChanges
                       : context.l10n.save,
-                  onPressed:
-                      controller.isSaving ? null : onSave,
+                  onPressed: controller.isSaving ? null : onSave,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,

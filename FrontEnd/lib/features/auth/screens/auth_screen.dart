@@ -445,7 +445,6 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           errorText: loginEmailErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -457,7 +456,6 @@ class _AuthScreenState extends State<AuthScreen> {
           isPassword: true,
           controller: passwordController,
           errorText: loginPasswordErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -497,7 +495,6 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.person_outline,
           controller: firstNameController,
           errorText: firstNameErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -508,7 +505,6 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.person_outline,
           controller: familyNameController,
           errorText: familyNameErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -520,7 +516,6 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: registerEmailController,
           keyboardType: TextInputType.emailAddress,
           errorText: registerEmailErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -532,7 +527,6 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: phoneController,
           keyboardType: TextInputType.phone,
           errorText: phoneErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -544,7 +538,6 @@ class _AuthScreenState extends State<AuthScreen> {
           isPassword: true,
           controller: registerPasswordController,
           errorText: registerPasswordErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -556,7 +549,6 @@ class _AuthScreenState extends State<AuthScreen> {
           isPassword: true,
           controller: confirmPasswordController,
           errorText: confirmPasswordErrorText,
-          isArabic: isArabic,
         ),
 
         const SizedBox(height: AppSpacing.lg),

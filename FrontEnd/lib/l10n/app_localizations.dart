@@ -1921,6 +1921,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email is already in use.'**
   String get emailAlreadyUsed;
+
+  /// No description provided for @failedToLoadUserInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load user information.'**
+  String get failedToLoadUserInformation;
+
+  /// No description provided for @invitedUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No parent account exists with this email address.'**
+  String get invitedUserNotFound;
+
+  /// No description provided for @cannotInviteYourself.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot invite your own account.'**
+  String get cannotInviteYourself;
+
+  /// No description provided for @userAlreadyInFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'This parent is already in the family.'**
+  String get userAlreadyInFamily;
+
+  /// No description provided for @guardianTypeAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'A parent with the same guardian type already exists in the family.'**
+  String get guardianTypeAlreadyExists;
+
+  /// No description provided for @invitationAlreadyPending.
+  ///
+  /// In en, this message translates to:
+  /// **'An invitation is already pending for this email.'**
+  String get invitationAlreadyPending;
+
+  /// No description provided for @familyInformationNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to find the family information.'**
+  String get familyInformationNotFound;
+
+  /// No description provided for @invalidEnteredData.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check the entered information.'**
+  String get invalidEnteredData;
 }
 
 class _AppLocalizationsDelegate

@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class SettingsErrorState extends StatelessWidget {
-  final bool isArabic;
+  final String? message;
   final Future<void> Function() onRetry;
 
-  const SettingsErrorState({
-    super.key,
-    required this.isArabic,
-    required this.onRetry,
-  });
+  const SettingsErrorState({super.key, required this.onRetry, this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +19,7 @@ class SettingsErrorState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              isArabic
-                  ? 'تعذّر تحميل بيانات المستخدم.'
-                  : 'Could not load user information.',
+              message ?? context.l10n.failedToLoadUserInformation,
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.error),
             ),
@@ -33,7 +28,7 @@ class SettingsErrorState extends StatelessWidget {
 
             ElevatedButton(
               onPressed: onRetry,
-              child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
+              child: Text(context.l10n.tryAgain),
             ),
           ],
         ),

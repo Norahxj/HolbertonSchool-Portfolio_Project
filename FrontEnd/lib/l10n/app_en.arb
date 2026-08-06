@@ -495,5 +495,13 @@
 "lastNameTooShort": "Last name must be at least two characters.",
 "invalidEmailAddress": "Please enter a valid email address.",
 "phoneNumberRequired": "Please enter a phone number.",
-"emailAlreadyUsed": "Email is already in use."
+"emailAlreadyUsed": "Email is already in use.",
+"failedToLoadUserInformation": "Could not load user information.",
+"invitedUserNotFound": "No parent account exists with this email address.",
+"cannotInviteYourself": "You cannot invite your own account.",
+"userAlreadyInFamily": "This parent is already in the family.",
+"guardianTypeAlreadyExists": "A parent with the same guardian type already exists in the family.",
+"invitationAlreadyPending": "An invitation is already pending for this email.",
+"familyInformationNotFound": "Unable to find the family information.",
+"invalidEnteredData": "Please check the entered information."
 }

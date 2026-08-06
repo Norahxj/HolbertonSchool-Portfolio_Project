@@ -132,7 +132,6 @@ class _ChildFormScreenState extends State<ChildFormScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: ChildFormView(
-        isEditMode: widget.isEditMode,
         nameController: nameController,
         phoneController: phoneController,
         onBack: () {

@@ -43,7 +43,7 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
       context,
       MaterialPageRoute(
         builder: (_) {
-          return  const ProfileScreen();
+          return const ProfileScreen();
         },
       ),
     );

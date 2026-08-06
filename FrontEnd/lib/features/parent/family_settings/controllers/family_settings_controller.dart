@@ -1,6 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../../services/family_api_service.dart';
+import '../services/family_api_service.dart';
 
 enum FamilySettingsErrorCode {
   loadFamilyData,
@@ -10,6 +11,13 @@ enum FamilySettingsErrorCode {
   sendInvitation,
   acceptInvitation,
   rejectInvitation,
+  invitedUserNotFound,
+  cannotInviteYourself,
+  userAlreadyInFamily,
+  guardianTypeAlreadyExists,
+  invitationAlreadyPending,
+  familyNotFound,
+  invalidEnteredData,
 }
 
 class FamilySettingsActionResult {
@@ -27,8 +35,9 @@ class FamilySettingsActionResult {
 class FamilySettingsController extends ChangeNotifier {
   final FamilyApiService _familyApiService;
 
-  FamilySettingsController({FamilyApiService? familyApiService})
-    : _familyApiService = familyApiService ?? FamilyApiService();
+  FamilySettingsController({
+    FamilyApiService? familyApiService,
+  }) : _familyApiService = familyApiService ?? FamilyApiService();
 
   bool _isLoading = true;
   bool _isSavingFamilyName = false;
@@ -76,7 +85,9 @@ class FamilySettingsController extends ChangeNotifier {
     return _processingInvitationIds.contains(invitationId);
   }
 
-  Future<void> loadFamilyData({bool showLoading = true}) async {
+  Future<void> loadFamilyData({
+    bool showLoading = true,
+  }) async {
     if (showLoading) {
       _isLoading = true;
     }
@@ -90,22 +101,23 @@ class FamilySettingsController extends ChangeNotifier {
         _familyApiService.getIncomingInvitations(),
       ]);
 
-      final familyData = Map<String, dynamic>.from(results[0] as Map);
+      final familyData = Map<String, dynamic>.from(
+        results[0] as Map,
+      );
 
       final loadedIncomingInvitations = (results[1] as List).map((item) {
         return Map<String, dynamic>.from(item as Map);
       }).toList();
 
-      final loadedGuardians = (familyData['guardians'] as List? ?? []).map((
-        item,
-      ) {
+      final loadedGuardians =
+          (familyData['guardians'] as List? ?? []).map((item) {
         return Map<String, dynamic>.from(item as Map);
       }).toList();
 
       final loadedSentInvitations =
           (familyData['pending_invitations'] as List? ?? []).map((item) {
-            return Map<String, dynamic>.from(item as Map);
-          }).toList();
+        return Map<String, dynamic>.from(item as Map);
+      }).toList();
 
       _originalFamilyName = familyData['name']?.toString() ?? '';
 
@@ -122,8 +134,20 @@ class FamilySettingsController extends ChangeNotifier {
       _incomingInvitations
         ..clear()
         ..addAll(loadedIncomingInvitations);
+    } on DioException catch (error) {
+      debugPrint(
+        'Loading family settings failed: '
+        'status=${error.response?.statusCode}, '
+        'data=${error.response?.data}',
+      );
+
+      _pageErrorCode =
+          _readErrorCode(error) ??
+          FamilySettingsErrorCode.loadFamilyData;
+
+      _pageBackendMessage = _readUnknownBackendMessage(error);
     } catch (error) {
-      _pageBackendMessage = _familyApiService.readErrorMessage(error);
+      debugPrint('Loading family settings failed: $error');
 
       _pageErrorCode = FamilySettingsErrorCode.loadFamilyData;
     } finally {
@@ -162,11 +186,27 @@ class FamilySettingsController extends ChangeNotifier {
       await _familyApiService.updateFamilyName(name);
       await loadFamilyData(showLoading: false);
 
-      return const FamilySettingsActionResult(isSuccess: true);
-    } catch (error) {
+      return const FamilySettingsActionResult(
+        isSuccess: true,
+      );
+    } on DioException catch (error) {
+      debugPrint(
+        'Updating family name failed: '
+        'status=${error.response?.statusCode}, '
+        'data=${error.response?.data}',
+      );
+
       return FamilySettingsActionResult(
+        errorCode:
+            _readErrorCode(error) ??
+            FamilySettingsErrorCode.updateFamilyName,
+        backendMessage: _readUnknownBackendMessage(error),
+      );
+    } catch (error) {
+      debugPrint('Updating family name failed: $error');
+
+      return const FamilySettingsActionResult(
         errorCode: FamilySettingsErrorCode.updateFamilyName,
-        backendMessage: _familyApiService.readErrorMessage(error),
       );
     } finally {
       _isSavingFamilyName = false;
@@ -174,7 +214,9 @@ class FamilySettingsController extends ChangeNotifier {
     }
   }
 
-  Future<FamilySettingsActionResult> sendInvitation(String email) async {
+  Future<FamilySettingsActionResult> sendInvitation(
+    String email,
+  ) async {
     final normalizedEmail = email.trim().toLowerCase();
 
     if (!_isValidEmail(normalizedEmail)) {
@@ -192,14 +234,29 @@ class FamilySettingsController extends ChangeNotifier {
 
     try {
       await _familyApiService.inviteParent(normalizedEmail);
-
       await loadFamilyData(showLoading: false);
 
-      return const FamilySettingsActionResult(isSuccess: true);
-    } catch (error) {
+      return const FamilySettingsActionResult(
+        isSuccess: true,
+      );
+    } on DioException catch (error) {
+      debugPrint(
+        'Sending family invitation failed: '
+        'status=${error.response?.statusCode}, '
+        'data=${error.response?.data}',
+      );
+
       return FamilySettingsActionResult(
+        errorCode:
+            _readErrorCode(error) ??
+            FamilySettingsErrorCode.sendInvitation,
+        backendMessage: _readUnknownBackendMessage(error),
+      );
+    } catch (error) {
+      debugPrint('Sending family invitation failed: $error');
+
+      return const FamilySettingsActionResult(
         errorCode: FamilySettingsErrorCode.sendInvitation,
-        backendMessage: _familyApiService.readErrorMessage(error),
       );
     } finally {
       _isSendingInvitation = false;
@@ -215,7 +272,7 @@ class FamilySettingsController extends ChangeNotifier {
       action: () {
         return _familyApiService.acceptInvitation(invitationId);
       },
-      errorCode: FamilySettingsErrorCode.acceptInvitation,
+      fallbackErrorCode: FamilySettingsErrorCode.acceptInvitation,
     );
   }
 
@@ -227,7 +284,7 @@ class FamilySettingsController extends ChangeNotifier {
       action: () {
         return _familyApiService.rejectInvitation(invitationId);
       },
-      errorCode: FamilySettingsErrorCode.rejectInvitation,
+      fallbackErrorCode: FamilySettingsErrorCode.rejectInvitation,
     );
   }
 
@@ -243,7 +300,7 @@ class FamilySettingsController extends ChangeNotifier {
   Future<FamilySettingsActionResult> _processInvitation({
     required String invitationId,
     required Future<void> Function() action,
-    required FamilySettingsErrorCode errorCode,
+    required FamilySettingsErrorCode fallbackErrorCode,
   }) async {
     if (invitationId.isEmpty ||
         _processingInvitationIds.contains(invitationId)) {
@@ -257,11 +314,25 @@ class FamilySettingsController extends ChangeNotifier {
       await action();
       await loadFamilyData(showLoading: false);
 
-      return const FamilySettingsActionResult(isSuccess: true);
-    } catch (error) {
+      return const FamilySettingsActionResult(
+        isSuccess: true,
+      );
+    } on DioException catch (error) {
+      debugPrint(
+        'Processing family invitation failed: '
+        'status=${error.response?.statusCode}, '
+        'data=${error.response?.data}',
+      );
+
       return FamilySettingsActionResult(
-        errorCode: errorCode,
-        backendMessage: _familyApiService.readErrorMessage(error),
+        errorCode: _readErrorCode(error) ?? fallbackErrorCode,
+        backendMessage: _readUnknownBackendMessage(error),
+      );
+    } catch (error) {
+      debugPrint('Processing family invitation failed: $error');
+
+      return FamilySettingsActionResult(
+        errorCode: fallbackErrorCode,
       );
     } finally {
       _processingInvitationIds.remove(invitationId);
@@ -269,13 +340,94 @@ class FamilySettingsController extends ChangeNotifier {
     }
   }
 
+  FamilySettingsErrorCode? _readErrorCode(
+    DioException error,
+  ) {
+    final backendMessage = _readBackendMessage(error);
+
+    switch (backendMessage) {
+      case 'Invited email does not belong to an existing user':
+        return FamilySettingsErrorCode.invitedUserNotFound;
+
+      case 'You cannot invite yourself':
+        return FamilySettingsErrorCode.cannotInviteYourself;
+
+      case 'User is already in your family':
+        return FamilySettingsErrorCode.userAlreadyInFamily;
+
+      case 'This family already has this guardian type':
+        return FamilySettingsErrorCode.guardianTypeAlreadyExists;
+
+      case 'An invitation is already pending for this email':
+        return FamilySettingsErrorCode.invitationAlreadyPending;
+
+      case 'Current user is not assigned to a family':
+      case 'Family not found':
+        return FamilySettingsErrorCode.familyNotFound;
+    }
+
+    final data = error.response?.data;
+
+    if (data is Map && data['errors'] != null) {
+      return FamilySettingsErrorCode.invalidEnteredData;
+    }
+
+    return null;
+  }
+
+  String? _readUnknownBackendMessage(
+    DioException error,
+  ) {
+    final backendMessage = _readBackendMessage(error);
+
+    const knownMessages = {
+      'Invited email does not belong to an existing user',
+      'You cannot invite yourself',
+      'User is already in your family',
+      'This family already has this guardian type',
+      'An invitation is already pending for this email',
+      'Current user is not assigned to a family',
+      'Family not found',
+    };
+
+    if (backendMessage == null ||
+        backendMessage.trim().isEmpty ||
+        knownMessages.contains(backendMessage)) {
+      return null;
+    }
+
+    return backendMessage;
+  }
+
+  String? _readBackendMessage(
+    DioException error,
+  ) {
+    final data = error.response?.data;
+
+    if (data is! Map) {
+      return null;
+    }
+
+    final backendError = data['error']?.toString();
+
+    if (backendError != null && backendError.trim().isNotEmpty) {
+      return backendError;
+    }
+
+    return data['message']?.toString();
+  }
+
   String _normalizeFamilyNameForSaving({
     required String displayedName,
     required String originalName,
   }) {
-    final normalizedOriginal = _removeFamilyPrefixAndSuffix(originalName);
+    final normalizedOriginal = _removeFamilyPrefixAndSuffix(
+      originalName,
+    );
 
-    final normalizedDisplayed = _removeFamilyPrefixAndSuffix(displayedName);
+    final normalizedDisplayed = _removeFamilyPrefixAndSuffix(
+      displayedName,
+    );
 
     if (normalizedDisplayed == normalizedOriginal) {
       return originalName.trim();
@@ -288,22 +440,36 @@ class FamilySettingsController extends ChangeNotifier {
     var result = value.trim();
 
     result = result.replaceFirst(
-      RegExp(r'^عائلة\s+', caseSensitive: false),
+      RegExp(
+        r'^عائلة\s+',
+        caseSensitive: false,
+      ),
       '',
     );
 
     result = result.replaceFirst(
-      RegExp(r'\s+family$', caseSensitive: false),
+      RegExp(
+        r'\s+family$',
+        caseSensitive: false,
+      ),
       '',
     );
 
-    result = result.replaceFirst(RegExp(r"['’]s$", caseSensitive: false), '');
+    result = result.replaceFirst(
+      RegExp(
+        r"['’]s$",
+        caseSensitive: false,
+      ),
+      '',
+    );
 
     return result.trim();
   }
 
   bool _isValidEmail(String email) {
-    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
+    return RegExp(
+      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+    ).hasMatch(email);
   }
 
   void _clearPageError() {

@@ -50,7 +50,7 @@ class SettingsCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (_) {
-                    return  const FamilySettingsScreen();
+                    return const FamilySettingsScreen();
                   },
                 ),
               );
@@ -151,6 +151,7 @@ class SettingsRow extends StatelessWidget {
     );
   }
 }
+
 class SettingsNavigationArrow extends StatelessWidget {
   const SettingsNavigationArrow({super.key});
 

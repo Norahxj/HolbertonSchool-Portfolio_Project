@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_text_field.dart';
 
 class InviteGuardianSection extends StatelessWidget {
   final TextEditingController controller;
@@ -54,39 +55,13 @@ class InviteGuardianSection extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.md),
 
-          Container(
-            height: 56,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            decoration: BoxDecoration(
-              color: AppColors.inputBackground,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    keyboardType: TextInputType.emailAddress,
-                    textAlign: TextAlign.start,
-                    textDirection: TextDirection.ltr,
-                    decoration: InputDecoration(
-                      hintText: context.l10n.guardianEmailAddress,
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: AppSpacing.sm),
-
-                const Icon(
-                  Icons.mail_outline,
-                  size: 18,
-                  color: AppColors.textSecondary,
-                ),
-              ],
-            ),
+          AppTextField(
+            label: context.l10n.guardianEmailAddress,
+            hint: context.l10n.guardianEmailAddress,
+            icon: Icons.mail_outline,
+            controller: controller,
+            keyboardType: TextInputType.emailAddress,
+            textDirection: TextDirection.ltr,
           ),
 
           const SizedBox(height: AppSpacing.md),

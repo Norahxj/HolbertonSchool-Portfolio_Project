@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/user_model.dart';
 
 class ProfileBanner extends StatelessWidget {
   final UserModel user;
-  final bool isArabic;
 
-  const ProfileBanner({super.key, required this.user, required this.isArabic});
+  const ProfileBanner({super.key, required this.user});
 
-  String get _roleLabel {
+  String _roleLabel(BuildContext context) {
     switch (user.guardianType.toUpperCase()) {
       case 'MOTHER':
-        return isArabic ? 'أم' : 'Mother';
+        return context.l10n.mother;
 
       case 'FATHER':
-        return isArabic ? 'أب' : 'Father';
+        return context.l10n.father;
 
       default:
-        return isArabic ? 'ولي الأمر' : 'Guardian';
+        return context.l10n.guardian;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final fullName = '${user.firstName} ${user.lastName}';
+    final fullName = '${user.firstName} ${user.lastName}'.trim();
 
     return Container(
       width: double.infinity,
@@ -43,7 +43,6 @@ class ProfileBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(26),
         child: Stack(
           children: [
-            // الخلفية البنفسجية
             Positioned.fill(
               child: Container(
                 decoration: const BoxDecoration(
@@ -60,10 +59,9 @@ class ProfileBanner extends StatelessWidget {
               ),
             ),
 
-            Positioned(
+            PositionedDirectional(
               top: -55,
-              right: isArabic ? 85 : null,
-              left: isArabic ? null : 85,
+              start: 85,
               child: Container(
                 width: 125,
                 height: 125,
@@ -74,10 +72,9 @@ class ProfileBanner extends StatelessWidget {
               ),
             ),
 
-            Positioned(
+            PositionedDirectional(
               top: 18,
-              left: isArabic ? 85 : null,
-              right: isArabic ? null : 85,
+              end: 85,
               child: Container(
                 width: 10,
                 height: 10,
@@ -88,17 +85,15 @@ class ProfileBanner extends StatelessWidget {
               ),
             ),
 
-            Positioned(
+            const PositionedDirectional(
               top: 17,
-              right: isArabic ? 16 : null,
-              left: isArabic ? null : 16,
-              child: const BannerDots(),
+              start: 16,
+              child: BannerDots(),
             ),
 
-            Positioned(
+            PositionedDirectional(
               top: 32,
-              right: isArabic ? 105 : null,
-              left: isArabic ? null : 105,
+              start: 105,
               child: Icon(
                 Icons.auto_awesome,
                 size: 19,
@@ -106,10 +101,9 @@ class ProfileBanner extends StatelessWidget {
               ),
             ),
 
-            Positioned(
+            PositionedDirectional(
               top: 82,
-              left: isArabic ? 150 : null,
-              right: isArabic ? null : 150,
+              end: 150,
               child: Icon(
                 Icons.star_rounded,
                 size: 15,
@@ -150,9 +144,6 @@ class ProfileBanner extends StatelessWidget {
                   vertical: 20,
                 ),
                 child: Row(
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
                   children: [
                     Container(
                       width: 72,
@@ -185,26 +176,17 @@ class ProfileBanner extends StatelessWidget {
 
                     Expanded(
                       child: Align(
-                        alignment: isArabic
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: isArabic
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
                               width: double.infinity,
                               child: Text(
                                 fullName,
-                                textDirection: isArabic
-                                    ? TextDirection.rtl
-                                    : TextDirection.ltr,
-                                textAlign: isArabic
-                                    ? TextAlign.right
-                                    : TextAlign.left,
+                                textAlign: TextAlign.start,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -219,9 +201,7 @@ class ProfileBanner extends StatelessWidget {
                             const SizedBox(height: 8),
 
                             Align(
-                              alignment: isArabic
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
+                              alignment: AlignmentDirectional.centerStart,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
@@ -235,10 +215,7 @@ class ProfileBanner extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  _roleLabel,
-                                  textDirection: isArabic
-                                      ? TextDirection.rtl
-                                      : TextDirection.ltr,
+                                  _roleLabel(context),
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -273,17 +250,16 @@ class BannerDots extends StatelessWidget {
       child: Wrap(
         spacing: 7,
         runSpacing: 7,
-        children: List.generate(
-          15,
-          (index) => Container(
+        children: List.generate(15, (index) {
+          return Container(
             width: 3,
             height: 3,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white.withValues(alpha: 0.28),
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }

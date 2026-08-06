@@ -991,4 +991,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get emailAlreadyUsed => 'البريد الإلكتروني مستخدم بالفعل.';
+
+  @override
+  String get failedToLoadUserInformation => 'تعذّر تحميل بيانات المستخدم.';
+
+  @override
+  String get invitedUserNotFound =>
+      'لا يوجد حساب ولي أمر بهذا البريد الإلكتروني.';
+
+  @override
+  String get cannotInviteYourself => 'لا يمكنك دعوة حسابك نفسه.';
+
+  @override
+  String get userAlreadyInFamily => 'ولي الأمر موجود بالفعل في العائلة.';
+
+  @override
+  String get guardianTypeAlreadyExists =>
+      'يوجد بالفعل ولي أمر من النوع نفسه في العائلة.';
+
+  @override
+  String get invitationAlreadyPending => 'توجد دعوة معلّقة لهذا البريد بالفعل.';
+
+  @override
+  String get familyInformationNotFound => 'تعذّر العثور على بيانات العائلة.';
+
+  @override
+  String get invalidEnteredData => 'تأكدي من صحة البيانات المدخلة.';
 }

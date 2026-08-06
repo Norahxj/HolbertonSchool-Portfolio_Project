@@ -495,6 +495,14 @@
 "lastNameTooShort": "يجب أن يتكون اسم العائلة من حرفين على الأقل.",
 "invalidEmailAddress": "يرجى إدخال بريد إلكتروني صحيح.",
 "phoneNumberRequired": "يرجى إدخال رقم الجوال.",
-"emailAlreadyUsed": "البريد الإلكتروني مستخدم بالفعل."
+"emailAlreadyUsed": "البريد الإلكتروني مستخدم بالفعل.",
+"failedToLoadUserInformation": "تعذّر تحميل بيانات المستخدم.",
+"invitedUserNotFound": "لا يوجد حساب ولي أمر بهذا البريد الإلكتروني.",
+"cannotInviteYourself": "لا يمكنك دعوة حسابك نفسه.",
+"userAlreadyInFamily": "ولي الأمر موجود بالفعل في العائلة.",
+"guardianTypeAlreadyExists": "يوجد بالفعل ولي أمر من النوع نفسه في العائلة.",
+"invitationAlreadyPending": "توجد دعوة معلّقة لهذا البريد بالفعل.",
+"familyInformationNotFound": "تعذّر العثور على بيانات العائلة.",
+"invalidEnteredData": "تأكدي من صحة البيانات المدخلة."
 
 }

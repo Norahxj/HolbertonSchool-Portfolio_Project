@@ -125,13 +125,13 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   }
 
   void _showResultError(FamilySettingsActionResult result) {
-    final message =
+  _showMessage(
+    result.errorCode?.localized(context) ??
         result.backendMessage ??
-        result.errorCode?.localized(context) ??
-        context.l10n.familySettingsGenericError;
-
-    _showMessage(message, isError: true);
-  }
+        context.l10n.familySettingsGenericError,
+    isError: true,
+  );
+}
 
   void _showMessage(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(

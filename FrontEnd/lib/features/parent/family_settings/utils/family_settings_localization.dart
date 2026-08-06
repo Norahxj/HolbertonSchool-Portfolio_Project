@@ -28,13 +28,34 @@ extension FamilySettingsErrorLocalization on FamilySettingsErrorCode {
 
       case FamilySettingsErrorCode.rejectInvitation:
         return l10n.failedToRejectInvitation;
+
+      case FamilySettingsErrorCode.invitedUserNotFound:
+        return l10n.invitedUserNotFound;
+
+      case FamilySettingsErrorCode.cannotInviteYourself:
+        return l10n.cannotInviteYourself;
+
+      case FamilySettingsErrorCode.userAlreadyInFamily:
+        return l10n.userAlreadyInFamily;
+
+      case FamilySettingsErrorCode.guardianTypeAlreadyExists:
+        return l10n.guardianTypeAlreadyExists;
+
+      case FamilySettingsErrorCode.invitationAlreadyPending:
+        return l10n.invitationAlreadyPending;
+
+      case FamilySettingsErrorCode.familyNotFound:
+        return l10n.familyInformationNotFound;
+
+      case FamilySettingsErrorCode.invalidEnteredData:
+        return l10n.invalidEnteredData;
     }
   }
 }
 
 extension FamilyGuardianLocalization on String {
   String guardianTypeLabel(BuildContext context) {
-    switch (toLowerCase()) {
+    switch (trim().toLowerCase()) {
       case 'father':
         return context.l10n.father;
 
@@ -48,7 +69,10 @@ extension FamilyGuardianLocalization on String {
   }
 }
 
-String displayLocalizedFamilyName(BuildContext context, String name) {
+String displayLocalizedFamilyName(
+  BuildContext context,
+  String name,
+) {
   final trimmedName = name.trim();
 
   if (trimmedName.isEmpty) {
@@ -56,19 +80,30 @@ String displayLocalizedFamilyName(BuildContext context, String name) {
   }
 
   var cleanName = trimmedName.replaceFirst(
-    RegExp(r'\s+family$', caseSensitive: false),
+    RegExp(
+      r'\s+family$',
+      caseSensitive: false,
+    ),
     '',
   );
 
   cleanName = cleanName.replaceFirst(
-    RegExp(r'^عائلة\s+', caseSensitive: false),
+    RegExp(
+      r'^عائلة\s+',
+      caseSensitive: false,
+    ),
     '',
   );
 
   cleanName = cleanName.replaceFirst(
-    RegExp(r"['’]s$", caseSensitive: false),
+    RegExp(
+      r"['’]s$",
+      caseSensitive: false,
+    ),
     '',
   );
 
-  return context.l10n.familyNameDisplay(cleanName.trim());
+  return context.l10n.familyNameDisplay(
+    cleanName.trim(),
+  );
 }

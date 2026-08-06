@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_text_field.dart';
 import 'guardian_components.dart';
 
 class FamilyNameSection extends StatelessWidget {
@@ -22,50 +22,17 @@ class FamilyNameSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FamilyFieldLabel(text: context.l10n.familyName),
+        FamilyFieldLabel(
+          text: context.l10n.familyName,
+        ),
 
         const SizedBox(height: AppSpacing.sm),
 
-        Container(
-          height: 56,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          decoration: BoxDecoration(
-            color: AppColors.inputBackground,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.edit_outlined,
-                size: 16,
-                color: AppColors.textSecondary,
-              ),
-
-              const SizedBox(width: AppSpacing.sm),
-
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(color: AppColors.textPrimary),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: AppSpacing.sm),
-
-              const Icon(
-                Icons.home_outlined,
-                size: 18,
-                color: AppColors.textSecondary,
-              ),
-            ],
-          ),
+        AppTextField(
+          label: context.l10n.familyName,
+          hint: context.l10n.familyName,
+          icon: Icons.home_outlined,
+          controller: controller,
         ),
 
         const SizedBox(height: AppSpacing.sm),
@@ -78,11 +45,15 @@ class FamilyNameSection extends StatelessWidget {
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
                   )
                 : const Icon(Icons.save_outlined),
             label: Text(
-              isSaving ? context.l10n.saving : context.l10n.saveFamilyName,
+              isSaving
+                  ? context.l10n.saving
+                  : context.l10n.saveFamilyName,
             ),
           ),
         ),

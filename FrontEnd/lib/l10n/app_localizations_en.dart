@@ -1020,4 +1020,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailAlreadyUsed => 'Email is already in use.';
+
+  @override
+  String get failedToLoadUserInformation => 'Could not load user information.';
+
+  @override
+  String get invitedUserNotFound =>
+      'No parent account exists with this email address.';
+
+  @override
+  String get cannotInviteYourself => 'You cannot invite your own account.';
+
+  @override
+  String get userAlreadyInFamily => 'This parent is already in the family.';
+
+  @override
+  String get guardianTypeAlreadyExists =>
+      'A parent with the same guardian type already exists in the family.';
+
+  @override
+  String get invitationAlreadyPending =>
+      'An invitation is already pending for this email.';
+
+  @override
+  String get familyInformationNotFound =>
+      'Unable to find the family information.';
+
+  @override
+  String get invalidEnteredData => 'Please check the entered information.';
 }

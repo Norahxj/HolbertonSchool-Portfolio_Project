@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_refresh_indicator.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/more_settings_controller.dart';
 import 'logout_button.dart';
@@ -29,13 +30,11 @@ class MoreSettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<MoreSettingsController>();
 
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
           bottom: false,
-          child: RefreshIndicator(
+          child: AppRefreshIndicator(
             onRefresh: onReload,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -45,7 +44,7 @@ class MoreSettingsView extends StatelessWidget {
                 AppSpacing.lg,
                 AppSpacing.xxl,
               ),
-              child: _buildContent(context, controller, isArabic),
+              child: _buildContent(context, controller),
             ),
           ),
         ),
@@ -56,7 +55,6 @@ class MoreSettingsView extends StatelessWidget {
   Widget _buildContent(
     BuildContext context,
     MoreSettingsController controller,
-    bool isArabic,
   ) {
     if (controller.isLoading) {
       return SizedBox(
@@ -66,7 +64,10 @@ class MoreSettingsView extends StatelessWidget {
     }
 
     if (controller.errorMessage != null || controller.user == null) {
-      return SettingsErrorState(isArabic: isArabic, onRetry: onReload);
+      return SettingsErrorState(
+        message: controller.errorMessage,
+        onRetry: onReload,
+      );
     }
 
     final user = controller.user!;
@@ -82,7 +83,7 @@ class MoreSettingsView extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
 
-        ProfileBanner(user: user, isArabic: isArabic),
+        ProfileBanner(user: user),
 
         const SizedBox(height: AppSpacing.lg),
 
