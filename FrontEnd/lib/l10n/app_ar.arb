@@ -477,6 +477,24 @@
   "couldNotIdentifyChildToUpdate": "تعذّر تحديد الطفل المطلوب تعديله.",
 
   "unexpectedAddChildError": "حدث خطأ غير متوقع أثناء إضافة الطفل.",
-  "unexpectedUpdateChildError": "حدث خطأ غير متوقع أثناء تعديل الطفل."
+  "unexpectedUpdateChildError": "حدث خطأ غير متوقع أثناء تعديل الطفل.",
+  "profile": "الملف الشخصي",
+"firstName": "الاسم الأول",
+"lastName": "اسم العائلة",
+"email": "البريد الإلكتروني",
+"phoneNumber": "رقم الجوال",
+"familyRelationship": "صلتي بالأسرة",
+
+"profileUpdatedSuccessfully": "تم حفظ التغييرات بنجاح ✓",
+
+"failedToLoadProfile": "تعذّر تحميل بيانات الملف الشخصي.",
+"failedToSaveProfile": "تعذّر حفظ التغييرات.",
+"unexpectedProfileSaveError": "حدث خطأ أثناء حفظ التغييرات.",
+
+"firstNameTooShort": "يجب أن يتكون الاسم الأول من حرفين على الأقل.",
+"lastNameTooShort": "يجب أن يتكون اسم العائلة من حرفين على الأقل.",
+"invalidEmailAddress": "يرجى إدخال بريد إلكتروني صحيح.",
+"phoneNumberRequired": "يرجى إدخال رقم الجوال.",
+"emailAlreadyUsed": "البريد الإلكتروني مستخدم بالفعل."
 
 }

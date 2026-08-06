@@ -39,13 +39,11 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   }
 
   Future<void> _openProfileScreen() async {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-
     final updatedUser = await Navigator.push<UserModel>(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return ProfileScreen(isArabic: isArabic);
+          return  const ProfileScreen();
         },
       ),
     );

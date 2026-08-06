@@ -1,35 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../core/localization/localization_extension.dart';
 import '../controllers/profile_controller.dart';
+import '../utils/profile_localization.dart';
 import '../widgets/profile_view.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final bool isArabic;
-
-  const ProfileScreen({super.key, required this.isArabic});
+  const ProfileScreen({
+    super.key,
+  });
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() {
+    return _ProfileScreenState();
+  }
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late final ProfileController _controller;
 
-  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController firstNameController =
+      TextEditingController();
 
-  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController lastNameController =
+      TextEditingController();
 
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController emailController =
+      TextEditingController();
 
-  final TextEditingController phoneController = TextEditingController();
-
-  bool get isArabic => widget.isArabic;
+  final TextEditingController phoneController =
+      TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    _controller = ProfileController(isArabic: widget.isArabic);
+    _controller = ProfileController();
 
     _loadUser();
   }
@@ -72,7 +79,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     if (!result.isSuccess) {
-      final message = result.errorMessage;
+      final message =
+          result.backendMessage ??
+          result.errorCode?.localized(context);
 
       if (message != null) {
         _showMessage(message);
@@ -84,9 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isArabic
-              ? 'تم حفظ التغييرات بنجاح ✓'
-              : 'Changes saved successfully ✓',
+          context.l10n.profileUpdatedSuccessfully,
         ),
       ),
     );
@@ -95,9 +102,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 
   @override
@@ -105,7 +114,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: ProfileView(
-        isArabic: isArabic,
         firstNameController: firstNameController,
         lastNameController: lastNameController,
         emailController: emailController,

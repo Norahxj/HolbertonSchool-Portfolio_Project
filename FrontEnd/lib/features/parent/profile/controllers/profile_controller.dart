@@ -4,13 +4,38 @@ import 'package:flutter/material.dart';
 import '../../../../models/user_model.dart';
 import '../../../../services/user_api_service.dart';
 
+enum ProfileErrorCode {
+  loadFailed,
+  saveFailed,
+  unexpectedSaveError,
+  firstNameTooShort,
+  lastNameTooShort,
+  invalidEmail,
+  phoneRequired,
+  emailAlreadyUsed,
+  phoneAlreadyUsed,
+}
+
+class ProfileSaveResult {
+  final UserModel? user;
+  final ProfileErrorCode? errorCode;
+  final String? backendMessage;
+
+  const ProfileSaveResult({
+    this.user,
+    this.errorCode,
+    this.backendMessage,
+  });
+
+  bool get isSuccess => user != null;
+}
+
 class ProfileController extends ChangeNotifier {
   final UserApiService _userApiService;
 
-  ProfileController({required this.isArabic, UserApiService? userApiService})
-    : _userApiService = userApiService ?? UserApiService();
-
-  final bool isArabic;
+  ProfileController({
+    UserApiService? userApiService,
+  }) : _userApiService = userApiService ?? UserApiService();
 
   UserModel? _user;
 
@@ -24,17 +49,19 @@ class ProfileController extends ChangeNotifier {
 
   bool get isSaving => _isSaving;
 
-  String? _pageError;
+  ProfileErrorCode? _pageErrorCode;
 
-  String? get pageError => _pageError;
+  ProfileErrorCode? get pageErrorCode => _pageErrorCode;
 
-  String tr(String arabic, String english) {
-    return isArabic ? arabic : english;
-  }
+  String? _pageBackendMessage;
+
+  String? get pageBackendMessage => _pageBackendMessage;
 
   Future<UserModel?> loadUser() async {
     _isLoading = true;
-    _pageError = null;
+    _pageErrorCode = null;
+    _pageBackendMessage = null;
+
     notifyListeners();
 
     try {
@@ -50,21 +77,14 @@ class ProfileController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      _pageError =
-          _readBackendMessage(error) ??
-          tr(
-            'تعذّر تحميل بيانات الملف الشخصي.',
-            'Unable to load profile data.',
-          );
+      _pageBackendMessage = _readUnknownBackendMessage(error);
+      _pageErrorCode = ProfileErrorCode.loadFailed;
 
       return null;
     } catch (error) {
       debugPrint('Loading profile failed: $error');
 
-      _pageError = tr(
-        'تعذّر تحميل بيانات الملف الشخصي.',
-        'Unable to load profile data.',
-      );
+      _pageErrorCode = ProfileErrorCode.loadFailed;
 
       return null;
     } finally {
@@ -88,15 +108,17 @@ class ProfileController extends ChangeNotifier {
     final cleanEmail = email.trim().toLowerCase();
     final cleanPhone = phone.trim();
 
-    final validationMessage = _validateFields(
+    final validationError = _validateFields(
       firstName: cleanFirstName,
       lastName: cleanLastName,
       email: cleanEmail,
       phone: cleanPhone,
     );
 
-    if (validationMessage != null) {
-      return ProfileSaveResult(errorMessage: validationMessage);
+    if (validationError != null) {
+      return ProfileSaveResult(
+        errorCode: validationError,
+      );
     }
 
     _isSaving = true;
@@ -112,7 +134,9 @@ class ProfileController extends ChangeNotifier {
 
       _user = updatedUser;
 
-      return ProfileSaveResult(user: updatedUser);
+      return ProfileSaveResult(
+        user: updatedUser,
+      );
     } on DioException catch (error) {
       debugPrint(
         'Updating profile failed: '
@@ -120,19 +144,15 @@ class ProfileController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      final message =
-          _readBackendMessage(error) ??
-          tr('تعذّر حفظ التغييرات.', 'Unable to save changes.');
-
-      return ProfileSaveResult(errorMessage: message);
+      return ProfileSaveResult(
+        errorCode: _readSaveErrorCode(error),
+        backendMessage: _readUnknownBackendMessage(error),
+      );
     } catch (error) {
       debugPrint('Updating profile failed: $error');
 
-      return ProfileSaveResult(
-        errorMessage: tr(
-          'حدث خطأ أثناء حفظ التغييرات.',
-          'An error occurred while saving changes.',
-        ),
+      return const ProfileSaveResult(
+        errorCode: ProfileErrorCode.unexpectedSaveError,
       );
     } finally {
       _isSaving = false;
@@ -140,51 +160,65 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
-  String guardianTypeLabel(String guardianType) {
-    switch (guardianType.toUpperCase()) {
-      case 'MOTHER':
-        return tr('أم', 'Mother');
-
-      case 'FATHER':
-        return tr('أب', 'Father');
-
-      default:
-        return tr('ولي أمر', 'Guardian');
-    }
-  }
-
-  String? _validateFields({
+  ProfileErrorCode? _validateFields({
     required String firstName,
     required String lastName,
     required String email,
     required String phone,
   }) {
     if (firstName.length < 2) {
-      return tr(
-        'يجب أن يتكون الاسم الأول من حرفين على الأقل.',
-        'First name must be at least two characters.',
-      );
+      return ProfileErrorCode.firstNameTooShort;
     }
 
     if (lastName.length < 2) {
-      return tr(
-        'يجب أن يتكون اسم العائلة من حرفين على الأقل.',
-        'Last name must be at least two characters.',
-      );
+      return ProfileErrorCode.lastNameTooShort;
     }
 
-    if (!email.contains('@')) {
-      return tr(
-        'يرجى إدخال بريد إلكتروني صحيح.',
-        'Please enter a valid email address.',
-      );
+    final validEmail = RegExp(
+      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+    );
+
+    if (!validEmail.hasMatch(email)) {
+      return ProfileErrorCode.invalidEmail;
     }
 
     if (phone.isEmpty) {
-      return tr('يرجى إدخال رقم الجوال.', 'Please enter a phone number.');
+      return ProfileErrorCode.phoneRequired;
     }
 
     return null;
+  }
+
+  ProfileErrorCode _readSaveErrorCode(DioException error) {
+    final backendMessage = _readBackendMessage(error);
+
+    switch (backendMessage) {
+      case 'Email already registered':
+        return ProfileErrorCode.emailAlreadyUsed;
+
+      case 'Phone number already used':
+        return ProfileErrorCode.phoneAlreadyUsed;
+
+      default:
+        return ProfileErrorCode.saveFailed;
+    }
+  }
+
+  String? _readUnknownBackendMessage(DioException error) {
+    final backendMessage = _readBackendMessage(error);
+
+    const knownMessages = {
+      'Email already registered',
+      'Phone number already used',
+    };
+
+    if (backendMessage == null ||
+        backendMessage.trim().isEmpty ||
+        knownMessages.contains(backendMessage)) {
+      return null;
+    }
+
+    return backendMessage;
   }
 
   String? _readBackendMessage(DioException error) {
@@ -195,14 +229,6 @@ class ProfileController extends ChangeNotifier {
     }
 
     final errorMessage = data['error']?.toString();
-
-    if (errorMessage == 'Email already registered') {
-      return tr('البريد الإلكتروني مستخدم بالفعل.', 'Email is already in use.');
-    }
-
-    if (errorMessage == 'Phone number already used') {
-      return tr('رقم الجوال مستخدم بالفعل.', 'Phone number is already in use.');
-    }
 
     if (errorMessage != null && errorMessage.trim().isNotEmpty) {
       return errorMessage;
@@ -222,13 +248,4 @@ class ProfileController extends ChangeNotifier {
 
     return data['message']?.toString();
   }
-}
-
-class ProfileSaveResult {
-  final UserModel? user;
-  final String? errorMessage;
-
-  const ProfileSaveResult({this.user, this.errorMessage});
-
-  bool get isSuccess => user != null;
 }

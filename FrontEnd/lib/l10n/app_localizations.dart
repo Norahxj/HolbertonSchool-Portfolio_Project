@@ -1831,6 +1831,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error occurred while updating the child.'**
   String get unexpectedUpdateChildError;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @firstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get firstName;
+
+  /// No description provided for @lastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get lastName;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @familyRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Relationship'**
+  String get familyRelationship;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved successfully ✓'**
+  String get profileUpdatedSuccessfully;
+
+  /// No description provided for @failedToLoadProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load profile data.'**
+  String get failedToLoadProfile;
+
+  /// No description provided for @failedToSaveProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to save changes.'**
+  String get failedToSaveProfile;
+
+  /// No description provided for @unexpectedProfileSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while saving changes.'**
+  String get unexpectedProfileSaveError;
+
+  /// No description provided for @firstNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'First name must be at least two characters.'**
+  String get firstNameTooShort;
+
+  /// No description provided for @lastNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name must be at least two characters.'**
+  String get lastNameTooShort;
+
+  /// No description provided for @invalidEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get invalidEmailAddress;
+
+  /// No description provided for @phoneNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a phone number.'**
+  String get phoneNumberRequired;
+
+  /// No description provided for @emailAlreadyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is already in use.'**
+  String get emailAlreadyUsed;
 }
 
 class _AppLocalizationsDelegate

@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class ProfileErrorState extends StatelessWidget {
   final String message;
-  final bool isArabic;
   final Future<void> Function() onRetry;
 
   const ProfileErrorState({
     super.key,
     required this.message,
-    required this.isArabic,
     required this.onRetry,
   });
 
@@ -26,14 +25,18 @@ class ProfileErrorState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.error),
+              style: const TextStyle(
+                color: AppColors.error,
+              ),
             ),
 
             const SizedBox(height: AppSpacing.sm),
 
             ElevatedButton(
               onPressed: onRetry,
-              child: Text(isArabic ? 'إعادة المحاولة' : 'Try Again'),
+              child: Text(
+                context.l10n.tryAgain,
+              ),
             ),
           ],
         ),

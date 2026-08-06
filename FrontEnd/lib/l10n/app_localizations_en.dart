@@ -974,4 +974,50 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get unexpectedUpdateChildError =>
       'An unexpected error occurred while updating the child.';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get firstName => 'First Name';
+
+  @override
+  String get lastName => 'Last Name';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get familyRelationship => 'Family Relationship';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Changes saved successfully ✓';
+
+  @override
+  String get failedToLoadProfile => 'Unable to load profile data.';
+
+  @override
+  String get failedToSaveProfile => 'Unable to save changes.';
+
+  @override
+  String get unexpectedProfileSaveError =>
+      'An error occurred while saving changes.';
+
+  @override
+  String get firstNameTooShort => 'First name must be at least two characters.';
+
+  @override
+  String get lastNameTooShort => 'Last name must be at least two characters.';
+
+  @override
+  String get invalidEmailAddress => 'Please enter a valid email address.';
+
+  @override
+  String get phoneNumberRequired => 'Please enter a phone number.';
+
+  @override
+  String get emailAlreadyUsed => 'Email is already in use.';
 }

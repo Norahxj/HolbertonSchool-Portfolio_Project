@@ -7,14 +7,12 @@ class ProfileTextField extends StatelessWidget {
   final TextEditingController controller;
   final IconData? trailingIcon;
   final TextInputType keyboardType;
-  final TextDirection textDirection;
 
   const ProfileTextField({
     super.key,
     required this.controller,
     this.trailingIcon,
     this.keyboardType = TextInputType.text,
-    required this.textDirection,
   });
 
   @override
@@ -42,7 +40,6 @@ class ProfileTextField extends StatelessWidget {
               controller: controller,
               keyboardType: keyboardType,
               textAlign: TextAlign.right,
-              textDirection: textDirection,
               style: const TextStyle(color: AppColors.textPrimary),
               decoration: const InputDecoration(
                 border: InputBorder.none,

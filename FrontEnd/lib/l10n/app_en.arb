@@ -477,5 +477,23 @@
   "couldNotIdentifyChildToUpdate": "Could not identify the child to update.",
 
   "unexpectedAddChildError": "An unexpected error occurred while adding the child.",
-  "unexpectedUpdateChildError": "An unexpected error occurred while updating the child."
+  "unexpectedUpdateChildError": "An unexpected error occurred while updating the child.",
+  "profile": "Profile",
+"firstName": "First Name",
+"lastName": "Last Name",
+"email": "Email",
+"phoneNumber": "Phone Number",
+"familyRelationship": "Family Relationship",
+
+"profileUpdatedSuccessfully": "Changes saved successfully ✓",
+
+"failedToLoadProfile": "Unable to load profile data.",
+"failedToSaveProfile": "Unable to save changes.",
+"unexpectedProfileSaveError": "An error occurred while saving changes.",
+
+"firstNameTooShort": "First name must be at least two characters.",
+"lastNameTooShort": "Last name must be at least two characters.",
+"invalidEmailAddress": "Please enter a valid email address.",
+"phoneNumberRequired": "Please enter a phone number.",
+"emailAlreadyUsed": "Email is already in use."
 }

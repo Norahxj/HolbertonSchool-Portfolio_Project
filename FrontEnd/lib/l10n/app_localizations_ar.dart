@@ -945,4 +945,50 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get unexpectedUpdateChildError =>
       'حدث خطأ غير متوقع أثناء تعديل الطفل.';
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get firstName => 'الاسم الأول';
+
+  @override
+  String get lastName => 'اسم العائلة';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get phoneNumber => 'رقم الجوال';
+
+  @override
+  String get familyRelationship => 'صلتي بالأسرة';
+
+  @override
+  String get profileUpdatedSuccessfully => 'تم حفظ التغييرات بنجاح ✓';
+
+  @override
+  String get failedToLoadProfile => 'تعذّر تحميل بيانات الملف الشخصي.';
+
+  @override
+  String get failedToSaveProfile => 'تعذّر حفظ التغييرات.';
+
+  @override
+  String get unexpectedProfileSaveError => 'حدث خطأ أثناء حفظ التغييرات.';
+
+  @override
+  String get firstNameTooShort =>
+      'يجب أن يتكون الاسم الأول من حرفين على الأقل.';
+
+  @override
+  String get lastNameTooShort => 'يجب أن يتكون اسم العائلة من حرفين على الأقل.';
+
+  @override
+  String get invalidEmailAddress => 'يرجى إدخال بريد إلكتروني صحيح.';
+
+  @override
+  String get phoneNumberRequired => 'يرجى إدخال رقم الجوال.';
+
+  @override
+  String get emailAlreadyUsed => 'البريد الإلكتروني مستخدم بالفعل.';
 }
