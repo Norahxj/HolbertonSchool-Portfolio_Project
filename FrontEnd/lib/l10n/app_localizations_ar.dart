@@ -666,4 +666,125 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deleteTask => 'حذف المهمة';
+
+  @override
+  String get failedToLoadFamilySettings => 'تعذّر تحميل إعدادات العائلة.';
+
+  @override
+  String get familyNameTooShort => 'اسم العائلة يجب أن يكون حرفين على الأقل.';
+
+  @override
+  String get invalidGuardianEmail => 'اكتبي بريدًا إلكترونيًا صحيحًا.';
+
+  @override
+  String get failedToUpdateFamilyName => 'تعذّر تحديث اسم العائلة.';
+
+  @override
+  String get failedToSendInvitation => 'تعذّر إرسال الدعوة.';
+
+  @override
+  String get failedToAcceptInvitation => 'تعذّر قبول الدعوة.';
+
+  @override
+  String get failedToRejectInvitation => 'تعذّر رفض الدعوة.';
+
+  @override
+  String get familySettingsGenericError => 'حدث خطأ غير متوقع.';
+
+  @override
+  String get familyName => 'اسم العائلة';
+
+  @override
+  String get saveFamilyName => 'حفظ الاسم';
+
+  @override
+  String get guardians => 'أولياء الأمور';
+
+  @override
+  String get noGuardians => 'لا يوجد أولياء أمور';
+
+  @override
+  String get father => 'أب';
+
+  @override
+  String get mother => 'أم';
+
+  @override
+  String get guardian => 'ولي أمر';
+
+  @override
+  String get you => 'أنت';
+
+  @override
+  String get incomingInvitations => 'الدعوات الواردة';
+
+  @override
+  String get noIncomingInvitations => 'لا توجد دعوات واردة حاليًا';
+
+  @override
+  String get incomingInvitationsDescription =>
+      'ستظهر هنا دعوات الانضمام إلى العائلات';
+
+  @override
+  String get family => 'العائلة';
+
+  @override
+  String invitationToJoinFamily(String familyName) {
+    return 'دعوة للانضمام إلى $familyName';
+  }
+
+  @override
+  String invitationSentBy(String name) {
+    return 'مرسلة من $name';
+  }
+
+  @override
+  String get accept => 'قبول';
+
+  @override
+  String get inviteAnotherGuardian => 'دعوة ولي أمر آخر';
+
+  @override
+  String get guardianEmailAddress => 'البريد الإلكتروني لولي الأمر';
+
+  @override
+  String get sending => 'جارٍ الإرسال...';
+
+  @override
+  String get sendInvitation => 'إرسال دعوة';
+
+  @override
+  String get guardianInvitationExplanation =>
+      'يجب أن يكون لدى ولي الأمر حساب مسجل مسبقًا، وستظهر الدعوة داخل حسابه.';
+
+  @override
+  String get pendingSentInvitations => 'الدعوات المرسلة المعلّقة';
+
+  @override
+  String get noPendingSentInvitations => 'لا توجد دعوات مرسلة معلّقة حاليًا';
+
+  @override
+  String get pendingInvitationsDescription =>
+      'ستظهر هنا الدعوات التي أرسلتها ولم تُقبل بعد';
+
+  @override
+  String get waitingForInvitationAcceptance => 'بانتظار قبول الدعوة';
+
+  @override
+  String get invitationAcceptedSuccessfully =>
+      'تم قبول الدعوة والانضمام إلى العائلة';
+
+  @override
+  String get invitationRejectedSuccessfully => 'تم رفض الدعوة';
+
+  @override
+  String get familyNameUpdatedSuccessfully => 'تم تحديث اسم العائلة';
+
+  @override
+  String get invitationSentSuccessfully => 'تم إرسال الدعوة بنجاح';
+
+  @override
+  String familyNameDisplay(String name) {
+    return 'عائلة $name';
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class FamilyFieldLabel extends StatelessWidget {
   final String text;
@@ -11,9 +12,10 @@ class FamilyFieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: AlignmentDirectional.centerStart,
       child: Text(
         text,
+        textAlign: TextAlign.start,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -56,31 +58,6 @@ class GuardianCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          tag,
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 12, color: subtitleColor),
-                  ),
-                ],
-              ),
-            ),
-          ),
           Container(
             width: 40,
             height: 40,
@@ -90,6 +67,38 @@ class GuardianCard extends StatelessWidget {
             ),
             child: Icon(Icons.person, color: iconColor, size: 20),
           ),
+
+          const SizedBox(width: AppSpacing.sm),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  name,
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                const SizedBox(height: 2),
+
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 12, color: subtitleColor),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: AppSpacing.sm),
+
+          tag,
         ],
       ),
     );
@@ -97,9 +106,7 @@ class GuardianCard extends StatelessWidget {
 }
 
 class CurrentUserTag extends StatelessWidget {
-  final bool isArabic;
-
-  const CurrentUserTag({super.key, required this.isArabic});
+  const CurrentUserTag({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +117,7 @@ class CurrentUserTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
-        isArabic ? 'أنت' : 'You',
+        context.l10n.you,
         style: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,

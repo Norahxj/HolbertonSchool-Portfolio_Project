@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import 'guardian_components.dart';
 
 class FamilyNameSection extends StatelessWidget {
-  final bool isArabic;
   final TextEditingController controller;
   final bool isSaving;
   final VoidCallback onSave;
 
   const FamilyNameSection({
     super.key,
-    required this.isArabic,
     required this.controller,
     required this.isSaving,
     required this.onSave,
@@ -23,7 +22,7 @@ class FamilyNameSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FamilyFieldLabel(text: isArabic ? 'اسم العائلة' : 'Family Name'),
+        FamilyFieldLabel(text: context.l10n.familyName),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -48,10 +47,7 @@ class FamilyNameSection extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
+                  textAlign: TextAlign.start,
                   style: const TextStyle(color: AppColors.textPrimary),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
@@ -75,7 +71,7 @@ class FamilyNameSection extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
 
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: AlignmentDirectional.centerEnd,
           child: TextButton.icon(
             onPressed: isSaving ? null : onSave,
             icon: isSaving
@@ -86,9 +82,7 @@ class FamilyNameSection extends StatelessWidget {
                   )
                 : const Icon(Icons.save_outlined),
             label: Text(
-              isSaving
-                  ? (isArabic ? 'جارٍ الحفظ...' : 'Saving...')
-                  : (isArabic ? 'حفظ الاسم' : 'Save Name'),
+              isSaving ? context.l10n.saving : context.l10n.saveFamilyName,
             ),
           ),
         ),

@@ -684,4 +684,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteTask => 'Delete task';
+
+  @override
+  String get failedToLoadFamilySettings => 'Failed to load family settings.';
+
+  @override
+  String get familyNameTooShort =>
+      'Family name must be at least two characters.';
+
+  @override
+  String get invalidGuardianEmail => 'Enter a valid email address.';
+
+  @override
+  String get failedToUpdateFamilyName => 'Failed to update the family name.';
+
+  @override
+  String get failedToSendInvitation => 'Failed to send the invitation.';
+
+  @override
+  String get failedToAcceptInvitation => 'Failed to accept the invitation.';
+
+  @override
+  String get failedToRejectInvitation => 'Failed to reject the invitation.';
+
+  @override
+  String get familySettingsGenericError => 'An unexpected error occurred.';
+
+  @override
+  String get familyName => 'Family name';
+
+  @override
+  String get saveFamilyName => 'Save name';
+
+  @override
+  String get guardians => 'Guardians';
+
+  @override
+  String get noGuardians => 'No guardians';
+
+  @override
+  String get father => 'Father';
+
+  @override
+  String get mother => 'Mother';
+
+  @override
+  String get guardian => 'Guardian';
+
+  @override
+  String get you => 'You';
+
+  @override
+  String get incomingInvitations => 'Incoming invitations';
+
+  @override
+  String get noIncomingInvitations => 'There are no incoming invitations';
+
+  @override
+  String get incomingInvitationsDescription =>
+      'Family invitations will appear here';
+
+  @override
+  String get family => 'the family';
+
+  @override
+  String invitationToJoinFamily(String familyName) {
+    return 'Invitation to join $familyName';
+  }
+
+  @override
+  String invitationSentBy(String name) {
+    return 'Sent by $name';
+  }
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get inviteAnotherGuardian => 'Invite another guardian';
+
+  @override
+  String get guardianEmailAddress => 'Guardian email address';
+
+  @override
+  String get sending => 'Sending...';
+
+  @override
+  String get sendInvitation => 'Send invitation';
+
+  @override
+  String get guardianInvitationExplanation =>
+      'The guardian must already have a registered account, and the invitation will appear in their account.';
+
+  @override
+  String get pendingSentInvitations => 'Pending sent invitations';
+
+  @override
+  String get noPendingSentInvitations =>
+      'There are no pending sent invitations';
+
+  @override
+  String get pendingInvitationsDescription =>
+      'Invitations you sent that have not yet been accepted will appear here';
+
+  @override
+  String get waitingForInvitationAcceptance =>
+      'Waiting for invitation acceptance';
+
+  @override
+  String get invitationAcceptedSuccessfully =>
+      'Invitation accepted and joined the family';
+
+  @override
+  String get invitationRejectedSuccessfully => 'Invitation rejected';
+
+  @override
+  String get familyNameUpdatedSuccessfully => 'Family name updated';
+
+  @override
+  String get invitationSentSuccessfully => 'Invitation sent successfully';
+
+  @override
+  String familyNameDisplay(String name) {
+    return '$name Family';
+  }
 }

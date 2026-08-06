@@ -1321,6 +1321,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete task'**
   String get deleteTask;
+
+  /// No description provided for @failedToLoadFamilySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load family settings.'**
+  String get failedToLoadFamilySettings;
+
+  /// No description provided for @familyNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Family name must be at least two characters.'**
+  String get familyNameTooShort;
+
+  /// No description provided for @invalidGuardianEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get invalidGuardianEmail;
+
+  /// No description provided for @failedToUpdateFamilyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update the family name.'**
+  String get failedToUpdateFamilyName;
+
+  /// No description provided for @failedToSendInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send the invitation.'**
+  String get failedToSendInvitation;
+
+  /// No description provided for @failedToAcceptInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to accept the invitation.'**
+  String get failedToAcceptInvitation;
+
+  /// No description provided for @failedToRejectInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to reject the invitation.'**
+  String get failedToRejectInvitation;
+
+  /// No description provided for @familySettingsGenericError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred.'**
+  String get familySettingsGenericError;
+
+  /// No description provided for @familyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Family name'**
+  String get familyName;
+
+  /// No description provided for @saveFamilyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Save name'**
+  String get saveFamilyName;
+
+  /// No description provided for @guardians.
+  ///
+  /// In en, this message translates to:
+  /// **'Guardians'**
+  String get guardians;
+
+  /// No description provided for @noGuardians.
+  ///
+  /// In en, this message translates to:
+  /// **'No guardians'**
+  String get noGuardians;
+
+  /// No description provided for @father.
+  ///
+  /// In en, this message translates to:
+  /// **'Father'**
+  String get father;
+
+  /// No description provided for @mother.
+  ///
+  /// In en, this message translates to:
+  /// **'Mother'**
+  String get mother;
+
+  /// No description provided for @guardian.
+  ///
+  /// In en, this message translates to:
+  /// **'Guardian'**
+  String get guardian;
+
+  /// No description provided for @you.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get you;
+
+  /// No description provided for @incomingInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming invitations'**
+  String get incomingInvitations;
+
+  /// No description provided for @noIncomingInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no incoming invitations'**
+  String get noIncomingInvitations;
+
+  /// No description provided for @incomingInvitationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Family invitations will appear here'**
+  String get incomingInvitationsDescription;
+
+  /// No description provided for @family.
+  ///
+  /// In en, this message translates to:
+  /// **'the family'**
+  String get family;
+
+  /// No description provided for @invitationToJoinFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation to join {familyName}'**
+  String invitationToJoinFamily(String familyName);
+
+  /// No description provided for @invitationSentBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent by {name}'**
+  String invitationSentBy(String name);
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @inviteAnotherGuardian.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite another guardian'**
+  String get inviteAnotherGuardian;
+
+  /// No description provided for @guardianEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Guardian email address'**
+  String get guardianEmailAddress;
+
+  /// No description provided for @sending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sending;
+
+  /// No description provided for @sendInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Send invitation'**
+  String get sendInvitation;
+
+  /// No description provided for @guardianInvitationExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'The guardian must already have a registered account, and the invitation will appear in their account.'**
+  String get guardianInvitationExplanation;
+
+  /// No description provided for @pendingSentInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending sent invitations'**
+  String get pendingSentInvitations;
+
+  /// No description provided for @noPendingSentInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no pending sent invitations'**
+  String get noPendingSentInvitations;
+
+  /// No description provided for @pendingInvitationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitations you sent that have not yet been accepted will appear here'**
+  String get pendingInvitationsDescription;
+
+  /// No description provided for @waitingForInvitationAcceptance.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for invitation acceptance'**
+  String get waitingForInvitationAcceptance;
+
+  /// No description provided for @invitationAcceptedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation accepted and joined the family'**
+  String get invitationAcceptedSuccessfully;
+
+  /// No description provided for @invitationRejectedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation rejected'**
+  String get invitationRejectedSuccessfully;
+
+  /// No description provided for @familyNameUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Family name updated'**
+  String get familyNameUpdatedSuccessfully;
+
+  /// No description provided for @invitationSentSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation sent successfully'**
+  String get invitationSentSuccessfully;
+
+  /// No description provided for @familyNameDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} Family'**
+  String familyNameDisplay(String name);
 }
 
 class _AppLocalizationsDelegate

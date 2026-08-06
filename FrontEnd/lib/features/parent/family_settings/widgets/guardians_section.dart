@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
+import '../utils/family_settings_localization.dart';
 import 'guardian_components.dart';
 
 class GuardiansSection extends StatelessWidget {
-  final bool isArabic;
   final List<Map<String, dynamic>> guardians;
   final String? currentUserId;
-  final String Function(String) guardianTypeLabel;
 
   const GuardiansSection({
     super.key,
-    required this.isArabic,
     required this.guardians,
     required this.currentUserId,
-    required this.guardianTypeLabel,
   });
 
   @override
@@ -23,7 +21,7 @@ class GuardiansSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FamilyFieldLabel(text: isArabic ? 'أولياء الأمور' : 'Guardians'),
+        FamilyFieldLabel(text: context.l10n.guardians),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -35,10 +33,7 @@ class GuardiansSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.border),
             ),
-            child: Text(
-              isArabic ? 'لا يوجد أولياء أمور' : 'No guardians',
-              textAlign: TextAlign.center,
-            ),
+            child: Text(context.l10n.noGuardians, textAlign: TextAlign.center),
           )
         else
           ...guardians.map((guardian) {
@@ -56,14 +51,14 @@ class GuardiansSection extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: GuardianCard(
                 name: '$firstName $lastName'.trim(),
-                subtitle: guardianTypeLabel(guardianType),
+                subtitle: guardianType.guardianTypeLabel(context),
                 subtitleColor: isCurrentUser
                     ? const Color(0xFFC08A3E)
                     : AppColors.textSecondary,
                 avatarColor: AppColors.primaryLight,
                 iconColor: AppColors.primary,
                 tag: isCurrentUser
-                    ? CurrentUserTag(isArabic: isArabic)
+                    ? const CurrentUserTag()
                     : const VerifiedTag(),
               ),
             );

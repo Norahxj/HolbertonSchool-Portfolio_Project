@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/family_settings_controller.dart';
+import '../utils/family_settings_localization.dart';
 import 'family_name_section.dart';
 import 'guardians_section.dart';
 import 'incoming_invitations_section.dart';
@@ -13,7 +15,6 @@ import 'invite_guardian_section.dart';
 import 'pending_invitations_section.dart';
 
 class FamilySettingsView extends StatelessWidget {
-  final bool isArabic;
   final TextEditingController familyNameController;
   final TextEditingController inviteEmailController;
   final Future<void> Function() onReload;
@@ -25,7 +26,6 @@ class FamilySettingsView extends StatelessWidget {
 
   const FamilySettingsView({
     super.key,
-    required this.isArabic,
     required this.familyNameController,
     required this.inviteEmailController,
     required this.onReload,
@@ -48,7 +48,11 @@ class FamilySettingsView extends StatelessWidget {
       );
     }
 
-    if (controller.pageError != null) {
+    final pageError =
+        controller.pageBackendMessage ??
+        controller.pageErrorCode?.localized(context);
+
+    if (pageError != null) {
       return Scaffold(
         body: ScreenBackground(
           child: SafeArea(
@@ -60,22 +64,26 @@ class FamilySettingsView extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.error_outline,
-                      color: Colors.red,
+                      color: AppColors.error,
                       size: 42,
                     ),
+
                     const SizedBox(height: AppSpacing.md),
+
                     Text(
-                      controller.pageError!,
+                      pageError,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 15,
                       ),
                     ),
+
                     const SizedBox(height: AppSpacing.md),
+
                     ElevatedButton(
                       onPressed: onReload,
-                      child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
+                      child: Text(context.l10n.retry),
                     ),
                   ],
                 ),
@@ -98,15 +106,13 @@ class FamilySettingsView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppPageHeader(
-                    isArabic: isArabic,
-                    title: isArabic ? 'إعدادات العائلة' : 'Family Settings',
+                    title: context.l10n.familySettings,
                     onBack: onBack,
                   ),
 
                   const SizedBox(height: AppSpacing.xl),
 
                   FamilyNameSection(
-                    isArabic: isArabic,
                     controller: familyNameController,
                     isSaving: controller.isSavingFamilyName,
                     onSave: onSaveFamilyName,
@@ -115,32 +121,28 @@ class FamilySettingsView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
 
                   GuardiansSection(
-                    isArabic: isArabic,
                     guardians: controller.guardians,
                     currentUserId: controller.currentUserId,
-                    guardianTypeLabel: controller.guardianTypeLabel,
                   ),
 
                   const SizedBox(height: AppSpacing.xl),
 
                   PendingInvitationsSection(
                     invitations: controller.sentInvitations,
-                    isArabic: isArabic,
                   ),
 
                   const SizedBox(height: AppSpacing.xl),
 
                   IncomingInvitationsSection(
                     invitations: controller.incomingInvitations,
+                    isProcessingInvitation: controller.isProcessingInvitation,
                     onAccept: onAcceptInvitation,
                     onReject: onRejectInvitation,
-                    isArabic: isArabic,
                   ),
 
                   const SizedBox(height: AppSpacing.xl),
 
                   InviteGuardianSection(
-                    isArabic: isArabic,
                     controller: inviteEmailController,
                     isSending: controller.isSendingInvitation,
                     onSend: onSendInvitation,

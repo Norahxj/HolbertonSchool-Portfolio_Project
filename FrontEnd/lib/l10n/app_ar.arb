@@ -332,5 +332,63 @@
     }
   }
 },
-"deleteTask": "حذف المهمة"
+"deleteTask": "حذف المهمة",
+"failedToLoadFamilySettings": "تعذّر تحميل إعدادات العائلة.",
+"familyNameTooShort": "اسم العائلة يجب أن يكون حرفين على الأقل.",
+"invalidGuardianEmail": "اكتبي بريدًا إلكترونيًا صحيحًا.",
+"failedToUpdateFamilyName": "تعذّر تحديث اسم العائلة.",
+"failedToSendInvitation": "تعذّر إرسال الدعوة.",
+"failedToAcceptInvitation": "تعذّر قبول الدعوة.",
+"failedToRejectInvitation": "تعذّر رفض الدعوة.",
+"familySettingsGenericError": "حدث خطأ غير متوقع.",
+"familyName": "اسم العائلة",
+"saveFamilyName": "حفظ الاسم",
+"guardians": "أولياء الأمور",
+"noGuardians": "لا يوجد أولياء أمور",
+"father": "أب",
+"mother": "أم",
+"guardian": "ولي أمر",
+"you": "أنت",
+"incomingInvitations": "الدعوات الواردة",
+"noIncomingInvitations": "لا توجد دعوات واردة حاليًا",
+"incomingInvitationsDescription": "ستظهر هنا دعوات الانضمام إلى العائلات",
+"family": "العائلة",
+"invitationToJoinFamily": "دعوة للانضمام إلى {familyName}",
+"@invitationToJoinFamily": {
+  "placeholders": {
+    "familyName": {
+      "type": "String"
+    }
+  }
+},
+"invitationSentBy": "مرسلة من {name}",
+"@invitationSentBy": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"accept": "قبول",
+"inviteAnotherGuardian": "دعوة ولي أمر آخر",
+"guardianEmailAddress": "البريد الإلكتروني لولي الأمر",
+"sending": "جارٍ الإرسال...",
+"sendInvitation": "إرسال دعوة",
+"guardianInvitationExplanation": "يجب أن يكون لدى ولي الأمر حساب مسجل مسبقًا، وستظهر الدعوة داخل حسابه.",
+"pendingSentInvitations": "الدعوات المرسلة المعلّقة",
+"noPendingSentInvitations": "لا توجد دعوات مرسلة معلّقة حاليًا",
+"pendingInvitationsDescription": "ستظهر هنا الدعوات التي أرسلتها ولم تُقبل بعد",
+"waitingForInvitationAcceptance": "بانتظار قبول الدعوة",
+"invitationAcceptedSuccessfully": "تم قبول الدعوة والانضمام إلى العائلة",
+"invitationRejectedSuccessfully": "تم رفض الدعوة",
+"familyNameUpdatedSuccessfully": "تم تحديث اسم العائلة",
+"invitationSentSuccessfully": "تم إرسال الدعوة بنجاح",
+"familyNameDisplay": "عائلة {name}",
+"@familyNameDisplay": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+}
 }

@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../controllers/family_settings_controller.dart';
+import '../utils/family_settings_localization.dart';
 import '../widgets/family_settings_view.dart';
 
 class FamilySettingsScreen extends StatefulWidget {
-  final bool isArabic;
-
-  const FamilySettingsScreen({super.key, required this.isArabic});
+  const FamilySettingsScreen({super.key});
 
   @override
-  State<FamilySettingsScreen> createState() => _FamilySettingsScreenState();
+  State<FamilySettingsScreen> createState() {
+    return _FamilySettingsScreenState();
+  }
 }
 
 class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
   late final FamilySettingsController _controller;
 
-  bool get isArabic => widget.isArabic;
-
   final TextEditingController familyNameController = TextEditingController();
+
   final TextEditingController inviteEmailController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    _controller = FamilySettingsController(isArabic: isArabic);
+    _controller = FamilySettingsController();
 
     _loadFamilyData();
   }
@@ -35,6 +37,7 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
     _controller.dispose();
     familyNameController.dispose();
     inviteEmailController.dispose();
+
     super.dispose();
   }
 
@@ -45,108 +48,97 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
       return;
     }
 
-    familyNameController.text = _controller.displayFamilyName(
-      _controller.originalFamilyName,
-    );
+    _updateDisplayedFamilyName();
   }
 
   Future<void> _acceptInvitation(String invitationId) async {
-    final errorMessage = await _controller.acceptInvitation(invitationId);
+    final result = await _controller.acceptInvitation(invitationId);
 
     if (!mounted) {
       return;
     }
 
-    if (errorMessage != null) {
-      _showMessage(errorMessage, isError: true);
+    if (!result.isSuccess) {
+      _showResultError(result);
       return;
     }
 
-    _showMessage(
-      isArabic
-          ? 'تم قبول الدعوة والانضمام إلى العائلة'
-          : 'Invitation accepted and joined the family',
-    );
+    _updateDisplayedFamilyName();
+
+    _showMessage(context.l10n.invitationAcceptedSuccessfully);
   }
 
   Future<void> _rejectInvitation(String invitationId) async {
-    final errorMessage = await _controller.rejectInvitation(invitationId);
+    final result = await _controller.rejectInvitation(invitationId);
 
     if (!mounted) {
       return;
     }
 
-    if (errorMessage != null) {
-      _showMessage(errorMessage, isError: true);
+    if (!result.isSuccess) {
+      _showResultError(result);
       return;
     }
 
-    _showMessage(isArabic ? 'تم رفض الدعوة' : 'Invitation rejected');
+    _showMessage(context.l10n.invitationRejectedSuccessfully);
   }
 
   Future<void> _saveFamilyName() async {
-    final errorMessage = await _controller.saveFamilyName(
-      familyNameController.text,
-    );
+    final result = await _controller.saveFamilyName(familyNameController.text);
 
     if (!mounted) {
       return;
     }
 
-    if (errorMessage != null) {
-      _showMessage(errorMessage, isError: true);
+    if (!result.isSuccess) {
+      _showResultError(result);
       return;
     }
 
-    familyNameController.text = _controller.displayFamilyName(
-      _controller.originalFamilyName,
-    );
+    _updateDisplayedFamilyName();
 
-    _showMessage(isArabic ? 'تم تحديث اسم العائلة' : 'Family name updated');
+    _showMessage(context.l10n.familyNameUpdatedSuccessfully);
   }
 
   Future<void> _sendInvitation() async {
-    final errorMessage = await _controller.sendInvitation(
-      inviteEmailController.text,
-    );
+    final result = await _controller.sendInvitation(inviteEmailController.text);
 
     if (!mounted) {
       return;
     }
 
-    if (errorMessage != null) {
-      _showMessage(errorMessage, isError: true);
+    if (!result.isSuccess) {
+      _showResultError(result);
       return;
     }
 
     inviteEmailController.clear();
 
-    _showMessage(
-      isArabic ? 'تم إرسال الدعوة بنجاح' : 'Invitation sent successfully',
+    _showMessage(context.l10n.invitationSentSuccessfully);
+  }
+
+  void _updateDisplayedFamilyName() {
+    familyNameController.text = displayLocalizedFamilyName(
+      context,
+      _controller.originalFamilyName,
     );
+  }
+
+  void _showResultError(FamilySettingsActionResult result) {
+    final message =
+        result.backendMessage ??
+        result.errorCode?.localized(context) ??
+        context.l10n.familySettingsGenericError;
+
+    _showMessage(message, isError: true);
   }
 
   void _showMessage(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : AppColors.success,
+        backgroundColor: isError ? AppColors.error : AppColors.success,
       ),
-    );
-  }
-
-  @override
-  void didUpdateWidget(covariant FamilySettingsScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.isArabic == widget.isArabic) {
-      return;
-    }
-
-    _controller.updateLanguage(widget.isArabic);
-
-    familyNameController.text = _controller.displayFamilyName(
-      _controller.originalFamilyName,
     );
   }
 
@@ -155,7 +147,6 @@ class _FamilySettingsScreenState extends State<FamilySettingsScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: FamilySettingsView(
-        isArabic: isArabic,
         familyNameController: familyNameController,
         inviteEmailController: inviteEmailController,
         onReload: _loadFamilyData,

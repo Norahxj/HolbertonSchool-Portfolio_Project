@@ -46,14 +46,11 @@ class SettingsCard extends StatelessWidget {
             icon: Icons.home_outlined,
             label: l10n.familySettings,
             onTap: () {
-              final isArabic =
-                  Localizations.localeOf(context).languageCode == 'ar';
-
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) {
-                    return FamilySettingsScreen(isArabic: isArabic);
+                    return  const FamilySettingsScreen();
                   },
                 ),
               );
@@ -154,7 +151,6 @@ class SettingsRow extends StatelessWidget {
     );
   }
 }
-
 class SettingsNavigationArrow extends StatelessWidget {
   const SettingsNavigationArrow({super.key});
 

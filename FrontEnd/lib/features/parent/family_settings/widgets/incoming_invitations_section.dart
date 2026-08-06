@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import 'guardian_components.dart';
 
 class IncomingInvitationsSection extends StatelessWidget {
   final List<Map<String, dynamic>> invitations;
-  final bool isArabic;
+  final bool Function(String invitationId) isProcessingInvitation;
   final Future<void> Function(String invitationId) onAccept;
   final Future<void> Function(String invitationId) onReject;
 
   const IncomingInvitationsSection({
     super.key,
     required this.invitations,
+    required this.isProcessingInvitation,
     required this.onAccept,
     required this.onReject,
-    required this.isArabic,
   });
 
   @override
@@ -23,9 +24,7 @@ class IncomingInvitationsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FamilyFieldLabel(
-          text: isArabic ? 'الدعوات الواردة' : 'Incoming Invitations',
-        ),
+        FamilyFieldLabel(text: context.l10n.incomingInvitations),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -40,9 +39,7 @@ class IncomingInvitationsSection extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  isArabic
-                      ? 'لا توجد دعوات واردة حاليًا'
-                      : 'There are no incoming invitations',
+                  context.l10n.noIncomingInvitations,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 14,
@@ -50,11 +47,11 @@ class IncomingInvitationsSection extends StatelessWidget {
                     color: AppColors.textPrimary,
                   ),
                 ),
+
                 const SizedBox(height: 4),
+
                 Text(
-                  isArabic
-                      ? 'ستظهر هنا دعوات الانضمام إلى العائلات'
-                      : 'Family invitations will appear here',
+                  context.l10n.incomingInvitationsDescription,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 12,
@@ -69,11 +66,13 @@ class IncomingInvitationsSection extends StatelessWidget {
             final invitationId = invitation['id']?.toString() ?? '';
 
             final familyName =
-                invitation['family_name']?.toString() ??
-                (isArabic ? 'العائلة' : 'the family');
+                invitation['family_name']?.toString() ?? context.l10n.family;
 
             final invitedByName = invitation['invited_by_name']?.toString();
+
             final invitedByEmail = invitation['invited_by_email']?.toString();
+
+            final isProcessing = isProcessingInvitation(invitationId);
 
             return Container(
               margin: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -93,30 +92,30 @@ class IncomingInvitationsSection extends StatelessWidget {
                         color: AppColors.primary,
                         size: 26,
                       ),
+
                       const SizedBox(width: AppSpacing.sm),
+
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              isArabic
-                                  ? 'دعوة للانضمام إلى $familyName'
-                                  : 'Invitation to join $familyName',
-                              textAlign: TextAlign.right,
+                              context.l10n.invitationToJoinFamily(familyName),
+                              textAlign: TextAlign.start,
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
                               ),
                             ),
+
                             if (invitedByName != null &&
-                                invitedByName.isNotEmpty) ...[
+                                invitedByName.trim().isNotEmpty) ...[
                               const SizedBox(height: 4),
+
                               Text(
-                                isArabic
-                                    ? 'مرسلة من $invitedByName'
-                                    : 'Sent by $invitedByName',
-                                textAlign: TextAlign.right,
+                                context.l10n.invitationSentBy(invitedByName),
+                                textAlign: TextAlign.start,
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textSecondary,
@@ -125,11 +124,13 @@ class IncomingInvitationsSection extends StatelessWidget {
                             ],
 
                             if (invitedByEmail != null &&
-                                invitedByEmail.isNotEmpty) ...[
+                                invitedByEmail.trim().isNotEmpty) ...[
                               const SizedBox(height: 2),
+
                               Text(
                                 invitedByEmail,
-                                textAlign: TextAlign.right,
+                                textAlign: TextAlign.start,
+                                textDirection: TextDirection.ltr,
                                 style: const TextStyle(
                                   fontSize: 11,
                                   color: AppColors.textSecondary,
@@ -148,19 +149,33 @@ class IncomingInvitationsSection extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: invitationId.isEmpty
+                          onPressed: invitationId.isEmpty || isProcessing
                               ? null
-                              : () => onReject(invitationId),
-                          child: Text(isArabic ? 'رفض' : 'Reject'),
+                              : () {
+                                  onReject(invitationId);
+                                },
+                          child: Text(context.l10n.reject),
                         ),
                       ),
+
                       const SizedBox(width: AppSpacing.sm),
+
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: invitationId.isEmpty
+                          onPressed: invitationId.isEmpty || isProcessing
                               ? null
-                              : () => onAccept(invitationId),
-                          child: Text(isArabic ? 'قبول' : 'Accept'),
+                              : () {
+                                  onAccept(invitationId);
+                                },
+                          child: isProcessing
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(context.l10n.accept),
                         ),
                       ),
                     ],

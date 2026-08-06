@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_button.dart';
 
 class InviteGuardianSection extends StatelessWidget {
-  final bool isArabic;
   final TextEditingController controller;
   final bool isSending;
   final VoidCallback onSend;
 
   const InviteGuardianSection({
     super.key,
-    required this.isArabic,
     required this.controller,
     required this.isSending,
     required this.onSend,
@@ -41,8 +40,8 @@ class InviteGuardianSection extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  isArabic ? 'دعوة ولي أمر آخر' : 'Invite Another Guardian',
-                  textAlign: TextAlign.right,
+                  context.l10n.inviteAnotherGuardian,
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -68,14 +67,10 @@ class InviteGuardianSection extends StatelessWidget {
                   child: TextField(
                     controller: controller,
                     keyboardType: TextInputType.emailAddress,
-                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                    textDirection: isArabic
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
+                    textAlign: TextAlign.start,
+                    textDirection: TextDirection.ltr,
                     decoration: InputDecoration(
-                      hintText: isArabic
-                          ? 'البريد الإلكتروني لولي الأمر'
-                          : 'Guardian email address',
+                      hintText: context.l10n.guardianEmailAddress,
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
@@ -98,9 +93,9 @@ class InviteGuardianSection extends StatelessWidget {
 
           AppButton(
             text: isSending
-                ? (isArabic ? 'جارٍ الإرسال...' : 'Sending...')
-                : (isArabic ? 'إرسال دعوة' : 'Send Invitation'),
-            onPressed: isSending ? () {} : onSend,
+                ? context.l10n.sending
+                : context.l10n.sendInvitation,
+            onPressed: isSending ? null : onSend,
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -111,9 +106,7 @@ class InviteGuardianSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           Text(
-            isArabic
-                ? 'يجب أن يكون لدى ولي الأمر حساب مسجل مسبقًا، وستظهر الدعوة داخل حسابه'
-                : 'The guardian must already have a registered account, and the invitation will appear in their account',
+            context.l10n.guardianInvitationExplanation,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 12,

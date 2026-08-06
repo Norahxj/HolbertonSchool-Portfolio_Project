@@ -332,5 +332,63 @@
     }
   }
 },
-"deleteTask": "Delete task"
+"deleteTask": "Delete task",
+"failedToLoadFamilySettings": "Failed to load family settings.",
+"familyNameTooShort": "Family name must be at least two characters.",
+"invalidGuardianEmail": "Enter a valid email address.",
+"failedToUpdateFamilyName": "Failed to update the family name.",
+"failedToSendInvitation": "Failed to send the invitation.",
+"failedToAcceptInvitation": "Failed to accept the invitation.",
+"failedToRejectInvitation": "Failed to reject the invitation.",
+"familySettingsGenericError": "An unexpected error occurred.",
+"familyName": "Family name",
+"saveFamilyName": "Save name",
+"guardians": "Guardians",
+"noGuardians": "No guardians",
+"father": "Father",
+"mother": "Mother",
+"guardian": "Guardian",
+"you": "You",
+"incomingInvitations": "Incoming invitations",
+"noIncomingInvitations": "There are no incoming invitations",
+"incomingInvitationsDescription": "Family invitations will appear here",
+"family": "the family",
+"invitationToJoinFamily": "Invitation to join {familyName}",
+"@invitationToJoinFamily": {
+  "placeholders": {
+    "familyName": {
+      "type": "String"
+    }
+  }
+},
+"invitationSentBy": "Sent by {name}",
+"@invitationSentBy": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"accept": "Accept",
+"inviteAnotherGuardian": "Invite another guardian",
+"guardianEmailAddress": "Guardian email address",
+"sending": "Sending...",
+"sendInvitation": "Send invitation",
+"guardianInvitationExplanation": "The guardian must already have a registered account, and the invitation will appear in their account.",
+"pendingSentInvitations": "Pending sent invitations",
+"noPendingSentInvitations": "There are no pending sent invitations",
+"pendingInvitationsDescription": "Invitations you sent that have not yet been accepted will appear here",
+"waitingForInvitationAcceptance": "Waiting for invitation acceptance",
+"invitationAcceptedSuccessfully": "Invitation accepted and joined the family",
+"invitationRejectedSuccessfully": "Invitation rejected",
+"familyNameUpdatedSuccessfully": "Family name updated",
+"invitationSentSuccessfully": "Invitation sent successfully",
+"familyNameDisplay": "{name} Family",
+"@familyNameDisplay": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+}
 }
