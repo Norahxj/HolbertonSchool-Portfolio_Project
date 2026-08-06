@@ -493,4 +493,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutFailed => 'Unable to log out. Please try again.';
+
+  @override
+  String get failedToLoadDashboard => 'Failed to load the dashboard.';
+
+  @override
+  String get failedToRefreshDashboard => 'Failed to refresh the dashboard.';
+
+  @override
+  String get failedToDeleteChild =>
+      'Failed to delete the child. Please try again.';
+
+  @override
+  String get childNotFoundForFamily =>
+      'The child was not found or is no longer linked to this family.';
+
+  @override
+  String get parentAccountNotFound => 'The parent account could not be found.';
+
+  @override
+  String get parentAccessRequired =>
+      'This action is available to parent accounts only.';
+
+  @override
+  String get failedToDeleteChildRelatedData =>
+      'Failed to delete the child and the related data.';
+
+  @override
+  String get yourChildren => 'Your children';
+
+  @override
+  String get addChild => 'Add child';
+
+  @override
+  String get reviewTasks => 'Review tasks';
+
+  @override
+  String childAgeYears(int age) {
+    return '$age years old';
+  }
+
+  @override
+  String pointsCount(int count) {
+    return '$count points';
+  }
+
+  @override
+  String get noChildrenAddedYet => 'No children added yet';
+
+  @override
+  String get welcome => 'Welcome';
+
+  @override
+  String get buildingWonderfulGeneration =>
+      'You are building a wonderful generation';
 }

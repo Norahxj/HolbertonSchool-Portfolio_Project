@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class WelcomeBanner extends StatelessWidget {
   final String parentName;
-  final bool isArabic;
 
-  const WelcomeBanner({
-    super.key,
-    required this.parentName,
-    required this.isArabic,
-  });
+  const WelcomeBanner({super.key, required this.parentName});
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final bannerWidth = constraints.maxWidth;
@@ -38,24 +36,23 @@ class WelcomeBanner extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Transform.flip(
-                  flipX: isArabic,
+                  flipX: isRtl,
                   child: Image.asset(
                     'assets/dashboard/family_home.png',
                     fit: BoxFit.cover,
-                    alignment: isArabic
+                    alignment: isRtl
                         ? Alignment.centerLeft
                         : Alignment.centerRight,
                   ),
                 ),
+
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: isArabic
+                      begin: isRtl
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
-                      end: isArabic
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
+                      end: isRtl ? Alignment.centerLeft : Alignment.centerRight,
                       colors: [
                         const Color(0xFFF7F2FB).withValues(alpha: 0.78),
                         const Color(0xFFF1E8F8).withValues(alpha: 0.55),
@@ -66,66 +63,55 @@ class WelcomeBanner extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
+
+                PositionedDirectional(
                   top: 0,
                   bottom: 0,
-                  right: isArabic ? 24 : null,
-                  left: isArabic ? null : 24,
+                  start: 24,
                   width: bannerWidth * 0.44,
-                  child: Directionality(
-                    textDirection: isArabic
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isArabic ? 'مرحبًا' : 'Welcome',
-                          textAlign: isArabic
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryDark.withValues(
-                              alpha: 0.75,
-                            ),
-                          ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.l10n.welcome,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryDark.withValues(alpha: 0.75),
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          parentName,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: isArabic
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          style: const TextStyle(
-                            fontSize: 21,
-                            height: 1.15,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryDark,
-                          ),
+                      ),
+
+                      const SizedBox(height: 3),
+
+                      Text(
+                        parentName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 21,
+                          height: 1.15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryDark,
                         ),
-                        const SizedBox(height: 9),
-                        Text(
-                          isArabic
-                              ? 'أنتِ تبنين جيلاً رائعًا'
-                              : 'You are building a wonderful generation',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: isArabic
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          style: const TextStyle(
-                            fontSize: 11.5,
-                            height: 1.45,
-                            color: AppColors.textSecondary,
-                          ),
+                      ),
+
+                      const SizedBox(height: 9),
+
+                      Text(
+                        context.l10n.buildingWonderfulGeneration,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          height: 1.45,
+                          color: AppColors.textSecondary,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],

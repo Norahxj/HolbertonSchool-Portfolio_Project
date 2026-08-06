@@ -217,5 +217,34 @@
 "helpAndSupport": "المساعدة والدعم",
 "soon": "قريبًا",
 "logOut": "تسجيل الخروج",
-"logoutFailed": "تعذّر تسجيل الخروج. حاول مرة أخرى."
+"logoutFailed": "تعذّر تسجيل الخروج. حاول مرة أخرى.",
+"failedToLoadDashboard": "تعذّر تحميل لوحة التحكم.",
+"failedToRefreshDashboard": "تعذّر تحديث لوحة التحكم.",
+"failedToDeleteChild": "تعذّر حذف الطفل. حاول مرة أخرى.",
+"childNotFoundForFamily": "لم يتم العثور على الطفل، أو أنه لم يعد مرتبطًا بهذه الأسرة.",
+"parentAccountNotFound": "تعذّر العثور على حساب ولي الأمر.",
+"parentAccessRequired": "هذا الإجراء متاح لحساب ولي الأمر فقط.",
+"failedToDeleteChildRelatedData": "تعذّر حذف الطفل والبيانات المرتبطة به.",
+"yourChildren": "أطفالك",
+"addChild": "إضافة طفل",
+"reviewTasks": "مراجعة المهام",
+"childAgeYears": "{age} سنوات",
+"@childAgeYears": {
+  "placeholders": {
+    "age": {
+      "type": "int"
+    }
+  }
+},
+"pointsCount": "{count} نقطة",
+"@pointsCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"noChildrenAddedYet": "لا يوجد أطفال بعد",
+"welcome": "مرحبًا",
+"buildingWonderfulGeneration": "أنتِ تبنين جيلاً رائعًا"
 }

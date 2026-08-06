@@ -6,14 +6,9 @@ import '../repositories/parent_dashboard_repository.dart';
 import '../widgets/parent_dashboard_view.dart';
 
 class ParentDashboardScreen extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onChildrenChanged;
 
-  const ParentDashboardScreen({
-    super.key,
-    required this.isArabic,
-    required this.onChildrenChanged,
-  });
+  const ParentDashboardScreen({super.key, required this.onChildrenChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +17,7 @@ class ParentDashboardScreen extends StatelessWidget {
         return ParentDashboardController(ParentDashboardRepository())
           ..loadDashboard();
       },
-      child: ParentDashboardView(
-        isArabic: isArabic,
-        onChildrenChanged: onChildrenChanged,
-      ),
+      child: ParentDashboardView(onChildrenChanged: onChildrenChanged),
     );
   }
 }

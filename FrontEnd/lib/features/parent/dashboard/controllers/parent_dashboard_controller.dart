@@ -4,22 +4,30 @@ import 'package:flutter/foundation.dart';
 import '../models/parent_dashboard_data.dart';
 import '../repositories/parent_dashboard_repository.dart';
 
+enum ParentDashboardErrorCode {
+  loadDashboard,
+  refreshDashboard,
+  deleteChild,
+  childNotFound,
+  parentNotFound,
+  parentAccessRequired,
+  deleteChildRelatedData,
+}
+
 class ParentDashboardController extends ChangeNotifier {
   final ParentDashboardRepository _repository;
 
   ParentDashboardController(this._repository);
-
-  bool get isArabic => PlatformDispatcher.instance.locale.languageCode == 'ar';
 
   ParentDashboardData? _data;
 
   bool _isLoading = false;
   bool _isRefreshing = false;
 
-  // Stores the ID of the child currently being deleted.
   String? _deletingChildId;
 
-  String? _errorMessage;
+  ParentDashboardErrorCode? _errorCode;
+  String? _backendMessage;
 
   ParentDashboardData? get data => _data;
 
@@ -29,35 +37,32 @@ class ParentDashboardController extends ChangeNotifier {
 
   String? get deletingChildId => _deletingChildId;
 
-  String? get errorMessage => _errorMessage;
+  ParentDashboardErrorCode? get errorCode => _errorCode;
+
+  String? get backendMessage => _backendMessage;
 
   bool get hasData => _data != null;
 
-  // Checks whether a specific child is currently being deleted.
   bool isDeletingChild(String childId) {
     return _deletingChildId == childId;
   }
 
   Future<void> loadDashboard() async {
-    if (_isLoading) return;
+    if (_isLoading) {
+      return;
+    }
 
     _isLoading = true;
-    _errorMessage = null;
-
+    _clearError();
     notifyListeners();
 
     try {
       _data = await _repository.getDashboardData();
     } on DioException catch (error) {
-      _errorMessage =
-          _readBackendMessage(error) ??
-          (isArabic
-              ? 'تعذّر تحميل لوحة التحكم.'
-              : 'Failed to load the dashboard.');
+      _backendMessage = _readBackendMessage(error);
+      _errorCode = ParentDashboardErrorCode.loadDashboard;
     } catch (error) {
-      _errorMessage = isArabic
-          ? 'تعذّر تحميل لوحة التحكم.'
-          : 'Failed to load the dashboard.';
+      _errorCode = ParentDashboardErrorCode.loadDashboard;
 
       debugPrint('Loading parent dashboard failed: $error');
     } finally {
@@ -67,25 +72,21 @@ class ParentDashboardController extends ChangeNotifier {
   }
 
   Future<void> refresh() async {
-    if (_isRefreshing) return;
+    if (_isRefreshing) {
+      return;
+    }
 
     _isRefreshing = true;
-    _errorMessage = null;
-
+    _clearError();
     notifyListeners();
 
     try {
       _data = await _repository.getDashboardData();
     } on DioException catch (error) {
-      _errorMessage =
-          _readBackendMessage(error) ??
-          (isArabic
-              ? 'تعذّر تحديث لوحة التحكم.'
-              : 'Failed to refresh the dashboard.');
+      _backendMessage = _readBackendMessage(error);
+      _errorCode = ParentDashboardErrorCode.refreshDashboard;
     } catch (error) {
-      _errorMessage = isArabic
-          ? 'تعذّر تحديث لوحة التحكم.'
-          : 'Failed to refresh the dashboard.';
+      _errorCode = ParentDashboardErrorCode.refreshDashboard;
 
       debugPrint('Refreshing parent dashboard failed: $error');
     } finally {
@@ -95,40 +96,38 @@ class ParentDashboardController extends ChangeNotifier {
   }
 
   Future<bool> deleteChild(String childId) async {
-    // Prevent more than one child from being deleted at the same time.
     if (_deletingChildId != null) {
       return false;
     }
 
     _deletingChildId = childId;
-    _errorMessage = null;
-
+    _clearError();
     notifyListeners();
 
     try {
       await _repository.deleteChild(childId);
 
-      // Remove the deleted child immediately from the current dashboard.
-      if (_data != null) {
-        final remainingChildren = _data!.children.where((item) {
+      final currentData = _data;
+
+      if (currentData != null) {
+        final remainingChildren = currentData.children.where((item) {
           return item.child.id != childId;
         }).toList();
 
         _data = ParentDashboardData(
-          user: _data!.user,
+          user: currentData.user,
           children: remainingChildren,
         );
       }
 
       return true;
     } on DioException catch (error) {
-      _errorMessage = _readDeleteError(error);
+      _backendMessage = _readBackendMessage(error);
+      _errorCode = _mapDeleteError(_backendMessage);
 
       return false;
     } catch (error) {
-      _errorMessage = isArabic
-          ? 'تعذّر حذف الطفل. حاول مرة أخرى.'
-          : 'Failed to delete the child. Please try again.';
+      _errorCode = ParentDashboardErrorCode.deleteChild;
 
       debugPrint('Deleting child failed: $error');
 
@@ -140,40 +139,35 @@ class ParentDashboardController extends ChangeNotifier {
   }
 
   void clearError() {
-    if (_errorMessage == null) return;
+    if (_errorCode == null && _backendMessage == null) {
+      return;
+    }
 
-    _errorMessage = null;
+    _clearError();
     notifyListeners();
   }
 
-  String _readDeleteError(DioException error) {
-    final backendMessage = _readBackendMessage(error);
+  void _clearError() {
+    _errorCode = null;
+    _backendMessage = null;
+  }
 
+  ParentDashboardErrorCode _mapDeleteError(String? backendMessage) {
     switch (backendMessage) {
       case 'Child not found':
-        return isArabic
-            ? 'لم يتم العثور على الطفل، أو أنه لم يعد مرتبطًا بهذه الأسرة.'
-            : 'The child was not found or is no longer linked to this family.';
+        return ParentDashboardErrorCode.childNotFound;
 
       case 'Parent not found':
-        return isArabic
-            ? 'تعذّر العثور على حساب ولي الأمر.'
-            : 'The parent account could not be found.';
+        return ParentDashboardErrorCode.parentNotFound;
 
       case 'Parent access required':
-        return isArabic
-            ? 'هذا الإجراء متاح لحساب ولي الأمر فقط.'
-            : 'This action is available to parent accounts only.';
+        return ParentDashboardErrorCode.parentAccessRequired;
 
       case 'Failed to delete child and related data':
-        return isArabic
-            ? 'تعذّر حذف الطفل والبيانات المرتبطة به.'
-            : 'Failed to delete the child and the related data.';
+        return ParentDashboardErrorCode.deleteChildRelatedData;
 
       default:
-        return isArabic
-            ? 'تعذّر حذف الطفل. حاول مرة أخرى.'
-            : 'Failed to delete the child. Please try again.';
+        return ParentDashboardErrorCode.deleteChild;
     }
   }
 

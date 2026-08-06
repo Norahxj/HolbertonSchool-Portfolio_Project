@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class DashboardNoChildrenState extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onAddChild;
 
-  const DashboardNoChildrenState({
-    super.key,
-    required this.isArabic,
-    required this.onAddChild,
-  });
+  const DashboardNoChildrenState({super.key, required this.onAddChild});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +29,7 @@ class DashboardNoChildrenState extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
 
           Text(
-            isArabic ? 'لا يوجد أطفال بعد' : 'No children added yet',
+            context.l10n.noChildrenAddedYet,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
@@ -43,7 +39,7 @@ class DashboardNoChildrenState extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.md),
 
-          _AddChildButton(isArabic: isArabic, onTap: onAddChild),
+          _AddChildButton(onTap: onAddChild),
         ],
       ),
     );
@@ -91,13 +87,11 @@ class DashboardErrorBanner extends StatelessWidget {
 
 class DashboardErrorState extends StatelessWidget {
   final String message;
-  final bool isArabic;
   final Future<void> Function() onRetry;
 
   const DashboardErrorState({
     super.key,
     required this.message,
-    required this.isArabic,
     required this.onRetry,
   });
 
@@ -128,7 +122,7 @@ class DashboardErrorState extends StatelessWidget {
         Center(
           child: ElevatedButton(
             onPressed: onRetry,
-            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
+            child: Text(context.l10n.retry),
           ),
         ),
       ],
@@ -137,10 +131,9 @@ class DashboardErrorState extends StatelessWidget {
 }
 
 class _AddChildButton extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onTap;
 
-  const _AddChildButton({required this.isArabic, required this.onTap});
+  const _AddChildButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +142,7 @@ class _AddChildButton extends StatelessWidget {
         onPressed: onTap,
         icon: const Icon(Icons.add, size: 20),
         label: Text(
-          isArabic ? 'إضافة طفل' : 'Add child',
+          context.l10n.addChild,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
         style: ElevatedButton.styleFrom(

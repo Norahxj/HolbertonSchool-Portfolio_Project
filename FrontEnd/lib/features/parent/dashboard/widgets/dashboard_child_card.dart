@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/child_avatar.dart';
 import '../models/parent_dashboard_data.dart';
 
 class DashboardChildCard extends StatelessWidget {
   final ParentDashboardChildItem item;
-  final bool isArabic;
   final VoidCallback onTap;
 
   const DashboardChildCard({
     super.key,
     required this.item,
-    required this.isArabic,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final dashboard = item.dashboard;
+
     final progress = dashboard.progressPercentage.clamp(0, 100).round();
 
     return Material(
@@ -35,7 +35,6 @@ class DashboardChildCard extends StatelessWidget {
             border: Border.all(color: AppColors.border),
           ),
           child: Row(
-            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
               ChildAvatar(avatarIndex: item.child.avatarIndex, size: 64),
 
@@ -62,9 +61,7 @@ class DashboardChildCard extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      isArabic
-                          ? '${dashboard.childAge} سنوات'
-                          : '${dashboard.childAge} years old',
+                      context.l10n.childAgeYears(dashboard.childAge),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.start,
@@ -76,7 +73,7 @@ class DashboardChildCard extends StatelessWidget {
 
                     const SizedBox(height: 5),
 
-                    _ChildPointsBadge(points: item.points, isArabic: isArabic),
+                    _ChildPointsBadge(points: item.points),
                   ],
                 ),
               ),
@@ -87,7 +84,7 @@ class DashboardChildCard extends StatelessWidget {
 
               const SizedBox(width: 8),
 
-              _ChildCardNavigationArrow(isArabic: isArabic),
+              const _ChildCardNavigationArrow(),
             ],
           ),
         ),
@@ -98,13 +95,12 @@ class DashboardChildCard extends StatelessWidget {
 
 class _ChildPointsBadge extends StatelessWidget {
   final int? points;
-  final bool isArabic;
 
-  const _ChildPointsBadge({required this.points, required this.isArabic});
+  const _ChildPointsBadge({required this.points});
 
   @override
   Widget build(BuildContext context) {
-    final pointsText = points?.toString() ?? '0';
+    final safePoints = points ?? 0;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
@@ -124,7 +120,7 @@ class _ChildPointsBadge extends StatelessWidget {
           const SizedBox(width: 5),
 
           Text(
-            isArabic ? '$pointsText نقطة' : '$pointsText points',
+            context.l10n.pointsCount(safePoints),
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -165,8 +161,10 @@ class _ProgressRing extends StatelessWidget {
               ),
             ),
           ),
+
           Text(
             '$safePercent%',
+            textDirection: TextDirection.ltr,
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -180,16 +178,16 @@ class _ProgressRing extends StatelessWidget {
 }
 
 class _ChildCardNavigationArrow extends StatelessWidget {
-  final bool isArabic;
-
-  const _ChildCardNavigationArrow({required this.isArabic});
+  const _ChildCardNavigationArrow();
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Icon(
-        isArabic
+        isRtl
             ? Icons.arrow_back_ios_new_rounded
             : Icons.arrow_forward_ios_rounded,
         size: 18,

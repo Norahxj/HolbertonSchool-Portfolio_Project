@@ -985,6 +985,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to log out. Please try again.'**
   String get logoutFailed;
+
+  /// No description provided for @failedToLoadDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load the dashboard.'**
+  String get failedToLoadDashboard;
+
+  /// No description provided for @failedToRefreshDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to refresh the dashboard.'**
+  String get failedToRefreshDashboard;
+
+  /// No description provided for @failedToDeleteChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete the child. Please try again.'**
+  String get failedToDeleteChild;
+
+  /// No description provided for @childNotFoundForFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'The child was not found or is no longer linked to this family.'**
+  String get childNotFoundForFamily;
+
+  /// No description provided for @parentAccountNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The parent account could not be found.'**
+  String get parentAccountNotFound;
+
+  /// No description provided for @parentAccessRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This action is available to parent accounts only.'**
+  String get parentAccessRequired;
+
+  /// No description provided for @failedToDeleteChildRelatedData.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete the child and the related data.'**
+  String get failedToDeleteChildRelatedData;
+
+  /// No description provided for @yourChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Your children'**
+  String get yourChildren;
+
+  /// No description provided for @addChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Add child'**
+  String get addChild;
+
+  /// No description provided for @reviewTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Review tasks'**
+  String get reviewTasks;
+
+  /// No description provided for @childAgeYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String childAgeYears(int age);
+
+  /// No description provided for @pointsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} points'**
+  String pointsCount(int count);
+
+  /// No description provided for @noChildrenAddedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No children added yet'**
+  String get noChildrenAddedYet;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcome;
+
+  /// No description provided for @buildingWonderfulGeneration.
+  ///
+  /// In en, this message translates to:
+  /// **'You are building a wonderful generation'**
+  String get buildingWonderfulGeneration;
 }
 
 class _AppLocalizationsDelegate

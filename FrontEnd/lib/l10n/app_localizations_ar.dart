@@ -479,4 +479,55 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get logoutFailed => 'تعذّر تسجيل الخروج. حاول مرة أخرى.';
+
+  @override
+  String get failedToLoadDashboard => 'تعذّر تحميل لوحة التحكم.';
+
+  @override
+  String get failedToRefreshDashboard => 'تعذّر تحديث لوحة التحكم.';
+
+  @override
+  String get failedToDeleteChild => 'تعذّر حذف الطفل. حاول مرة أخرى.';
+
+  @override
+  String get childNotFoundForFamily =>
+      'لم يتم العثور على الطفل، أو أنه لم يعد مرتبطًا بهذه الأسرة.';
+
+  @override
+  String get parentAccountNotFound => 'تعذّر العثور على حساب ولي الأمر.';
+
+  @override
+  String get parentAccessRequired => 'هذا الإجراء متاح لحساب ولي الأمر فقط.';
+
+  @override
+  String get failedToDeleteChildRelatedData =>
+      'تعذّر حذف الطفل والبيانات المرتبطة به.';
+
+  @override
+  String get yourChildren => 'أطفالك';
+
+  @override
+  String get addChild => 'إضافة طفل';
+
+  @override
+  String get reviewTasks => 'مراجعة المهام';
+
+  @override
+  String childAgeYears(int age) {
+    return '$age سنوات';
+  }
+
+  @override
+  String pointsCount(int count) {
+    return '$count نقطة';
+  }
+
+  @override
+  String get noChildrenAddedYet => 'لا يوجد أطفال بعد';
+
+  @override
+  String get welcome => 'مرحبًا';
+
+  @override
+  String get buildingWonderfulGeneration => 'أنتِ تبنين جيلاً رائعًا';
 }

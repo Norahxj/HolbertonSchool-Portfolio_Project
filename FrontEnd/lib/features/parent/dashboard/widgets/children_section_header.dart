@@ -3,18 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class ChildrenSectionHeader extends StatelessWidget {
-  final String title;
-  final bool isArabic;
   final int pendingReviewCount;
   final VoidCallback onAddChild;
   final VoidCallback onReviewTasks;
 
   const ChildrenSectionHeader({
     super.key,
-    required this.title,
-    required this.isArabic,
     required this.pendingReviewCount,
     required this.onAddChild,
     required this.onReviewTasks,
@@ -23,21 +20,22 @@ class ChildrenSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: AppTextStyles.arabicTitle),
+        Text(context.l10n.yourChildren, style: AppTextStyles.arabicTitle),
+
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _HeaderActionButton(
-              tooltip: isArabic ? 'إضافة طفل' : 'Add child',
+              tooltip: context.l10n.addChild,
               icon: Icons.add_rounded,
               onTap: onAddChild,
             ),
+
             const SizedBox(width: AppSpacing.sm),
+
             _ReviewTasksHeaderButton(
-              isArabic: isArabic,
               count: pendingReviewCount,
               onTap: onReviewTasks,
             ),
@@ -81,20 +79,17 @@ class _HeaderActionButton extends StatelessWidget {
 }
 
 class _ReviewTasksHeaderButton extends StatelessWidget {
-  final bool isArabic;
   final int count;
   final VoidCallback onTap;
 
-  const _ReviewTasksHeaderButton({
-    required this.isArabic,
-    required this.count,
-    required this.onTap,
-  });
+  const _ReviewTasksHeaderButton({required this.count, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
     return Tooltip(
-      message: isArabic ? 'مراجعة المهام' : 'Review tasks',
+      message: context.l10n.reviewTasks,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -115,11 +110,12 @@ class _ReviewTasksHeaderButton extends StatelessWidget {
               ),
             ),
           ),
+
           if (count > 0)
             Positioned(
               top: -2,
-              right: isArabic ? null : -2,
-              left: isArabic ? -2 : null,
+              right: isRtl ? null : -2,
+              left: isRtl ? -2 : null,
               child: Container(
                 width: 11,
                 height: 11,

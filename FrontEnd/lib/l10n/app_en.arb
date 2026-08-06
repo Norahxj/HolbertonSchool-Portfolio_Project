@@ -217,5 +217,34 @@
 "helpAndSupport": "Help and support",
 "soon": "Soon",
 "logOut": "Log out",
-"logoutFailed": "Unable to log out. Please try again."
+"logoutFailed": "Unable to log out. Please try again.",
+"failedToLoadDashboard": "Failed to load the dashboard.",
+"failedToRefreshDashboard": "Failed to refresh the dashboard.",
+"failedToDeleteChild": "Failed to delete the child. Please try again.",
+"childNotFoundForFamily": "The child was not found or is no longer linked to this family.",
+"parentAccountNotFound": "The parent account could not be found.",
+"parentAccessRequired": "This action is available to parent accounts only.",
+"failedToDeleteChildRelatedData": "Failed to delete the child and the related data.",
+"yourChildren": "Your children",
+"addChild": "Add child",
+"reviewTasks": "Review tasks",
+"childAgeYears": "{age} years old",
+"@childAgeYears": {
+  "placeholders": {
+    "age": {
+      "type": "int"
+    }
+  }
+},
+"pointsCount": "{count} points",
+"@pointsCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"noChildrenAddedYet": "No children added yet",
+"welcome": "Welcome",
+"buildingWonderfulGeneration": "You are building a wonderful generation"
 }
