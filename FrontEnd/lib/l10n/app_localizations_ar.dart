@@ -354,4 +354,99 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get moodStar => 'نجم';
+
+  @override
+  String childPointsHistory(String childName) {
+    return 'سجل نقاط $childName';
+  }
+
+  @override
+  String taskCompletedPointsHistory(String taskTitle) {
+    return 'إكمال مهمة: $taskTitle';
+  }
+
+  @override
+  String wishAchievedPointsHistory(String wishName) {
+    return 'تحقيق أمنية: $wishName';
+  }
+
+  @override
+  String get pointsUpdate => 'تحديث في النقاط';
+
+  @override
+  String get noPointsHistoryYet => 'لا يوجد سجل نقاط حتى الآن';
+
+  @override
+  String get pointsHistoryDescription => 'ستظهر هنا النقاط المكتسبة والمخصومة.';
+
+  @override
+  String get failedToLoadPointsHistory => 'تعذّر تحميل سجل النقاط.';
+
+  @override
+  String get childrenWishes => 'أمنيات الأطفال';
+
+  @override
+  String get childrenWishesSubtitle =>
+      'راجع أمنية طفلك وحدد عدد نقاط نور التي يحتاج لجمعها حتى يتمكن من تحقيقها';
+
+  @override
+  String get failedToRefreshWishes => 'تعذّر تحديث الأمنيات';
+
+  @override
+  String get failedToApproveWish => 'تعذّرت الموافقة على الأمنية';
+
+  @override
+  String get failedToRejectWish => 'تعذّر رفض الأمنية';
+
+  @override
+  String get wishApprovalExplanation =>
+      'بعد اعتماد الأمنية، يبدأ الطفل بجمع نقاط نور حتى يصل إلى الهدف المحدد.';
+
+  @override
+  String get pendingApproval => 'بانتظار الموافقة';
+
+  @override
+  String get pendingWishSubtitle =>
+      'طلب هذه الأمنية وينتظر منك تحديد هدف النقاط';
+
+  @override
+  String get pointsGoal => 'هدف النقاط';
+
+  @override
+  String get convertWishExplanation =>
+      'بعد تحويل الأمنية إلى هدف، يبدأ الطفل بجمع هذا العدد من نقاط نور لتحقيقها.';
+
+  @override
+  String get pointsMustBePositive => 'يجب أن تكون النقاط أكبر من صفر';
+
+  @override
+  String get convertToGoal => 'تحويل إلى هدف';
+
+  @override
+  String get reject => 'رفض';
+
+  @override
+  String get goalCreated => 'هدف معتمد';
+
+  @override
+  String get wishApprovedSubtitle => 'تمت الموافقة على هذه الأمنية';
+
+  @override
+  String get selectedPointsGoal => 'هدف النقاط المحدد';
+
+  @override
+  String get wishAchieved => 'تم تحقيقها';
+
+  @override
+  String get wishAchievedSuccessfully => 'تم تحقيق هذه الأمنية بنجاح 🎉';
+
+  @override
+  String get completedNoorPointsGoal => 'أكمل الطفل هدف نقاط نور';
+
+  @override
+  String get failedToLoadWishes =>
+      'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.';
+
+  @override
+  String get noWishesYet => 'لا توجد أمنيات بعد.';
 }

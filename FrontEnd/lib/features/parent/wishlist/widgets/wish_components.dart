@@ -19,10 +19,15 @@ class StatusTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius:
+            BorderRadius.circular(16),
       ),
       child: Text(
         label,
@@ -40,36 +45,41 @@ class WishHeader extends StatelessWidget {
   final String childName;
   final String wishTitle;
   final int avatarIndex;
-  final bool isArabic;
 
   const WishHeader({
     super.key,
     required this.childName,
     required this.wishTitle,
     required this.avatarIndex,
-    required this.isArabic,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       children: [
-        ChildAvatar(avatarIndex: avatarIndex, size: 40),
+        ChildAvatar(
+          avatarIndex: avatarIndex,
+          size: 40,
+        ),
 
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(
+          width: AppSpacing.sm,
+        ),
 
         Flexible(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
               Text(
                 childName,
                 textAlign: TextAlign.start,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  fontWeight:
+                      FontWeight.bold,
+                  color: AppColors
+                      .textPrimary,
                 ),
               ),
 
@@ -80,7 +90,8 @@ class WishHeader extends StatelessWidget {
                 textAlign: TextAlign.start,
                 style: const TextStyle(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: AppColors
+                      .textSecondary,
                 ),
               ),
             ],
@@ -111,13 +122,18 @@ class StepperButton extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: isFilled ? AppColors.primary : AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(10),
+          color: isFilled
+              ? AppColors.primary
+              : AppColors.primaryLight,
+          borderRadius:
+              BorderRadius.circular(10),
         ),
         child: Icon(
           icon,
           size: 16,
-          color: isFilled ? Colors.white : AppColors.primaryDark,
+          color: isFilled
+              ? Colors.white
+              : AppColors.primaryDark,
         ),
       ),
     );

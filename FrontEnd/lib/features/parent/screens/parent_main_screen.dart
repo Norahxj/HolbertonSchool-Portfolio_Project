@@ -140,7 +140,7 @@ class _ParentNavigationView extends StatelessWidget {
           : const SizedBox.shrink(),
 
       navigation.isLoaded(3)
-          ? WishlistApprovalScreen(isArabic: isArabic)
+          ? const WishlistApprovalScreen()
           : const SizedBox.shrink(),
 
       navigation.isLoaded(4)

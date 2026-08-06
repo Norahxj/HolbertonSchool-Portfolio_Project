@@ -2,34 +2,32 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/points_history_model.dart';
 
 class PointsHistoryCard extends StatelessWidget {
   final PointsHistoryModel item;
-  final bool isArabic;
 
-  const PointsHistoryCard({
-    super.key,
-    required this.item,
-    required this.isArabic,
-  });
+  const PointsHistoryCard({super.key, required this.item});
 
   bool get isAdded => item.points >= 0;
 
-  String get title {
+  String _title(BuildContext context) {
+    final l10n = context.l10n;
+
     if (item.taskAssignment != null) {
       final taskTitle = item.taskAssignment!.task.title;
 
-      return isArabic ? 'إكمال مهمة: $taskTitle' : 'Task completed: $taskTitle';
+      return l10n.taskCompletedPointsHistory(taskTitle);
     }
 
     if (item.wishlist != null) {
       final wishName = item.wishlist!.name;
 
-      return isArabic ? 'تحقيق أمنية: $wishName' : 'Wish achieved: $wishName';
+      return l10n.wishAchievedPointsHistory(wishName);
     }
 
-    return isArabic ? 'تحديث في النقاط' : 'Points update';
+    return l10n.pointsUpdate;
   }
 
   String get formattedDate {
@@ -73,13 +71,11 @@ class PointsHistoryCard extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment: isArabic
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  _title(context),
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -105,6 +101,7 @@ class PointsHistoryCard extends StatelessWidget {
 
           Text(
             '${isAdded ? '+' : ''}${item.points}',
+            textDirection: TextDirection.ltr,
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,

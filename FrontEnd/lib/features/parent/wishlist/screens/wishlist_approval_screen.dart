@@ -5,17 +5,18 @@ import '../controllers/wishlist_approval_controller.dart';
 import '../widgets/wishlist_approval_view.dart';
 
 class WishlistApprovalScreen extends StatelessWidget {
-  final bool isArabic;
-
-  const WishlistApprovalScreen({super.key, required this.isArabic});
+  const WishlistApprovalScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) {
-        return WishlistApprovalController()..loadWishes();
+        return WishlistApprovalController()
+          ..loadWishes();
       },
-      child: WishlistApprovalView(isArabic: isArabic),
+      child: const WishlistApprovalView(),
     );
   }
 }

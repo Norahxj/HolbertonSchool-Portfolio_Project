@@ -158,5 +158,54 @@
 "moodGreat": "Great",
 "moodLoved": "Loved",
 "moodStrong": "Strong",
-"moodStar": "Star"
+"moodStar": "Star",
+"childPointsHistory": "{childName}'s Points History",
+"@childPointsHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"taskCompletedPointsHistory": "Task completed: {taskTitle}",
+"@taskCompletedPointsHistory": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"wishAchievedPointsHistory": "Wish achieved: {wishName}",
+"@wishAchievedPointsHistory": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"pointsUpdate": "Points update",
+"noPointsHistoryYet": "No points history yet",
+"pointsHistoryDescription": "Earned and deducted points will appear here.",
+"failedToLoadPointsHistory": "Could not load points history.",
+"childrenWishes": "Children’s Wishes",
+"childrenWishesSubtitle": "Review your child’s wish and set how many Noor points they need to collect to achieve it",
+"failedToRefreshWishes": "Unable to refresh wishes",
+"failedToApproveWish": "Unable to approve the wish",
+"failedToRejectWish": "Unable to reject the wish",
+"wishApprovalExplanation": "After the wish is approved, the child starts collecting Noor points until reaching the selected goal.",
+"pendingApproval": "Pending Approval",
+"pendingWishSubtitle": "Requested this wish and is waiting for you to set the points goal",
+"pointsGoal": "Points Goal",
+"convertWishExplanation": "After converting the wish into a goal, the child starts collecting these Noor points to achieve it.",
+"pointsMustBePositive": "Points must be greater than zero",
+"convertToGoal": "Convert to Goal",
+"reject": "Reject",
+"goalCreated": "Goal Created",
+"wishApprovedSubtitle": "This wish has been approved",
+"selectedPointsGoal": "Selected Points Goal",
+"wishAchieved": "Achieved",
+"wishAchievedSuccessfully": "This wish was achieved successfully 🎉",
+"completedNoorPointsGoal": "The child completed the Noor Points goal",
+"failedToLoadWishes": "An error occurred while loading wishes. Please try again.",
+"noWishesYet": "No wishes yet."
 }

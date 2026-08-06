@@ -158,5 +158,54 @@
 "moodGreat": "رائع",
 "moodLoved": "محبوب",
 "moodStrong": "قوي",
-"moodStar": "نجم"
+"moodStar": "نجم",
+"childPointsHistory": "سجل نقاط {childName}",
+"@childPointsHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"taskCompletedPointsHistory": "إكمال مهمة: {taskTitle}",
+"@taskCompletedPointsHistory": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"wishAchievedPointsHistory": "تحقيق أمنية: {wishName}",
+"@wishAchievedPointsHistory": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"pointsUpdate": "تحديث في النقاط",
+"noPointsHistoryYet": "لا يوجد سجل نقاط حتى الآن",
+"pointsHistoryDescription": "ستظهر هنا النقاط المكتسبة والمخصومة.",
+"failedToLoadPointsHistory": "تعذّر تحميل سجل النقاط.",
+"childrenWishes": "أمنيات الأطفال",
+"childrenWishesSubtitle": "راجع أمنية طفلك وحدد عدد نقاط نور التي يحتاج لجمعها حتى يتمكن من تحقيقها",
+"failedToRefreshWishes": "تعذّر تحديث الأمنيات",
+"failedToApproveWish": "تعذّرت الموافقة على الأمنية",
+"failedToRejectWish": "تعذّر رفض الأمنية",
+"wishApprovalExplanation": "بعد اعتماد الأمنية، يبدأ الطفل بجمع نقاط نور حتى يصل إلى الهدف المحدد.",
+"pendingApproval": "بانتظار الموافقة",
+"pendingWishSubtitle": "طلب هذه الأمنية وينتظر منك تحديد هدف النقاط",
+"pointsGoal": "هدف النقاط",
+"convertWishExplanation": "بعد تحويل الأمنية إلى هدف، يبدأ الطفل بجمع هذا العدد من نقاط نور لتحقيقها.",
+"pointsMustBePositive": "يجب أن تكون النقاط أكبر من صفر",
+"convertToGoal": "تحويل إلى هدف",
+"reject": "رفض",
+"goalCreated": "هدف معتمد",
+"wishApprovedSubtitle": "تمت الموافقة على هذه الأمنية",
+"selectedPointsGoal": "هدف النقاط المحدد",
+"wishAchieved": "تم تحقيقها",
+"wishAchievedSuccessfully": "تم تحقيق هذه الأمنية بنجاح 🎉",
+"completedNoorPointsGoal": "أكمل الطفل هدف نقاط نور",
+"failedToLoadWishes": "حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.",
+"noWishesYet": "لا توجد أمنيات بعد."
 }

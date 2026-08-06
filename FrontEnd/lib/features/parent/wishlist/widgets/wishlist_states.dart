@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class WishlistErrorState extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onRetry;
 
   const WishlistErrorState({
     super.key,
-    required this.isArabic,
     required this.onRetry,
   });
 
@@ -18,16 +18,22 @@ class WishlistErrorState extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            isArabic
-                ? 'حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.'
-                : 'An error occurred while loading wishes. Please try again.',
+            context.l10n.failedToLoadWishes,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.error),
+            style: const TextStyle(
+              color: AppColors.error,
+            ),
           ),
-          const SizedBox(height: 12),
+
+          const SizedBox(
+            height: AppSpacing.md,
+          ),
+
           ElevatedButton(
             onPressed: onRetry,
-            child: Text(isArabic ? 'إعادة المحاولة' : 'Try Again'),
+            child: Text(
+              context.l10n.retry,
+            ),
           ),
         ],
       ),
@@ -36,9 +42,9 @@ class WishlistErrorState extends StatelessWidget {
 }
 
 class WishlistEmptyState extends StatelessWidget {
-  final bool isArabic;
-
-  const WishlistEmptyState({super.key, required this.isArabic});
+  const WishlistEmptyState({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +52,13 @@ class WishlistEmptyState extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Text(
-          isArabic ? 'لا توجد أمنيات بعد.' : 'No wishes yet.',
+          context.l10n.noWishesYet,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
+          style: const TextStyle(
+            fontSize: 16,
+            color:
+                AppColors.textSecondary,
+          ),
         ),
       ),
     );

@@ -7,17 +7,17 @@ import '../widgets/points_history_view.dart';
 class PointsHistoryScreen extends StatefulWidget {
   final String childId;
   final String childName;
-  final bool isArabic;
 
   const PointsHistoryScreen({
     super.key,
     required this.childId,
     required this.childName,
-    required this.isArabic,
   });
 
   @override
-  State<PointsHistoryScreen> createState() => _PointsHistoryScreenState();
+  State<PointsHistoryScreen> createState() {
+    return _PointsHistoryScreenState();
+  }
 }
 
 class _PointsHistoryScreenState extends State<PointsHistoryScreen> {
@@ -43,7 +43,6 @@ class _PointsHistoryScreenState extends State<PointsHistoryScreen> {
       value: _controller,
       child: PointsHistoryView(
         childName: widget.childName,
-        isArabic: widget.isArabic,
         onBack: () {
           Navigator.pop(context);
         },

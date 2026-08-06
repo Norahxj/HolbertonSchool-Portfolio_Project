@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class PointsHistoryEmptyState extends StatelessWidget {
-  final bool isArabic;
-
-  const PointsHistoryEmptyState({super.key, required this.isArabic});
+  const PointsHistoryEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -19,7 +20,7 @@ class PointsHistoryEmptyState extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
 
           Text(
-            isArabic ? 'لا يوجد سجل نقاط حتى الآن' : 'No points history yet',
+            l10n.noPointsHistoryYet,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 16,
@@ -31,9 +32,7 @@ class PointsHistoryEmptyState extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           Text(
-            isArabic
-                ? 'ستظهر هنا النقاط المكتسبة والمخصومة.'
-                : 'Earned and deducted points will appear here.',
+            l10n.pointsHistoryDescription,
             textAlign: TextAlign.center,
             style: const TextStyle(color: AppColors.textSecondary),
           ),

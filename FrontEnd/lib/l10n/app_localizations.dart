@@ -757,6 +757,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Star'**
   String get moodStar;
+
+  /// No description provided for @childPointsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'{childName}\'s Points History'**
+  String childPointsHistory(String childName);
+
+  /// No description provided for @taskCompletedPointsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Task completed: {taskTitle}'**
+  String taskCompletedPointsHistory(String taskTitle);
+
+  /// No description provided for @wishAchievedPointsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Wish achieved: {wishName}'**
+  String wishAchievedPointsHistory(String wishName);
+
+  /// No description provided for @pointsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Points update'**
+  String get pointsUpdate;
+
+  /// No description provided for @noPointsHistoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No points history yet'**
+  String get noPointsHistoryYet;
+
+  /// No description provided for @pointsHistoryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned and deducted points will appear here.'**
+  String get pointsHistoryDescription;
+
+  /// No description provided for @failedToLoadPointsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load points history.'**
+  String get failedToLoadPointsHistory;
+
+  /// No description provided for @childrenWishes.
+  ///
+  /// In en, this message translates to:
+  /// **'Children’s Wishes'**
+  String get childrenWishes;
+
+  /// No description provided for @childrenWishesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review your child’s wish and set how many Noor points they need to collect to achieve it'**
+  String get childrenWishesSubtitle;
+
+  /// No description provided for @failedToRefreshWishes.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to refresh wishes'**
+  String get failedToRefreshWishes;
+
+  /// No description provided for @failedToApproveWish.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to approve the wish'**
+  String get failedToApproveWish;
+
+  /// No description provided for @failedToRejectWish.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to reject the wish'**
+  String get failedToRejectWish;
+
+  /// No description provided for @wishApprovalExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'After the wish is approved, the child starts collecting Noor points until reaching the selected goal.'**
+  String get wishApprovalExplanation;
+
+  /// No description provided for @pendingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Approval'**
+  String get pendingApproval;
+
+  /// No description provided for @pendingWishSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested this wish and is waiting for you to set the points goal'**
+  String get pendingWishSubtitle;
+
+  /// No description provided for @pointsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Points Goal'**
+  String get pointsGoal;
+
+  /// No description provided for @convertWishExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'After converting the wish into a goal, the child starts collecting these Noor points to achieve it.'**
+  String get convertWishExplanation;
+
+  /// No description provided for @pointsMustBePositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Points must be greater than zero'**
+  String get pointsMustBePositive;
+
+  /// No description provided for @convertToGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to Goal'**
+  String get convertToGoal;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// No description provided for @goalCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal Created'**
+  String get goalCreated;
+
+  /// No description provided for @wishApprovedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This wish has been approved'**
+  String get wishApprovedSubtitle;
+
+  /// No description provided for @selectedPointsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Points Goal'**
+  String get selectedPointsGoal;
+
+  /// No description provided for @wishAchieved.
+  ///
+  /// In en, this message translates to:
+  /// **'Achieved'**
+  String get wishAchieved;
+
+  /// No description provided for @wishAchievedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'This wish was achieved successfully 🎉'**
+  String get wishAchievedSuccessfully;
+
+  /// No description provided for @completedNoorPointsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'The child completed the Noor Points goal'**
+  String get completedNoorPointsGoal;
+
+  /// No description provided for @failedToLoadWishes.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while loading wishes. Please try again.'**
+  String get failedToLoadWishes;
+
+  /// No description provided for @noWishesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No wishes yet.'**
+  String get noWishesYet;
 }
 
 class _AppLocalizationsDelegate

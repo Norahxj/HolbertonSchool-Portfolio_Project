@@ -243,7 +243,6 @@ class ParentChildDetailsView extends StatelessWidget {
                             builder: (_) => PointsHistoryScreen(
                               childId: item.child.id,
                               childName: item.child.name,
-                              isArabic: isArabic,
                             ),
                           ),
                         );

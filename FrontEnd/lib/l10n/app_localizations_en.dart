@@ -365,4 +365,102 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodStar => 'Star';
+
+  @override
+  String childPointsHistory(String childName) {
+    return '$childName\'s Points History';
+  }
+
+  @override
+  String taskCompletedPointsHistory(String taskTitle) {
+    return 'Task completed: $taskTitle';
+  }
+
+  @override
+  String wishAchievedPointsHistory(String wishName) {
+    return 'Wish achieved: $wishName';
+  }
+
+  @override
+  String get pointsUpdate => 'Points update';
+
+  @override
+  String get noPointsHistoryYet => 'No points history yet';
+
+  @override
+  String get pointsHistoryDescription =>
+      'Earned and deducted points will appear here.';
+
+  @override
+  String get failedToLoadPointsHistory => 'Could not load points history.';
+
+  @override
+  String get childrenWishes => 'Children’s Wishes';
+
+  @override
+  String get childrenWishesSubtitle =>
+      'Review your child’s wish and set how many Noor points they need to collect to achieve it';
+
+  @override
+  String get failedToRefreshWishes => 'Unable to refresh wishes';
+
+  @override
+  String get failedToApproveWish => 'Unable to approve the wish';
+
+  @override
+  String get failedToRejectWish => 'Unable to reject the wish';
+
+  @override
+  String get wishApprovalExplanation =>
+      'After the wish is approved, the child starts collecting Noor points until reaching the selected goal.';
+
+  @override
+  String get pendingApproval => 'Pending Approval';
+
+  @override
+  String get pendingWishSubtitle =>
+      'Requested this wish and is waiting for you to set the points goal';
+
+  @override
+  String get pointsGoal => 'Points Goal';
+
+  @override
+  String get convertWishExplanation =>
+      'After converting the wish into a goal, the child starts collecting these Noor points to achieve it.';
+
+  @override
+  String get pointsMustBePositive => 'Points must be greater than zero';
+
+  @override
+  String get convertToGoal => 'Convert to Goal';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get goalCreated => 'Goal Created';
+
+  @override
+  String get wishApprovedSubtitle => 'This wish has been approved';
+
+  @override
+  String get selectedPointsGoal => 'Selected Points Goal';
+
+  @override
+  String get wishAchieved => 'Achieved';
+
+  @override
+  String get wishAchievedSuccessfully =>
+      'This wish was achieved successfully 🎉';
+
+  @override
+  String get completedNoorPointsGoal =>
+      'The child completed the Noor Points goal';
+
+  @override
+  String get failedToLoadWishes =>
+      'An error occurred while loading wishes. Please try again.';
+
+  @override
+  String get noWishesYet => 'No wishes yet.';
 }
