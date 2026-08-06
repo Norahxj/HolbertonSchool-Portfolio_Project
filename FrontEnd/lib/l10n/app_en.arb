@@ -503,5 +503,10 @@
 "guardianTypeAlreadyExists": "A parent with the same guardian type already exists in the family.",
 "invitationAlreadyPending": "An invitation is already pending for this email.",
 "familyInformationNotFound": "Unable to find the family information.",
-"invalidEnteredData": "Please check the entered information."
+"invalidEnteredData": "Please check the entered information.",
+"parentNavigationTasks": "Tasks",
+"parentNavigationWishes": "Wishes",
+"parentNavigationHome": "Home",
+"parentNavigationRewards": "Rewards",
+"parentNavigationMore": "More"
 }

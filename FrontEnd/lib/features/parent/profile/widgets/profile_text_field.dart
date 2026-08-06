@@ -5,39 +5,31 @@ import '../../../../core/constants/app_spacing.dart';
 
 class ProfileTextField extends StatelessWidget {
   final TextEditingController controller;
-  final IconData? trailingIcon;
+  final IconData icon;
   final TextInputType keyboardType;
   final TextDirection? textDirection;
+  final TextCapitalization textCapitalization;
+  final Iterable<String>? autofillHints;
 
   const ProfileTextField({
     super.key,
     required this.controller,
-    this.trailingIcon,
+    required this.icon,
     this.keyboardType = TextInputType.text,
     this.textDirection,
+    this.textCapitalization = TextCapitalization.none,
+    this.autofillHints,
   });
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTextDirection =
-        textDirection ?? Directionality.of(context);
-
-    final effectiveTextAlign =
-        effectiveTextDirection == TextDirection.rtl
-        ? TextAlign.right
-        : TextAlign.left;
-
     return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-      ),
+      constraints: const BoxConstraints(minHeight: 56),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.inputBackground,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -46,39 +38,25 @@ class ProfileTextField extends StatelessWidget {
             size: 16,
             color: AppColors.textSecondary,
           ),
-
-          const SizedBox(
-            width: AppSpacing.sm,
-          ),
-
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: TextField(
               controller: controller,
               keyboardType: keyboardType,
-              textDirection: effectiveTextDirection,
-              textAlign: effectiveTextAlign,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-              ),
+              textDirection: textDirection,
+              textAlign: TextAlign.start,
+              textCapitalization: textCapitalization,
+              autofillHints: autofillHints,
+              style: const TextStyle(color: AppColors.textPrimary),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.zero,
+                contentPadding: EdgeInsets.symmetric(vertical: AppSpacing.md),
               ),
             ),
           ),
-
-          if (trailingIcon != null) ...[
-            const SizedBox(
-              width: AppSpacing.sm,
-            ),
-
-            Icon(
-              trailingIcon,
-              size: 18,
-              color: AppColors.textSecondary,
-            ),
-          ],
+          const SizedBox(width: AppSpacing.sm),
+          Icon(icon, size: 18, color: AppColors.textSecondary),
         ],
       ),
     );

@@ -1048,4 +1048,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidEnteredData => 'Please check the entered information.';
+
+  @override
+  String get parentNavigationTasks => 'Tasks';
+
+  @override
+  String get parentNavigationWishes => 'Wishes';
+
+  @override
+  String get parentNavigationHome => 'Home';
+
+  @override
+  String get parentNavigationRewards => 'Rewards';
+
+  @override
+  String get parentNavigationMore => 'More';
 }

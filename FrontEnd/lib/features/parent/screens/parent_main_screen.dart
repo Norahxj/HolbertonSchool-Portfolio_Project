@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/localization/localization_extension.dart';
 import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
 import '../add_task/screens/add_task_screen.dart';
@@ -22,9 +23,7 @@ class ParentMainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) {
-        return AppNavigationController(initialIndex: initialIndex);
-      },
+      create: (_) => AppNavigationController(initialIndex: initialIndex),
       child: _ParentNavigationView(onLoggedOut: onLoggedOut),
     );
   }
@@ -35,48 +34,45 @@ class _ParentNavigationView extends StatelessWidget {
 
   const _ParentNavigationView({required this.onLoggedOut});
 
-  static const List<AppNavigationItem> _navigationItems = [
-    AppNavigationItem(
-      index: 0,
-      icon: Icons.list_alt_outlined,
-      selectedIcon: Icons.list_alt,
-      arabicLabel: 'المهام',
-      englishLabel: 'Tasks',
-    ),
-    AppNavigationItem(
-      index: 3,
-      icon: Icons.favorite_border_rounded,
-      selectedIcon: Icons.favorite_rounded,
-      arabicLabel: 'الأمنيات',
-      englishLabel: 'Wishes',
-    ),
-    AppNavigationItem(
-      index: 2,
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home_rounded,
-      arabicLabel: 'الرئيسية',
-      englishLabel: 'Home',
-    ),
-    AppNavigationItem(
-      index: 1,
-      icon: Icons.card_giftcard_outlined,
-      selectedIcon: Icons.card_giftcard_rounded,
-      arabicLabel: 'المكافآت',
-      englishLabel: 'Rewards',
-    ),
-    AppNavigationItem(
-      index: 4,
-      icon: Icons.more_horiz,
-      selectedIcon: Icons.more_horiz,
-      arabicLabel: 'المزيد',
-      englishLabel: 'More',
-    ),
-  ];
+  List<AppNavigationItem> _buildNavigationItems(BuildContext context) {
+    final l10n = context.l10n;
 
-  @override
-  Widget build(BuildContext context) {
-    final navigation = context.watch<AppNavigationController>();
-    final pages = <Widget>[
+    return [
+      AppNavigationItem(
+        index: 0,
+        icon: Icons.list_alt_outlined,
+        selectedIcon: Icons.list_alt,
+        label: l10n.parentNavigationTasks,
+      ),
+      AppNavigationItem(
+        index: 3,
+        icon: Icons.favorite_border_rounded,
+        selectedIcon: Icons.favorite_rounded,
+        label: l10n.parentNavigationWishes,
+      ),
+      AppNavigationItem(
+        index: 2,
+        icon: Icons.home_outlined,
+        selectedIcon: Icons.home_rounded,
+        label: l10n.parentNavigationHome,
+      ),
+      AppNavigationItem(
+        index: 1,
+        icon: Icons.card_giftcard_outlined,
+        selectedIcon: Icons.card_giftcard_rounded,
+        label: l10n.parentNavigationRewards,
+      ),
+      AppNavigationItem(
+        index: 4,
+        icon: Icons.more_horiz,
+        selectedIcon: Icons.more_horiz,
+        label: l10n.parentNavigationMore,
+      ),
+    ];
+  }
+
+  List<Widget> _buildPages(AppNavigationController navigation) {
+    return [
       navigation.isLoaded(0)
           ? AddTaskScreen(
               resetVersion: navigation.reselectionVersionFor(0),
@@ -86,30 +82,33 @@ class _ParentNavigationView extends StatelessWidget {
               },
             )
           : const SizedBox.shrink(),
-
       navigation.isLoaded(1)
           ? RewardManagementScreen(childrenVersion: navigation.childrenVersion)
           : const SizedBox.shrink(),
-
       navigation.isLoaded(2)
           ? ParentDashboardScreen(
               onChildrenChanged: navigation.notifyChildrenChanged,
             )
           : const SizedBox.shrink(),
-
       navigation.isLoaded(3)
           ? const WishlistApprovalScreen()
           : const SizedBox.shrink(),
-
       navigation.isLoaded(4)
           ? MoreSettingsScreen(onLoggedOut: onLoggedOut)
           : const SizedBox.shrink(),
     ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final navigation = context.watch<AppNavigationController>();
+    final navigationItems = _buildNavigationItems(context);
+    final pages = _buildPages(navigation);
 
     return Scaffold(
       body: IndexedStack(index: navigation.currentIndex, children: pages),
       bottomNavigationBar: AppBottomNavigation(
-        items: _navigationItems,
+        items: navigationItems,
         currentIndex: navigation.currentIndex,
         onTap: navigation.selectTab,
       ),

@@ -1017,4 +1017,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invalidEnteredData => 'تأكدي من صحة البيانات المدخلة.';
+
+  @override
+  String get parentNavigationTasks => 'المهام';
+
+  @override
+  String get parentNavigationWishes => 'الأمنيات';
+
+  @override
+  String get parentNavigationHome => 'الرئيسية';
+
+  @override
+  String get parentNavigationRewards => 'المكافآت';
+
+  @override
+  String get parentNavigationMore => 'المزيد';
 }

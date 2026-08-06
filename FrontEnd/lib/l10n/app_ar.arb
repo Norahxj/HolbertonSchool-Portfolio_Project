@@ -503,6 +503,11 @@
 "guardianTypeAlreadyExists": "يوجد بالفعل ولي أمر من النوع نفسه في العائلة.",
 "invitationAlreadyPending": "توجد دعوة معلّقة لهذا البريد بالفعل.",
 "familyInformationNotFound": "تعذّر العثور على بيانات العائلة.",
-"invalidEnteredData": "تأكدي من صحة البيانات المدخلة."
+"invalidEnteredData": "تأكدي من صحة البيانات المدخلة.",
+"parentNavigationTasks": "المهام",
+"parentNavigationWishes": "الأمنيات",
+"parentNavigationHome": "الرئيسية",
+"parentNavigationRewards": "المكافآت",
+"parentNavigationMore": "المزيد"
 
 }

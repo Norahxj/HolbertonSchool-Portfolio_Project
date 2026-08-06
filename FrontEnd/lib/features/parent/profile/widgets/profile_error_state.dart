@@ -22,21 +22,23 @@ class ProfileErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 48,
+              color: AppColors.error,
+            ),
+            const SizedBox(height: AppSpacing.md),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.error,
-              ),
+              style: const TextStyle(color: AppColors.error),
             ),
-
-            const SizedBox(height: AppSpacing.sm),
-
+            const SizedBox(height: AppSpacing.md),
             ElevatedButton(
-              onPressed: onRetry,
-              child: Text(
-                context.l10n.tryAgain,
-              ),
+              onPressed: () {
+                onRetry();
+              },
+              child: Text(context.l10n.tryAgain),
             ),
           ],
         ),

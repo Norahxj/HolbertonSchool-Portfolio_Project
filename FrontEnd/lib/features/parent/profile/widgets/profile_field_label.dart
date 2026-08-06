@@ -10,10 +10,10 @@ class ProfileFieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: AlignmentDirectional.centerStart,
       child: Text(
         text,
-        textDirection: TextDirection.rtl,
+        textAlign: TextAlign.start,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,

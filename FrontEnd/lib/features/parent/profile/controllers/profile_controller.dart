@@ -1,41 +1,18 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../models/user_model.dart';
 import '../../../../services/user_api_service.dart';
-
-enum ProfileErrorCode {
-  loadFailed,
-  saveFailed,
-  unexpectedSaveError,
-  firstNameTooShort,
-  lastNameTooShort,
-  invalidEmail,
-  phoneRequired,
-  emailAlreadyUsed,
-  phoneAlreadyUsed,
-}
-
-class ProfileSaveResult {
-  final UserModel? user;
-  final ProfileErrorCode? errorCode;
-  final String? backendMessage;
-
-  const ProfileSaveResult({
-    this.user,
-    this.errorCode,
-    this.backendMessage,
-  });
-
-  bool get isSuccess => user != null;
-}
+import '../models/profile_error_code.dart';
+import '../models/profile_save_result.dart';
+import '../utils/profile_error_mapper.dart';
+import '../utils/profile_validator.dart';
 
 class ProfileController extends ChangeNotifier {
   final UserApiService _userApiService;
 
-  ProfileController({
-    UserApiService? userApiService,
-  }) : _userApiService = userApiService ?? UserApiService();
+  ProfileController({UserApiService? userApiService})
+    : _userApiService = userApiService ?? UserApiService();
 
   UserModel? _user;
 
@@ -58,18 +35,19 @@ class ProfileController extends ChangeNotifier {
   String? get pageBackendMessage => _pageBackendMessage;
 
   Future<UserModel?> loadUser() async {
-    _isLoading = true;
-    _pageErrorCode = null;
-    _pageBackendMessage = null;
+    if (_isLoading && _user != null) {
+      return _user;
+    }
 
-    notifyListeners();
+    _setLoading(true);
+    _clearPageError();
 
     try {
-      final user = await _userApiService.getCurrentUser();
+      final loadedUser = await _userApiService.getCurrentUser();
 
-      _user = user;
+      _user = loadedUser;
 
-      return user;
+      return loadedUser;
     } on DioException catch (error) {
       debugPrint(
         'Loading profile failed: '
@@ -77,19 +55,18 @@ class ProfileController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      _pageBackendMessage = _readUnknownBackendMessage(error);
       _pageErrorCode = ProfileErrorCode.loadFailed;
+      _pageBackendMessage = ProfileErrorMapper.readUnknownBackendMessage(error);
 
       return null;
-    } catch (error) {
-      debugPrint('Loading profile failed: $error');
+    } catch (error, stackTrace) {
+      debugPrint('Loading profile failed: $error\n$stackTrace');
 
       _pageErrorCode = ProfileErrorCode.loadFailed;
 
       return null;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
@@ -108,7 +85,7 @@ class ProfileController extends ChangeNotifier {
     final cleanEmail = email.trim().toLowerCase();
     final cleanPhone = phone.trim();
 
-    final validationError = _validateFields(
+    final validationError = ProfileValidator.validate(
       firstName: cleanFirstName,
       lastName: cleanLastName,
       email: cleanEmail,
@@ -116,13 +93,10 @@ class ProfileController extends ChangeNotifier {
     );
 
     if (validationError != null) {
-      return ProfileSaveResult(
-        errorCode: validationError,
-      );
+      return ProfileSaveResult(errorCode: validationError);
     }
 
-    _isSaving = true;
-    notifyListeners();
+    _setSaving(true);
 
     try {
       final updatedUser = await _userApiService.updateCurrentUser(
@@ -134,9 +108,7 @@ class ProfileController extends ChangeNotifier {
 
       _user = updatedUser;
 
-      return ProfileSaveResult(
-        user: updatedUser,
-      );
+      return ProfileSaveResult(user: updatedUser);
     } on DioException catch (error) {
       debugPrint(
         'Updating profile failed: '
@@ -145,107 +117,40 @@ class ProfileController extends ChangeNotifier {
       );
 
       return ProfileSaveResult(
-        errorCode: _readSaveErrorCode(error),
-        backendMessage: _readUnknownBackendMessage(error),
+        errorCode: ProfileErrorMapper.mapSaveError(error),
+        backendMessage: ProfileErrorMapper.readUnknownBackendMessage(error),
       );
-    } catch (error) {
-      debugPrint('Updating profile failed: $error');
+    } catch (error, stackTrace) {
+      debugPrint('Updating profile failed: $error\n$stackTrace');
 
       return const ProfileSaveResult(
         errorCode: ProfileErrorCode.unexpectedSaveError,
       );
     } finally {
-      _isSaving = false;
-      notifyListeners();
+      _setSaving(false);
     }
   }
 
-  ProfileErrorCode? _validateFields({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String phone,
-  }) {
-    if (firstName.length < 2) {
-      return ProfileErrorCode.firstNameTooShort;
-    }
-
-    if (lastName.length < 2) {
-      return ProfileErrorCode.lastNameTooShort;
-    }
-
-    final validEmail = RegExp(
-      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-    );
-
-    if (!validEmail.hasMatch(email)) {
-      return ProfileErrorCode.invalidEmail;
-    }
-
-    if (phone.isEmpty) {
-      return ProfileErrorCode.phoneRequired;
-    }
-
-    return null;
+  void _clearPageError() {
+    _pageErrorCode = null;
+    _pageBackendMessage = null;
   }
 
-  ProfileErrorCode _readSaveErrorCode(DioException error) {
-    final backendMessage = _readBackendMessage(error);
-
-    switch (backendMessage) {
-      case 'Email already registered':
-        return ProfileErrorCode.emailAlreadyUsed;
-
-      case 'Phone number already used':
-        return ProfileErrorCode.phoneAlreadyUsed;
-
-      default:
-        return ProfileErrorCode.saveFailed;
+  void _setLoading(bool value) {
+    if (_isLoading == value) {
+      return;
     }
+
+    _isLoading = value;
+    notifyListeners();
   }
 
-  String? _readUnknownBackendMessage(DioException error) {
-    final backendMessage = _readBackendMessage(error);
-
-    const knownMessages = {
-      'Email already registered',
-      'Phone number already used',
-    };
-
-    if (backendMessage == null ||
-        backendMessage.trim().isEmpty ||
-        knownMessages.contains(backendMessage)) {
-      return null;
+  void _setSaving(bool value) {
+    if (_isSaving == value) {
+      return;
     }
 
-    return backendMessage;
-  }
-
-  String? _readBackendMessage(DioException error) {
-    final data = error.response?.data;
-
-    if (data is! Map) {
-      return null;
-    }
-
-    final errorMessage = data['error']?.toString();
-
-    if (errorMessage != null && errorMessage.trim().isNotEmpty) {
-      return errorMessage;
-    }
-
-    final errors = data['errors'];
-
-    if (errors is Map && errors.isNotEmpty) {
-      final firstError = errors.values.first;
-
-      if (firstError is List && firstError.isNotEmpty) {
-        return firstError.first.toString();
-      }
-
-      return firstError.toString();
-    }
-
-    return data['message']?.toString();
+    _isSaving = value;
+    notifyListeners();
   }
 }

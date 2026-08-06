@@ -10,8 +10,7 @@ import '../../../../core/widgets/screen_background.dart';
 import '../controllers/profile_controller.dart';
 import '../utils/profile_localization.dart';
 import 'profile_error_state.dart';
-import 'profile_field_label.dart';
-import 'profile_text_field.dart';
+import 'profile_form.dart';
 
 class ProfileView extends StatelessWidget {
   final TextEditingController firstNameController;
@@ -43,224 +42,82 @@ class ProfileView extends StatelessWidget {
 
     return Scaffold(
       body: ScreenBackground(
-        child: SafeArea(
-          child: controller.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : pageError != null
-              ? ProfileErrorState(
-                  message: pageError,
-                  onRetry: onReload,
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(
-                    AppSpacing.lg,
-                  ),
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.stretch,
-                    children: [
-                      AppPageHeader(
-                        title: context.l10n.profile,
-                        onBack: onBack,
-                      ),
+        child: SafeArea(child: _buildContent(context, controller, pageError)),
+      ),
+    );
+  }
 
-                      const SizedBox(
-                        height: AppSpacing.xl,
-                      ),
+  Widget _buildContent(
+    BuildContext context,
+    ProfileController controller,
+    String? pageError,
+  ) {
+    if (controller.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-                      Center(
-                        child: Container(
-                          width: 96,
-                          height: 96,
-                          decoration:
-                              const BoxDecoration(
-                            color:
-                                AppColors.primaryLight,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.person,
-                            color:
-                                AppColors.primaryDark,
-                            size: 48,
-                          ),
-                        ),
-                      ),
+    if (pageError != null || controller.user == null) {
+      return ProfileErrorState(
+        message: pageError ?? context.l10n.failedToLoadProfile,
+        onRetry: onReload,
+      );
+    }
 
-                      const SizedBox(
-                        height: AppSpacing.xl,
-                      ),
+    final guardianType = guardianTypeLabel(
+      context,
+      controller.user!.guardianType,
+    );
 
-                      ProfileFieldLabel(
-                        text: context.l10n.firstName,
-                      ),
+    return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppPageHeader(title: context.l10n.profile, onBack: onBack),
+          const SizedBox(height: AppSpacing.xl),
+          const _ProfileAvatar(),
+          const SizedBox(height: AppSpacing.xl),
+          ProfileForm(
+            firstNameController: firstNameController,
+            lastNameController: lastNameController,
+            emailController: emailController,
+            phoneController: phoneController,
+            guardianType: guardianType,
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+          AppButton(
+            text: controller.isSaving
+                ? context.l10n.saving
+                : context.l10n.saveChanges,
+            onPressed: controller.isSaving ? null : onSave,
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: AppColors.primaryGradient,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+      ),
+    );
+  }
+}
 
-                      const SizedBox(
-                        height: AppSpacing.sm,
-                      ),
+class _ProfileAvatar extends StatelessWidget {
+  const _ProfileAvatar();
 
-                      ProfileTextField(
-                        controller:
-                            firstNameController,
-                        trailingIcon:
-                            Icons.person_outline,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.lg,
-                      ),
-
-                      ProfileFieldLabel(
-                        text: context.l10n.lastName,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.sm,
-                      ),
-
-                      ProfileTextField(
-                        controller:
-                            lastNameController,
-                        trailingIcon:
-                            Icons.person_outline,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.lg,
-                      ),
-
-                      ProfileFieldLabel(
-                        text: context.l10n.email,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.sm,
-                      ),
-
-                      ProfileTextField(
-                        controller: emailController,
-                        trailingIcon:
-                            Icons.email_outlined,
-                        keyboardType:
-                            TextInputType.emailAddress,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.lg,
-                      ),
-
-                      ProfileFieldLabel(
-                        text: context.l10n.phoneNumber,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.sm,
-                      ),
-
-                      ProfileTextField(
-                        controller: phoneController,
-                        trailingIcon:
-                            Icons.phone_outlined,
-                        keyboardType:
-                            TextInputType.phone,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.lg,
-                      ),
-
-                      ProfileFieldLabel(
-                        text:
-                            context.l10n.familyRelationship,
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.sm,
-                      ),
-
-                      Container(
-                        height: 56,
-                        padding:
-                            const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              AppColors.inputBackground,
-                          borderRadius:
-                              BorderRadius.circular(18),
-                          border: Border.all(
-                            color: AppColors.border,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                guardianTypeLabel(
-                                  context,
-                                  controller
-                                      .user!
-                                      .guardianType,
-                                ),
-                                textAlign:
-                                    TextAlign.start,
-                                style:
-                                    const TextStyle(
-                                  color: AppColors
-                                      .textPrimary,
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(
-                              width: AppSpacing.sm,
-                            ),
-
-                            const Icon(
-                              Icons
-                                  .escalator_warning,
-                              size: 18,
-                              color: AppColors
-                                  .textSecondary,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.xxl,
-                      ),
-
-                      AppButton(
-                        text: controller.isSaving
-                            ? context.l10n.saving
-                            : context
-                                .l10n
-                                .saveChanges,
-                        onPressed:
-                            controller.isSaving
-                            ? null
-                            : onSave,
-                        gradient:
-                            const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end:
-                              Alignment.bottomRight,
-                          colors: AppColors
-                              .primaryGradient,
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: AppSpacing.lg,
-                      ),
-                    ],
-                  ),
-                ),
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 96,
+        height: 96,
+        decoration: const BoxDecoration(
+          color: AppColors.primaryLight,
+          shape: BoxShape.circle,
         ),
+        child: const Icon(Icons.person, color: AppColors.primaryDark, size: 48),
       ),
     );
   }

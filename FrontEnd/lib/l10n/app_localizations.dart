@@ -1969,6 +1969,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please check the entered information.'**
   String get invalidEnteredData;
+
+  /// No description provided for @parentNavigationTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get parentNavigationTasks;
+
+  /// No description provided for @parentNavigationWishes.
+  ///
+  /// In en, this message translates to:
+  /// **'Wishes'**
+  String get parentNavigationWishes;
+
+  /// No description provided for @parentNavigationHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get parentNavigationHome;
+
+  /// No description provided for @parentNavigationRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get parentNavigationRewards;
+
+  /// No description provided for @parentNavigationMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get parentNavigationMore;
 }
 
 class _AppLocalizationsDelegate

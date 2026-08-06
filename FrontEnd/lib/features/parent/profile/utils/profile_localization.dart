@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/profile_controller.dart';
+import '../models/profile_error_code.dart';
 
 extension ProfileErrorLocalization on ProfileErrorCode {
   String localized(BuildContext context) {
@@ -38,17 +38,15 @@ extension ProfileErrorLocalization on ProfileErrorCode {
   }
 }
 
-String guardianTypeLabel(
-  BuildContext context,
-  String guardianType,
-) {
-  switch (guardianType.toUpperCase()) {
+String guardianTypeLabel(BuildContext context, String guardianType) {
+  switch (guardianType.trim().toUpperCase()) {
     case 'MOTHER':
       return context.l10n.mother;
 
     case 'FATHER':
       return context.l10n.father;
 
+    case 'GUARDIAN':
     default:
       return context.l10n.guardian;
   }
