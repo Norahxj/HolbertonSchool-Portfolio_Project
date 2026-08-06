@@ -34,8 +34,6 @@ class ChildFormView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<ChildFormController>();
 
-    final isEditMode = controller.isEditMode;
-
     final nameError = controller.nameErrorCode?.localized(context);
 
     final birthDateError = controller.birthDateErrorCode?.localized(context);
@@ -46,51 +44,46 @@ class ChildFormView extends StatelessWidget {
       body: ScreenBackground(
         child: SafeArea(
           child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Align(
                   alignment: AlignmentDirectional.centerStart,
-                  child: AppBackButton(
-                    onTap: onBack,
-                  ),
+                  child: AppBackButton(onTap: onBack),
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
-
                 Text(
-                  isEditMode
+                  controller.isEditMode
                       ? context.l10n.editChildInformation
                       : context.l10n.addChild,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.arabicTitle,
                 ),
-
                 const SizedBox(height: AppSpacing.sm),
-
                 Text(
-                  isEditMode
+                  controller.isEditMode
                       ? context.l10n.editChildSubtitle
                       : context.l10n.addChildSubtitle,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.body,
                 ),
-
                 const SizedBox(height: AppSpacing.xl),
-
                 Text(
                   context.l10n.chooseAvatar,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: AppSpacing.md,
+                  runSpacing: AppSpacing.md,
                   children: [
                     AvatarOption(
                       imagePath: 'assets/avatars/avatar_boy_1v.jpg',
@@ -126,9 +119,7 @@ class ChildFormView extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: AppSpacing.xl),
-
                 AppTextField(
                   label: context.l10n.childName,
                   hint: context.l10n.childName,
@@ -136,35 +127,25 @@ class ChildFormView extends StatelessWidget {
                   controller: nameController,
                   errorText: nameError,
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 BirthDateField(
                   label:
-                      controller.formattedBirthDate ??
-                      context.l10n.dateOfBirth,
+                      controller.formattedBirthDate ?? context.l10n.dateOfBirth,
                   hasValue: controller.selectedBirthDate != null,
                   onTap: onPickDate,
                 ),
-
-                if (birthDateError != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Text(
-                        birthDateError,
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.error,
-                        ),
-                      ),
+                if (birthDateError != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    birthDateError,
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.error,
                     ),
                   ),
-
+                ],
                 const SizedBox(height: AppSpacing.xs),
-
                 Text(
                   context.l10n.openCalendarToSelectDate,
                   textAlign: TextAlign.center,
@@ -173,9 +154,7 @@ class ChildFormView extends StatelessWidget {
                     color: AppColors.textSecondary,
                   ),
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 AppTextField(
                   label: context.l10n.phoneNumberOptional,
                   hint: '05XXXXXXXX',
@@ -185,13 +164,11 @@ class ChildFormView extends StatelessWidget {
                   textDirection: TextDirection.ltr,
                   errorText: phoneError,
                 ),
-
                 const SizedBox(height: AppSpacing.xxl),
-
                 AppButton(
                   text: controller.isSaving
                       ? context.l10n.saving
-                      : isEditMode
+                      : controller.isEditMode
                       ? context.l10n.saveChanges
                       : context.l10n.save,
                   onPressed: controller.isSaving ? null : onSave,
@@ -201,7 +178,6 @@ class ChildFormView extends StatelessWidget {
                     colors: AppColors.primaryGradient,
                   ),
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
               ],
             ),

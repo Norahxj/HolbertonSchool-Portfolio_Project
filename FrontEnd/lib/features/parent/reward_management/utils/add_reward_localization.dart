@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/add_reward_controller.dart';
+import '../models/add_reward_result.dart';
 
 extension AddRewardErrorLocalization on AddRewardErrorCode {
   String localized(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/reward_management_controller.dart';
+import '../models/reward_management_result.dart';
 
 extension RewardManagementErrorLocalization on RewardManagementErrorCode {
   String localized(BuildContext context) {

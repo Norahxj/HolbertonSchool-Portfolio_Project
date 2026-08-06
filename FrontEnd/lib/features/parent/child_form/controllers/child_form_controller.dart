@@ -1,155 +1,79 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../models/child_model.dart';
-import '../../services/child_api_service.dart';
-
-enum ChildFormMode {
-  add,
-  edit,
-}
-
-enum ChildFormFieldErrorCode {
-  nameRequired,
-  nameTooShort,
-  nameTooLong,
-  nameLettersOnly,
-  birthDateRequired,
-  invalidChildAge,
-  invalidPhone,
-}
-
-enum ChildFormErrorCode {
-  addChild,
-  updateChild,
-  childNotIdentified,
-  phoneAlreadyUsed,
-  parentNotLinkedToFamily,
-  parentAccessRequiredForAdd,
-  parentAccessRequiredForEdit,
-  parentNotFound,
-  childNotFound,
-  couldNotCreateChild,
-  couldNotUpdateChild,
-  unexpectedAddError,
-  unexpectedUpdateError,
-}
-
-class ChildFormSaveResult {
-  final bool isSuccess;
-  final ChildModel? child;
-  final ChildFormErrorCode? errorCode;
-  final String? backendMessage;
-
-  const ChildFormSaveResult({
-    this.isSuccess = false,
-    this.child,
-    this.errorCode,
-    this.backendMessage,
-  });
-}
+import '../models/child_form_errors.dart';
+import '../models/child_form_mode.dart';
+import '../models/child_form_save_result.dart';
+import '../repositories/child_form_repository.dart';
+import '../utils/child_form_error_mapper.dart';
+import '../utils/child_form_validator.dart';
 
 class ChildFormController extends ChangeNotifier {
-  final ChildApiService _childApiService;
+  final ChildFormRepository _repository;
 
-  ChildFormController.add({
-    ChildApiService? childApiService,
-  }) : mode = ChildFormMode.add,
-       child = null,
-       _childApiService = childApiService ?? ChildApiService(),
-       _selectedAvatarIndex = 0,
-       _selectedBirthDate = null;
+  ChildFormController.add({ChildFormRepository? repository})
+    : mode = ChildFormMode.add,
+      child = null,
+      _repository = repository ?? ChildFormRepository(),
+      _selectedAvatarIndex = 0,
+      _selectedBirthDate = null;
 
   ChildFormController.edit({
     required ChildModel child,
-    ChildApiService? childApiService,
+    ChildFormRepository? repository,
   }) : mode = ChildFormMode.edit,
        child = child,
-       _childApiService = childApiService ?? ChildApiService(),
+       _repository = repository ?? ChildFormRepository(),
        _selectedAvatarIndex = child.avatarIndex,
        _selectedBirthDate = DateTime.tryParse(child.birthDate);
 
   final ChildFormMode mode;
   final ChildModel? child;
 
+  int _selectedAvatarIndex;
+  DateTime? _selectedBirthDate;
+
+  bool _isSaving = false;
+  bool _isDisposed = false;
+
+  ChildFormFieldErrorCode? _nameErrorCode;
+  ChildFormFieldErrorCode? _birthDateErrorCode;
+  ChildFormFieldErrorCode? _phoneErrorCode;
+
   bool get isAddMode => mode == ChildFormMode.add;
 
   bool get isEditMode => mode == ChildFormMode.edit;
 
-  int _selectedAvatarIndex;
-
   int get selectedAvatarIndex => _selectedAvatarIndex;
-
-  DateTime? _selectedBirthDate;
 
   DateTime? get selectedBirthDate => _selectedBirthDate;
 
-  bool _isSaving = false;
-
   bool get isSaving => _isSaving;
-
-  ChildFormFieldErrorCode? _nameErrorCode;
 
   ChildFormFieldErrorCode? get nameErrorCode => _nameErrorCode;
 
-  ChildFormFieldErrorCode? _birthDateErrorCode;
-
   ChildFormFieldErrorCode? get birthDateErrorCode => _birthDateErrorCode;
-
-  ChildFormFieldErrorCode? _phoneErrorCode;
 
   ChildFormFieldErrorCode? get phoneErrorCode => _phoneErrorCode;
 
-  void selectAvatar(int avatarIndex) {
-    if (_selectedAvatarIndex == avatarIndex) {
-      return;
-    }
-
-    _selectedAvatarIndex = avatarIndex;
-    notifyListeners();
-  }
-
-  void selectBirthDate(DateTime date) {
-    if (_selectedBirthDate == date) {
-      return;
-    }
-
-    _selectedBirthDate = date;
-    _birthDateErrorCode = null;
-
-    notifyListeners();
-  }
-
   DateTime get earliestBirthDate {
-    final now = DateTime.now();
+    final today = _today();
 
-    return DateTime(
-      now.year - 18,
-      now.month,
-      now.day,
-    );
+    return DateTime(today.year - 18, today.month, today.day);
   }
 
   DateTime get latestBirthDate {
-    final now = DateTime.now();
+    final today = _today();
 
-    return DateTime(
-      now.year - 6,
-      now.month,
-      now.day,
-    );
+    return DateTime(today.year - 6, today.month, today.day);
   }
 
   DateTime get initialBirthDate {
-    final now = DateTime.now();
+    final today = _today();
 
     var date =
-        _selectedBirthDate ??
-        DateTime(
-          now.year - 7,
-          now.month,
-          now.day,
-        );
+        _selectedBirthDate ?? DateTime(today.year - 7, today.month, today.day);
 
     if (date.isBefore(earliestBirthDate)) {
       date = earliestBirthDate;
@@ -170,105 +94,62 @@ class ChildFormController extends ChangeNotifier {
     }
 
     final day = date.day.toString().padLeft(2, '0');
+
     final month = date.month.toString().padLeft(2, '0');
 
     return '$day/$month/${date.year}';
   }
 
-  bool validateFields({
-    required String name,
-    required String phone,
-  }) {
-    _clearFieldErrors();
-
-    final trimmedName = name.trim();
-    final trimmedPhone = phone.trim();
-
-    if (trimmedName.isEmpty) {
-      _nameErrorCode = ChildFormFieldErrorCode.nameRequired;
-    } else if (trimmedName.length < 2) {
-      _nameErrorCode = ChildFormFieldErrorCode.nameTooShort;
-    } else if (trimmedName.length > 100) {
-      _nameErrorCode = ChildFormFieldErrorCode.nameTooLong;
-    } else if (!RegExp(
-      r'^[a-zA-Z\u0621-\u063A\u0641-\u064A\s]+$',
-    ).hasMatch(trimmedName)) {
-      _nameErrorCode = ChildFormFieldErrorCode.nameLettersOnly;
+  void selectAvatar(int avatarIndex) {
+    if (avatarIndex < 0 ||
+        avatarIndex > 3 ||
+        _selectedAvatarIndex == avatarIndex) {
+      return;
     }
 
-    if (_selectedBirthDate == null) {
-      _birthDateErrorCode =
-          ChildFormFieldErrorCode.birthDateRequired;
-    } else if (_selectedBirthDate!.isBefore(earliestBirthDate) ||
-        _selectedBirthDate!.isAfter(latestBirthDate)) {
-      _birthDateErrorCode =
-          ChildFormFieldErrorCode.invalidChildAge;
+    _selectedAvatarIndex = avatarIndex;
+    _notify();
+  }
+
+  void selectBirthDate(DateTime date) {
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+
+    if (_selectedBirthDate == normalizedDate) {
+      return;
     }
 
-    if (trimmedPhone.isNotEmpty &&
-        !RegExp(r'^05\d{8}$').hasMatch(trimmedPhone)) {
-      _phoneErrorCode = ChildFormFieldErrorCode.invalidPhone;
-    }
+    _selectedBirthDate = normalizedDate;
+    _birthDateErrorCode = null;
 
-    notifyListeners();
-
-    return !_hasFieldErrors;
+    _notify();
   }
 
   Future<ChildFormSaveResult> save({
     required String name,
     required String phone,
   }) async {
-    final trimmedName = name.trim();
-    final trimmedPhone = phone.trim();
+    if (_isSaving) {
+      return const ChildFormSaveResult.validationFailure();
+    }
 
-    final isValid = validateFields(
-      name: trimmedName,
-      phone: trimmedPhone,
-    );
+    final cleanName = name.trim();
+    final cleanPhone = phone.trim();
 
-    if (!isValid || _isSaving) {
-      return const ChildFormSaveResult();
+    final isValid = _validateFields(name: cleanName, phone: cleanPhone);
+
+    if (!isValid) {
+      return const ChildFormSaveResult.validationFailure();
     }
 
     _isSaving = true;
-    notifyListeners();
+    _notify();
 
     try {
-      if (isAddMode) {
-        final createdChild = await _childApiService.addChild(
-          name: trimmedName,
-          birthDate: _formatBirthDate(_selectedBirthDate!),
-          avatarIndex: _selectedAvatarIndex,
-          phone: trimmedPhone.isEmpty ? null : trimmedPhone,
-        );
+      final savedChild = isAddMode
+          ? await _addChild(name: cleanName, phone: cleanPhone)
+          : await _updateChild(name: cleanName, phone: cleanPhone);
 
-        return ChildFormSaveResult(
-          isSuccess: true,
-          child: createdChild,
-        );
-      }
-
-      final editingChild = child;
-
-      if (editingChild == null) {
-        return const ChildFormSaveResult(
-          errorCode: ChildFormErrorCode.childNotIdentified,
-        );
-      }
-
-      final updatedChild = await _childApiService.updateChild(
-        childId: editingChild.id,
-        name: trimmedName,
-        birthDate: _formatBirthDate(_selectedBirthDate!),
-        avatarIndex: _selectedAvatarIndex,
-        phone: trimmedPhone.isEmpty ? null : trimmedPhone,
-      );
-
-      return ChildFormSaveResult(
-        isSuccess: true,
-        child: updatedChild,
-      );
+      return ChildFormSaveResult.success(savedChild);
     } on DioException catch (error) {
       debugPrint(
         'Child form save failed: '
@@ -277,177 +158,112 @@ class ChildFormController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      _readBackendValidationErrors(error);
+      final validationErrors = ChildFormErrorMapper.readValidationErrors(error);
 
-      if (_hasFieldErrors) {
-        return const ChildFormSaveResult();
+      if (validationErrors.hasErrors) {
+        _applyBackendValidationErrors(validationErrors);
+
+        return const ChildFormSaveResult.validationFailure();
       }
 
-      return ChildFormSaveResult(
-        errorCode: _readSaveErrorCode(error),
-        backendMessage: _readUnknownBackendMessage(error),
+      return ChildFormSaveResult.failure(
+        errorCode: ChildFormErrorMapper.mapSaveError(error: error, mode: mode),
+        backendMessage: ChildFormErrorMapper.readUnknownBackendMessage(error),
       );
-    } catch (error) {
-      debugPrint('Unexpected child form save error: $error');
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Unexpected child form save error: '
+        '$error\n$stackTrace',
+      );
 
-      return ChildFormSaveResult(
+      return ChildFormSaveResult.failure(
         errorCode: isAddMode
             ? ChildFormErrorCode.unexpectedAddError
             : ChildFormErrorCode.unexpectedUpdateError,
       );
     } finally {
       _isSaving = false;
-      notifyListeners();
+      _notify();
     }
   }
 
-  void _readBackendValidationErrors(DioException error) {
-    final responseData = error.response?.data;
-
-    if (responseData is! Map) {
-      return;
-    }
-
-    final errors = responseData['errors'];
-
-    if (errors is! Map) {
-      return;
-    }
-
-    final nameMessage = _firstError(errors['name']);
-
-    switch (nameMessage) {
-      case 'Child name must be at least 2 characters long.':
-        _nameErrorCode = ChildFormFieldErrorCode.nameTooShort;
-
-      case 'Child name must not exceed 100 characters.':
-        _nameErrorCode = ChildFormFieldErrorCode.nameTooLong;
-
-      case 'Child name must contain letters only.':
-        _nameErrorCode = ChildFormFieldErrorCode.nameLettersOnly;
-
-      default:
-        if (nameMessage != null) {
-          _nameErrorCode = ChildFormFieldErrorCode.nameLettersOnly;
-        }
-    }
-
-    final birthDateMessage = _firstError(errors['birth_date']);
-
-    switch (birthDateMessage) {
-      case 'Child age must be between 6 and 18.':
-      case 'Birth date cannot be in the future.':
-        _birthDateErrorCode =
-            ChildFormFieldErrorCode.invalidChildAge;
-
-      default:
-        if (birthDateMessage != null) {
-          _birthDateErrorCode =
-              ChildFormFieldErrorCode.birthDateRequired;
-        }
-    }
-
-    if (_firstError(errors['phone']) != null) {
-      _phoneErrorCode = ChildFormFieldErrorCode.invalidPhone;
-    }
-
-    notifyListeners();
+  Future<ChildModel> _addChild({required String name, required String phone}) {
+    return _repository.addChild(
+      name: name,
+      birthDate: _formatBirthDate(_selectedBirthDate!),
+      avatarIndex: _selectedAvatarIndex,
+      phone: phone.isEmpty ? null : phone,
+    );
   }
 
-  ChildFormErrorCode _readSaveErrorCode(DioException error) {
-    final backendMessage = _readBackendMessage(error);
+  Future<ChildModel> _updateChild({
+    required String name,
+    required String phone,
+  }) {
+    final editingChild = child;
 
-    switch (backendMessage) {
-      case 'Phone number already used':
-        return ChildFormErrorCode.phoneAlreadyUsed;
-
-      case 'Parent is not assigned to a family':
-        return ChildFormErrorCode.parentNotLinkedToFamily;
-
-      case 'Parent access required':
-        return isAddMode
-            ? ChildFormErrorCode.parentAccessRequiredForAdd
-            : ChildFormErrorCode.parentAccessRequiredForEdit;
-
-      case 'Parent not found':
-        return ChildFormErrorCode.parentNotFound;
-
-      case 'Child not found':
-        return ChildFormErrorCode.childNotFound;
-
-      case 'Could not create child':
-        return ChildFormErrorCode.couldNotCreateChild;
-
-      case 'Failed to update child':
-        return ChildFormErrorCode.couldNotUpdateChild;
-
-      default:
-        return isAddMode
-            ? ChildFormErrorCode.addChild
-            : ChildFormErrorCode.updateChild;
+    if (editingChild == null) {
+      throw StateError('Child is required in edit mode.');
     }
+
+    return _repository.updateChild(
+      childId: editingChild.id,
+      name: name,
+      birthDate: _formatBirthDate(_selectedBirthDate!),
+      avatarIndex: _selectedAvatarIndex,
+      phone: phone.isEmpty ? null : phone,
+    );
   }
 
-  String? _readUnknownBackendMessage(DioException error) {
-    final backendMessage = _readBackendMessage(error);
+  bool _validateFields({required String name, required String phone}) {
+    final validation = ChildFormValidator.validate(
+      name: name,
+      phone: phone,
+      birthDate: _selectedBirthDate,
+      earliestBirthDate: earliestBirthDate,
+      latestBirthDate: latestBirthDate,
+    );
 
-    const knownMessages = {
-      'Phone number already used',
-      'Parent is not assigned to a family',
-      'Parent access required',
-      'Parent not found',
-      'Child not found',
-      'Could not create child',
-      'Failed to update child',
-    };
+    _nameErrorCode = validation.nameError;
+    _birthDateErrorCode = validation.birthDateError;
+    _phoneErrorCode = validation.phoneError;
 
-    if (backendMessage == null ||
-        knownMessages.contains(backendMessage)) {
-      return null;
-    }
+    _notify();
 
-    return backendMessage;
+    return validation.isValid;
   }
 
-  String? _readBackendMessage(DioException error) {
-    final responseData = error.response?.data;
+  void _applyBackendValidationErrors(ChildFormBackendValidationErrors errors) {
+    _nameErrorCode = errors.nameError;
+    _birthDateErrorCode = errors.birthDateError;
+    _phoneErrorCode = errors.phoneError;
 
-    if (responseData is! Map) {
-      return null;
-    }
+    _notify();
+  }
 
-    return responseData['error']?.toString() ??
-        responseData['message']?.toString();
+  DateTime _today() {
+    final now = DateTime.now();
+
+    return DateTime(now.year, now.month, now.day);
   }
 
   String _formatBirthDate(DateTime date) {
     final month = date.month.toString().padLeft(2, '0');
+
     final day = date.day.toString().padLeft(2, '0');
 
     return '${date.year}-$month-$day';
   }
 
-  String? _firstError(dynamic value) {
-    if (value is List && value.isNotEmpty) {
-      return value.first.toString();
+  void _notify() {
+    if (!_isDisposed) {
+      notifyListeners();
     }
-
-    if (value is String && value.trim().isNotEmpty) {
-      return value;
-    }
-
-    return null;
   }
 
-  bool get _hasFieldErrors {
-    return _nameErrorCode != null ||
-        _birthDateErrorCode != null ||
-        _phoneErrorCode != null;
-  }
-
-  void _clearFieldErrors() {
-    _nameErrorCode = null;
-    _birthDateErrorCode = null;
-    _phoneErrorCode = null;
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 }

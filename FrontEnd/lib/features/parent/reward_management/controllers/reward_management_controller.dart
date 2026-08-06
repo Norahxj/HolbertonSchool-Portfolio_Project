@@ -1,37 +1,18 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../models/child_model.dart';
 import '../../../../models/reward_model.dart';
 import '../../../../models/reward_suggestion_model.dart';
-import '../../../../services/reward_api_service.dart';
-import '../../services/child_api_service.dart';
 import '../helpers/reward_error_helper.dart';
-
-enum RewardManagementErrorCode {
-  loadChildren,
-  loadRewards,
-  loadSuggestions,
-  deleteNotAllowed,
-  deleteClaimedReward,
-  deleteReward,
-}
+import '../models/reward_management_result.dart';
+import '../repositories/reward_management_repository.dart';
 
 class RewardManagementController extends ChangeNotifier {
-  final ChildApiService _childApiService;
-  final RewardApiService _rewardApiService;
+  final RewardManagementRepository _repository;
 
-  RewardManagementController({
-    required String languageCode,
-    ChildApiService? childApiService,
-    RewardApiService? rewardApiService,
-  }) : _languageCode = languageCode,
-       _childApiService = childApiService ?? ChildApiService(),
-       _rewardApiService = rewardApiService ?? RewardApiService();
-
-  String _languageCode;
-
-  String get languageCode => _languageCode;
+  RewardManagementController({RewardManagementRepository? repository})
+    : _repository = repository ?? RewardManagementRepository();
 
   final List<ChildModel> _children = [];
   final List<RewardModel> _currentRewards = [];
@@ -39,20 +20,40 @@ class RewardManagementController extends ChangeNotifier {
 
   final Set<String> _deletingRewardIds = {};
 
-  List<ChildModel> get children => List.unmodifiable(_children);
-
-  List<RewardModel> get currentRewards => List.unmodifiable(_currentRewards);
-
-  List<RewardSuggestionModel> get rewardSuggestions =>
-      List.unmodifiable(_rewardSuggestions);
-
   String? _selectedChildId;
 
-  String? get selectedChildId => _selectedChildId;
-
-  bool _isLoadingChildren = true;
+  bool _isLoadingChildren = false;
   bool _isLoadingRewards = false;
   bool _isLoadingSuggestions = false;
+
+  bool _childrenRequestRunning = false;
+  bool _rewardsRequestRunning = false;
+
+  int _suggestionsRequestVersion = 0;
+
+  bool _isDisposed = false;
+
+  RewardManagementErrorCode? _childrenError;
+  RewardManagementErrorCode? _rewardsError;
+  RewardManagementErrorCode? _suggestionsError;
+
+  String? _childrenBackendMessage;
+  String? _rewardsBackendMessage;
+  String? _suggestionsBackendMessage;
+
+  List<ChildModel> get children {
+    return List.unmodifiable(_children);
+  }
+
+  List<RewardModel> get currentRewards {
+    return List.unmodifiable(_currentRewards);
+  }
+
+  List<RewardSuggestionModel> get rewardSuggestions {
+    return List.unmodifiable(_rewardSuggestions);
+  }
+
+  String? get selectedChildId => _selectedChildId;
 
   bool get isLoadingChildren => _isLoadingChildren;
 
@@ -60,71 +61,75 @@ class RewardManagementController extends ChangeNotifier {
 
   bool get isLoadingSuggestions => _isLoadingSuggestions;
 
-  RewardManagementErrorCode? _childrenError;
+  RewardManagementErrorCode? get childrenError {
+    return _childrenError;
+  }
 
-  RewardManagementErrorCode? get childrenError => _childrenError;
+  RewardManagementErrorCode? get rewardsError {
+    return _rewardsError;
+  }
 
-  String? _childrenBackendMessage;
+  RewardManagementErrorCode? get suggestionsError {
+    return _suggestionsError;
+  }
 
-  String? get childrenBackendMessage => _childrenBackendMessage;
+  String? get childrenBackendMessage {
+    return _childrenBackendMessage;
+  }
 
-  RewardManagementErrorCode? _rewardsError;
+  String? get rewardsBackendMessage {
+    return _rewardsBackendMessage;
+  }
 
-  RewardManagementErrorCode? get rewardsError => _rewardsError;
-
-  String? _rewardsBackendMessage;
-
-  String? get rewardsBackendMessage => _rewardsBackendMessage;
-
-  RewardManagementErrorCode? _suggestionsError;
-
-  RewardManagementErrorCode? get suggestionsError => _suggestionsError;
-
-  String? _suggestionsBackendMessage;
-
-  String? get suggestionsBackendMessage => _suggestionsBackendMessage;
+  String? get suggestionsBackendMessage {
+    return _suggestionsBackendMessage;
+  }
 
   bool isDeletingReward(String rewardId) {
     return _deletingRewardIds.contains(rewardId);
   }
 
-  Future<void> initialize() async {
-    await Future.wait([loadChildren(), loadRewardSuggestions()]);
+  Future<void> initialize({required String languageCode}) async {
+    await Future.wait([
+      loadChildren(),
+      loadRewardSuggestions(languageCode: languageCode),
+    ]);
   }
 
-  Future<void> updateLanguage(String languageCode) async {
-    if (_languageCode == languageCode) {
+  Future<void> refresh({required String languageCode}) async {
+    await Future.wait([
+      loadChildren(showLoading: false),
+      loadRewardSuggestions(languageCode: languageCode, showLoading: false),
+    ]);
+  }
+
+  Future<void> loadChildren({bool showLoading = true}) async {
+    if (_childrenRequestRunning) {
       return;
     }
 
-    _languageCode = languageCode;
+    _childrenRequestRunning = true;
 
-    _rewardSuggestions.clear();
-    _suggestionsError = null;
-    _suggestionsBackendMessage = null;
+    if (showLoading) {
+      _isLoadingChildren = true;
+    }
 
-    notifyListeners();
-
-    await loadRewardSuggestions();
-  }
-
-  Future<void> loadChildren() async {
-    _isLoadingChildren = true;
     _childrenError = null;
     _childrenBackendMessage = null;
-
-    notifyListeners();
+    _notify();
 
     try {
-      final data = await _childApiService.getChildren();
+      final loadedChildren = await _repository.getChildren();
 
       _children
         ..clear()
-        ..addAll(data);
+        ..addAll(loadedChildren);
 
       if (_children.isEmpty) {
         _selectedChildId = null;
         _currentRewards.clear();
+        _rewardsError = null;
+        _rewardsBackendMessage = null;
       } else {
         final selectedChildStillExists = _children.any(
           (child) => child.id == _selectedChildId,
@@ -133,13 +138,6 @@ class RewardManagementController extends ChangeNotifier {
         if (_selectedChildId == null || !selectedChildStillExists) {
           _selectedChildId = _children.first.id;
         }
-      }
-
-      _isLoadingChildren = false;
-      notifyListeners();
-
-      if (_selectedChildId != null) {
-        await loadCurrentRewards();
       }
     } on DioException catch (error) {
       _childrenError = RewardManagementErrorCode.loadChildren;
@@ -151,23 +149,27 @@ class RewardManagementController extends ChangeNotifier {
         'status=${error.response?.statusCode}, '
         'data=${error.response?.data}',
       );
-
-      _isLoadingChildren = false;
-      notifyListeners();
-    } catch (error) {
+    } catch (error, stackTrace) {
       _childrenError = RewardManagementErrorCode.loadChildren;
 
-      _childrenBackendMessage = null;
-
-      debugPrint('Loading children failed: $error');
-
+      debugPrint(
+        'Loading children failed: '
+        '$error\n$stackTrace',
+      );
+    } finally {
       _isLoadingChildren = false;
-      notifyListeners();
+      _childrenRequestRunning = false;
+      _notify();
+    }
+
+    if (_childrenError == null && _selectedChildId != null) {
+      await loadCurrentRewards();
     }
   }
 
   Future<void> selectChild(String childId) async {
-    if (_selectedChildId == childId) {
+    if (_selectedChildId == childId ||
+        !_children.any((child) => child.id == childId)) {
       return;
     }
 
@@ -177,7 +179,7 @@ class RewardManagementController extends ChangeNotifier {
     _rewardsError = null;
     _rewardsBackendMessage = null;
 
-    notifyListeners();
+    _notify();
 
     await loadCurrentRewards();
   }
@@ -185,18 +187,18 @@ class RewardManagementController extends ChangeNotifier {
   Future<void> loadCurrentRewards() async {
     final childId = _selectedChildId;
 
-    if (childId == null) {
+    if (childId == null || _rewardsRequestRunning) {
       return;
     }
 
+    _rewardsRequestRunning = true;
     _isLoadingRewards = true;
     _rewardsError = null;
     _rewardsBackendMessage = null;
-
-    notifyListeners();
+    _notify();
 
     try {
-      final rewards = await _rewardApiService.getRewardsForChild(childId);
+      final rewards = await _repository.getRewardsForChild(childId);
 
       if (_selectedChildId != childId) {
         return;
@@ -219,97 +221,58 @@ class RewardManagementController extends ChangeNotifier {
         'status=${error.response?.statusCode}, '
         'data=${error.response?.data}',
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
       if (_selectedChildId != childId) {
         return;
       }
 
       _rewardsError = RewardManagementErrorCode.loadRewards;
 
-      _rewardsBackendMessage = null;
-
-      debugPrint('Loading rewards failed: $error');
+      debugPrint(
+        'Loading rewards failed: '
+        '$error\n$stackTrace',
+      );
     } finally {
+      _rewardsRequestRunning = false;
+
       if (_selectedChildId == childId) {
         _isLoadingRewards = false;
-        notifyListeners();
+        _notify();
       }
     }
   }
 
-  Future<RewardDeleteResult> deleteReward(RewardModel reward) async {
-    if (_deletingRewardIds.contains(reward.id)) {
-      return const RewardDeleteResult();
+  Future<void> loadRewardSuggestions({
+    required String languageCode,
+    bool showLoading = true,
+  }) async {
+    final requestVersion = ++_suggestionsRequestVersion;
+
+    if (showLoading) {
+      _isLoadingSuggestions = true;
     }
 
-    final rewardIndex = _currentRewards.indexWhere(
-      (item) => item.id == reward.id,
-    );
-
-    _deletingRewardIds.add(reward.id);
-
-    _currentRewards.removeWhere((item) => item.id == reward.id);
-
-    notifyListeners();
-
-    try {
-      await _rewardApiService.deleteReward(reward.id);
-
-      return const RewardDeleteResult(isSuccess: true);
-    } on DioException catch (error) {
-      _restoreReward(reward: reward, originalIndex: rewardIndex);
-
-      final statusCode = error.response?.statusCode;
-
-      final backendMessage = readBackendMessage(error);
-
-      if (statusCode == 404) {
-        return const RewardDeleteResult(
-          errorCode: RewardManagementErrorCode.deleteNotAllowed,
-        );
-      }
-
-      if (backendMessage?.toLowerCase().contains('claimed') == true) {
-        return const RewardDeleteResult(
-          errorCode: RewardManagementErrorCode.deleteClaimedReward,
-        );
-      }
-
-      return RewardDeleteResult(
-        errorCode: RewardManagementErrorCode.deleteReward,
-        backendMessage: backendMessage,
-      );
-    } catch (error) {
-      _restoreReward(reward: reward, originalIndex: rewardIndex);
-
-      debugPrint('Deleting reward failed: $error');
-
-      return const RewardDeleteResult(
-        errorCode: RewardManagementErrorCode.deleteReward,
-      );
-    } finally {
-      _deletingRewardIds.remove(reward.id);
-      notifyListeners();
-    }
-  }
-
-  Future<void> loadRewardSuggestions() async {
-    _isLoadingSuggestions = true;
     _suggestionsError = null;
     _suggestionsBackendMessage = null;
-
-    notifyListeners();
+    _notify();
 
     try {
-      final suggestions = await _rewardApiService.getRewardSuggestions(
-        lang: _languageCode,
-        count: 5,
+      final suggestions = await _repository.getRewardSuggestions(
+        languageCode: languageCode,
       );
+
+      if (requestVersion != _suggestionsRequestVersion) {
+        return;
+      }
 
       _rewardSuggestions
         ..clear()
         ..addAll(suggestions);
     } on DioException catch (error) {
+      if (requestVersion != _suggestionsRequestVersion) {
+        return;
+      }
+
       _suggestionsError = RewardManagementErrorCode.loadSuggestions;
 
       _suggestionsBackendMessage = readBackendMessage(error);
@@ -319,18 +282,81 @@ class RewardManagementController extends ChangeNotifier {
         'status=${error.response?.statusCode}, '
         'data=${error.response?.data}',
       );
-    } catch (error) {
-      _suggestionsError = RewardManagementErrorCode.loadSuggestions;
+    } catch (error, stackTrace) {
+      if (requestVersion != _suggestionsRequestVersion) {
+        return;
+      }
 
-      _suggestionsBackendMessage = null;
+      _suggestionsError = RewardManagementErrorCode.loadSuggestions;
 
       debugPrint(
         'Loading reward suggestions failed: '
-        '$error',
+        '$error\n$stackTrace',
       );
     } finally {
-      _isLoadingSuggestions = false;
-      notifyListeners();
+      if (requestVersion == _suggestionsRequestVersion) {
+        _isLoadingSuggestions = false;
+        _notify();
+      }
+    }
+  }
+
+  Future<RewardDeleteResult> deleteReward(RewardModel reward) async {
+    if (_deletingRewardIds.contains(reward.id)) {
+      return const RewardDeleteResult.success();
+    }
+
+    final originalIndex = _currentRewards.indexWhere(
+      (item) => item.id == reward.id,
+    );
+
+    _deletingRewardIds.add(reward.id);
+
+    _currentRewards.removeWhere((item) => item.id == reward.id);
+
+    _notify();
+
+    try {
+      await _repository.deleteReward(reward.id);
+
+      return const RewardDeleteResult.success();
+    } on DioException catch (error) {
+      _restoreReward(reward: reward, originalIndex: originalIndex);
+
+      final statusCode = error.response?.statusCode;
+
+      final backendMessage = readBackendMessage(error);
+
+      if (statusCode == 404) {
+        return const RewardDeleteResult.failure(
+          errorCode: RewardManagementErrorCode.deleteNotAllowed,
+        );
+      }
+
+      if (backendMessage?.toLowerCase().contains('claimed') == true) {
+        return const RewardDeleteResult.failure(
+          errorCode: RewardManagementErrorCode.deleteClaimedReward,
+        );
+      }
+
+      return RewardDeleteResult.failure(
+        errorCode: RewardManagementErrorCode.deleteReward,
+        backendMessage: backendMessage,
+      );
+    } catch (error, stackTrace) {
+      _restoreReward(reward: reward, originalIndex: originalIndex);
+
+      debugPrint(
+        'Deleting reward failed: '
+        '$error\n$stackTrace',
+      );
+
+      return const RewardDeleteResult.failure(
+        errorCode: RewardManagementErrorCode.deleteReward,
+      );
+    } finally {
+      _deletingRewardIds.remove(reward.id);
+      _notify();
     }
   }
 
@@ -350,16 +376,17 @@ class RewardManagementController extends ChangeNotifier {
 
     _currentRewards.insert(safeIndex, reward);
   }
-}
 
-class RewardDeleteResult {
-  final bool isSuccess;
-  final RewardManagementErrorCode? errorCode;
-  final String? backendMessage;
+  void _notify() {
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+  }
 
-  const RewardDeleteResult({
-    this.isSuccess = false,
-    this.errorCode,
-    this.backendMessage,
-  });
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _suggestionsRequestVersion++;
+    super.dispose();
+  }
 }

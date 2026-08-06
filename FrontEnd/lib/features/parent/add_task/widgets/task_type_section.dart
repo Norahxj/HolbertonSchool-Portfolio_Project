@@ -9,7 +9,9 @@ import '../utils/add_task_localization.dart';
 import 'task_type_card.dart';
 
 class TaskTypeSection extends StatelessWidget {
-  const TaskTypeSection({super.key});
+  final String languageCode;
+
+  const TaskTypeSection({super.key, required this.languageCode});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +28,7 @@ class TaskTypeSection extends StatelessWidget {
                 taskType: 0,
               ),
             ),
-
             const SizedBox(width: AppSpacing.md),
-
             Expanded(
               child: _buildTaskTypeCard(
                 context: context,
@@ -38,9 +38,7 @@ class TaskTypeSection extends StatelessWidget {
             ),
           ],
         ),
-
         const SizedBox(height: AppSpacing.md),
-
         Row(
           children: [
             Expanded(
@@ -50,9 +48,7 @@ class TaskTypeSection extends StatelessWidget {
                 taskType: 2,
               ),
             ),
-
             const SizedBox(width: AppSpacing.md),
-
             Expanded(
               child: _buildTaskTypeCard(
                 context: context,
@@ -62,10 +58,9 @@ class TaskTypeSection extends StatelessWidget {
             ),
           ],
         ),
-
         if (controller.categoryError != null)
           Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsetsDirectional.only(top: 8),
             child: Align(
               alignment: AlignmentDirectional.centerStart,
               child: Text(
@@ -89,7 +84,10 @@ class TaskTypeSection extends StatelessWidget {
       isSelected: controller.selectedTaskType == taskType,
       isEnabled: controller.selectedChildIds.isNotEmpty,
       onTap: () {
-        controller.selectTaskType(taskType);
+        controller.selectTaskType(
+          taskType: taskType,
+          languageCode: languageCode,
+        );
       },
     );
   }
@@ -98,13 +96,10 @@ class TaskTypeSection extends StatelessWidget {
     switch (taskType) {
       case 0:
         return Icons.mosque_outlined;
-
       case 1:
         return Icons.shopping_bag_outlined;
-
       case 2:
         return Icons.menu_book_outlined;
-
       default:
         return Icons.credit_card;
     }
@@ -116,13 +111,10 @@ class TaskTypeSection extends StatelessWidget {
     switch (taskType) {
       case 0:
         return l10n.culturalTasks;
-
       case 1:
         return l10n.dailyTasks;
-
       case 2:
         return l10n.religiousTasks;
-
       default:
         return l10n.financialTasks;
     }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../models/task_suggestion_model.dart';
 import '../controllers/add_task_controller.dart';
 import '../utils/add_task_localization.dart';
 import 'child_card.dart';
@@ -11,13 +12,20 @@ import 'quick_add_category.dart';
 import 'task_type_section.dart';
 
 class ChooseChildStep extends StatelessWidget {
-  final VoidCallback onSuggestionApplied;
+  final String languageCode;
 
-  const ChooseChildStep({super.key, required this.onSuggestionApplied});
+  final ValueChanged<TaskSuggestionModel> onSuggestionTap;
+
+  const ChooseChildStep({
+    super.key,
+    required this.languageCode,
+    required this.onSuggestionTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+
     final l10n = context.l10n;
 
     return Column(
@@ -40,48 +48,40 @@ class ChooseChildStep extends StatelessWidget {
           Wrap(
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.md,
-            children: controller.children.map((child) {
-              final isSelected = controller.selectedChildIds.contains(child.id);
-
-              return ChildCard(
-                name: child.name,
-                avatarIndex: child.avatarIndex,
-                isSelected: isSelected,
-                onTap: () {
-                  controller.toggleChild(child.id);
-                },
-              );
-            }).toList(),
+            children: [
+              for (final child in controller.children)
+                ChildCard(
+                  name: child.name,
+                  avatarIndex: child.avatarIndex,
+                  isSelected: controller.selectedChildIds.contains(child.id),
+                  onTap: () {
+                    controller.toggleChild(
+                      childId: child.id,
+                      languageCode: languageCode,
+                    );
+                  },
+                ),
+            ],
           ),
-
         if (controller.childError != null) ...[
           const SizedBox(height: AppSpacing.sm),
-
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              controller.childError!.localized(context),
-              style: const TextStyle(color: AppColors.error, fontSize: 12),
-            ),
+          Text(
+            controller.childError!.localized(context),
+            textAlign: TextAlign.start,
+            style: const TextStyle(color: AppColors.error, fontSize: 12),
           ),
         ],
-
         const SizedBox(height: AppSpacing.lg),
-
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: Text(
-            l10n.taskType,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
+        Text(
+          l10n.taskType,
+          textAlign: TextAlign.start,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
           ),
         ),
-
         const SizedBox(height: AppSpacing.xs),
-
         Text(
           controller.selectedChildIds.isEmpty
               ? l10n.selectChildFirst
@@ -94,32 +94,22 @@ class ChooseChildStep extends StatelessWidget {
                 : AppColors.textSecondary,
           ),
         ),
-
         const SizedBox(height: AppSpacing.md),
-
-        const TaskTypeSection(),
-
+        TaskTypeSection(languageCode: languageCode),
         const SizedBox(height: AppSpacing.xl),
-
         _TaskInformationBox(text: l10n.tasksInformation),
-
         const SizedBox(height: AppSpacing.lg),
-
         if (controller.selectedTaskType != null) ...[
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              l10n.quickAdd,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
+          Text(
+            l10n.quickAdd,
+            textAlign: TextAlign.start,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
             ),
           ),
-
           const SizedBox(height: AppSpacing.sm),
-
           if (controller.isLoadingSuggestions)
             const Center(
               child: Padding(
@@ -136,9 +126,10 @@ class ChooseChildStep extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: AppColors.error, fontSize: 12),
                 ),
-
                 TextButton(
-                  onPressed: controller.loadTaskSuggestions,
+                  onPressed: () {
+                    controller.loadTaskSuggestions(languageCode: languageCode);
+                  },
                   child: Text(l10n.retry),
                 ),
               ],
@@ -151,10 +142,7 @@ class ChooseChildStep extends StatelessWidget {
                 controller.selectedTaskType!,
               ),
               suggestions: controller.taskSuggestions,
-              onSuggestionTap: (suggestion) {
-                controller.applyTaskSuggestion(suggestion);
-                onSuggestionApplied();
-              },
+              onSuggestionTap: onSuggestionTap,
             ),
         ],
       ],
@@ -177,6 +165,8 @@ class _TaskInformationBox extends StatelessWidget {
       ),
       child: Row(
         children: [
+          const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
               text,
@@ -187,10 +177,6 @@ class _TaskInformationBox extends StatelessWidget {
               ),
             ),
           ),
-
-          const SizedBox(width: AppSpacing.sm),
-
-          const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
         ],
       ),
     );

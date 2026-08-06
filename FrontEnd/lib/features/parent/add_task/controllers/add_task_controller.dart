@@ -1,142 +1,100 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../models/child_model.dart';
 import '../../../../models/task_suggestion_model.dart';
-import '../../../../services/task_api_service.dart';
-import '../../services/child_api_service.dart';
-
-enum AddTaskWeekDay {
-  sunday,
-  monday,
-  tuesday,
-  wednesday,
-  thursday,
-  friday,
-  saturday,
-}
-
-enum AddTaskErrorCode {
-  selectAtLeastOneChild,
-  selectTaskType,
-  taskNameRequired,
-  descriptionRequired,
-  pointsRange,
-  taskNameLength,
-  descriptionLength,
-}
-
-enum AddTaskSaveErrorCode { generic }
+import '../models/add_task_errors.dart';
+import '../models/add_task_save_result.dart';
+import '../models/add_task_week_day.dart';
+import '../models/task_draft.dart';
+import '../repositories/add_task_repository.dart';
+import '../utils/add_task_backend_error_mapper.dart';
+import '../utils/add_task_validator.dart';
 
 class AddTaskController extends ChangeNotifier {
-  final TaskApiService _taskApiService;
-  final ChildApiService _childApiService;
+  final AddTaskRepository _repository;
 
-  AddTaskController({
-    required String languageCode,
-    TaskApiService? taskApiService,
-    ChildApiService? childApiService,
-  }) : _languageCode = languageCode,
-       _taskApiService = taskApiService ?? TaskApiService(),
-       _childApiService = childApiService ?? ChildApiService();
-
-  String _languageCode;
-
-  String get languageCode => _languageCode;
-
-  final TextEditingController taskNameController = TextEditingController();
-
-  final TextEditingController taskDescriptionController =
-      TextEditingController();
+  AddTaskController({AddTaskRepository? repository})
+    : _repository = repository ?? AddTaskRepository();
 
   final List<ChildModel> _children = [];
+  final List<String> _selectedChildIds = [];
+  final List<TaskSuggestionModel> _taskSuggestions = [];
+
+  bool _isLoadingChildren = false;
+  bool _isLoadingSuggestions = false;
+  bool _isSaving = false;
+  bool _isDisposed = false;
+
+  bool _childrenRequestRunning = false;
+  int _suggestionsRequestVersion = 0;
+
+  int _currentStep = 0;
+  int? _selectedTaskType;
+  int _taskPoints = 10;
+  bool _trustChild = true;
+  int _selectedFrequency = 1;
+
+  AddTaskWeekDay _selectedWeeklyDay = AddTaskWeekDay.sunday;
+
+  int _selectedMonthlyDay = 1;
+
+  AddTaskErrorCode? _titleError;
+  AddTaskErrorCode? _descriptionError;
+  AddTaskErrorCode? _pointsError;
+  AddTaskErrorCode? _categoryError;
+  AddTaskErrorCode? _childError;
+
+  String? _frequencyBackendError;
+  String? _recurrenceDayBackendError;
+
+  bool _hasSuggestionsError = false;
+  String? _suggestionsBackendMessage;
 
   List<ChildModel> get children => List.unmodifiable(_children);
 
-  final List<String> _selectedChildIds = [];
-
   List<String> get selectedChildIds => List.unmodifiable(_selectedChildIds);
-
-  final List<TaskSuggestionModel> _taskSuggestions = [];
 
   List<TaskSuggestionModel> get taskSuggestions =>
       List.unmodifiable(_taskSuggestions);
 
-  bool _isLoadingChildren = true;
-
   bool get isLoadingChildren => _isLoadingChildren;
-
-  bool _isLoadingSuggestions = false;
 
   bool get isLoadingSuggestions => _isLoadingSuggestions;
 
-  bool _hasSuggestionsError = false;
+  bool get isSaving => _isSaving;
 
   bool get hasSuggestionsError => _hasSuggestionsError;
 
-  String? _suggestionsBackendMessage;
-
   String? get suggestionsBackendMessage => _suggestionsBackendMessage;
-
-  bool _isSaving = false;
-
-  bool get isSaving => _isSaving;
-
-  int _currentStep = 0;
 
   int get currentStep => _currentStep;
 
-  int? _selectedTaskType;
-
   int? get selectedTaskType => _selectedTaskType;
-
-  int _taskPoints = 10;
 
   int get taskPoints => _taskPoints;
 
-  bool _trustChild = true;
-
   bool get trustChild => _trustChild;
-
-  int _selectedFrequency = 1;
 
   int get selectedFrequency => _selectedFrequency;
 
-  AddTaskWeekDay _selectedWeeklyDay = AddTaskWeekDay.sunday;
-
   AddTaskWeekDay get selectedWeeklyDay => _selectedWeeklyDay;
-
-  int _selectedMonthlyDay = 1;
 
   int get selectedMonthlyDay => _selectedMonthlyDay;
 
-  AddTaskErrorCode? _titleError;
-
   AddTaskErrorCode? get titleError => _titleError;
-
-  AddTaskErrorCode? _descriptionError;
 
   AddTaskErrorCode? get descriptionError => _descriptionError;
 
-  AddTaskErrorCode? _pointsError;
-
   AddTaskErrorCode? get pointsError => _pointsError;
-
-  AddTaskErrorCode? _categoryError;
 
   AddTaskErrorCode? get categoryError => _categoryError;
 
-  String? _frequencyBackendError;
+  AddTaskErrorCode? get childError => _childError;
 
   String? get frequencyBackendError => _frequencyBackendError;
 
-  String? _recurrenceDayBackendError;
-
   String? get recurrenceDayBackendError => _recurrenceDayBackendError;
-
-  AddTaskErrorCode? _childError;
-
-  AddTaskErrorCode? get childError => _childError;
 
   List<AddTaskWeekDay> get weekDays => AddTaskWeekDay.values;
 
@@ -155,22 +113,7 @@ class AddTaskController extends ChangeNotifier {
 
   int? get recurrenceDay {
     if (_selectedFrequency == 1) {
-      switch (_selectedWeeklyDay) {
-        case AddTaskWeekDay.monday:
-          return 0;
-        case AddTaskWeekDay.tuesday:
-          return 1;
-        case AddTaskWeekDay.wednesday:
-          return 2;
-        case AddTaskWeekDay.thursday:
-          return 3;
-        case AddTaskWeekDay.friday:
-          return 4;
-        case AddTaskWeekDay.saturday:
-          return 5;
-        case AddTaskWeekDay.sunday:
-          return 6;
-      }
+      return _selectedWeeklyDay.backendValue;
     }
 
     if (_selectedFrequency == 2) {
@@ -195,24 +138,17 @@ class AddTaskController extends ChangeNotifier {
     }
   }
 
-  Future<void> updateLanguage(String languageCode) async {
-    if (_languageCode == languageCode) {
+  Future<void> loadChildren() async {
+    if (_childrenRequestRunning) {
       return;
     }
 
-    _languageCode = languageCode;
-
-    if (_selectedChildIds.isNotEmpty && _selectedTaskType != null) {
-      await loadTaskSuggestions();
-    }
-  }
-
-  Future<void> loadChildren() async {
+    _childrenRequestRunning = true;
     _isLoadingChildren = true;
-    notifyListeners();
+    _notify();
 
     try {
-      final loadedChildren = await _childApiService.getChildren();
+      final loadedChildren = await _repository.getChildren();
 
       _children
         ..clear()
@@ -227,15 +163,22 @@ class AddTaskController extends ChangeNotifier {
         'status=${error.response?.statusCode}, '
         'data=${error.response?.data}',
       );
-    } catch (error) {
-      debugPrint('Loading children failed: $error');
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Loading children failed: '
+        '$error\n$stackTrace',
+      );
     } finally {
       _isLoadingChildren = false;
-      notifyListeners();
+      _childrenRequestRunning = false;
+      _notify();
     }
   }
 
-  Future<void> toggleChild(String childId) async {
+  Future<void> toggleChild({
+    required String childId,
+    required String languageCode,
+  }) async {
     if (_selectedChildIds.contains(childId)) {
       _selectedChildIds.remove(childId);
     } else {
@@ -243,99 +186,122 @@ class AddTaskController extends ChangeNotifier {
     }
 
     _childError = null;
-    notifyListeners();
-
-    if (_selectedTaskType != null && _selectedChildIds.isNotEmpty) {
-      await loadTaskSuggestions();
-      return;
-    }
 
     if (_selectedChildIds.isEmpty) {
       _taskSuggestions.clear();
       _clearSuggestionsError();
-      notifyListeners();
+      _notify();
+      return;
+    }
+
+    _notify();
+
+    if (_selectedTaskType != null) {
+      await loadTaskSuggestions(languageCode: languageCode);
     }
   }
 
-  Future<void> selectTaskType(int taskType) async {
+  Future<void> selectTaskType({
+    required int taskType,
+    required String languageCode,
+  }) async {
+    if (taskType < 0 || taskType > 3) {
+      return;
+    }
+
     _selectedTaskType = taskType;
     _categoryError = null;
-    notifyListeners();
+    _notify();
 
-    await loadTaskSuggestions();
+    await loadTaskSuggestions(languageCode: languageCode);
   }
 
-  Future<void> loadTaskSuggestions() async {
+  Future<void> loadTaskSuggestions({required String languageCode}) async {
     if (_selectedChildIds.isEmpty || _selectedTaskType == null) {
       return;
     }
 
+    final requestVersion = ++_suggestionsRequestVersion;
+
     _isLoadingSuggestions = true;
     _clearSuggestionsError();
     _taskSuggestions.clear();
-    notifyListeners();
+    _notify();
 
     try {
-      final suggestions = await _taskApiService.getTaskSuggestions({
-        'child_ids': _selectedChildIds,
-        'category': category,
-        'lang': _languageCode,
-      });
+      final suggestions = await _repository.getTaskSuggestions(
+        childIds: List.unmodifiable(_selectedChildIds),
+        category: category,
+        languageCode: languageCode,
+      );
+
+      if (requestVersion != _suggestionsRequestVersion) {
+        return;
+      }
 
       _taskSuggestions
         ..clear()
         ..addAll(suggestions);
     } on DioException catch (error) {
+      if (requestVersion != _suggestionsRequestVersion) {
+        return;
+      }
+
       _hasSuggestionsError = true;
-      _suggestionsBackendMessage = _readBackendMessage(error);
+      _suggestionsBackendMessage = AddTaskBackendErrorMapper.readBackendMessage(
+        error,
+      );
 
       debugPrint(
         'Loading task suggestions failed: '
         'status=${error.response?.statusCode}, '
         'data=${error.response?.data}',
       );
-    } catch (error) {
-      _hasSuggestionsError = true;
-      _suggestionsBackendMessage = null;
+    } catch (error, stackTrace) {
+      if (requestVersion != _suggestionsRequestVersion) {
+        return;
+      }
 
-      debugPrint('Loading task suggestions failed: $error');
+      _hasSuggestionsError = true;
+
+      debugPrint(
+        'Loading task suggestions failed: '
+        '$error\n$stackTrace',
+      );
     } finally {
-      _isLoadingSuggestions = false;
-      notifyListeners();
+      if (requestVersion == _suggestionsRequestVersion) {
+        _isLoadingSuggestions = false;
+        _notify();
+      }
     }
   }
 
   void applyTaskSuggestion(TaskSuggestionModel suggestion) {
-    taskNameController.text = suggestion.title;
-    taskDescriptionController.text = suggestion.description;
+    _taskPoints = suggestion.points.clamp(1, 100);
 
-    _taskPoints = suggestion.points;
     _trustChild = suggestion.isAutoVerified;
 
-    switch (suggestion.taskFrequency) {
+    switch (suggestion.taskFrequency.toUpperCase()) {
       case 'DAILY':
         _selectedFrequency = 0;
         break;
 
       case 'WEEKLY':
         _selectedFrequency = 1;
-        _selectedWeeklyDay = _weekDayFromBackend(suggestion.recurrenceDay);
+        _selectedWeeklyDay = AddTaskWeekDayBackendValue.fromBackend(
+          suggestion.recurrenceDay,
+        );
         break;
 
       case 'MONTHLY':
         _selectedFrequency = 2;
-
-        final day = suggestion.recurrenceDay;
-
-        if (day != null && day >= 1 && day <= 31) {
-          _selectedMonthlyDay = day;
-        }
+        _selectedMonthlyDay = (suggestion.recurrenceDay ?? 1).clamp(1, 31);
         break;
     }
 
     _currentStep = 1;
     clearErrors();
-    notifyListeners();
+    _notify();
   }
 
   void increasePoints() {
@@ -343,10 +309,10 @@ class AddTaskController extends ChangeNotifier {
       return;
     }
 
-    _taskPoints = (_taskPoints + 5).clamp(1, 100).toInt();
+    _taskPoints = (_taskPoints + 5).clamp(1, 100);
 
     _pointsError = null;
-    notifyListeners();
+    _notify();
   }
 
   void decreasePoints() {
@@ -354,70 +320,75 @@ class AddTaskController extends ChangeNotifier {
       return;
     }
 
-    _taskPoints = (_taskPoints - 5).clamp(1, 100).toInt();
+    _taskPoints = (_taskPoints - 5).clamp(1, 100);
 
     _pointsError = null;
-    notifyListeners();
+    _notify();
   }
 
   void toggleTrustChild() {
     _trustChild = !_trustChild;
-    notifyListeners();
+    _notify();
   }
 
   void selectFrequency(int frequency) {
+    if (frequency < 0 || frequency > 2) {
+      return;
+    }
+
     _selectedFrequency = frequency;
     _frequencyBackendError = null;
     _recurrenceDayBackendError = null;
-    notifyListeners();
+    _notify();
   }
 
   void selectWeeklyDay(AddTaskWeekDay day) {
     _selectedWeeklyDay = day;
     _recurrenceDayBackendError = null;
-    notifyListeners();
+    _notify();
   }
 
   void selectMonthlyDay(int day) {
-    _selectedMonthlyDay = day.clamp(1, 31).toInt();
-
+    _selectedMonthlyDay = day.clamp(1, 31);
     _recurrenceDayBackendError = null;
-    notifyListeners();
+    _notify();
   }
 
-  bool goToNextStep() {
+  bool goToNextStep({required String title, required String description}) {
     clearErrors();
 
     if (_currentStep == 0) {
-      var hasError = false;
+      final result = AddTaskValidator.validateStepOne(
+        childIds: _selectedChildIds,
+        taskType: _selectedTaskType,
+      );
 
-      if (_selectedChildIds.isEmpty) {
-        _childError = AddTaskErrorCode.selectAtLeastOneChild;
+      _applyValidation(result);
 
-        hasError = true;
-      }
-
-      if (_selectedTaskType == null) {
-        _categoryError = AddTaskErrorCode.selectTaskType;
-
-        hasError = true;
-      }
-
-      if (hasError) {
-        notifyListeners();
+      if (!result.isValid) {
+        _notify();
         return false;
       }
+
+      _currentStep = 1;
+      _notify();
+      return true;
     }
 
-    if (_currentStep == 1 && !_validateDetails()) {
-      notifyListeners();
+    final details = AddTaskValidator.validateDetails(
+      title: title.trim(),
+      description: description.trim(),
+      points: _taskPoints,
+    );
+
+    _applyValidation(details);
+
+    if (!details.isValid) {
+      _notify();
       return false;
     }
 
-    _currentStep++;
-    notifyListeners();
-
-    return true;
+    return false;
   }
 
   bool goToPreviousStep() {
@@ -425,16 +396,106 @@ class AddTaskController extends ChangeNotifier {
       return false;
     }
 
-    _currentStep--;
-    notifyListeners();
+    _currentStep = 0;
+    _notify();
 
     return true;
   }
 
-  void reset() {
-    _currentStep = 0;
+  Future<AddTaskSaveResult> saveTask({
+    required String title,
+    required String description,
+  }) async {
+    if (_isSaving) {
+      return const AddTaskSaveResult.validationFailure();
+    }
+
     clearErrors();
-    notifyListeners();
+
+    final cleanTitle = title.trim();
+    final cleanDescription = description.trim();
+
+    final validation = AddTaskValidator.validateAll(
+      childIds: _selectedChildIds,
+      taskType: _selectedTaskType,
+      title: cleanTitle,
+      description: cleanDescription,
+      points: _taskPoints,
+    );
+
+    _applyValidation(validation);
+
+    if (!validation.isValid) {
+      _currentStep = validation.hasStepOneError ? 0 : 1;
+
+      _notify();
+
+      return const AddTaskSaveResult.validationFailure();
+    }
+
+    _isSaving = true;
+    _notify();
+
+    try {
+      final draft = TaskDraft(
+        childIds: List.unmodifiable(_selectedChildIds),
+        title: cleanTitle,
+        description: cleanDescription,
+        points: _taskPoints,
+        frequency: taskFrequency,
+        recurrenceDay: recurrenceDay,
+        category: category,
+        isAutoVerified: _trustChild,
+      );
+
+      await _repository.createTask(draft);
+
+      return const AddTaskSaveResult.success();
+    } on DioException catch (error) {
+      final backendErrors = AddTaskBackendErrorMapper.readFieldErrors(error);
+
+      _applyBackendErrors(backendErrors);
+
+      _currentStep = backendErrors.hasStepOneError ? 0 : 1;
+
+      return AddTaskSaveResult.failure(
+        errorCode: AddTaskSaveErrorCode.generic,
+        backendMessage: AddTaskBackendErrorMapper.readBackendMessage(error),
+      );
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Creating task failed: '
+        '$error\n$stackTrace',
+      );
+
+      return const AddTaskSaveResult.failure(
+        errorCode: AddTaskSaveErrorCode.generic,
+      );
+    } finally {
+      _isSaving = false;
+      _notify();
+    }
+  }
+
+  void reset() {
+    _suggestionsRequestVersion++;
+
+    _selectedChildIds.clear();
+    _taskSuggestions.clear();
+
+    _currentStep = 0;
+    _selectedTaskType = null;
+    _taskPoints = 10;
+    _trustChild = true;
+    _selectedFrequency = 1;
+    _selectedWeeklyDay = AddTaskWeekDay.sunday;
+    _selectedMonthlyDay = 1;
+
+    _isLoadingSuggestions = false;
+
+    clearErrors();
+    _clearSuggestionsError();
+    _notify();
   }
 
   void clearErrors() {
@@ -447,186 +508,24 @@ class AddTaskController extends ChangeNotifier {
     _childError = null;
   }
 
-  bool _validateDetails() {
-    var isValid = true;
-
-    final title = taskNameController.text.trim();
-
-    final description = taskDescriptionController.text.trim();
-
-    if (title.isEmpty) {
-      _titleError = AddTaskErrorCode.taskNameRequired;
-
-      isValid = false;
-    }
-
-    if (description.isEmpty) {
-      _descriptionError = AddTaskErrorCode.descriptionRequired;
-
-      isValid = false;
-    }
-
-    if (_taskPoints < 1 || _taskPoints > 100) {
-      _pointsError = AddTaskErrorCode.pointsRange;
-
-      isValid = false;
-    }
-
-    return isValid;
+  void _applyValidation(AddTaskValidationResult result) {
+    _childError = result.childError;
+    _categoryError = result.categoryError;
+    _titleError = result.titleError;
+    _descriptionError = result.descriptionError;
+    _pointsError = result.pointsError;
   }
 
-  Future<AddTaskSaveResult> saveTask() async {
-    if (_isSaving) {
-      return const AddTaskSaveResult();
-    }
+  void _applyBackendErrors(AddTaskBackendErrors errors) {
+    _childError = errors.childError;
+    _categoryError = errors.categoryError;
+    _titleError = errors.titleError;
+    _descriptionError = errors.descriptionError;
+    _pointsError = errors.pointsError;
 
-    clearErrors();
+    _frequencyBackendError = errors.frequencyError;
 
-    var isValid = true;
-
-    if (_selectedChildIds.isEmpty) {
-      _childError = AddTaskErrorCode.selectAtLeastOneChild;
-
-      isValid = false;
-    }
-
-    if (_selectedTaskType == null) {
-      _categoryError = AddTaskErrorCode.selectTaskType;
-
-      isValid = false;
-    }
-
-    if (!_validateDetails()) {
-      isValid = false;
-    }
-
-    if (!isValid) {
-      _currentStep = _childError != null || _categoryError != null ? 0 : 1;
-
-      notifyListeners();
-
-      return const AddTaskSaveResult();
-    }
-
-    _isSaving = true;
-    notifyListeners();
-
-    try {
-      await _taskApiService.createTask({
-        'child_ids': _selectedChildIds,
-        'title': taskNameController.text.trim(),
-        'description': taskDescriptionController.text.trim(),
-        'points': _taskPoints,
-        'task_frequency': taskFrequency,
-        if (recurrenceDay != null) 'recurrence_day': recurrenceDay,
-        'category': category,
-        'is_auto_verified': _trustChild,
-      });
-
-      return const AddTaskSaveResult(isSuccess: true);
-    } on DioException catch (error) {
-      _handleBackendErrors(error);
-
-      _currentStep = _childError != null || _categoryError != null ? 0 : 1;
-
-      return AddTaskSaveResult(backendMessage: _readBackendMessage(error));
-    } catch (error) {
-      debugPrint('Creating task failed: $error');
-
-      return const AddTaskSaveResult(errorCode: AddTaskSaveErrorCode.generic);
-    } finally {
-      _isSaving = false;
-      notifyListeners();
-    }
-  }
-
-  void _handleBackendErrors(DioException error) {
-    final data = error.response?.data;
-
-    if (data is! Map) {
-      return;
-    }
-
-    final errors = data['errors'];
-
-    if (errors is! Map) {
-      return;
-    }
-
-    _titleError = _mapBackendFieldError(_getError(errors['title']));
-
-    _descriptionError = _mapBackendFieldError(_getError(errors['description']));
-
-    _pointsError = _mapBackendFieldError(_getError(errors['points']));
-
-    _childError = _mapBackendFieldError(_getError(errors['child_ids']));
-
-    _categoryError = _mapBackendFieldError(_getError(errors['category']));
-
-    _frequencyBackendError = _getError(errors['task_frequency']);
-
-    _recurrenceDayBackendError = _getError(errors['recurrence_day']);
-  }
-
-  AddTaskErrorCode? _mapBackendFieldError(String? message) {
-    switch (message) {
-      case 'Shorter than minimum length 1.':
-        return AddTaskErrorCode.selectAtLeastOneChild;
-
-      case 'Must be greater than or equal to 1 and less than or equal to 100.':
-        return AddTaskErrorCode.pointsRange;
-
-      case 'Length must be between 2 and 100.':
-        return AddTaskErrorCode.taskNameLength;
-
-      case 'Length must be between 2 and 500.':
-        return AddTaskErrorCode.descriptionLength;
-
-      default:
-        return null;
-    }
-  }
-
-  String? _readBackendMessage(DioException error) {
-    final data = error.response?.data;
-
-    if (data is Map) {
-      return data['error']?.toString() ?? data['message']?.toString();
-    }
-
-    return null;
-  }
-
-  String? _getError(dynamic error) {
-    if (error == null) {
-      return null;
-    }
-
-    if (error is List && error.isNotEmpty) {
-      return error.first.toString();
-    }
-
-    return error.toString();
-  }
-
-  AddTaskWeekDay _weekDayFromBackend(int? recurrenceDay) {
-    switch (recurrenceDay) {
-      case 0:
-        return AddTaskWeekDay.monday;
-      case 1:
-        return AddTaskWeekDay.tuesday;
-      case 2:
-        return AddTaskWeekDay.wednesday;
-      case 3:
-        return AddTaskWeekDay.thursday;
-      case 4:
-        return AddTaskWeekDay.friday;
-      case 5:
-        return AddTaskWeekDay.saturday;
-      case 6:
-      default:
-        return AddTaskWeekDay.sunday;
-    }
+    _recurrenceDayBackendError = errors.recurrenceDayError;
   }
 
   void _clearSuggestionsError() {
@@ -634,22 +533,16 @@ class AddTaskController extends ChangeNotifier {
     _suggestionsBackendMessage = null;
   }
 
+  void _notify() {
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+  }
+
   @override
   void dispose() {
-    taskNameController.dispose();
-    taskDescriptionController.dispose();
+    _isDisposed = true;
+    _suggestionsRequestVersion++;
     super.dispose();
   }
-}
-
-class AddTaskSaveResult {
-  final bool isSuccess;
-  final AddTaskSaveErrorCode? errorCode;
-  final String? backendMessage;
-
-  const AddTaskSaveResult({
-    this.isSuccess = false,
-    this.errorCode,
-    this.backendMessage,
-  });
 }

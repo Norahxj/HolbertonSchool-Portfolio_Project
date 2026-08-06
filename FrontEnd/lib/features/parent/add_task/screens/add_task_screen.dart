@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../models/task_suggestion_model.dart';
 import '../controllers/add_task_controller.dart';
+import '../models/add_task_save_result.dart';
 import '../utils/add_task_localization.dart';
 import '../widgets/add_task_view.dart';
 
@@ -21,7 +23,9 @@ class AddTaskScreen extends StatefulWidget {
   });
 
   @override
-  State<AddTaskScreen> createState() => _AddTaskScreenState();
+  State<AddTaskScreen> createState() {
+    return _AddTaskScreenState();
+  }
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
@@ -29,27 +33,30 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   final ScrollController _scrollController = ScrollController();
 
-  String? _currentLanguageCode;
+  final TextEditingController _taskNameController = TextEditingController();
+
+  final TextEditingController _taskDescriptionController =
+      TextEditingController();
+
+  String get _languageCode {
+    return Localizations.localeOf(context).languageCode;
+  }
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AddTaskController(languageCode: 'ar')..loadChildren();
+    _controller = AddTaskController()..loadChildren();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final languageCode = Localizations.localeOf(context).languageCode;
-
-    if (_currentLanguageCode == languageCode) {
-      return;
+    if (_controller.selectedChildIds.isNotEmpty &&
+        _controller.selectedTaskType != null) {
+      _controller.loadTaskSuggestions(languageCode: _languageCode);
     }
-
-    _currentLanguageCode = languageCode;
-    _controller.updateLanguage(languageCode);
   }
 
   @override
@@ -61,35 +68,27 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
 
     if (oldWidget.resetVersion != widget.resetVersion) {
-      _controller.reset();
-      _scrollToTop();
+      _resetForm();
     }
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _taskNameController.dispose();
+    _taskDescriptionController.dispose();
     _controller.dispose();
 
     super.dispose();
   }
 
-  void _scrollToTop() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollController.hasClients) {
-        return;
-      }
-
-      _scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeOutCubic,
-      );
-    });
-  }
-
   void _goToNextStep() {
-    final moved = _controller.goToNextStep();
+    FocusScope.of(context).unfocus();
+
+    final moved = _controller.goToNextStep(
+      title: _taskNameController.text,
+      description: _taskDescriptionController.text,
+    );
 
     if (moved) {
       _scrollToTop();
@@ -97,11 +96,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   void _goToPreviousStep() {
+    FocusScope.of(context).unfocus();
+
     final moved = _controller.goToPreviousStep();
 
     if (!moved) {
-      _controller.reset();
-      _scrollToTop();
+      _resetForm();
       return;
     }
 
@@ -130,9 +130,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
-
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -182,36 +180,80 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       },
     );
 
-    if (selectedDay != null) {
-      _controller.selectMonthlyDay(selectedDay);
+    if (!mounted || selectedDay == null) {
+      return;
     }
+
+    _controller.selectMonthlyDay(selectedDay);
   }
 
   Future<void> _saveTask() async {
-    final result = await _controller.saveTask();
+    FocusScope.of(context).unfocus();
+
+    final result = await _controller.saveTask(
+      title: _taskNameController.text,
+      description: _taskDescriptionController.text,
+    );
 
     if (!mounted) {
       return;
     }
 
     if (!result.isSuccess) {
-      final message =
-          result.backendMessage ?? result.errorCode?.localized(context);
-
-      if (message != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
-      }
-
+      _handleSaveFailure(result);
       _scrollToTop();
       return;
     }
 
-    _controller.reset();
-    _scrollToTop();
-
+    _resetForm();
     widget.onTaskSaved();
+  }
+
+  void _applySuggestion(TaskSuggestionModel suggestion) {
+    _controller.applyTaskSuggestion(suggestion);
+
+    _taskNameController.text = suggestion.title;
+
+    _taskDescriptionController.text = suggestion.description;
+
+    _scrollToTop();
+  }
+
+  void _handleSaveFailure(AddTaskSaveResult result) {
+    final message =
+        result.backendMessage ?? result.errorCode?.localized(context);
+
+    if (message == null || message.trim().isEmpty) {
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _resetForm() {
+    _controller.reset();
+    _taskNameController.clear();
+    _taskDescriptionController.clear();
+
+    _scrollToTop();
+  }
+
+  void _scrollToTop() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) {
+        return;
+      }
+
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   @override
@@ -220,12 +262,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       value: _controller,
       child: AddTaskView(
         scrollController: _scrollController,
+        taskNameController: _taskNameController,
+        taskDescriptionController: _taskDescriptionController,
+        languageCode: _languageCode,
         onRefresh: _controller.loadChildren,
         onNext: _goToNextStep,
         onBack: _goToPreviousStep,
         onSave: _saveTask,
         onMonthlyDayPicker: _showMonthlyDayPicker,
-        onSuggestionApplied: _scrollToTop,
+        onSuggestionTap: _applySuggestion,
       ),
     );
   }

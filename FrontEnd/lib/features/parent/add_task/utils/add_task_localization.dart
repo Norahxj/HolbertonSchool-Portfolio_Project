@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/add_task_controller.dart';
+import '../models/add_task_errors.dart';
+import '../models/add_task_week_day.dart';
 
 extension AddTaskErrorLocalization on AddTaskErrorCode {
   String localized(BuildContext context) {

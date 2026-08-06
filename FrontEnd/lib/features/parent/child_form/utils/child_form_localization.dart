@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/child_form_controller.dart';
+import '../models/child_form_errors.dart';
 
-extension ChildFormFieldErrorLocalization
-    on ChildFormFieldErrorCode {
+extension ChildFormFieldErrorLocalization on ChildFormFieldErrorCode {
   String localized(BuildContext context) {
     final l10n = context.l10n;
 

@@ -11,9 +11,18 @@ import 'task_schedule_section.dart';
 import 'task_text_field.dart';
 
 class TaskDetailsStep extends StatelessWidget {
+  final TextEditingController taskNameController;
+
+  final TextEditingController taskDescriptionController;
+
   final Future<void> Function() onMonthlyDayPicker;
 
-  const TaskDetailsStep({super.key, required this.onMonthlyDayPicker});
+  const TaskDetailsStep({
+    super.key,
+    required this.taskNameController,
+    required this.taskDescriptionController,
+    required this.onMonthlyDayPicker,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class TaskDetailsStep extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
 
         TaskTextField(
-          controller: controller.taskNameController,
+          controller: taskNameController,
           hint: l10n.taskNameExample,
           errorText: controller.titleError?.localized(context),
         ),
@@ -40,7 +49,7 @@ class TaskDetailsStep extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
 
         TaskTextField(
-          controller: controller.taskDescriptionController,
+          controller: taskDescriptionController,
           hint: l10n.taskDescriptionHint,
           maxLines: 2,
           errorText: controller.descriptionError?.localized(context),

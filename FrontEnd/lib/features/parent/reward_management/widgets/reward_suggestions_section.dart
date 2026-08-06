@@ -18,8 +18,6 @@ class RewardSuggestionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic = Directionality.of(context) == TextDirection.rtl;
-
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -37,65 +35,62 @@ class RewardSuggestionsSection extends StatelessWidget {
             )
           : Column(
               children: [
-                for (int index = 0; index < suggestions.length; index++) ...[
-                  InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      onSuggestionTap(suggestions[index]);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.sm,
-                      ),
-                      child: Row(
-                        textDirection: isArabic
-                            ? TextDirection.rtl
-                            : TextDirection.ltr,
-                        children: [
-                          const Icon(
-                            Icons.add_circle_outline,
-                            size: 19,
-                            color: AppColors.primary,
-                          ),
-
-                          const SizedBox(width: AppSpacing.sm),
-
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  suggestions[index].rewardName,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-
-                                if (suggestions[index]
-                                    .description
-                                    .isNotEmpty) ...[
-                                  const SizedBox(height: 3),
-
+                for (var index = 0; index < suggestions.length; index++) ...[
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        onSuggestionTap(suggestions[index]);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.symmetric(
+                          vertical: AppSpacing.sm,
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.add_circle_outline,
+                              size: 19,
+                              color: AppColors.primary,
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Text(
-                                    suggestions[index].description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                    suggestions[index].rewardName,
+                                    textAlign: TextAlign.start,
                                     style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.textSecondary,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
                                     ),
                                   ),
+                                  if (suggestions[index].description
+                                      .trim()
+                                      .isNotEmpty) ...[
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      suggestions[index].description,
+                                      textAlign: TextAlign.start,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-
                   if (index != suggestions.length - 1)
                     const Divider(height: 1, color: AppColors.border),
                 ],

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../models/reward_suggestion_model.dart';
 import '../controllers/add_reward_controller.dart';
+import '../models/add_reward_result.dart';
 import '../utils/add_reward_localization.dart';
 import '../widgets/add_reward_view.dart';
 
@@ -13,15 +14,17 @@ class AddRewardScreen extends StatefulWidget {
   const AddRewardScreen({super.key, required this.childId, this.suggestion});
 
   @override
-  State<AddRewardScreen> createState() => _AddRewardScreenState();
+  State<AddRewardScreen> createState() {
+    return _AddRewardScreenState();
+  }
 }
 
 class _AddRewardScreenState extends State<AddRewardScreen> {
   late final AddRewardController _controller;
 
-  final TextEditingController nameController = TextEditingController();
+  late final TextEditingController _nameController;
 
-  final TextEditingController descriptionController = TextEditingController();
+  late final TextEditingController _descriptionController;
 
   @override
   void initState() {
@@ -32,27 +35,30 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
       suggestion: widget.suggestion,
     );
 
-    final suggestion = widget.suggestion;
+    _nameController = TextEditingController(
+      text: widget.suggestion?.rewardName ?? '',
+    );
 
-    if (suggestion != null) {
-      nameController.text = suggestion.rewardName;
-      descriptionController.text = suggestion.description;
-    }
+    _descriptionController = TextEditingController(
+      text: widget.suggestion?.description ?? '',
+    );
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    nameController.dispose();
-    descriptionController.dispose();
+    _nameController.dispose();
+    _descriptionController.dispose();
 
     super.dispose();
   }
 
   Future<void> _saveReward() async {
+    FocusScope.of(context).unfocus();
+
     final result = await _controller.saveReward(
-      rewardName: nameController.text,
-      description: descriptionController.text,
+      rewardName: _nameController.text,
+      description: _descriptionController.text,
     );
 
     if (!mounted) {
@@ -60,19 +66,30 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     }
 
     if (!result.isSuccess) {
-      final message =
-          result.backendMessage ?? result.errorCode?.localized(context);
-
-      if (message != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
-      }
-
+      _showSaveError(result);
       return;
     }
 
     Navigator.pop(context, true);
+  }
+
+  void _showSaveError(AddRewardResult result) {
+    final message =
+        result.backendMessage ?? result.errorCode?.localized(context);
+
+    if (message == null || message.isEmpty) {
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _goBack() {
+    Navigator.pop(context);
   }
 
   @override
@@ -80,12 +97,10 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: AddRewardView(
-        nameController: nameController,
-        descriptionController: descriptionController,
+        nameController: _nameController,
+        descriptionController: _descriptionController,
         onSave: _saveReward,
-        onBack: () {
-          Navigator.pop(context);
-        },
+        onBack: _goBack,
       ),
     );
   }

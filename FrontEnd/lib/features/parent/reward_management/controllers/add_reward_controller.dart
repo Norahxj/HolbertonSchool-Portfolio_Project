@@ -1,19 +1,19 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../models/reward_suggestion_model.dart';
-import '../../../../services/reward_api_service.dart';
-
-enum AddRewardErrorCode { rewardNameRequired, saveReward, genericSaveReward }
+import '../helpers/reward_error_helper.dart';
+import '../models/add_reward_result.dart';
+import '../repositories/add_reward_repository.dart';
 
 class AddRewardController extends ChangeNotifier {
-  final RewardApiService _rewardApiService;
+  final AddRewardRepository _repository;
 
   AddRewardController({
     required this.childId,
     this.suggestion,
-    RewardApiService? rewardApiService,
-  }) : _rewardApiService = rewardApiService ?? RewardApiService(),
+    AddRewardRepository? repository,
+  }) : _repository = repository ?? AddRewardRepository(),
        _selectedUnlockDay = suggestion?.unlockDay.clamp(0, 6).toInt() ?? 3;
 
   final String childId;
@@ -31,10 +31,12 @@ class AddRewardController extends ChangeNotifier {
 
   AddRewardErrorCode? get nameError => _nameError;
 
-  List<int> get weekDays => const [0, 1, 2, 3, 4, 5, 6];
+  List<int> get weekDays {
+    return const [0, 1, 2, 3, 4, 5, 6];
+  }
 
   void selectUnlockDay(int dayIndex) {
-    if (_selectedUnlockDay == dayIndex) {
+    if (_selectedUnlockDay == dayIndex || dayIndex < 0 || dayIndex > 6) {
       return;
     }
 
@@ -47,7 +49,7 @@ class AddRewardController extends ChangeNotifier {
     required String description,
   }) async {
     if (_isSaving) {
-      return const AddRewardResult();
+      return const AddRewardResult.success();
     }
 
     final cleanRewardName = rewardName.trim();
@@ -60,7 +62,7 @@ class AddRewardController extends ChangeNotifier {
 
       notifyListeners();
 
-      return const AddRewardResult(
+      return const AddRewardResult.failure(
         errorCode: AddRewardErrorCode.rewardNameRequired,
       );
     }
@@ -69,29 +71,32 @@ class AddRewardController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _rewardApiService.createReward(
+      await _repository.createReward(
         childId: childId,
         rewardName: cleanRewardName,
         description: cleanDescription.isEmpty ? null : cleanDescription,
         unlockDay: _selectedUnlockDay,
       );
 
-      return const AddRewardResult(isSuccess: true);
+      return const AddRewardResult.success();
     } on DioException catch (error) {
       debugPrint(
-        'Save reward failed: '
+        'Saving reward failed: '
         'status=${error.response?.statusCode}, '
         'data=${error.response?.data}',
       );
 
-      return AddRewardResult(
+      return AddRewardResult.failure(
         errorCode: AddRewardErrorCode.saveReward,
-        backendMessage: _readBackendMessage(error),
+        backendMessage: readBackendMessage(error),
       );
-    } catch (error) {
-      debugPrint('Save reward failed: $error');
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Saving reward failed: '
+        '$error\n$stackTrace',
+      );
 
-      return const AddRewardResult(
+      return const AddRewardResult.failure(
         errorCode: AddRewardErrorCode.genericSaveReward,
       );
     } finally {
@@ -99,26 +104,4 @@ class AddRewardController extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  String? _readBackendMessage(DioException error) {
-    final data = error.response?.data;
-
-    if (data is Map) {
-      return data['error']?.toString() ?? data['message']?.toString();
-    }
-
-    return null;
-  }
-}
-
-class AddRewardResult {
-  final bool isSuccess;
-  final AddRewardErrorCode? errorCode;
-  final String? backendMessage;
-
-  const AddRewardResult({
-    this.isSuccess = false,
-    this.errorCode,
-    this.backendMessage,
-  });
 }

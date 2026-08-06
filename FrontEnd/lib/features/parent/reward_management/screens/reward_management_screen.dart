@@ -6,6 +6,7 @@ import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/reward_model.dart';
 import '../../../../models/reward_suggestion_model.dart';
 import '../controllers/reward_management_controller.dart';
+import '../models/reward_management_result.dart';
 import '../utils/reward_management_localization.dart';
 import '../widgets/reward_management_view.dart';
 import 'add_reward_screen.dart';
@@ -24,32 +25,33 @@ class RewardManagementScreen extends StatefulWidget {
 class _RewardManagementScreenState extends State<RewardManagementScreen> {
   late final RewardManagementController _controller;
 
-  bool _didInitialize = false;
+  String? _languageCode;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = RewardManagementController(languageCode: 'ar');
+    _controller = RewardManagementController();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final languageCode = Localizations.localeOf(context).languageCode;
+    final currentLanguageCode = Localizations.localeOf(context).languageCode;
 
-    if (!_didInitialize) {
-      _didInitialize = true;
+    if (_languageCode == null) {
+      _languageCode = currentLanguageCode;
 
-      _controller.updateLanguage(languageCode);
-      _controller.initialize();
+      _controller.initialize(languageCode: currentLanguageCode);
 
       return;
     }
 
-    if (_controller.languageCode != languageCode) {
-      _controller.updateLanguage(languageCode);
+    if (_languageCode != currentLanguageCode) {
+      _languageCode = currentLanguageCode;
+
+      _controller.loadRewardSuggestions(languageCode: currentLanguageCode);
     }
   }
 
@@ -65,8 +67,11 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
   @override
   void dispose() {
     _controller.dispose();
-
     super.dispose();
+  }
+
+  Future<void> _refresh() {
+    return _controller.refresh(languageCode: _languageCode ?? 'ar');
   }
 
   Future<void> _openAddReward({RewardSuggestionModel? suggestion}) async {
@@ -85,11 +90,7 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
       ),
     );
 
-    if (!mounted) {
-      return;
-    }
-
-    if (saved != true) {
+    if (!mounted || saved != true) {
       return;
     }
 
@@ -99,21 +100,20 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.rewardAddedSuccessfully)),
-    );
+    _showMessage(context.l10n.rewardAddedSuccessfully);
   }
 
   Future<void> _deleteReward(RewardModel reward) async {
-    final l10n = context.l10n;
-
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(l10n.deleteRewardTitle, textAlign: TextAlign.start),
+          title: Text(
+            context.l10n.deleteRewardTitle,
+            textAlign: TextAlign.start,
+          ),
           content: Text(
-            l10n.deleteRewardConfirmation(reward.rewardName),
+            context.l10n.deleteRewardConfirmation(reward.rewardName),
             textAlign: TextAlign.start,
           ),
           actions: [
@@ -121,16 +121,14 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
               onPressed: () {
                 Navigator.pop(dialogContext, false);
               },
-              child: Text(l10n.cancel),
+              child: Text(context.l10n.cancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext, true);
               },
-              child: Text(
-                l10n.delete,
-                style: const TextStyle(color: AppColors.error),
-              ),
+              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              child: Text(context.l10n.delete),
             ),
           ],
         );
@@ -147,22 +145,29 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
       return;
     }
 
-    if (result.isSuccess) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.rewardDeleted)));
-
+    if (!result.isSuccess) {
+      _showDeleteError(result);
       return;
     }
 
+    _showMessage(context.l10n.rewardDeleted);
+  }
+
+  void _showDeleteError(RewardDeleteResult result) {
     final message =
         result.backendMessage ??
         result.errorCode?.localized(context) ??
         context.l10n.failedToDeleteReward;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    _showMessage(message);
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -170,6 +175,7 @@ class _RewardManagementScreenState extends State<RewardManagementScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: RewardManagementView(
+        onRefresh: _refresh,
         onAddReward: _openAddReward,
         onDeleteReward: _deleteReward,
       ),
