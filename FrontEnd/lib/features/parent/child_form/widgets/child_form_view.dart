@@ -8,21 +8,19 @@ import '../../../../core/widgets/app_back_button.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/screen_background.dart';
-import '../controllers/edit_child_controller.dart';
-import '../../child_form/widgets/avatar_option.dart';
-import '../../child_form/widgets/birth_date_field.dart';
+import '../controllers/child_form_controller.dart';
+import 'avatar_option.dart';
+import 'birth_date_field.dart';
 
-class EditChildView extends StatelessWidget {
-  final bool isArabic;
+class ChildFormView extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController phoneController;
   final VoidCallback onBack;
   final VoidCallback onPickDate;
   final Future<void> Function() onSave;
 
-  const EditChildView({
+  const ChildFormView({
     super.key,
-    required this.isArabic,
     required this.nameController,
     required this.phoneController,
     required this.onBack,
@@ -30,13 +28,16 @@ class EditChildView extends StatelessWidget {
     required this.onSave,
   });
 
-  String _tr(String arabic, String english) {
-    return isArabic ? arabic : english;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<EditChildController>();
+    final controller = context.watch<ChildFormController>();
+
+    final isArabic = controller.isArabic;
+    final isEditMode = controller.isEditMode;
+
+    String tr(String arabic, String english) {
+      return isArabic ? arabic : english;
+    }
 
     return Directionality(
       textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
@@ -57,7 +58,9 @@ class EditChildView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.lg),
 
                   Text(
-                    _tr('تعديل بيانات الطفل', 'Edit Child Information'),
+                    isEditMode
+                        ? tr('تعديل بيانات الطفل', 'Edit Child Information')
+                        : tr('إضافة طفل', 'Add Child'),
                     style: AppTextStyles.arabicTitle,
                     textAlign: TextAlign.center,
                   ),
@@ -65,10 +68,15 @@ class EditChildView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.sm),
 
                   Text(
-                    _tr(
-                      'عدّل معلومات الطفل ثم اضغط حفظ',
-                      'Update the child information, then save',
-                    ),
+                    isEditMode
+                        ? tr(
+                            'عدّل معلومات الطفل ثم اضغط حفظ',
+                            'Update the child information, then save',
+                          )
+                        : tr(
+                            'أضف معلومات طفلك لبدء رحلته',
+                            'Add your child’s information to begin their journey',
+                          ),
                     style: AppTextStyles.body,
                     textAlign: TextAlign.center,
                   ),
@@ -76,7 +84,7 @@ class EditChildView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
 
                   Text(
-                    _tr('اختر صورة رمزية', 'Choose an avatar'),
+                    tr('اختر صورة رمزية', 'Choose an avatar'),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -127,8 +135,8 @@ class EditChildView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
 
                   AppTextField(
-                    label: _tr('اسم الطفل', 'Child name'),
-                    hint: _tr('اسم الطفل', 'Child name'),
+                    label: tr('اسم الطفل', 'Child name'),
+                    hint: tr('اسم الطفل', 'Child name'),
                     icon: Icons.person_outline,
                     controller: nameController,
                     errorText: controller.nameError,
@@ -152,6 +160,9 @@ class EditChildView extends StatelessWidget {
                             : Alignment.centerLeft,
                         child: Text(
                           controller.birthDateError!,
+                          textAlign: isArabic
+                              ? TextAlign.right
+                              : TextAlign.left,
                           style: const TextStyle(
                             color: AppColors.error,
                             fontSize: 12,
@@ -160,14 +171,28 @@ class EditChildView extends StatelessWidget {
                       ),
                     ),
 
+                  const SizedBox(height: AppSpacing.xs),
+
+                  Text(
+                    tr(
+                      'يفتح التقويم لاختيار التاريخ',
+                      'Open the calendar to select a date',
+                    ),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+
                   const SizedBox(height: AppSpacing.md),
 
                   AppTextField(
-                    label: _tr('رقم الجوال', 'Phone number'),
-                    hint: _tr(
+                    label: tr(
                       'رقم الجوال (اختياري)',
                       'Phone number (optional)',
                     ),
+                    hint: '05XXXXXXXX',
                     icon: Icons.phone_outlined,
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
@@ -179,8 +204,10 @@ class EditChildView extends StatelessWidget {
 
                   AppButton(
                     text: controller.isSaving
-                        ? _tr('جارٍ الحفظ...', 'Saving...')
-                        : _tr('حفظ التعديلات', 'Save Changes'),
+                        ? tr('جارٍ الحفظ...', 'Saving...')
+                        : isEditMode
+                        ? tr('حفظ التعديلات', 'Save Changes')
+                        : tr('حفظ', 'Save'),
                     onPressed: controller.isSaving ? null : onSave,
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,

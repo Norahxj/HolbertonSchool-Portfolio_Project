@@ -4,19 +4,49 @@ import 'package:flutter/material.dart';
 import '../../../../models/child_model.dart';
 import '../../services/child_api_service.dart';
 
-class EditChildController extends ChangeNotifier {
+enum ChildFormMode { add, edit }
+
+class ChildFormSaveResult {
+  final bool isSuccess;
+  final ChildModel? child;
+  final String? errorMessage;
+
+  const ChildFormSaveResult({
+    this.isSuccess = false,
+    this.child,
+    this.errorMessage,
+  });
+}
+
+class ChildFormController extends ChangeNotifier {
   final ChildApiService _childApiService;
 
-  EditChildController({
-    required this.child,
+  ChildFormController.add({
     required this.isArabic,
     ChildApiService? childApiService,
-  }) : _childApiService = childApiService ?? ChildApiService(),
+  }) : mode = ChildFormMode.add,
+       child = null,
+       _childApiService = childApiService ?? ChildApiService(),
+       _selectedAvatarIndex = 0,
+       _selectedBirthDate = null;
+
+  ChildFormController.edit({
+    required ChildModel child,
+    required this.isArabic,
+    ChildApiService? childApiService,
+  }) : mode = ChildFormMode.edit,
+       child = child,
+       _childApiService = childApiService ?? ChildApiService(),
        _selectedAvatarIndex = child.avatarIndex,
        _selectedBirthDate = DateTime.tryParse(child.birthDate);
 
-  final ChildModel child;
+  final ChildFormMode mode;
+  final ChildModel? child;
   final bool isArabic;
+
+  bool get isEditMode => mode == ChildFormMode.edit;
+
+  bool get isAddMode => mode == ChildFormMode.add;
 
   int _selectedAvatarIndex;
 
@@ -60,6 +90,10 @@ class EditChildController extends ChangeNotifier {
   }
 
   void selectBirthDate(DateTime date) {
+    if (_selectedBirthDate == date) {
+      return;
+    }
+
     _selectedBirthDate = date;
     _birthDateError = null;
     notifyListeners();
@@ -80,18 +114,17 @@ class EditChildController extends ChangeNotifier {
   DateTime get initialBirthDate {
     final now = DateTime.now();
 
-    var initialDate =
-        _selectedBirthDate ?? DateTime(now.year - 7, now.month, now.day);
+    var date = _selectedBirthDate ?? DateTime(now.year - 7, now.month, now.day);
 
-    if (initialDate.isBefore(earliestBirthDate)) {
-      initialDate = earliestBirthDate;
+    if (date.isBefore(earliestBirthDate)) {
+      date = earliestBirthDate;
     }
 
-    if (initialDate.isAfter(latestBirthDate)) {
-      initialDate = latestBirthDate;
+    if (date.isAfter(latestBirthDate)) {
+      date = latestBirthDate;
     }
 
-    return initialDate;
+    return date;
   }
 
   String get birthDateLabel {
@@ -101,14 +134,14 @@ class EditChildController extends ChangeNotifier {
       return tr('تاريخ الميلاد', 'Date of birth');
     }
 
-    return '${date.day}/${date.month}/${date.year}';
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+
+    return '$day/$month/${date.year}';
   }
 
   bool validateFields({required String name, required String phone}) {
-    _nameError = null;
-    _phoneError = null;
-    _birthDateError = null;
-    _errorMessage = null;
+    _clearErrors();
 
     final trimmedName = name.trim();
     final trimmedPhone = phone.trim();
@@ -164,7 +197,7 @@ class EditChildController extends ChangeNotifier {
     return true;
   }
 
-  Future<ChildModel?> saveChanges({
+  Future<ChildFormSaveResult> save({
     required String name,
     required String phone,
   }) async {
@@ -173,8 +206,12 @@ class EditChildController extends ChangeNotifier {
 
     final isValid = validateFields(name: trimmedName, phone: trimmedPhone);
 
-    if (!isValid || _isSaving) {
-      return null;
+    if (!isValid) {
+      return const ChildFormSaveResult();
+    }
+
+    if (_isSaving) {
+      return const ChildFormSaveResult();
     }
 
     _isSaving = true;
@@ -182,38 +219,68 @@ class EditChildController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      return await _childApiService.updateChild(
-        childId: child.id,
+      if (isAddMode) {
+        await _childApiService.addChild(
+          name: trimmedName,
+          birthDate: _formatBirthDate(_selectedBirthDate!),
+          avatarIndex: _selectedAvatarIndex,
+          phone: trimmedPhone.isEmpty ? null : trimmedPhone,
+        );
+
+        return const ChildFormSaveResult(isSuccess: true);
+      }
+
+      final editingChild = child;
+
+      if (editingChild == null) {
+        final message = tr(
+          'تعذّر تحديد الطفل المراد تعديله.',
+          'Could not identify the child to update.',
+        );
+
+        _errorMessage = message;
+
+        return ChildFormSaveResult(errorMessage: message);
+      }
+
+      final updatedChild = await _childApiService.updateChild(
+        childId: editingChild.id,
         name: trimmedName,
         birthDate: _formatBirthDate(_selectedBirthDate!),
         avatarIndex: _selectedAvatarIndex,
         phone: trimmedPhone.isEmpty ? null : trimmedPhone,
       );
+
+      return ChildFormSaveResult(isSuccess: true, child: updatedChild);
     } on DioException catch (error) {
       debugPrint(
-        'Update child failed: '
-        '${error.response?.statusCode} '
-        '${error.response?.data}',
+        'Child form save failed: '
+        'mode=$mode, '
+        'status=${error.response?.statusCode}, '
+        'data=${error.response?.data}',
       );
 
       _readValidationErrors(error);
 
-      if (_nameError == null &&
-          _phoneError == null &&
-          _birthDateError == null) {
-        _errorMessage = _readUpdateErrorMessage(error);
+      if (!_hasFieldErrors) {
+        _errorMessage = _readSaveErrorMessage(error);
       }
 
-      return null;
+      return ChildFormSaveResult(errorMessage: _errorMessage);
     } catch (error) {
-      debugPrint('Unexpected update child error: $error');
+      debugPrint('Unexpected child form save error: $error');
 
-      _errorMessage = tr(
-        'حدث خطأ غير متوقع أثناء تعديل الطفل.',
-        'An unexpected error occurred while updating the child.',
-      );
+      _errorMessage = isAddMode
+          ? tr(
+              'حدث خطأ غير متوقع أثناء إضافة الطفل.',
+              'An unexpected error occurred while adding the child.',
+            )
+          : tr(
+              'حدث خطأ غير متوقع أثناء تعديل الطفل.',
+              'An unexpected error occurred while updating the child.',
+            );
 
-      return null;
+      return ChildFormSaveResult(errorMessage: _errorMessage);
     } finally {
       _isSaving = false;
       notifyListeners();
@@ -238,41 +305,74 @@ class EditChildController extends ChangeNotifier {
     _birthDateError = _firstError(errors['birth_date']);
   }
 
-  String _readUpdateErrorMessage(DioException error) {
+  String _readSaveErrorMessage(DioException error) {
     final responseData = error.response?.data;
 
-    var message = tr(
-      'تعذّر تعديل بيانات الطفل. حاولي مرة أخرى.',
-      'Could not update the child. Please try again.',
-    );
+    final fallbackMessage = isAddMode
+        ? tr(
+            'تعذّر إضافة الطفل. حاولي مرة أخرى.',
+            'Could not add the child. Please try again.',
+          )
+        : tr(
+            'تعذّر تعديل بيانات الطفل. حاولي مرة أخرى.',
+            'Could not update the child. Please try again.',
+          );
 
     if (responseData is! Map) {
-      return message;
+      return fallbackMessage;
     }
 
     final backendMessage = responseData['error'] ?? responseData['message'];
 
+    if (backendMessage is! String || backendMessage.trim().isEmpty) {
+      return fallbackMessage;
+    }
+
     switch (backendMessage) {
       case 'Phone number already used':
-        message = tr(
+        return tr(
           'رقم الجوال مستخدم بالفعل.',
           'This phone number is already in use.',
         );
 
-      case 'Child not found':
-        message = tr('لم يتم العثور على الطفل.', 'The child was not found.');
+      case 'Parent is not assigned to a family':
+        return tr(
+          'حساب ولي الأمر غير مرتبط بأسرة.',
+          'The parent account is not linked to a family.',
+        );
 
       case 'Parent access required':
-        message = tr(
-          'تعديل بيانات الطفل متاح لولي الأمر فقط.',
-          'Only parents can update child information.',
+        return isAddMode
+            ? tr(
+                'إضافة الأطفال متاحة لولي الأمر فقط.',
+                'Only parents can add children.',
+              )
+            : tr(
+                'تعديل بيانات الطفل متاح لولي الأمر فقط.',
+                'Only parents can update child information.',
+              );
+
+      case 'Parent not found':
+        return tr(
+          'تعذّر العثور على حساب ولي الأمر.',
+          'The parent account could not be found.',
+        );
+
+      case 'Child not found':
+        return tr('لم يتم العثور على الطفل.', 'The child was not found.');
+
+      case 'Could not create child':
+        return tr(
+          'تعذّر إنشاء حساب الطفل.',
+          'Could not create the child account.',
         );
 
       case 'Failed to update child':
-        message = tr('تعذّر حفظ التعديلات.', 'Could not save the changes.');
-    }
+        return tr('تعذّر حفظ التعديلات.', 'Could not save the changes.');
 
-    return message;
+      default:
+        return backendMessage;
+    }
   }
 
   String _formatBirthDate(DateTime date) {
@@ -293,5 +393,16 @@ class EditChildController extends ChangeNotifier {
     }
 
     return null;
+  }
+
+  bool get _hasFieldErrors {
+    return _nameError != null || _phoneError != null || _birthDateError != null;
+  }
+
+  void _clearErrors() {
+    _nameError = null;
+    _phoneError = null;
+    _birthDateError = null;
+    _errorMessage = null;
   }
 }

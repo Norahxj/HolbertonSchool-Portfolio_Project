@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/screen_background.dart';
-import '../../add_child/screens/add_child_screen.dart';
+import '../../child_form/screens/child_form_screen.dart';
 import '../../parent_child_details/screens/parent_child_details_screen.dart';
 import '../../task_review/screens/task_review_screen.dart';
 import '../controllers/parent_dashboard_controller.dart';
@@ -26,16 +26,11 @@ class ParentDashboardView extends StatelessWidget {
   Future<void> _openAddChild(BuildContext context) async {
     final controller = context.read<ParentDashboardController>();
 
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
-
     final wasAdded = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return AddChildScreen(
-            isArabic: isArabic,
-          );
+          return const ChildFormScreen.add();
         },
       ),
     );
@@ -44,20 +39,23 @@ class ParentDashboardView extends StatelessWidget {
       return;
     }
 
-    if (wasAdded == true) {
-      await controller.refresh();
-
-      if (!context.mounted) {
-        return;
-      }
-
-      onChildrenChanged();
+    if (wasAdded != true) {
+      return;
     }
+
+    await controller.refresh();
+
+    if (!context.mounted) {
+      return;
+    }
+
+    onChildrenChanged();
   }
 
   Future<void> _openTaskReview(BuildContext context) async {
     final controller = context.read<ParentDashboardController>();
-    await Navigator.push(
+
+    await Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) {
@@ -104,9 +102,7 @@ class ParentDashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-        context.watch<ParentDashboardController>();
-
+    final controller = context.watch<ParentDashboardController>();
     final data = controller.data;
 
     return Scaffold(
@@ -159,8 +155,7 @@ class ParentDashboardView extends StatelessWidget {
           100,
         ),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             WelcomeBanner(
               parentName:
@@ -179,8 +174,7 @@ class ParentDashboardView extends StatelessWidget {
               ),
 
             ChildrenSectionHeader(
-              pendingReviewCount:
-                  data.pendingReviewCount,
+              pendingReviewCount: data.pendingReviewCount,
               onAddChild: () {
                 _openAddChild(context);
               },

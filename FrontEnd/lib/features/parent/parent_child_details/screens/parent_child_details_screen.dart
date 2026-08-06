@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../child_form/screens/child_form_screen.dart';
 import '../../child_tasks/screens/child_tasks_screen.dart';
 import '../../daily_feedback/screens/daily_feedback_screen.dart';
 import '../../dashboard/controllers/parent_dashboard_controller.dart';
 import '../../dashboard/models/parent_dashboard_data.dart';
 import '../../dashboard/utils/parent_dashboard_localization.dart';
-import '../../edit_child/screens/edit_child_screen.dart';
 import '../../points_history/screens/points_history_screen.dart';
 import '../controllers/parent_child_details_controller.dart';
 import '../repositories/parent_child_details_repository.dart';
@@ -17,7 +17,10 @@ import '../widgets/parent_child_details_view.dart';
 class ParentChildDetailsScreen extends StatefulWidget {
   final ParentDashboardChildItem item;
 
-  const ParentChildDetailsScreen({super.key, required this.item});
+  const ParentChildDetailsScreen({
+    super.key,
+    required this.item,
+  });
 
   @override
   State<ParentChildDetailsScreen> createState() {
@@ -25,15 +28,17 @@ class ParentChildDetailsScreen extends StatefulWidget {
   }
 }
 
-class _ParentChildDetailsScreenState extends State<ParentChildDetailsScreen> {
+class _ParentChildDetailsScreenState
+    extends State<ParentChildDetailsScreen> {
   late final ParentChildDetailsController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = ParentChildDetailsController(ParentChildDetailsRepository())
-      ..loadTasks(widget.item.child.id);
+    _controller = ParentChildDetailsController(
+      ParentChildDetailsRepository(),
+    )..loadTasks(widget.item.child.id);
   }
 
   @override
@@ -69,7 +74,9 @@ class _ParentChildDetailsScreenState extends State<ParentChildDetailsScreen> {
               onPressed: () {
                 Navigator.pop(dialogContext, true);
               },
-              style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.error,
+              ),
               child: Text(l10n.delete),
             ),
           ],
@@ -81,9 +88,12 @@ class _ParentChildDetailsScreenState extends State<ParentChildDetailsScreen> {
       return;
     }
 
-    final dashboardController = context.read<ParentDashboardController>();
+    final dashboardController =
+        context.read<ParentDashboardController>();
 
-    final deleted = await dashboardController.deleteChild(widget.item.child.id);
+    final deleted = await dashboardController.deleteChild(
+      widget.item.child.id,
+    );
 
     if (!mounted) {
       return;
@@ -91,7 +101,11 @@ class _ParentChildDetailsScreenState extends State<ParentChildDetailsScreen> {
 
     if (deleted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.childDeletedSuccessfully)),
+        SnackBar(
+          content: Text(
+            context.l10n.childDeletedSuccessfully,
+          ),
+        ),
       );
 
       Navigator.pop(context, true);
@@ -103,19 +117,21 @@ class _ParentChildDetailsScreenState extends State<ParentChildDetailsScreen> {
         dashboardController.errorCode?.localized(context) ??
         context.l10n.failedToDeleteChild;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 
   Future<void> _openEditChild() async {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-
     final updatedChild = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return EditChildScreen(child: widget.item.child, isArabic: isArabic);
+          return ChildFormScreen.edit(
+            child: widget.item.child,
+          );
         },
       ),
     );
@@ -152,7 +168,9 @@ class _ParentChildDetailsScreenState extends State<ParentChildDetailsScreen> {
       context,
       MaterialPageRoute(
         builder: (_) {
-          return DailyFeedbackScreen(child: widget.item.child);
+          return DailyFeedbackScreen(
+            child: widget.item.child,
+          );
         },
       ),
     );
