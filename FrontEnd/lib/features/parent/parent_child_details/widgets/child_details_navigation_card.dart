@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-import 'left_navigation_arrow.dart';
+import 'navigation_arrow.dart';
 
 class ChildDetailsNavigationCard extends StatelessWidget {
   final IconData icon;
@@ -52,6 +52,7 @@ class ChildDetailsNavigationCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    textAlign: TextAlign.start,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -63,6 +64,7 @@ class ChildDetailsNavigationCard extends StatelessWidget {
 
                   Text(
                     subtitle,
+                    textAlign: TextAlign.start,
                     style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
@@ -72,7 +74,7 @@ class ChildDetailsNavigationCard extends StatelessWidget {
               ),
             ),
 
-            const LeftNavigationArrow(),
+            const NavigationArrow(),
           ],
         ),
       ),

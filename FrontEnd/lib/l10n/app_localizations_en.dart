@@ -66,7 +66,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get daily => 'Daily';
 
   @override
-  String get weekly => 'Once a Week';
+  String get weekly => 'Weekly';
 
   @override
   String get monthly => 'Monthly';
@@ -547,4 +547,141 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get buildingWonderfulGeneration =>
       'You are building a wonderful generation';
+
+  @override
+  String get failedToLoadChildTasks => 'Could not load the child tasks.';
+
+  @override
+  String get failedToRefreshChildTasks => 'Could not refresh the child tasks.';
+
+  @override
+  String get couldNotIdentifyChild => 'Could not identify the child.';
+
+  @override
+  String get onlyCreatorCanDeleteTask =>
+      'You can only delete tasks you created.';
+
+  @override
+  String get failedToDeleteTask => 'Could not delete the task.';
+
+  @override
+  String deleteChildConfirmationTitle(String childName) {
+    return 'Delete $childName?';
+  }
+
+  @override
+  String get deleteChildConfirmationDescription =>
+      'The child account and all related data will be permanently deleted. This action cannot be undone.';
+
+  @override
+  String get childDeletedSuccessfully => 'Child deleted successfully';
+
+  @override
+  String get childDetails => 'Child details';
+
+  @override
+  String get weeklyProgress => 'Weekly progress';
+
+  @override
+  String get noorPointsHistory => 'Noor Points History';
+
+  @override
+  String get viewPointsHistory => 'View points history';
+
+  @override
+  String rateChildDayAndViewHistory(String childName) {
+    return 'Rate $childName\'s day and view history';
+  }
+
+  @override
+  String viewChildTasks(String childName) {
+    return 'View $childName\'s tasks';
+  }
+
+  @override
+  String get editChildInformation => 'Edit child information';
+
+  @override
+  String get deleting => 'Deleting...';
+
+  @override
+  String get deleteChild => 'Delete child';
+
+  @override
+  String get childAccessCode => 'Child access code';
+
+  @override
+  String get childAccessCodeCopied => 'Child access code copied';
+
+  @override
+  String get copyCode => 'Copy code';
+
+  @override
+  String get tasks => 'Tasks';
+
+  @override
+  String get deleteTaskTitle => 'Delete task?';
+
+  @override
+  String deleteTaskConfirmation(String taskTitle) {
+    return 'The task \"$taskTitle\" will be permanently deleted. This action cannot be undone.';
+  }
+
+  @override
+  String get taskDeletedSuccessfully => 'Task deleted successfully';
+
+  @override
+  String childTasksTitle(String childName) {
+    return '$childName\'s Tasks';
+  }
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get upcoming => 'Upcoming';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get awaitingReview => 'Awaiting review';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get rejected => 'Rejected';
+
+  @override
+  String get noTasks => 'No tasks';
+
+  @override
+  String get noUpcomingTasks => 'No upcoming tasks';
+
+  @override
+  String get noActiveTasks => 'No active tasks';
+
+  @override
+  String get noTasksAwaitingReview => 'No tasks awaiting review';
+
+  @override
+  String get noCompletedTasks => 'No completed tasks';
+
+  @override
+  String get noRejectedTasks => 'No rejected tasks';
+
+  @override
+  String get childHasNoTasks => 'This child has no tasks yet';
+
+  @override
+  String get failedToLoadTasks => 'Failed to load tasks';
+
+  @override
+  String nextTaskDate(String date) {
+    return 'Next date: $date';
+  }
+
+  @override
+  String get deleteTask => 'Delete task';
 }

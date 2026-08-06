@@ -76,9 +76,6 @@ class _ParentNavigationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigation = context.watch<AppNavigationController>();
-
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-
     final pages = <Widget>[
       navigation.isLoaded(0)
           ? AddTaskScreen(
@@ -96,7 +93,6 @@ class _ParentNavigationView extends StatelessWidget {
 
       navigation.isLoaded(2)
           ? ParentDashboardScreen(
-              isArabic: isArabic,
               onChildrenChanged: navigation.notifyChildrenChanged,
             )
           : const SizedBox.shrink(),

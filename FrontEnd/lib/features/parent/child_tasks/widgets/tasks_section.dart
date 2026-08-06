@@ -12,10 +12,11 @@ import 'upcoming_task_card.dart';
 class TasksSection extends StatelessWidget {
   final ParentChildDetailsController controller;
   final String childId;
-  final bool isArabic;
   final List<TaskAssignmentModel> tasks;
   final List<UpcomingTaskItem> upcomingTasks;
   final ChildTaskFilter selectedFilter;
+  final ValueChanged<TaskAssignmentModel> onAssignmentTap;
+  final ValueChanged<UpcomingTaskItem> onUpcomingTaskTap;
 
   final Future<void> Function({
     required String taskId,
@@ -27,10 +28,11 @@ class TasksSection extends StatelessWidget {
     super.key,
     required this.controller,
     required this.childId,
-    required this.isArabic,
     required this.tasks,
     required this.upcomingTasks,
     required this.selectedFilter,
+    required this.onAssignmentTap,
+    required this.onUpcomingTaskTap,
     required this.onDeleteTask,
   });
 
@@ -43,9 +45,11 @@ class TasksSection extends StatelessWidget {
       );
     }
 
-    if (controller.errorMessage != null && controller.hasNoTaskData) {
+    final hasError =
+        controller.errorCode != null || controller.backendMessage != null;
+
+    if (hasError && controller.hasNoTaskData) {
       return TasksErrorState(
-        isArabic: isArabic,
         onRetry: () {
           controller.loadTasks(childId);
         },
@@ -53,14 +57,11 @@ class TasksSection extends StatelessWidget {
     }
 
     if (controller.hasNoTaskData) {
-      return TasksEmptyState(isArabic: isArabic);
+      return const TasksEmptyState();
     }
 
     if (tasks.isEmpty && upcomingTasks.isEmpty) {
-      return FilteredTasksEmptyState(
-        isArabic: isArabic,
-        selectedFilter: selectedFilter,
-      );
+      return FilteredTasksEmptyState(selectedFilter: selectedFilter);
     }
 
     return Column(
@@ -70,8 +71,10 @@ class TasksSection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: UpcomingTaskCard(
               item: upcomingTask,
-              isArabic: isArabic,
               canDelete: controller.canDeleteTask(upcomingTask.task.id),
+              onTap: () {
+                onUpcomingTaskTap(upcomingTask);
+              },
               onDelete: () {
                 return onDeleteTask(
                   taskId: upcomingTask.task.id,
@@ -86,8 +89,10 @@ class TasksSection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: ChildTaskCard(
               assignment: assignment,
-              isArabic: isArabic,
               canDelete: controller.canDeleteTask(assignment.task.id),
+              onTap: () {
+                onAssignmentTap(assignment);
+              },
               onDelete: () {
                 return onDeleteTask(
                   taskId: assignment.task.id,

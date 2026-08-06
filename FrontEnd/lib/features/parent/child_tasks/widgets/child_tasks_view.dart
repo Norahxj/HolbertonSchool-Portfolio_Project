@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../../../../models/task_assignment_model.dart';
@@ -13,8 +14,9 @@ import 'tasks_section.dart';
 class ChildTasksView extends StatefulWidget {
   final String childId;
   final String childName;
-  final bool isArabic;
   final ParentChildDetailsController controller;
+  final ValueChanged<TaskAssignmentModel> onAssignmentTap;
+  final ValueChanged<UpcomingTaskItem> onUpcomingTaskTap;
 
   final Future<void> Function({
     required String taskId,
@@ -26,13 +28,16 @@ class ChildTasksView extends StatefulWidget {
     super.key,
     required this.childId,
     required this.childName,
-    required this.isArabic,
     required this.controller,
+    required this.onAssignmentTap,
+    required this.onUpcomingTaskTap,
     required this.onDeleteTask,
   });
 
   @override
-  State<ChildTasksView> createState() => _ChildTasksViewState();
+  State<ChildTasksView> createState() {
+    return _ChildTasksViewState();
+  }
 }
 
 class _ChildTasksViewState extends State<ChildTasksView> {
@@ -79,56 +84,53 @@ class _ChildTasksViewState extends State<ChildTasksView> {
       widget.controller.upcomingTasks,
     );
 
-    return Directionality(
-      textDirection: widget.isArabic ? TextDirection.rtl : TextDirection.ltr,
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          toolbarHeight: 80,
-          title: AppPageHeader(
-            isArabic: widget.isArabic,
-            title: widget.isArabic
-                ? 'مهام ${widget.childName}'
-                : '${widget.childName}’s Tasks',
-          ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 80,
+        title: AppPageHeader(
+          title: context.l10n.childTasksTitle(widget.childName),
+          onBack: () {
+            Navigator.pop(context);
+          },
         ),
-        body: ScreenBackground(
-          child: SafeArea(
-            top: false,
-            child: RefreshIndicator(
-              onRefresh: widget.controller.refresh,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TaskFilterBar(
-                      selectedFilter: selectedFilter,
-                      isArabic: widget.isArabic,
-                      onSelected: (filter) {
-                        setState(() {
-                          selectedFilter = filter;
-                        });
-                      },
-                    ),
+      ),
+      body: ScreenBackground(
+        child: SafeArea(
+          top: false,
+          child: RefreshIndicator(
+            onRefresh: widget.controller.refresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TaskFilterBar(
+                    selectedFilter: selectedFilter,
+                    onSelected: (filter) {
+                      setState(() {
+                        selectedFilter = filter;
+                      });
+                    },
+                  ),
 
-                    const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: AppSpacing.md),
 
-                    TasksSection(
-                      controller: widget.controller,
-                      childId: widget.childId,
-                      isArabic: widget.isArabic,
-                      tasks: filteredTasks,
-                      upcomingTasks: filteredUpcomingTasks,
-                      selectedFilter: selectedFilter,
-                      onDeleteTask: widget.onDeleteTask,
-                    ),
-                  ],
-                ),
+                  TasksSection(
+                    controller: widget.controller,
+                    childId: widget.childId,
+                    tasks: filteredTasks,
+                    upcomingTasks: filteredUpcomingTasks,
+                    selectedFilter: selectedFilter,
+                    onAssignmentTap: widget.onAssignmentTap,
+                    onUpcomingTaskTap: widget.onUpcomingTaskTap,
+                    onDeleteTask: widget.onDeleteTask,
+                  ),
+                ],
               ),
             ),
           ),

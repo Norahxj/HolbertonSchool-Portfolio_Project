@@ -246,5 +246,91 @@
 },
 "noChildrenAddedYet": "لا يوجد أطفال بعد",
 "welcome": "مرحبًا",
-"buildingWonderfulGeneration": "أنتِ تبنين جيلاً رائعًا"
+"buildingWonderfulGeneration": "أنتِ تبنين جيلاً رائعًا",
+"failedToLoadChildTasks": "تعذّر تحميل مهام الطفل.",
+"failedToRefreshChildTasks": "تعذّر تحديث مهام الطفل.",
+"couldNotIdentifyChild": "تعذّر تحديد الطفل.",
+"onlyCreatorCanDeleteTask": "يمكنك حذف المهام التي أنشأتها فقط.",
+"failedToDeleteTask": "تعذّر حذف المهمة.",
+"deleteChildConfirmationTitle": "حذف {childName}؟",
+"@deleteChildConfirmationTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"deleteChildConfirmationDescription": "سيتم حذف حساب الطفل وجميع البيانات المرتبطة به نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+"childDeletedSuccessfully": "تم حذف الطفل بنجاح",
+"childDetails": "بيانات الطفل",
+"noorPoints": "نقاط نور",
+"weeklyProgress": "تقدم الأسبوع",
+"noorPointsHistory": "سجل نقاط نور",
+"viewPointsHistory": "عرض سجل النقاط",
+"rateChildDayAndViewHistory": "قيّمي يوم {childName} وراجعي السجل",
+"@rateChildDayAndViewHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"viewChildTasks": "عرض مهام {childName}",
+"@viewChildTasks": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"editChildInformation": "تعديل بيانات الطفل",
+"deleting": "جارٍ الحذف...",
+"deleteChild": "حذف الطفل",
+"childAccessCode": "رمز دخول الطفل",
+"childAccessCodeCopied": "تم نسخ رمز دخول الطفل",
+"copyCode": "نسخ الرمز",
+"tasks": "المهام",
+"deleteTaskTitle": "حذف المهمة؟",
+"deleteTaskConfirmation": "سيتم حذف مهمة \"{taskTitle}\" نهائيًا، ولا يمكن التراجع عن هذا الإجراء.",
+"@deleteTaskConfirmation": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskDeletedSuccessfully": "تم حذف المهمة بنجاح",
+"childTasksTitle": "مهام {childName}",
+"@childTasksTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"all": "الكل",
+"upcoming": "قادمة",
+"active": "نشطة",
+"awaitingReview": "بانتظار المراجعة",
+"completed": "مكتملة",
+"rejected": "مرفوضة",
+"noTasks": "لا توجد مهام",
+"noUpcomingTasks": "لا توجد مهام قادمة",
+"noActiveTasks": "لا توجد مهام نشطة",
+"noTasksAwaitingReview": "لا توجد مهام بانتظار المراجعة",
+"noCompletedTasks": "لا توجد مهام مكتملة",
+"noRejectedTasks": "لا توجد مهام مرفوضة",
+"childHasNoTasks": "لا توجد مهام لهذا الطفل حتى الآن",
+"failedToLoadTasks": "تعذّر تحميل المهام",
+"weekly": "أسبوعية",
+"monthly": "شهرية",
+"nextTaskDate": "الموعد القادم: {date}",
+"@nextTaskDate": {
+  "placeholders": {
+    "date": {
+      "type": "String"
+    }
+  }
+},
+"deleteTask": "حذف المهمة"
 }

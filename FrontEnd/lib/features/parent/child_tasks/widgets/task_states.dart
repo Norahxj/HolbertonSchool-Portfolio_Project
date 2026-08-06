@@ -2,39 +2,35 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import 'task_filter_bar.dart';
 
 class FilteredTasksEmptyState extends StatelessWidget {
-  final bool isArabic;
   final ChildTaskFilter selectedFilter;
 
-  const FilteredTasksEmptyState({
-    super.key,
-    required this.isArabic,
-    required this.selectedFilter,
-  });
+  const FilteredTasksEmptyState({super.key, required this.selectedFilter});
 
-  String get _message {
+  String _message(BuildContext context) {
+    final l10n = context.l10n;
+
     switch (selectedFilter) {
       case ChildTaskFilter.all:
-        return isArabic ? 'لا توجد مهام' : 'No tasks';
+        return l10n.noTasks;
 
       case ChildTaskFilter.upcoming:
-        return isArabic ? 'لا توجد مهام قادمة' : 'No upcoming tasks';
+        return l10n.noUpcomingTasks;
 
       case ChildTaskFilter.active:
-        return isArabic ? 'لا توجد مهام نشطة' : 'No active tasks';
+        return l10n.noActiveTasks;
 
       case ChildTaskFilter.awaitingReview:
-        return isArabic
-            ? 'لا توجد مهام بانتظار المراجعة'
-            : 'No tasks awaiting review';
+        return l10n.noTasksAwaitingReview;
 
       case ChildTaskFilter.completed:
-        return isArabic ? 'لا توجد مهام مكتملة' : 'No completed tasks';
+        return l10n.noCompletedTasks;
 
       case ChildTaskFilter.rejected:
-        return isArabic ? 'لا توجد مهام مرفوضة' : 'No rejected tasks';
+        return l10n.noRejectedTasks;
     }
   }
 
@@ -49,7 +45,7 @@ class FilteredTasksEmptyState extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       child: Text(
-        _message,
+        _message(context),
         textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
@@ -58,9 +54,7 @@ class FilteredTasksEmptyState extends StatelessWidget {
 }
 
 class TasksEmptyState extends StatelessWidget {
-  final bool isArabic;
-
-  const TasksEmptyState({super.key, required this.isArabic});
+  const TasksEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,11 +73,11 @@ class TasksEmptyState extends StatelessWidget {
             size: 40,
             color: AppColors.textSecondary,
           ),
+
           const SizedBox(height: AppSpacing.sm),
+
           Text(
-            isArabic
-                ? 'لا توجد مهام لهذا الطفل حتى الآن'
-                : 'This child has no tasks yet',
+            context.l10n.childHasNoTasks,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 14,
@@ -97,14 +91,9 @@ class TasksEmptyState extends StatelessWidget {
 }
 
 class TasksErrorState extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onRetry;
 
-  const TasksErrorState({
-    super.key,
-    required this.isArabic,
-    required this.onRetry,
-  });
+  const TasksErrorState({super.key, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -119,17 +108,18 @@ class TasksErrorState extends StatelessWidget {
       child: Column(
         children: [
           const Icon(Icons.error_outline, size: 38, color: AppColors.error),
+
           const SizedBox(height: AppSpacing.sm),
+
           Text(
-            isArabic ? 'تعذّر تحميل المهام' : 'Failed to load tasks',
+            context.l10n.failedToLoadTasks,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
           ),
+
           const SizedBox(height: AppSpacing.md),
-          ElevatedButton(
-            onPressed: onRetry,
-            child: Text(isArabic ? 'إعادة المحاولة' : 'Try again'),
-          ),
+
+          ElevatedButton(onPressed: onRetry, child: Text(context.l10n.retry)),
         ],
       ),
     );

@@ -215,7 +215,7 @@ abstract class AppLocalizations {
   /// No description provided for @weekly.
   ///
   /// In en, this message translates to:
-  /// **'Once a Week'**
+  /// **'Weekly'**
   String get weekly;
 
   /// No description provided for @monthly.
@@ -1075,6 +1075,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are building a wonderful generation'**
   String get buildingWonderfulGeneration;
+
+  /// No description provided for @failedToLoadChildTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the child tasks.'**
+  String get failedToLoadChildTasks;
+
+  /// No description provided for @failedToRefreshChildTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not refresh the child tasks.'**
+  String get failedToRefreshChildTasks;
+
+  /// No description provided for @couldNotIdentifyChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not identify the child.'**
+  String get couldNotIdentifyChild;
+
+  /// No description provided for @onlyCreatorCanDeleteTask.
+  ///
+  /// In en, this message translates to:
+  /// **'You can only delete tasks you created.'**
+  String get onlyCreatorCanDeleteTask;
+
+  /// No description provided for @failedToDeleteTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete the task.'**
+  String get failedToDeleteTask;
+
+  /// No description provided for @deleteChildConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {childName}?'**
+  String deleteChildConfirmationTitle(String childName);
+
+  /// No description provided for @deleteChildConfirmationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The child account and all related data will be permanently deleted. This action cannot be undone.'**
+  String get deleteChildConfirmationDescription;
+
+  /// No description provided for @childDeletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Child deleted successfully'**
+  String get childDeletedSuccessfully;
+
+  /// No description provided for @childDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Child details'**
+  String get childDetails;
+
+  /// No description provided for @weeklyProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly progress'**
+  String get weeklyProgress;
+
+  /// No description provided for @noorPointsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Noor Points History'**
+  String get noorPointsHistory;
+
+  /// No description provided for @viewPointsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'View points history'**
+  String get viewPointsHistory;
+
+  /// No description provided for @rateChildDayAndViewHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate {childName}\'s day and view history'**
+  String rateChildDayAndViewHistory(String childName);
+
+  /// No description provided for @viewChildTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'View {childName}\'s tasks'**
+  String viewChildTasks(String childName);
+
+  /// No description provided for @editChildInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit child information'**
+  String get editChildInformation;
+
+  /// No description provided for @deleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting...'**
+  String get deleting;
+
+  /// No description provided for @deleteChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete child'**
+  String get deleteChild;
+
+  /// No description provided for @childAccessCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Child access code'**
+  String get childAccessCode;
+
+  /// No description provided for @childAccessCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Child access code copied'**
+  String get childAccessCodeCopied;
+
+  /// No description provided for @copyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy code'**
+  String get copyCode;
+
+  /// No description provided for @tasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get tasks;
+
+  /// No description provided for @deleteTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete task?'**
+  String get deleteTaskTitle;
+
+  /// No description provided for @deleteTaskConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'The task \"{taskTitle}\" will be permanently deleted. This action cannot be undone.'**
+  String deleteTaskConfirmation(String taskTitle);
+
+  /// No description provided for @taskDeletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Task deleted successfully'**
+  String get taskDeletedSuccessfully;
+
+  /// No description provided for @childTasksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{childName}\'s Tasks'**
+  String childTasksTitle(String childName);
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @awaitingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting review'**
+  String get awaitingReview;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get rejected;
+
+  /// No description provided for @noTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks'**
+  String get noTasks;
+
+  /// No description provided for @noUpcomingTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming tasks'**
+  String get noUpcomingTasks;
+
+  /// No description provided for @noActiveTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No active tasks'**
+  String get noActiveTasks;
+
+  /// No description provided for @noTasksAwaitingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks awaiting review'**
+  String get noTasksAwaitingReview;
+
+  /// No description provided for @noCompletedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed tasks'**
+  String get noCompletedTasks;
+
+  /// No description provided for @noRejectedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No rejected tasks'**
+  String get noRejectedTasks;
+
+  /// No description provided for @childHasNoTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'This child has no tasks yet'**
+  String get childHasNoTasks;
+
+  /// No description provided for @failedToLoadTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load tasks'**
+  String get failedToLoadTasks;
+
+  /// No description provided for @nextTaskDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Next date: {date}'**
+  String nextTaskDate(String date);
+
+  /// No description provided for @deleteTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete task'**
+  String get deleteTask;
 }
 
 class _AppLocalizationsDelegate

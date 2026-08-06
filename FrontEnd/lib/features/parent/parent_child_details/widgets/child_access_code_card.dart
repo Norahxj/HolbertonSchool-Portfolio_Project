@@ -3,29 +3,23 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class ChildAccessCodeCard extends StatelessWidget {
   final String accessCode;
-  final bool isArabic;
 
-  const ChildAccessCodeCard({
-    super.key,
-    required this.accessCode,
-    required this.isArabic,
-  });
+  const ChildAccessCodeCard({super.key, required this.accessCode});
 
   Future<void> _copyCode(BuildContext context) async {
     await Clipboard.setData(ClipboardData(text: accessCode));
 
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isArabic ? 'تم نسخ رمز دخول الطفل' : 'Child access code copied',
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.childAccessCodeCopied)));
   }
 
   @override
@@ -57,12 +51,10 @@ class ChildAccessCodeCard extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment: isArabic
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isArabic ? 'رمز دخول الطفل' : 'Child access code',
+                  context.l10n.childAccessCode,
                   textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 12,
@@ -87,7 +79,7 @@ class ChildAccessCodeCard extends StatelessWidget {
           ),
 
           IconButton(
-            tooltip: isArabic ? 'نسخ الرمز' : 'Copy code',
+            tooltip: context.l10n.copyCode,
             onPressed: accessCode.isEmpty
                 ? null
                 : () {

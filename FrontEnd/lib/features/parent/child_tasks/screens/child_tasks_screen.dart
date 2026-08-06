@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/localization_extension.dart';
+import '../../../../models/task_assignment_model.dart';
+import '../../../child/screens/child_task_details_screen.dart';
 import '../../parent_child_details/controllers/parent_child_details_controller.dart';
+import '../../parent_child_details/models/parent_child_tasks_data.dart';
+import '../../parent_child_details/utils/parent_child_details_localization.dart';
 import '../widgets/child_tasks_view.dart';
 
 class ChildTasksScreen extends StatelessWidget {
   final String childId;
   final String childName;
-  final bool isArabic;
   final ParentChildDetailsController controller;
 
   const ChildTasksScreen({
     super.key,
     required this.childId,
     required this.childName,
-    required this.isArabic,
     required this.controller,
   });
 
@@ -25,7 +29,6 @@ class ChildTasksScreen extends StatelessWidget {
       child: _ChildTasksCoordinator(
         childId: childId,
         childName: childName,
-        isArabic: isArabic,
       ),
     );
   }
@@ -34,16 +37,16 @@ class ChildTasksScreen extends StatelessWidget {
 class _ChildTasksCoordinator extends StatefulWidget {
   final String childId;
   final String childName;
-  final bool isArabic;
 
   const _ChildTasksCoordinator({
     required this.childId,
     required this.childName,
-    required this.isArabic,
   });
 
   @override
-  State<_ChildTasksCoordinator> createState() => _ChildTasksCoordinatorState();
+  State<_ChildTasksCoordinator> createState() {
+    return _ChildTasksCoordinatorState();
+  }
 }
 
 class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
@@ -51,29 +54,35 @@ class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
     required String taskId,
     required String taskTitle,
   }) async {
+    final l10n = context.l10n;
+
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(widget.isArabic ? 'حذف المهمة؟' : 'Delete task?'),
+          title: Text(
+            l10n.deleteTaskTitle,
+            textAlign: TextAlign.start,
+          ),
           content: Text(
-            widget.isArabic
-                ? 'سيتم حذف مهمة "$taskTitle" نهائيًا، ولا يمكن التراجع عن هذا الإجراء.'
-                : 'The task "$taskTitle" will be permanently deleted. This action cannot be undone.',
+            l10n.deleteTaskConfirmation(taskTitle),
+            textAlign: TextAlign.start,
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext, false);
               },
-              child: Text(widget.isArabic ? 'إلغاء' : 'Cancel'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext, true);
               },
-              style: TextButton.styleFrom(foregroundColor: AppColors.error),
-              child: Text(widget.isArabic ? 'حذف' : 'Delete'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.error,
+              ),
+              child: Text(l10n.delete),
             ),
           ],
         );
@@ -84,26 +93,24 @@ class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
       return;
     }
 
-    final controller = context.read<ParentChildDetailsController>();
+    final controller =
+        context.read<ParentChildDetailsController>();
 
-    final errorMessage = await controller.deleteTask(taskId);
+    final result = await controller.deleteTask(taskId);
 
     if (!mounted) {
       return;
     }
 
-    if (errorMessage != null) {
-      final message = errorMessage == 'You can only delete tasks you created.'
-          ? widget.isArabic
-                ? 'لا يمكنك حذف هذه المهمة لأنها أُنشئت بواسطة ولي أمر آخر.'
-                : 'You cannot delete this task because it was created by another parent.'
-          : widget.isArabic
-          ? 'تعذر حذف المهمة. حاولي مرة أخرى.'
-          : errorMessage;
+    if (!result.isSuccess) {
+      final message =
+          result.backendMessage ??
+          result.errorCode?.localized(context) ??
+          context.l10n.failedToDeleteTask;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
 
       return;
     }
@@ -111,23 +118,89 @@ class _ChildTasksCoordinatorState extends State<_ChildTasksCoordinator> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          widget.isArabic ? 'تم حذف المهمة بنجاح' : 'Task deleted successfully',
+          context.l10n.taskDeletedSuccessfully,
         ),
+      ),
+    );
+  }
+
+  void _openAssignmentDetails(
+    TaskAssignmentModel assignment,
+  ) {
+    final isArabic =
+        Localizations.localeOf(context).languageCode == 'ar';
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return ChildTaskDetailsScreen(
+            assignment: assignment,
+            icon: Icons.task_alt_outlined,
+            isArabic: isArabic,
+            parentView: true,
+          );
+        },
+      ),
+    );
+  }
+
+  void _openUpcomingTaskDetails(
+    UpcomingTaskItem item,
+  ) {
+    final isArabic =
+        Localizations.localeOf(context).languageCode == 'ar';
+
+    final assignment = TaskAssignmentModel(
+      id: '',
+      status: 'PENDING',
+      assignedDate: item.nextDate,
+      task: AssignmentTask(
+        id: item.task.id,
+        title: item.task.title,
+        description: item.task.description,
+        points: item.task.points,
+        taskFrequency: item.task.taskFrequency,
+        recurrenceDay: item.task.recurrenceDay,
+        category: item.task.category,
+        isAutoVerified: item.task.isAutoVerified,
+      ),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return ChildTaskDetailsScreen(
+            assignment: assignment,
+            icon: Icons.event_available_outlined,
+            isArabic: isArabic,
+            parentView: true,
+          );
+        },
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<ParentChildDetailsController>();
+    final controller =
+        context.watch<ParentChildDetailsController>();
 
     return ChildTasksView(
       childId: widget.childId,
       childName: widget.childName,
-      isArabic: widget.isArabic,
       controller: controller,
-      onDeleteTask: ({required String taskId, required String taskTitle}) {
-        return _confirmDeleteTask(taskId: taskId, taskTitle: taskTitle);
+      onAssignmentTap: _openAssignmentDetails,
+      onUpcomingTaskTap: _openUpcomingTaskDetails,
+      onDeleteTask: ({
+        required String taskId,
+        required String taskTitle,
+      }) {
+        return _confirmDeleteTask(
+          taskId: taskId,
+          taskTitle: taskTitle,
+        );
       },
     );
   }

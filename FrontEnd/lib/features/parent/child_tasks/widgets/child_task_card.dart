@@ -1,41 +1,44 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/task_assignment_model.dart';
-import '../../../child/screens/child_task_details_screen.dart';
 
 class ChildTaskCard extends StatelessWidget {
   final TaskAssignmentModel assignment;
-  final bool isArabic;
   final bool canDelete;
+  final VoidCallback onTap;
   final Future<void> Function() onDelete;
 
   const ChildTaskCard({
     super.key,
     required this.assignment,
-    required this.isArabic,
     required this.canDelete,
+    required this.onTap,
     required this.onDelete,
   });
 
-  String get _statusLabel {
+  String _statusLabel(BuildContext context) {
+    final l10n = context.l10n;
+
     if (assignment.needsParentApproval) {
-      return isArabic ? 'بانتظار المراجعة' : 'Awaiting review';
+      return l10n.awaitingReview;
     }
 
     if (assignment.isApproved) {
-      return isArabic ? 'مكتملة' : 'Completed';
+      return l10n.completed;
     }
 
     if (assignment.isRejected) {
-      return isArabic ? 'مرفوضة' : 'Rejected';
+      return l10n.rejected;
     }
 
     if (assignment.isPending) {
-      return isArabic ? 'نشطة' : 'Active';
+      return l10n.active;
     }
 
-    return isArabic ? 'مكتملة' : 'Completed';
+    return l10n.completed;
   }
 
   Color get _statusColor {
@@ -76,19 +79,7 @@ class ChildTaskCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ChildTaskDetailsScreen(
-                assignment: assignment,
-                icon: Icons.task_alt_outlined,
-                isArabic: isArabic,
-                parentView: true,
-              ),
-            ),
-          );
-        },
+        onTap: onTap,
         child: Ink(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -140,7 +131,7 @@ class ChildTaskCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        _statusLabel,
+                        _statusLabel(context),
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -156,10 +147,8 @@ class ChildTaskCard extends StatelessWidget {
 
               if (canDelete)
                 IconButton(
-                  onPressed: () async {
-                    await onDelete();
-                  },
-                  tooltip: isArabic ? 'حذف المهمة' : 'Delete task',
+                  onPressed: onDelete,
+                  tooltip: context.l10n.deleteTask,
                   icon: const Icon(
                     Icons.delete_outline_rounded,
                     color: AppColors.error,
@@ -167,35 +156,42 @@ class ChildTaskCard extends StatelessWidget {
                   ),
                 ),
 
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.goldLight,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome,
-                      size: 13,
-                      color: AppColors.gold,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${assignment.task.points}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _PointsBadge(points: assignment.task.points),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _PointsBadge extends StatelessWidget {
+  final int points;
+
+  const _PointsBadge({required this.points});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.goldLight,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.auto_awesome, size: 13, color: AppColors.gold),
+          const SizedBox(width: 4),
+          Text(
+            '$points',
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
       ),
     );
   }

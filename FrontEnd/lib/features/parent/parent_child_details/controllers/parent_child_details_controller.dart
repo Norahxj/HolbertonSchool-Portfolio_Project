@@ -5,6 +5,14 @@ import '../../../../models/task_assignment_model.dart';
 import '../models/parent_child_tasks_data.dart';
 import '../repositories/parent_child_details_repository.dart';
 
+enum ParentChildDetailsErrorCode {
+  loadTasks,
+  refreshTasks,
+  childNotIdentified,
+  taskDeleteNotAllowed,
+  deleteTask,
+}
+
 class ParentChildDetailsController extends ChangeNotifier {
   final ParentChildDetailsRepository _repository;
 
@@ -17,45 +25,45 @@ class ParentChildDetailsController extends ChangeNotifier {
   bool _isLoading = false;
   bool _isRefreshing = false;
 
-  String? _errorMessage;
+  ParentChildDetailsErrorCode? _errorCode;
+  String? _backendMessage;
   String? _childId;
 
-  List<TaskAssignmentModel> get tasks => _tasks;
+  List<TaskAssignmentModel> get tasks => List.unmodifiable(_tasks);
 
-  List<UpcomingTaskItem> get upcomingTasks => _upcomingTasks;
-
-  bool canDeleteTask(String taskId) {
-    return _deletableTaskIds.contains(taskId);
-  }
+  List<UpcomingTaskItem> get upcomingTasks => List.unmodifiable(_upcomingTasks);
 
   bool get isLoading => _isLoading;
 
   bool get isRefreshing => _isRefreshing;
 
-  String? get errorMessage => _errorMessage;
+  ParentChildDetailsErrorCode? get errorCode => _errorCode;
+
+  String? get backendMessage => _backendMessage;
 
   bool get hasNoTaskData => _tasks.isEmpty && _upcomingTasks.isEmpty;
 
+  bool canDeleteTask(String taskId) {
+    return _deletableTaskIds.contains(taskId);
+  }
+
   Future<void> loadTasks(String childId) async {
-    if (_isLoading) return;
+    if (_isLoading) {
+      return;
+    }
 
     _childId = childId;
     _isLoading = true;
-    _errorMessage = null;
-
+    _clearError();
     notifyListeners();
 
     try {
-      final data = await _repository.getChildTasksData(childId);
-
-      _tasks = data.assignments;
-      _upcomingTasks = data.upcomingTasks;
-      _deletableTaskIds = data.deletableTaskIds;
+      await _loadTaskData(childId);
     } on DioException catch (error) {
-      _errorMessage =
-          _readBackendMessage(error) ?? 'Could not load the child tasks.';
+      _backendMessage = _readBackendMessage(error);
+      _errorCode = ParentChildDetailsErrorCode.loadTasks;
     } catch (error) {
-      _errorMessage = 'Could not load the child tasks.';
+      _errorCode = ParentChildDetailsErrorCode.loadTasks;
 
       debugPrint('Loading child tasks failed: $error');
     } finally {
@@ -72,21 +80,16 @@ class ParentChildDetailsController extends ChangeNotifier {
     }
 
     _isRefreshing = true;
-    _errorMessage = null;
-
+    _clearError();
     notifyListeners();
 
     try {
-      final data = await _repository.getChildTasksData(childId);
-
-      _tasks = data.assignments;
-      _upcomingTasks = data.upcomingTasks;
-      _deletableTaskIds = data.deletableTaskIds;
+      await _loadTaskData(childId);
     } on DioException catch (error) {
-      _errorMessage =
-          _readBackendMessage(error) ?? 'Could not refresh the child tasks.';
+      _backendMessage = _readBackendMessage(error);
+      _errorCode = ParentChildDetailsErrorCode.refreshTasks;
     } catch (error) {
-      _errorMessage = 'Could not refresh the child tasks.';
+      _errorCode = ParentChildDetailsErrorCode.refreshTasks;
 
       debugPrint('Refreshing child tasks failed: $error');
     } finally {
@@ -95,38 +98,63 @@ class ParentChildDetailsController extends ChangeNotifier {
     }
   }
 
-  Future<String?> deleteTask(String taskId) async {
+  Future<ParentChildTaskDeleteResult> deleteTask(String taskId) async {
     final childId = _childId;
 
     if (childId == null) {
-      return 'Could not identify the child.';
+      return const ParentChildTaskDeleteResult(
+        errorCode: ParentChildDetailsErrorCode.childNotIdentified,
+      );
     }
 
-    // حماية إضافية في الفرونت.
     if (!_deletableTaskIds.contains(taskId)) {
-      return 'You can only delete tasks you created.';
+      return const ParentChildTaskDeleteResult(
+        errorCode: ParentChildDetailsErrorCode.taskDeleteNotAllowed,
+      );
     }
 
     try {
       await _repository.deleteTask(taskId);
+      await _loadTaskData(childId);
 
-      final data = await _repository.getChildTasksData(childId);
-
-      _tasks = data.assignments;
-      _upcomingTasks = data.upcomingTasks;
-      _deletableTaskIds = data.deletableTaskIds;
-      _errorMessage = null;
-
+      _clearError();
       notifyListeners();
 
-      return null;
+      return const ParentChildTaskDeleteResult(isSuccess: true);
     } on DioException catch (error) {
-      return _readBackendMessage(error) ?? 'Could not delete the task.';
+      return ParentChildTaskDeleteResult(
+        errorCode: ParentChildDetailsErrorCode.deleteTask,
+        backendMessage: _readBackendMessage(error),
+      );
     } catch (error) {
       debugPrint('Deleting task failed: $error');
 
-      return 'Could not delete the task.';
+      return const ParentChildTaskDeleteResult(
+        errorCode: ParentChildDetailsErrorCode.deleteTask,
+      );
     }
+  }
+
+  void clearError() {
+    if (_errorCode == null && _backendMessage == null) {
+      return;
+    }
+
+    _clearError();
+    notifyListeners();
+  }
+
+  Future<void> _loadTaskData(String childId) async {
+    final data = await _repository.getChildTasksData(childId);
+
+    _tasks = data.assignments;
+    _upcomingTasks = data.upcomingTasks;
+    _deletableTaskIds = data.deletableTaskIds;
+  }
+
+  void _clearError() {
+    _errorCode = null;
+    _backendMessage = null;
   }
 
   String? _readBackendMessage(DioException error) {
@@ -139,4 +167,16 @@ class ParentChildDetailsController extends ChangeNotifier {
 
     return null;
   }
+}
+
+class ParentChildTaskDeleteResult {
+  final bool isSuccess;
+  final ParentChildDetailsErrorCode? errorCode;
+  final String? backendMessage;
+
+  const ParentChildTaskDeleteResult({
+    this.isSuccess = false,
+    this.errorCode,
+    this.backendMessage,
+  });
 }

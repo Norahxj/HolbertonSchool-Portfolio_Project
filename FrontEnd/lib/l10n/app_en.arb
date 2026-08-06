@@ -246,5 +246,91 @@
 },
 "noChildrenAddedYet": "No children added yet",
 "welcome": "Welcome",
-"buildingWonderfulGeneration": "You are building a wonderful generation"
+"buildingWonderfulGeneration": "You are building a wonderful generation",
+"failedToLoadChildTasks": "Could not load the child tasks.",
+"failedToRefreshChildTasks": "Could not refresh the child tasks.",
+"couldNotIdentifyChild": "Could not identify the child.",
+"onlyCreatorCanDeleteTask": "You can only delete tasks you created.",
+"failedToDeleteTask": "Could not delete the task.",
+"deleteChildConfirmationTitle": "Delete {childName}?",
+"@deleteChildConfirmationTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"deleteChildConfirmationDescription": "The child account and all related data will be permanently deleted. This action cannot be undone.",
+"childDeletedSuccessfully": "Child deleted successfully",
+"childDetails": "Child details",
+"noorPoints": "Noor Points",
+"weeklyProgress": "Weekly progress",
+"noorPointsHistory": "Noor Points History",
+"viewPointsHistory": "View points history",
+"rateChildDayAndViewHistory": "Rate {childName}'s day and view history",
+"@rateChildDayAndViewHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"viewChildTasks": "View {childName}'s tasks",
+"@viewChildTasks": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"editChildInformation": "Edit child information",
+"deleting": "Deleting...",
+"deleteChild": "Delete child",
+"childAccessCode": "Child access code",
+"childAccessCodeCopied": "Child access code copied",
+"copyCode": "Copy code",
+"tasks": "Tasks",
+"deleteTaskTitle": "Delete task?",
+"deleteTaskConfirmation": "The task \"{taskTitle}\" will be permanently deleted. This action cannot be undone.",
+"@deleteTaskConfirmation": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskDeletedSuccessfully": "Task deleted successfully",
+"childTasksTitle": "{childName}'s Tasks",
+"@childTasksTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"all": "All",
+"upcoming": "Upcoming",
+"active": "Active",
+"awaitingReview": "Awaiting review",
+"completed": "Completed",
+"rejected": "Rejected",
+"noTasks": "No tasks",
+"noUpcomingTasks": "No upcoming tasks",
+"noActiveTasks": "No active tasks",
+"noTasksAwaitingReview": "No tasks awaiting review",
+"noCompletedTasks": "No completed tasks",
+"noRejectedTasks": "No rejected tasks",
+"childHasNoTasks": "This child has no tasks yet",
+"failedToLoadTasks": "Failed to load tasks",
+"weekly": "Weekly",
+"monthly": "Monthly",
+"nextTaskDate": "Next date: {date}",
+"@nextTaskDate": {
+  "placeholders": {
+    "date": {
+      "type": "String"
+    }
+  }
+},
+"deleteTask": "Delete task"
 }

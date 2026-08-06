@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 enum ChildTaskFilter {
   all,
@@ -13,35 +14,35 @@ enum ChildTaskFilter {
 
 class TaskFilterBar extends StatelessWidget {
   final ChildTaskFilter selectedFilter;
-  final bool isArabic;
   final ValueChanged<ChildTaskFilter> onSelected;
 
   const TaskFilterBar({
     super.key,
     required this.selectedFilter,
-    required this.isArabic,
     required this.onSelected,
   });
 
-  String _label(ChildTaskFilter filter) {
+  String _label(BuildContext context, ChildTaskFilter filter) {
+    final l10n = context.l10n;
+
     switch (filter) {
       case ChildTaskFilter.all:
-        return isArabic ? 'الكل' : 'All';
+        return l10n.all;
 
       case ChildTaskFilter.upcoming:
-        return isArabic ? 'قادمة' : 'Upcoming';
+        return l10n.upcoming;
 
       case ChildTaskFilter.active:
-        return isArabic ? 'نشطة' : 'Active';
+        return l10n.active;
 
       case ChildTaskFilter.awaitingReview:
-        return isArabic ? 'بانتظار المراجعة' : 'Awaiting review';
+        return l10n.awaitingReview;
 
       case ChildTaskFilter.completed:
-        return isArabic ? 'مكتملة' : 'Completed';
+        return l10n.completed;
 
       case ChildTaskFilter.rejected:
-        return isArabic ? 'مرفوضة' : 'Rejected';
+        return l10n.rejected;
     }
   }
 
@@ -52,7 +53,7 @@ class TaskFilterBar extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: ChildTaskFilter.values.length,
-        separatorBuilder: (context, index) {
+        separatorBuilder: (_, _) {
           return const SizedBox(width: 8);
         },
         itemBuilder: (context, index) {
@@ -75,7 +76,7 @@ class TaskFilterBar extends StatelessWidget {
                 ),
               ),
               child: Text(
-                _label(filter),
+                _label(context, filter),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,

@@ -1,138 +1,234 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/screen_background.dart';
+import '../../add_child/screens/add_child_screen.dart';
+import '../../parent_child_details/screens/parent_child_details_screen.dart';
+import '../../task_review/screens/task_review_screen.dart';
+import '../controllers/parent_dashboard_controller.dart';
+import '../models/parent_dashboard_data.dart';
+import '../utils/parent_dashboard_localization.dart';
+import 'children_section_header.dart';
+import 'dashboard_child_card.dart';
+import 'dashboard_states.dart';
+import 'welcome_banner.dart';
 
-class WelcomeBanner extends StatelessWidget {
-  final String parentName;
-  final bool isArabic;
+class ParentDashboardView extends StatelessWidget {
+  final VoidCallback onChildrenChanged;
 
-  const WelcomeBanner({
+  const ParentDashboardView({
     super.key,
-    required this.parentName,
-    required this.isArabic,
+    required this.onChildrenChanged,
   });
+
+  Future<void> _openAddChild(BuildContext context) async {
+    final controller = context.read<ParentDashboardController>();
+
+    final isArabic =
+        Localizations.localeOf(context).languageCode == 'ar';
+
+    final wasAdded = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return AddChildScreen(
+            isArabic: isArabic,
+          );
+        },
+      ),
+    );
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (wasAdded == true) {
+      await controller.refresh();
+
+      if (!context.mounted) {
+        return;
+      }
+
+      onChildrenChanged();
+    }
+  }
+
+  Future<void> _openTaskReview(BuildContext context) async {
+    final controller = context.read<ParentDashboardController>();
+
+    final isArabic =
+        Localizations.localeOf(context).languageCode == 'ar';
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return TaskReviewScreen(
+            isArabic: isArabic,
+          );
+        },
+      ),
+    );
+
+    if (!context.mounted) {
+      return;
+    }
+
+    await controller.refresh();
+  }
+
+  Future<void> _openChildDetails(
+    BuildContext context,
+    ParentDashboardChildItem item,
+  ) async {
+    final controller = context.read<ParentDashboardController>();
+
+    final wasUpdated = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return ChangeNotifierProvider.value(
+            value: controller,
+            child: ParentChildDetailsScreen(
+              item: item,
+            ),
+          );
+        },
+      ),
+    );
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (wasUpdated == true) {
+      await controller.refresh();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bannerWidth = constraints.maxWidth;
+    final controller =
+        context.watch<ParentDashboardController>();
 
-        return Container(
-          width: double.infinity,
-          height: 210,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 7),
-              ),
-            ],
+    final data = controller.data;
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: ScreenBackground(
+        child: SafeArea(
+          bottom: false,
+          child: _buildContent(
+            context: context,
+            controller: controller,
+            data: data,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(26),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Transform.flip(
-                  flipX: isArabic,
-                  child: Image.asset(
-                    'assets/dashboard/family_home.png',
-                    fit: BoxFit.cover,
-                    alignment: isArabic
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: isArabic
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      end: isArabic
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
-                      colors: [
-                        const Color(0xFFF7F2FB).withValues(alpha: 0.78),
-                        const Color(0xFFF1E8F8).withValues(alpha: 0.55),
-                        const Color(0xFFE7DAF5).withValues(alpha: 0.18),
-                        const Color(0xFFF2ECF8).withValues(alpha: 0.18),
-                      ],
-                      stops: const [0.0, 0.30, 0.52, 0.75],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  bottom: 0,
-                  right: isArabic ? 24 : null,
-                  left: isArabic ? null : 24,
-                  width: bannerWidth * 0.44,
-                  child: Directionality(
-                    textDirection: isArabic
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isArabic ? 'مرحبًا' : 'Welcome',
-                          textAlign: isArabic
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryDark.withValues(
-                              alpha: 0.75,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          parentName,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: isArabic
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          style: const TextStyle(
-                            fontSize: 21,
-                            height: 1.15,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryDark,
-                          ),
-                        ),
-                        const SizedBox(height: 9),
-                        Text(
-                          isArabic
-                              ? 'أنتِ تبنين جيلاً رائعًا'
-                              : 'You are building a wonderful generation',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: isArabic
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          style: const TextStyle(
-                            fontSize: 11.5,
-                            height: 1.45,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent({
+    required BuildContext context,
+    required ParentDashboardController controller,
+    required ParentDashboardData? data,
+  }) {
+    if (controller.isLoading && data == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    final errorMessage =
+        controller.backendMessage ??
+        controller.errorCode?.localized(context);
+
+    if (data == null) {
+      return DashboardErrorState(
+        message:
+            errorMessage ??
+            context.l10n.failedToLoadDashboard,
+        onRetry: controller.loadDashboard,
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: controller.refresh,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          100,
+        ),
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.stretch,
+          children: [
+            WelcomeBanner(
+              parentName:
+                  '${data.user.firstName} '
+                  '${data.user.lastName}',
             ),
-          ),
-        );
-      },
+
+            const SizedBox(
+              height: AppSpacing.xl,
+            ),
+
+            if (errorMessage != null)
+              DashboardErrorBanner(
+                message: errorMessage,
+                onClose: controller.clearError,
+              ),
+
+            ChildrenSectionHeader(
+              pendingReviewCount:
+                  data.pendingReviewCount,
+              onAddChild: () {
+                _openAddChild(context);
+              },
+              onReviewTasks: () {
+                _openTaskReview(context);
+              },
+            ),
+
+            const SizedBox(
+              height: AppSpacing.md,
+            ),
+
+            if (data.children.isEmpty)
+              DashboardNoChildrenState(
+                onAddChild: () {
+                  _openAddChild(context);
+                },
+              )
+            else
+              ...data.children.map((item) {
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: AppSpacing.md,
+                  ),
+                  child: DashboardChildCard(
+                    item: item,
+                    onTap: () {
+                      _openChildDetails(
+                        context,
+                        item,
+                      );
+                    },
+                  ),
+                );
+              }),
+
+            const SizedBox(
+              height: AppSpacing.lg,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

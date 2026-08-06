@@ -66,10 +66,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get daily => 'يوميًا';
 
   @override
-  String get weekly => 'مرة في الأسبوع';
+  String get weekly => 'أسبوعية';
 
   @override
-  String get monthly => 'شهريًا';
+  String get monthly => 'شهرية';
 
   @override
   String get chooseChildSubtitle => 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
@@ -530,4 +530,140 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get buildingWonderfulGeneration => 'أنتِ تبنين جيلاً رائعًا';
+
+  @override
+  String get failedToLoadChildTasks => 'تعذّر تحميل مهام الطفل.';
+
+  @override
+  String get failedToRefreshChildTasks => 'تعذّر تحديث مهام الطفل.';
+
+  @override
+  String get couldNotIdentifyChild => 'تعذّر تحديد الطفل.';
+
+  @override
+  String get onlyCreatorCanDeleteTask => 'يمكنك حذف المهام التي أنشأتها فقط.';
+
+  @override
+  String get failedToDeleteTask => 'تعذّر حذف المهمة.';
+
+  @override
+  String deleteChildConfirmationTitle(String childName) {
+    return 'حذف $childName؟';
+  }
+
+  @override
+  String get deleteChildConfirmationDescription =>
+      'سيتم حذف حساب الطفل وجميع البيانات المرتبطة به نهائيًا. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get childDeletedSuccessfully => 'تم حذف الطفل بنجاح';
+
+  @override
+  String get childDetails => 'بيانات الطفل';
+
+  @override
+  String get weeklyProgress => 'تقدم الأسبوع';
+
+  @override
+  String get noorPointsHistory => 'سجل نقاط نور';
+
+  @override
+  String get viewPointsHistory => 'عرض سجل النقاط';
+
+  @override
+  String rateChildDayAndViewHistory(String childName) {
+    return 'قيّمي يوم $childName وراجعي السجل';
+  }
+
+  @override
+  String viewChildTasks(String childName) {
+    return 'عرض مهام $childName';
+  }
+
+  @override
+  String get editChildInformation => 'تعديل بيانات الطفل';
+
+  @override
+  String get deleting => 'جارٍ الحذف...';
+
+  @override
+  String get deleteChild => 'حذف الطفل';
+
+  @override
+  String get childAccessCode => 'رمز دخول الطفل';
+
+  @override
+  String get childAccessCodeCopied => 'تم نسخ رمز دخول الطفل';
+
+  @override
+  String get copyCode => 'نسخ الرمز';
+
+  @override
+  String get tasks => 'المهام';
+
+  @override
+  String get deleteTaskTitle => 'حذف المهمة؟';
+
+  @override
+  String deleteTaskConfirmation(String taskTitle) {
+    return 'سيتم حذف مهمة \"$taskTitle\" نهائيًا، ولا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get taskDeletedSuccessfully => 'تم حذف المهمة بنجاح';
+
+  @override
+  String childTasksTitle(String childName) {
+    return 'مهام $childName';
+  }
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get upcoming => 'قادمة';
+
+  @override
+  String get active => 'نشطة';
+
+  @override
+  String get awaitingReview => 'بانتظار المراجعة';
+
+  @override
+  String get completed => 'مكتملة';
+
+  @override
+  String get rejected => 'مرفوضة';
+
+  @override
+  String get noTasks => 'لا توجد مهام';
+
+  @override
+  String get noUpcomingTasks => 'لا توجد مهام قادمة';
+
+  @override
+  String get noActiveTasks => 'لا توجد مهام نشطة';
+
+  @override
+  String get noTasksAwaitingReview => 'لا توجد مهام بانتظار المراجعة';
+
+  @override
+  String get noCompletedTasks => 'لا توجد مهام مكتملة';
+
+  @override
+  String get noRejectedTasks => 'لا توجد مهام مرفوضة';
+
+  @override
+  String get childHasNoTasks => 'لا توجد مهام لهذا الطفل حتى الآن';
+
+  @override
+  String get failedToLoadTasks => 'تعذّر تحميل المهام';
+
+  @override
+  String nextTaskDate(String date) {
+    return 'الموعد القادم: $date';
+  }
+
+  @override
+  String get deleteTask => 'حذف المهمة';
 }
