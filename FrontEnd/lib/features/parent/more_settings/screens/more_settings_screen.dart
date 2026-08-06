@@ -8,7 +8,9 @@ import '../controllers/more_settings_controller.dart';
 import '../widgets/more_settings_view.dart';
 
 class MoreSettingsScreen extends StatefulWidget {
-  const MoreSettingsScreen({super.key});
+  final VoidCallback onLoggedOut;
+
+  const MoreSettingsScreen({super.key, required this.onLoggedOut});
 
   @override
   State<MoreSettingsScreen> createState() {
@@ -66,6 +68,24 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
     ).showSnackBar(SnackBar(content: Text(context.l10n.comingSoonMessage)));
   }
 
+  Future<void> _logout() async {
+    final success = await _controller.logout();
+
+    if (!mounted) {
+      return;
+    }
+
+    if (!success) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.logoutFailed)));
+
+      return;
+    }
+
+    widget.onLoggedOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
@@ -74,6 +94,7 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
         onReload: _reloadUser,
         onProfileTap: _openProfileScreen,
         onComingSoon: _showComingSoon,
+        onLogout: _logout,
       ),
     );
   }

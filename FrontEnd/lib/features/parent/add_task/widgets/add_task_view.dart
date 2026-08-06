@@ -70,14 +70,10 @@ class AddTaskView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
 
                   if (controller.currentStep == 0)
-                    ChooseChildStep(
-                      onSuggestionApplied: onSuggestionApplied,
-                    ),
+                    ChooseChildStep(onSuggestionApplied: onSuggestionApplied),
 
                   if (controller.currentStep == 1)
-                    TaskDetailsStep(
-                      onMonthlyDayPicker: onMonthlyDayPicker,
-                    ),
+                    TaskDetailsStep(onMonthlyDayPicker: onMonthlyDayPicker),
 
                   const SizedBox(height: AppSpacing.xl),
 

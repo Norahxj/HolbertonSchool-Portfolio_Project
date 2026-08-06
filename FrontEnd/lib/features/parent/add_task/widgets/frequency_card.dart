@@ -29,15 +29,12 @@ class FrequencyCard extends StatelessWidget {
           color: AppColors.card,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.border,
+            color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
@@ -45,21 +42,12 @@ class FrequencyCard extends StatelessWidget {
                   width: 22,
                   height: 22,
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppColors.primary
-                        : Colors.white,
+                    color: isSelected ? AppColors.primary : Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.primary,
-                      width: 1.5,
-                    ),
+                    border: Border.all(color: AppColors.primary, width: 1.5),
                   ),
                   child: isSelected
-                      ? const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 14,
-                        )
+                      ? const Icon(Icons.check, color: Colors.white, size: 14)
                       : null,
                 ),
 
@@ -67,8 +55,7 @@ class FrequencyCard extends StatelessWidget {
 
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
@@ -76,8 +63,7 @@ class FrequencyCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color:
-                              AppColors.textPrimary,
+                          color: AppColors.textPrimary,
                         ),
                       ),
 
@@ -88,8 +74,7 @@ class FrequencyCard extends StatelessWidget {
                         textAlign: TextAlign.start,
                         style: const TextStyle(
                           fontSize: 12,
-                          color:
-                              AppColors.textSecondary,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ],
@@ -103,8 +88,7 @@ class FrequencyCard extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     color: AppColors.primaryLight,
-                    borderRadius:
-                        BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.calendar_today_outlined,
@@ -116,9 +100,7 @@ class FrequencyCard extends StatelessWidget {
             ),
 
             if (extraContent != null) ...[
-              const SizedBox(
-                height: AppSpacing.sm,
-              ),
+              const SizedBox(height: AppSpacing.sm),
               extraContent!,
             ],
           ],

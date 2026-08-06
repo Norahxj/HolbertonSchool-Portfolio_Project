@@ -16,7 +16,9 @@ class AsalahApp extends StatefulWidget {
   const AsalahApp({super.key});
 
   @override
-  State<AsalahApp> createState() => _AsalahAppState();
+  State<AsalahApp> createState() {
+    return _AsalahAppState();
+  }
 }
 
 class _AsalahAppState extends State<AsalahApp> {
@@ -57,7 +59,7 @@ class _AsalahAppState extends State<AsalahApp> {
     });
   }
 
-  Future<void> _handleSessionExpired() async {
+  void _markLoggedOut() {
     if (!mounted) {
       return;
     }
@@ -77,9 +79,14 @@ class _AsalahAppState extends State<AsalahApp> {
     });
   }
 
+  Future<void> _handleSessionExpired() async {
+    _markLoggedOut();
+  }
+
   @override
   void dispose() {
     DioFactory.onSessionExpired = null;
+
     super.dispose();
   }
 
@@ -89,19 +96,13 @@ class _AsalahAppState extends State<AsalahApp> {
 
     return MaterialApp(
       navigatorKey: _navigatorKey,
-
       onGenerateTitle: (context) {
         return AppLocalizations.of(context).appName;
       },
-
       debugShowCheckedModeBanner: false,
-
       locale: localeController.locale,
-
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-
       supportedLocales: AppLocalizations.supportedLocales,
-
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.cairoTextTheme(),
@@ -111,20 +112,17 @@ class _AsalahAppState extends State<AsalahApp> {
           primary: AppColors.primary,
         ),
       ),
-
       builder: (context, child) {
         if (child == null) {
           return const SizedBox.shrink();
         }
-
-        final appContent = child;
 
         return LayoutBuilder(
           builder: (context, constraints) {
             final isWideScreen = constraints.maxWidth > 500;
 
             if (!isWideScreen) {
-              return appContent;
+              return child;
             }
 
             return ColoredBox(
@@ -135,7 +133,7 @@ class _AsalahAppState extends State<AsalahApp> {
                   height: 844,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(32),
-                    child: appContent,
+                    child: child,
                   ),
                 ),
               ),
@@ -143,7 +141,6 @@ class _AsalahAppState extends State<AsalahApp> {
           },
         );
       },
-
       home: _buildHomeScreen(context),
     );
   }
@@ -157,21 +154,21 @@ class _AsalahAppState extends State<AsalahApp> {
 
     final isArabic = localeController.locale.languageCode == 'ar';
 
-    void toggleLanguage() {
-      localeController.toggleLocale();
-    }
-
     if (!_isLoggedIn) {
       return WelcomeScreen(
         isArabic: isArabic,
-        onLanguageToggle: toggleLanguage,
+        onLanguageToggle: localeController.toggleLocale,
       );
     }
 
     if (_isChild) {
-      return ChildNav(isArabic: isArabic, onLanguageToggle: toggleLanguage);
+      return ChildNav(
+        isArabic: isArabic,
+        onLanguageToggle: localeController.toggleLocale,
+        onLoggedOut: _markLoggedOut,
+      );
     }
 
-    return const ParentMainScreen();
+    return ParentMainScreen(onLoggedOut: _markLoggedOut);
   }
 }

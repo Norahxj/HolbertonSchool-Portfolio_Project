@@ -10,10 +10,7 @@ import 'daily_feedback_mood.dart';
 class FeedbackHistorySection extends StatelessWidget {
   final List<DailyFeedbackModel> feedbackHistory;
 
-  const FeedbackHistorySection({
-    super.key,
-    required this.feedbackHistory,
-  });
+  const FeedbackHistorySection({super.key, required this.feedbackHistory});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +21,7 @@ class FeedbackHistorySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          context.l10n.feedbackHistory,
-          style: AppTextStyles.arabicTitle,
-        ),
+        Text(context.l10n.feedbackHistory, style: AppTextStyles.arabicTitle),
 
         const SizedBox(height: AppSpacing.md),
 
@@ -36,17 +30,13 @@ class FeedbackHistorySection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: feedbackHistory.length,
           separatorBuilder: (_, _) {
-            return const SizedBox(
-              height: AppSpacing.sm,
-            );
+            return const SizedBox(height: AppSpacing.sm);
           },
           itemBuilder: (context, index) {
             final feedback = feedbackHistory[index];
 
             return Container(
-              padding: const EdgeInsets.all(
-                AppSpacing.md,
-              ),
+              padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(16),
@@ -54,22 +44,15 @@ class FeedbackHistorySection extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    DailyFeedbackMood.emoji(
-                      feedback.mood,
-                    ),
-                    style: const TextStyle(
-                      fontSize: 28,
-                    ),
+                    DailyFeedbackMood.emoji(feedback.mood),
+                    style: const TextStyle(fontSize: 28),
                   ),
 
-                  const SizedBox(
-                    width: AppSpacing.md,
-                  ),
+                  const SizedBox(width: AppSpacing.md),
 
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           DailyFeedbackMood.label(
@@ -79,22 +62,18 @@ class FeedbackHistorySection extends StatelessWidget {
                           textAlign: TextAlign.start,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            color:
-                                AppColors.textPrimary,
+                            color: AppColors.textPrimary,
                           ),
                         ),
 
                         const SizedBox(height: 2),
 
                         Text(
-                          DailyFeedbackMood.formatDate(
-                            feedback.feedbackDate,
-                          ),
+                          DailyFeedbackMood.formatDate(feedback.feedbackDate),
                           textAlign: TextAlign.start,
                           style: const TextStyle(
                             fontSize: 12,
-                            color:
-                                AppColors.textSecondary,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],

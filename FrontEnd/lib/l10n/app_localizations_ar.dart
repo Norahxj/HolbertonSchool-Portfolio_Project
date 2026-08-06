@@ -473,4 +473,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get soon => 'قريبًا';
+
+  @override
+  String get logOut => 'تسجيل الخروج';
+
+  @override
+  String get logoutFailed => 'تعذّر تسجيل الخروج. حاول مرة أخرى.';
 }

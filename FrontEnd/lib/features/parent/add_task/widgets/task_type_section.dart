@@ -9,9 +9,7 @@ import '../utils/add_task_localization.dart';
 import 'task_type_card.dart';
 
 class TaskTypeSection extends StatelessWidget {
-  const TaskTypeSection({
-    super.key,
-  });
+  const TaskTypeSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +70,7 @@ class TaskTypeSection extends StatelessWidget {
               alignment: AlignmentDirectional.centerStart,
               child: Text(
                 controller.categoryError!.localized(context),
-                style: const TextStyle(
-                  color: AppColors.error,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: AppColors.error, fontSize: 12),
               ),
             ),
           ),
@@ -90,14 +85,9 @@ class TaskTypeSection extends StatelessWidget {
   }) {
     return TaskTypeCard(
       icon: taskTypeIcon(taskType),
-      label: taskTypeLabel(
-        context,
-        taskType,
-      ),
-      isSelected:
-          controller.selectedTaskType == taskType,
-      isEnabled:
-          controller.selectedChildIds.isNotEmpty,
+      label: taskTypeLabel(context, taskType),
+      isSelected: controller.selectedTaskType == taskType,
+      isEnabled: controller.selectedChildIds.isNotEmpty,
       onTap: () {
         controller.selectTaskType(taskType);
       },
@@ -120,10 +110,7 @@ class TaskTypeSection extends StatelessWidget {
     }
   }
 
-  static String taskTypeLabel(
-    BuildContext context,
-    int taskType,
-  ) {
+  static String taskTypeLabel(BuildContext context, int taskType) {
     final l10n = context.l10n;
 
     switch (taskType) {

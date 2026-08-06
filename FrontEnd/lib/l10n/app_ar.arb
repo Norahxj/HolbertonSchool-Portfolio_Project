@@ -215,5 +215,7 @@
 "language": "اللغة",
 "notifications": "الإشعارات",
 "helpAndSupport": "المساعدة والدعم",
-"soon": "قريبًا"
+"soon": "قريبًا",
+"logOut": "تسجيل الخروج",
+"logoutFailed": "تعذّر تسجيل الخروج. حاول مرة أخرى."
 }

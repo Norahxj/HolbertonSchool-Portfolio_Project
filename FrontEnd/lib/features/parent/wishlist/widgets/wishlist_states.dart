@@ -7,10 +7,7 @@ import '../../../../core/localization/localization_extension.dart';
 class WishlistErrorState extends StatelessWidget {
   final VoidCallback onRetry;
 
-  const WishlistErrorState({
-    super.key,
-    required this.onRetry,
-  });
+  const WishlistErrorState({super.key, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +17,12 @@ class WishlistErrorState extends StatelessWidget {
           Text(
             context.l10n.failedToLoadWishes,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.error,
-            ),
+            style: const TextStyle(color: AppColors.error),
           ),
 
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
+          const SizedBox(height: AppSpacing.md),
 
-          ElevatedButton(
-            onPressed: onRetry,
-            child: Text(
-              context.l10n.retry,
-            ),
-          ),
+          ElevatedButton(onPressed: onRetry, child: Text(context.l10n.retry)),
         ],
       ),
     );
@@ -42,9 +30,7 @@ class WishlistErrorState extends StatelessWidget {
 }
 
 class WishlistEmptyState extends StatelessWidget {
-  const WishlistEmptyState({
-    super.key,
-  });
+  const WishlistEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +40,7 @@ class WishlistEmptyState extends StatelessWidget {
         child: Text(
           context.l10n.noWishesYet,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 16,
-            color:
-                AppColors.textSecondary,
-          ),
+          style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
         ),
       ),
     );

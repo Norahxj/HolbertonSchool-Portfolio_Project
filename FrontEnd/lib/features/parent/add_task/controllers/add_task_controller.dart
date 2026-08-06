@@ -26,9 +26,7 @@ enum AddTaskErrorCode {
   descriptionLength,
 }
 
-enum AddTaskSaveErrorCode {
-  generic,
-}
+enum AddTaskSaveErrorCode { generic }
 
 class AddTaskController extends ChangeNotifier {
   final TaskApiService _taskApiService;
@@ -46,21 +44,18 @@ class AddTaskController extends ChangeNotifier {
 
   String get languageCode => _languageCode;
 
-  final TextEditingController taskNameController =
-      TextEditingController();
+  final TextEditingController taskNameController = TextEditingController();
 
   final TextEditingController taskDescriptionController =
       TextEditingController();
 
   final List<ChildModel> _children = [];
 
-  List<ChildModel> get children =>
-      List.unmodifiable(_children);
+  List<ChildModel> get children => List.unmodifiable(_children);
 
   final List<String> _selectedChildIds = [];
 
-  List<String> get selectedChildIds =>
-      List.unmodifiable(_selectedChildIds);
+  List<String> get selectedChildIds => List.unmodifiable(_selectedChildIds);
 
   final List<TaskSuggestionModel> _taskSuggestions = [];
 
@@ -81,8 +76,7 @@ class AddTaskController extends ChangeNotifier {
 
   String? _suggestionsBackendMessage;
 
-  String? get suggestionsBackendMessage =>
-      _suggestionsBackendMessage;
+  String? get suggestionsBackendMessage => _suggestionsBackendMessage;
 
   bool _isSaving = false;
 
@@ -108,11 +102,9 @@ class AddTaskController extends ChangeNotifier {
 
   int get selectedFrequency => _selectedFrequency;
 
-  AddTaskWeekDay _selectedWeeklyDay =
-      AddTaskWeekDay.sunday;
+  AddTaskWeekDay _selectedWeeklyDay = AddTaskWeekDay.sunday;
 
-  AddTaskWeekDay get selectedWeeklyDay =>
-      _selectedWeeklyDay;
+  AddTaskWeekDay get selectedWeeklyDay => _selectedWeeklyDay;
 
   int _selectedMonthlyDay = 1;
 
@@ -124,8 +116,7 @@ class AddTaskController extends ChangeNotifier {
 
   AddTaskErrorCode? _descriptionError;
 
-  AddTaskErrorCode? get descriptionError =>
-      _descriptionError;
+  AddTaskErrorCode? get descriptionError => _descriptionError;
 
   AddTaskErrorCode? _pointsError;
 
@@ -137,20 +128,17 @@ class AddTaskController extends ChangeNotifier {
 
   String? _frequencyBackendError;
 
-  String? get frequencyBackendError =>
-      _frequencyBackendError;
+  String? get frequencyBackendError => _frequencyBackendError;
 
   String? _recurrenceDayBackendError;
 
-  String? get recurrenceDayBackendError =>
-      _recurrenceDayBackendError;
+  String? get recurrenceDayBackendError => _recurrenceDayBackendError;
 
   AddTaskErrorCode? _childError;
 
   AddTaskErrorCode? get childError => _childError;
 
-  List<AddTaskWeekDay> get weekDays =>
-      AddTaskWeekDay.values;
+  List<AddTaskWeekDay> get weekDays => AddTaskWeekDay.values;
 
   String get taskFrequency {
     switch (_selectedFrequency) {
@@ -207,17 +195,14 @@ class AddTaskController extends ChangeNotifier {
     }
   }
 
-  Future<void> updateLanguage(
-    String languageCode,
-  ) async {
+  Future<void> updateLanguage(String languageCode) async {
     if (_languageCode == languageCode) {
       return;
     }
 
     _languageCode = languageCode;
 
-    if (_selectedChildIds.isNotEmpty &&
-        _selectedTaskType != null) {
+    if (_selectedChildIds.isNotEmpty && _selectedTaskType != null) {
       await loadTaskSuggestions();
     }
   }
@@ -227,17 +212,14 @@ class AddTaskController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final loadedChildren =
-          await _childApiService.getChildren();
+      final loadedChildren = await _childApiService.getChildren();
 
       _children
         ..clear()
         ..addAll(loadedChildren);
 
       _selectedChildIds.removeWhere(
-        (id) => !_children.any(
-          (child) => child.id == id,
-        ),
+        (id) => !_children.any((child) => child.id == id),
       );
     } on DioException catch (error) {
       debugPrint(
@@ -246,18 +228,14 @@ class AddTaskController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
     } catch (error) {
-      debugPrint(
-        'Loading children failed: $error',
-      );
+      debugPrint('Loading children failed: $error');
     } finally {
       _isLoadingChildren = false;
       notifyListeners();
     }
   }
 
-  Future<void> toggleChild(
-    String childId,
-  ) async {
+  Future<void> toggleChild(String childId) async {
     if (_selectedChildIds.contains(childId)) {
       _selectedChildIds.remove(childId);
     } else {
@@ -267,8 +245,7 @@ class AddTaskController extends ChangeNotifier {
     _childError = null;
     notifyListeners();
 
-    if (_selectedTaskType != null &&
-        _selectedChildIds.isNotEmpty) {
+    if (_selectedTaskType != null && _selectedChildIds.isNotEmpty) {
       await loadTaskSuggestions();
       return;
     }
@@ -280,9 +257,7 @@ class AddTaskController extends ChangeNotifier {
     }
   }
 
-  Future<void> selectTaskType(
-    int taskType,
-  ) async {
+  Future<void> selectTaskType(int taskType) async {
     _selectedTaskType = taskType;
     _categoryError = null;
     notifyListeners();
@@ -291,8 +266,7 @@ class AddTaskController extends ChangeNotifier {
   }
 
   Future<void> loadTaskSuggestions() async {
-    if (_selectedChildIds.isEmpty ||
-        _selectedTaskType == null) {
+    if (_selectedChildIds.isEmpty || _selectedTaskType == null) {
       return;
     }
 
@@ -302,8 +276,7 @@ class AddTaskController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final suggestions =
-          await _taskApiService.getTaskSuggestions({
+      final suggestions = await _taskApiService.getTaskSuggestions({
         'child_ids': _selectedChildIds,
         'category': category,
         'lang': _languageCode,
@@ -314,8 +287,7 @@ class AddTaskController extends ChangeNotifier {
         ..addAll(suggestions);
     } on DioException catch (error) {
       _hasSuggestionsError = true;
-      _suggestionsBackendMessage =
-          _readBackendMessage(error);
+      _suggestionsBackendMessage = _readBackendMessage(error);
 
       debugPrint(
         'Loading task suggestions failed: '
@@ -326,21 +298,16 @@ class AddTaskController extends ChangeNotifier {
       _hasSuggestionsError = true;
       _suggestionsBackendMessage = null;
 
-      debugPrint(
-        'Loading task suggestions failed: $error',
-      );
+      debugPrint('Loading task suggestions failed: $error');
     } finally {
       _isLoadingSuggestions = false;
       notifyListeners();
     }
   }
 
-  void applyTaskSuggestion(
-    TaskSuggestionModel suggestion,
-  ) {
+  void applyTaskSuggestion(TaskSuggestionModel suggestion) {
     taskNameController.text = suggestion.title;
-    taskDescriptionController.text =
-        suggestion.description;
+    taskDescriptionController.text = suggestion.description;
 
     _taskPoints = suggestion.points;
     _trustChild = suggestion.isAutoVerified;
@@ -352,9 +319,7 @@ class AddTaskController extends ChangeNotifier {
 
       case 'WEEKLY':
         _selectedFrequency = 1;
-        _selectedWeeklyDay = _weekDayFromBackend(
-          suggestion.recurrenceDay,
-        );
+        _selectedWeeklyDay = _weekDayFromBackend(suggestion.recurrenceDay);
         break;
 
       case 'MONTHLY':
@@ -362,9 +327,7 @@ class AddTaskController extends ChangeNotifier {
 
         final day = suggestion.recurrenceDay;
 
-        if (day != null &&
-            day >= 1 &&
-            day <= 31) {
+        if (day != null && day >= 1 && day <= 31) {
           _selectedMonthlyDay = day;
         }
         break;
@@ -380,8 +343,7 @@ class AddTaskController extends ChangeNotifier {
       return;
     }
 
-    _taskPoints =
-        (_taskPoints + 5).clamp(1, 100).toInt();
+    _taskPoints = (_taskPoints + 5).clamp(1, 100).toInt();
 
     _pointsError = null;
     notifyListeners();
@@ -392,8 +354,7 @@ class AddTaskController extends ChangeNotifier {
       return;
     }
 
-    _taskPoints =
-        (_taskPoints - 5).clamp(1, 100).toInt();
+    _taskPoints = (_taskPoints - 5).clamp(1, 100).toInt();
 
     _pointsError = null;
     notifyListeners();
@@ -411,17 +372,14 @@ class AddTaskController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectWeeklyDay(
-    AddTaskWeekDay day,
-  ) {
+  void selectWeeklyDay(AddTaskWeekDay day) {
     _selectedWeeklyDay = day;
     _recurrenceDayBackendError = null;
     notifyListeners();
   }
 
   void selectMonthlyDay(int day) {
-    _selectedMonthlyDay =
-        day.clamp(1, 31).toInt();
+    _selectedMonthlyDay = day.clamp(1, 31).toInt();
 
     _recurrenceDayBackendError = null;
     notifyListeners();
@@ -434,15 +392,13 @@ class AddTaskController extends ChangeNotifier {
       var hasError = false;
 
       if (_selectedChildIds.isEmpty) {
-        _childError =
-            AddTaskErrorCode.selectAtLeastOneChild;
+        _childError = AddTaskErrorCode.selectAtLeastOneChild;
 
         hasError = true;
       }
 
       if (_selectedTaskType == null) {
-        _categoryError =
-            AddTaskErrorCode.selectTaskType;
+        _categoryError = AddTaskErrorCode.selectTaskType;
 
         hasError = true;
       }
@@ -453,8 +409,7 @@ class AddTaskController extends ChangeNotifier {
       }
     }
 
-    if (_currentStep == 1 &&
-        !_validateDetails()) {
+    if (_currentStep == 1 && !_validateDetails()) {
       notifyListeners();
       return false;
     }
@@ -495,30 +450,24 @@ class AddTaskController extends ChangeNotifier {
   bool _validateDetails() {
     var isValid = true;
 
-    final title =
-        taskNameController.text.trim();
+    final title = taskNameController.text.trim();
 
-    final description =
-        taskDescriptionController.text.trim();
+    final description = taskDescriptionController.text.trim();
 
     if (title.isEmpty) {
-      _titleError =
-          AddTaskErrorCode.taskNameRequired;
+      _titleError = AddTaskErrorCode.taskNameRequired;
 
       isValid = false;
     }
 
     if (description.isEmpty) {
-      _descriptionError =
-          AddTaskErrorCode.descriptionRequired;
+      _descriptionError = AddTaskErrorCode.descriptionRequired;
 
       isValid = false;
     }
 
-    if (_taskPoints < 1 ||
-        _taskPoints > 100) {
-      _pointsError =
-          AddTaskErrorCode.pointsRange;
+    if (_taskPoints < 1 || _taskPoints > 100) {
+      _pointsError = AddTaskErrorCode.pointsRange;
 
       isValid = false;
     }
@@ -536,15 +485,13 @@ class AddTaskController extends ChangeNotifier {
     var isValid = true;
 
     if (_selectedChildIds.isEmpty) {
-      _childError =
-          AddTaskErrorCode.selectAtLeastOneChild;
+      _childError = AddTaskErrorCode.selectAtLeastOneChild;
 
       isValid = false;
     }
 
     if (_selectedTaskType == null) {
-      _categoryError =
-          AddTaskErrorCode.selectTaskType;
+      _categoryError = AddTaskErrorCode.selectTaskType;
 
       isValid = false;
     }
@@ -554,11 +501,7 @@ class AddTaskController extends ChangeNotifier {
     }
 
     if (!isValid) {
-      _currentStep =
-          _childError != null ||
-                  _categoryError != null
-              ? 0
-              : 1;
+      _currentStep = _childError != null || _categoryError != null ? 0 : 1;
 
       notifyListeners();
 
@@ -571,51 +514,33 @@ class AddTaskController extends ChangeNotifier {
     try {
       await _taskApiService.createTask({
         'child_ids': _selectedChildIds,
-        'title':
-            taskNameController.text.trim(),
-        'description':
-            taskDescriptionController.text.trim(),
+        'title': taskNameController.text.trim(),
+        'description': taskDescriptionController.text.trim(),
         'points': _taskPoints,
         'task_frequency': taskFrequency,
-        if (recurrenceDay != null)
-          'recurrence_day': recurrenceDay,
+        if (recurrenceDay != null) 'recurrence_day': recurrenceDay,
         'category': category,
         'is_auto_verified': _trustChild,
       });
 
-      return const AddTaskSaveResult(
-        isSuccess: true,
-      );
+      return const AddTaskSaveResult(isSuccess: true);
     } on DioException catch (error) {
       _handleBackendErrors(error);
 
-      _currentStep =
-          _childError != null ||
-                  _categoryError != null
-              ? 0
-              : 1;
+      _currentStep = _childError != null || _categoryError != null ? 0 : 1;
 
-      return AddTaskSaveResult(
-        backendMessage:
-            _readBackendMessage(error),
-      );
+      return AddTaskSaveResult(backendMessage: _readBackendMessage(error));
     } catch (error) {
-      debugPrint(
-        'Creating task failed: $error',
-      );
+      debugPrint('Creating task failed: $error');
 
-      return const AddTaskSaveResult(
-        errorCode: AddTaskSaveErrorCode.generic,
-      );
+      return const AddTaskSaveResult(errorCode: AddTaskSaveErrorCode.generic);
     } finally {
       _isSaving = false;
       notifyListeners();
     }
   }
 
-  void _handleBackendErrors(
-    DioException error,
-  ) {
+  void _handleBackendErrors(DioException error) {
     final data = error.response?.data;
 
     if (data is! Map) {
@@ -628,40 +553,25 @@ class AddTaskController extends ChangeNotifier {
       return;
     }
 
-    _titleError = _mapBackendFieldError(
-      _getError(errors['title']),
-    );
+    _titleError = _mapBackendFieldError(_getError(errors['title']));
 
-    _descriptionError = _mapBackendFieldError(
-      _getError(errors['description']),
-    );
+    _descriptionError = _mapBackendFieldError(_getError(errors['description']));
 
-    _pointsError = _mapBackendFieldError(
-      _getError(errors['points']),
-    );
+    _pointsError = _mapBackendFieldError(_getError(errors['points']));
 
-    _childError = _mapBackendFieldError(
-      _getError(errors['child_ids']),
-    );
+    _childError = _mapBackendFieldError(_getError(errors['child_ids']));
 
-    _categoryError = _mapBackendFieldError(
-      _getError(errors['category']),
-    );
+    _categoryError = _mapBackendFieldError(_getError(errors['category']));
 
-    _frequencyBackendError =
-        _getError(errors['task_frequency']);
+    _frequencyBackendError = _getError(errors['task_frequency']);
 
-    _recurrenceDayBackendError =
-        _getError(errors['recurrence_day']);
+    _recurrenceDayBackendError = _getError(errors['recurrence_day']);
   }
 
-  AddTaskErrorCode? _mapBackendFieldError(
-    String? message,
-  ) {
+  AddTaskErrorCode? _mapBackendFieldError(String? message) {
     switch (message) {
       case 'Shorter than minimum length 1.':
-        return AddTaskErrorCode
-            .selectAtLeastOneChild;
+        return AddTaskErrorCode.selectAtLeastOneChild;
 
       case 'Must be greater than or equal to 1 and less than or equal to 100.':
         return AddTaskErrorCode.pointsRange;
@@ -677,14 +587,11 @@ class AddTaskController extends ChangeNotifier {
     }
   }
 
-  String? _readBackendMessage(
-    DioException error,
-  ) {
+  String? _readBackendMessage(DioException error) {
     final data = error.response?.data;
 
     if (data is Map) {
-      return data['error']?.toString() ??
-          data['message']?.toString();
+      return data['error']?.toString() ?? data['message']?.toString();
     }
 
     return null;
@@ -702,9 +609,7 @@ class AddTaskController extends ChangeNotifier {
     return error.toString();
   }
 
-  AddTaskWeekDay _weekDayFromBackend(
-    int? recurrenceDay,
-  ) {
+  AddTaskWeekDay _weekDayFromBackend(int? recurrenceDay) {
     switch (recurrenceDay) {
       case 0:
         return AddTaskWeekDay.monday;

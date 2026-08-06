@@ -13,10 +13,7 @@ import 'task_text_field.dart';
 class TaskDetailsStep extends StatelessWidget {
   final Future<void> Function() onMonthlyDayPicker;
 
-  const TaskDetailsStep({
-    super.key,
-    required this.onMonthlyDayPicker,
-  });
+  const TaskDetailsStep({super.key, required this.onMonthlyDayPicker});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +23,7 @@ class TaskDetailsStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _FieldLabel(
-          text: l10n.taskName,
-        ),
+        _FieldLabel(text: l10n.taskName),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -40,9 +35,7 @@ class TaskDetailsStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
 
-        _FieldLabel(
-          text: l10n.taskDescription,
-        ),
+        _FieldLabel(text: l10n.taskDescription),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -55,9 +48,7 @@ class TaskDetailsStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
 
-        _FieldLabel(
-          text: l10n.noorPoints,
-        ),
+        _FieldLabel(text: l10n.noorPoints),
 
         const SizedBox(height: AppSpacing.sm),
 
@@ -70,10 +61,7 @@ class TaskDetailsStep extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               controller.pointsError!.localized(context),
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: AppColors.error, fontSize: 12),
             ),
           ),
         ],
@@ -84,15 +72,11 @@ class TaskDetailsStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.xl),
 
-        _FieldLabel(
-          text: l10n.taskFrequency,
-        ),
+        _FieldLabel(text: l10n.taskFrequency),
 
         const SizedBox(height: AppSpacing.md),
 
-        TaskScheduleSection(
-          onMonthlyDayPicker: onMonthlyDayPicker,
-        ),
+        TaskScheduleSection(onMonthlyDayPicker: onMonthlyDayPicker),
 
         const SizedBox(height: AppSpacing.xl),
 
@@ -105,9 +89,7 @@ class TaskDetailsStep extends StatelessWidget {
 class _FieldLabel extends StatelessWidget {
   final String text;
 
-  const _FieldLabel({
-    required this.text,
-  });
+  const _FieldLabel({required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -141,30 +123,20 @@ class _PointsSelector extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
-          PointsButton(
-            icon: Icons.add,
-            onTap: controller.increasePoints,
-          ),
+          PointsButton(icon: Icons.add, onTap: controller.increasePoints),
 
           const SizedBox(width: AppSpacing.sm),
 
-          PointsButton(
-            icon: Icons.remove,
-            onTap: controller.decreasePoints,
-          ),
+          PointsButton(icon: Icons.remove, onTap: controller.decreasePoints),
 
           const Spacer(),
 
           Text(
-            l10n.pointsValue(
-              controller.taskPoints,
-            ),
+            l10n.pointsValue(controller.taskPoints),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -174,11 +146,7 @@ class _PointsSelector extends StatelessWidget {
 
           const SizedBox(width: AppSpacing.xs),
 
-          const Icon(
-            Icons.auto_awesome,
-            color: AppColors.gold,
-            size: 18,
-          ),
+          const Icon(Icons.auto_awesome, color: AppColors.gold, size: 18),
         ],
       ),
     );
@@ -213,11 +181,7 @@ class _PointsInformationBox extends StatelessWidget {
 
           const SizedBox(width: AppSpacing.sm),
 
-          const Icon(
-            Icons.auto_awesome,
-            color: AppColors.primary,
-            size: 18,
-          ),
+          const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
         ],
       ),
     );
@@ -237,9 +201,7 @@ class _TrustChildCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -249,21 +211,12 @@ class _TrustChildCard extends StatelessWidget {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: controller.trustChild
-                    ? AppColors.primary
-                    : Colors.white,
+                color: controller.trustChild ? AppColors.primary : Colors.white,
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: AppColors.primary,
-                  width: 1.5,
-                ),
+                border: Border.all(color: AppColors.primary, width: 1.5),
               ),
               child: controller.trustChild
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 16,
-                    )
+                  ? const Icon(Icons.check, color: Colors.white, size: 16)
                   : null,
             ),
           ),

@@ -215,5 +215,7 @@
 "language": "Language",
 "notifications": "Notifications",
 "helpAndSupport": "Help and support",
-"soon": "Soon"
+"soon": "Soon",
+"logOut": "Log out",
+"logoutFailed": "Unable to log out. Please try again."
 }

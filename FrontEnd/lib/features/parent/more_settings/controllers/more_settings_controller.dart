@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../../../models/user_model.dart';
 import '../../../../services/user_api_service.dart';
+import '../../../auth/services/auth_api_service.dart';
 
 class MoreSettingsController extends ChangeNotifier {
   final UserApiService _userApiService;
+  final AuthApiService _authApiService;
 
-  MoreSettingsController({UserApiService? userApiService})
-    : _userApiService = userApiService ?? UserApiService();
+  MoreSettingsController({
+    UserApiService? userApiService,
+    AuthApiService? authApiService,
+  }) : _userApiService = userApiService ?? UserApiService(),
+       _authApiService = authApiService ?? AuthApiService();
 
   UserModel? _user;
 
@@ -16,6 +21,10 @@ class MoreSettingsController extends ChangeNotifier {
   bool _isLoading = true;
 
   bool get isLoading => _isLoading;
+
+  bool _isLoggingOut = false;
+
+  bool get isLoggingOut => _isLoggingOut;
 
   String? _errorMessage;
 
@@ -28,7 +37,9 @@ class MoreSettingsController extends ChangeNotifier {
 
     try {
       _user = await _userApiService.getCurrentUser();
-    } catch (_) {
+    } catch (error) {
+      debugPrint('Loading current user failed: $error');
+
       _errorMessage = 'Unable to load user information.';
     } finally {
       _isLoading = false;
@@ -44,5 +55,26 @@ class MoreSettingsController extends ChangeNotifier {
     _user = user;
     _errorMessage = null;
     notifyListeners();
+  }
+
+  Future<bool> logout() async {
+    if (_isLoggingOut) {
+      return false;
+    }
+
+    _isLoggingOut = true;
+    notifyListeners();
+
+    try {
+      await _authApiService.logout();
+      return true;
+    } catch (error) {
+      debugPrint('Parent logout failed: $error');
+
+      return false;
+    } finally {
+      _isLoggingOut = false;
+      notifyListeners();
+    }
   }
 }

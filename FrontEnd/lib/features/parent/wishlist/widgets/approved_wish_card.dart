@@ -24,20 +24,14 @@ class ApprovedWishCard extends StatelessWidget {
     final l10n = context.l10n;
 
     return Container(
-      padding: const EdgeInsets.all(
-        AppSpacing.md,
-      ),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius:
-            BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           WishHeader(
             childName: childName,
@@ -45,23 +39,17 @@ class ApprovedWishCard extends StatelessWidget {
             avatarIndex: avatarIndex,
           ),
 
-          const SizedBox(
-            height: AppSpacing.sm,
-          ),
+          const SizedBox(height: AppSpacing.sm),
 
           Row(
             children: [
               StatusTag(
                 label: l10n.goalCreated,
-                backgroundColor:
-                    AppColors.primaryLight,
-                textColor:
-                    AppColors.primaryDark,
+                backgroundColor: AppColors.primaryLight,
+                textColor: AppColors.primaryDark,
               ),
 
-              const SizedBox(
-                width: AppSpacing.sm,
-              ),
+              const SizedBox(width: AppSpacing.sm),
 
               Expanded(
                 child: Text(
@@ -69,40 +57,33 @@ class ApprovedWishCard extends StatelessWidget {
                   textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors
-                        .textSecondary,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
+          const SizedBox(height: AppSpacing.md),
 
           Container(
-            padding:
-                const EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.md,
               vertical: AppSpacing.sm,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius:
-                  BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
                     l10n.selectedPointsGoal,
-                    textAlign:
-                        TextAlign.start,
+                    textAlign: TextAlign.start,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: AppColors
-                          .textSecondary,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ),
@@ -115,20 +96,15 @@ class ApprovedWishCard extends StatelessWidget {
                       size: 16,
                     ),
 
-                    const SizedBox(
-                      width: 4,
-                    ),
+                    const SizedBox(width: 4),
 
                     Text(
                       '$points',
-                      textDirection:
-                          TextDirection.ltr,
+                      textDirection: TextDirection.ltr,
                       style: const TextStyle(
                         fontSize: 15,
-                        fontWeight:
-                            FontWeight.bold,
-                        color:
-                            AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
                       ),
                     ),
                   ],

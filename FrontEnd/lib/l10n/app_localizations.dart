@@ -973,6 +973,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Soon'**
   String get soon;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logOut;
+
+  /// No description provided for @logoutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to log out. Please try again.'**
+  String get logoutFailed;
 }
 
 class _AppLocalizationsDelegate

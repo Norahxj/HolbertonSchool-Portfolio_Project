@@ -12,10 +12,7 @@ import 'selectable_chip.dart';
 class TaskScheduleSection extends StatelessWidget {
   final Future<void> Function() onMonthlyDayPicker;
 
-  const TaskScheduleSection({
-    super.key,
-    required this.onMonthlyDayPicker,
-  });
+  const TaskScheduleSection({super.key, required this.onMonthlyDayPicker});
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +54,7 @@ class TaskScheduleSection extends StatelessWidget {
             controller.selectFrequency(2);
           },
           extraContent: controller.selectedFrequency == 2
-              ? _MonthlyDayPicker(
-                  onTap: onMonthlyDayPicker,
-                )
+              ? _MonthlyDayPicker(onTap: onMonthlyDayPicker)
               : null,
         ),
 
@@ -70,10 +65,7 @@ class TaskScheduleSection extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               controller.frequencyBackendError!,
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: AppColors.error, fontSize: 12),
             ),
           ),
         ],
@@ -85,10 +77,7 @@ class TaskScheduleSection extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               controller.recurrenceDayBackendError!,
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: AppColors.error, fontSize: 12),
             ),
           ),
         ],
@@ -143,9 +132,7 @@ class _WeeklyDayPicker extends StatelessWidget {
 class _MonthlyDayPicker extends StatelessWidget {
   final Future<void> Function() onTap;
 
-  const _MonthlyDayPicker({
-    required this.onTap,
-  });
+  const _MonthlyDayPicker({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -180,9 +167,7 @@ class _MonthlyDayPicker extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.border,
-                ),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

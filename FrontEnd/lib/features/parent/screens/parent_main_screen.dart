@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/localization/locale_controller.dart';
 import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
 import '../add_task/screens/add_task_screen.dart';
@@ -12,8 +11,13 @@ import '../wishlist/screens/wishlist_approval_screen.dart';
 
 class ParentMainScreen extends StatelessWidget {
   final int initialIndex;
+  final VoidCallback onLoggedOut;
 
-  const ParentMainScreen({super.key, this.initialIndex = 2});
+  const ParentMainScreen({
+    super.key,
+    this.initialIndex = 2,
+    required this.onLoggedOut,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +25,15 @@ class ParentMainScreen extends StatelessWidget {
       create: (_) {
         return AppNavigationController(initialIndex: initialIndex);
       },
-      child: const _ParentNavigationView(),
+      child: _ParentNavigationView(onLoggedOut: onLoggedOut),
     );
   }
 }
 
 class _ParentNavigationView extends StatelessWidget {
-  const _ParentNavigationView();
+  final VoidCallback onLoggedOut;
+
+  const _ParentNavigationView({required this.onLoggedOut});
 
   static const List<AppNavigationItem> _navigationItems = [
     AppNavigationItem(
@@ -71,17 +77,16 @@ class _ParentNavigationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigation = context.watch<AppNavigationController>();
 
-    final localeController = context.watch<LocaleController>();
-
-    final isArabic = localeController.isArabic;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     final pages = <Widget>[
       navigation.isLoaded(0)
           ? AddTaskScreen(
               resetVersion: navigation.reselectionVersionFor(0),
               childrenVersion: navigation.childrenVersion,
-              isArabic: isArabic,
-              onLanguageToggle: context.read<LocaleController>().toggleLocale,
+              onTaskSaved: () {
+                navigation.openTab(2);
+              },
             )
           : const SizedBox.shrink(),
 
@@ -101,7 +106,7 @@ class _ParentNavigationView extends StatelessWidget {
           : const SizedBox.shrink(),
 
       navigation.isLoaded(4)
-          ? const MoreSettingsScreen()
+          ? MoreSettingsScreen(onLoggedOut: onLoggedOut)
           : const SizedBox.shrink(),
     ];
 

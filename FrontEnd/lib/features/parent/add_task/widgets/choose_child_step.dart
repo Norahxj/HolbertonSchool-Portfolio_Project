@@ -13,10 +13,7 @@ import 'task_type_section.dart';
 class ChooseChildStep extends StatelessWidget {
   final VoidCallback onSuggestionApplied;
 
-  const ChooseChildStep({
-    super.key,
-    required this.onSuggestionApplied,
-  });
+  const ChooseChildStep({super.key, required this.onSuggestionApplied});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +24,7 @@ class ChooseChildStep extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (controller.isLoadingChildren)
-          const Center(
-            child: CircularProgressIndicator(),
-          )
+          const Center(child: CircularProgressIndicator())
         else if (controller.children.isEmpty)
           Center(
             child: Text(
@@ -46,8 +41,7 @@ class ChooseChildStep extends StatelessWidget {
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.md,
             children: controller.children.map((child) {
-              final isSelected =
-                  controller.selectedChildIds.contains(child.id);
+              final isSelected = controller.selectedChildIds.contains(child.id);
 
               return ChildCard(
                 name: child.name,
@@ -67,10 +61,7 @@ class ChooseChildStep extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               controller.childError!.localized(context),
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: AppColors.error, fontSize: 12),
             ),
           ),
         ],
@@ -110,9 +101,7 @@ class ChooseChildStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.xl),
 
-        _TaskInformationBox(
-          text: l10n.tasksInformation,
-        ),
+        _TaskInformationBox(text: l10n.tasksInformation),
 
         const SizedBox(height: AppSpacing.lg),
 
@@ -145,10 +134,7 @@ class ChooseChildStep extends StatelessWidget {
                   controller.suggestionsBackendMessage ??
                       l10n.unableToLoadSuggestions,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.error,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: AppColors.error, fontSize: 12),
                 ),
 
                 TextButton(
@@ -159,9 +145,7 @@ class ChooseChildStep extends StatelessWidget {
             )
           else
             QuickAddCategory(
-              icon: TaskTypeSection.taskTypeIcon(
-                controller.selectedTaskType!,
-              ),
+              icon: TaskTypeSection.taskTypeIcon(controller.selectedTaskType!),
               label: TaskTypeSection.taskTypeLabel(
                 context,
                 controller.selectedTaskType!,
@@ -181,9 +165,7 @@ class ChooseChildStep extends StatelessWidget {
 class _TaskInformationBox extends StatelessWidget {
   final String text;
 
-  const _TaskInformationBox({
-    required this.text,
-  });
+  const _TaskInformationBox({required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -208,11 +190,7 @@ class _TaskInformationBox extends StatelessWidget {
 
           const SizedBox(width: AppSpacing.sm),
 
-          const Icon(
-            Icons.auto_awesome,
-            color: AppColors.primary,
-            size: 18,
-          ),
+          const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
         ],
       ),
     );

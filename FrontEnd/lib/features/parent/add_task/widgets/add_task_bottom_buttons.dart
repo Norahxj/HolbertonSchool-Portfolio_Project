@@ -41,12 +41,8 @@ class AddTaskBottomButtons extends StatelessWidget {
         Expanded(
           flex: 2,
           child: AppButton(
-            text: controller.isSaving
-                ? l10n.saving
-                : l10n.saveTask,
-            onPressed: controller.isSaving
-                ? null
-                : onSave,
+            text: controller.isSaving ? l10n.saving : l10n.saveTask,
+            onPressed: controller.isSaving ? null : onSave,
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -63,13 +59,9 @@ class AddTaskBottomButtons extends StatelessWidget {
             child: OutlinedButton(
               onPressed: onBack,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(
-                  color: AppColors.primary,
-                  width: 1.5,
-                ),
+                side: const BorderSide(color: AppColors.primary, width: 1.5),
                 shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(18),
                 ),
               ),
               child: Text(

@@ -15,12 +15,14 @@ class MoreSettingsView extends StatelessWidget {
   final Future<void> Function() onReload;
   final VoidCallback onProfileTap;
   final VoidCallback onComingSoon;
+  final Future<void> Function() onLogout;
 
   const MoreSettingsView({
     super.key,
     required this.onReload,
     required this.onProfileTap,
     required this.onComingSoon,
+    required this.onLogout,
   });
 
   @override
@@ -88,7 +90,7 @@ class MoreSettingsView extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.xl),
 
-        LogoutButton(isArabic: isArabic),
+        LogoutButton(isLoading: controller.isLoggingOut, onLogout: onLogout),
 
         const SizedBox(height: AppSpacing.md),
       ],

@@ -487,4 +487,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get soon => 'Soon';
+
+  @override
+  String get logOut => 'Log out';
+
+  @override
+  String get logoutFailed => 'Unable to log out. Please try again.';
 }

@@ -14,24 +14,14 @@ import 'pending_wish_card.dart';
 import 'wishlist_states.dart';
 
 class WishlistApprovalView extends StatelessWidget {
-  const WishlistApprovalView({
-    super.key,
-  });
+  const WishlistApprovalView({super.key});
 
-  Future<void> _refresh(
-    BuildContext context,
-  ) async {
-    final success = await context
-        .read<WishlistApprovalController>()
-        .refresh();
+  Future<void> _refresh(BuildContext context) async {
+    final success = await context.read<WishlistApprovalController>().refresh();
 
     if (!success && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.failedToRefreshWishes,
-          ),
-        ),
+        SnackBar(content: Text(context.l10n.failedToRefreshWishes)),
       );
     }
   }
@@ -43,45 +33,30 @@ class WishlistApprovalView extends StatelessWidget {
   ) async {
     final success = await context
         .read<WishlistApprovalController>()
-        .approveWish(
-          wishId,
-          targetPoints,
-        );
+        .approveWish(wishId, targetPoints);
 
     if (!success && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.failedToApproveWish,
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.failedToApproveWish)));
     }
   }
 
-  Future<void> _rejectWish(
-    BuildContext context,
-    String wishId,
-  ) async {
-    final success = await context
-        .read<WishlistApprovalController>()
-        .rejectWish(wishId);
+  Future<void> _rejectWish(BuildContext context, String wishId) async {
+    final success = await context.read<WishlistApprovalController>().rejectWish(
+      wishId,
+    );
 
     if (!success && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.failedToRejectWish,
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.failedToRejectWish)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-        context.watch<WishlistApprovalController>();
+    final controller = context.watch<WishlistApprovalController>();
 
     final l10n = context.l10n;
 
@@ -93,25 +68,18 @@ class WishlistApprovalView extends StatelessWidget {
               return _refresh(context);
             },
             child: SingleChildScrollView(
-              physics:
-                  const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(
-                AppSpacing.lg,
-              ),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     l10n.childrenWishes,
-                    style:
-                        AppTextStyles.arabicTitle,
+                    style: AppTextStyles.arabicTitle,
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(
-                    height: AppSpacing.sm,
-                  ),
+                  const SizedBox(height: AppSpacing.sm),
 
                   Text(
                     l10n.childrenWishesSubtitle,
@@ -119,116 +87,68 @@ class WishlistApprovalView extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(
-                    height: AppSpacing.lg,
-                  ),
+                  const SizedBox(height: AppSpacing.lg),
 
                   if (controller.isLoading)
                     const Center(
                       child: Padding(
-                        padding:
-                            EdgeInsets.all(32),
-                        child:
-                            CircularProgressIndicator(),
+                        padding: EdgeInsets.all(32),
+                        child: CircularProgressIndicator(),
                       ),
                     )
-                  else if (controller.hasError &&
-                      controller.isEmpty)
-                    WishlistErrorState(
-                      onRetry:
-                          controller.loadWishes,
-                    )
+                  else if (controller.hasError && controller.isEmpty)
+                    WishlistErrorState(onRetry: controller.loadWishes)
                   else if (controller.isEmpty)
                     const WishlistEmptyState()
                   else ...[
-                    for (final entry
-                        in controller
-                            .pendingWishes) ...[
+                    for (final entry in controller.pendingWishes) ...[
                       PendingWishCard(
-                        key: ValueKey(
-                          entry.wish.id,
-                        ),
-                        childName:
-                            entry.childName,
-                        avatarIndex:
-                            entry.avatarIndex,
-                        wishTitle:
-                            entry.wish.name,
-                        startingPoints:
-                            entry.wish
-                                .targetPoints ??
-                            250,
+                        key: ValueKey(entry.wish.id),
+                        childName: entry.childName,
+                        avatarIndex: entry.avatarIndex,
+                        wishTitle: entry.wish.name,
+                        startingPoints: entry.wish.targetPoints ?? 250,
                         onApprove: (points) {
-                          _approveWish(
-                            context,
-                            entry.wish.id,
-                            points,
-                          );
+                          _approveWish(context, entry.wish.id, points);
                         },
                         onReject: () {
-                          _rejectWish(
-                            context,
-                            entry.wish.id,
-                          );
+                          _rejectWish(context, entry.wish.id);
                         },
                       ),
 
-                      const SizedBox(
-                        height: AppSpacing.md,
-                      ),
+                      const SizedBox(height: AppSpacing.md),
                     ],
 
-                    for (final entry
-                        in controller
-                            .approvedWishes) ...[
+                    for (final entry in controller.approvedWishes) ...[
                       ApprovedWishCard(
-                        childName:
-                            entry.childName,
-                        avatarIndex:
-                            entry.avatarIndex,
-                        wishTitle:
-                            entry.wish.name,
+                        childName: entry.childName,
+                        avatarIndex: entry.avatarIndex,
+                        wishTitle: entry.wish.name,
                         points:
                             entry.approvedPoints ??
-                            entry.wish
-                                .targetPoints ??
+                            entry.wish.targetPoints ??
                             0,
                       ),
 
-                      const SizedBox(
-                        height: AppSpacing.md,
-                      ),
+                      const SizedBox(height: AppSpacing.md),
                     ],
 
-                    for (final entry
-                        in controller
-                            .achievedWishes) ...[
+                    for (final entry in controller.achievedWishes) ...[
                       AchievedWishCard(
-                        childName:
-                            entry.childName,
-                        avatarIndex:
-                            entry.avatarIndex,
-                        wishTitle:
-                            entry.wish.name,
-                        points:
-                            entry.wish
-                                .targetPoints ??
-                            0,
+                        childName: entry.childName,
+                        avatarIndex: entry.avatarIndex,
+                        wishTitle: entry.wish.name,
+                        points: entry.wish.targetPoints ?? 0,
                       ),
 
-                      const SizedBox(
-                        height: AppSpacing.md,
-                      ),
+                      const SizedBox(height: AppSpacing.md),
                     ],
                   ],
 
-                  const SizedBox(
-                    height: AppSpacing.sm,
-                  ),
+                  const SizedBox(height: AppSpacing.sm),
 
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.md,
                     ),
                     child: Text(
@@ -236,15 +156,12 @@ class WishlistApprovalView extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: AppColors
-                            .textSecondary,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
 
-                  const SizedBox(
-                    height: AppSpacing.lg,
-                  ),
+                  const SizedBox(height: AppSpacing.lg),
                 ],
               ),
             ),

@@ -29,11 +29,7 @@ class QuickAddCategory extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(
-              icon,
-              color: AppColors.primaryDark,
-              size: 18,
-            ),
+            Icon(icon, color: AppColors.primaryDark, size: 18),
 
             const SizedBox(width: AppSpacing.sm),
 
@@ -59,9 +55,7 @@ class QuickAddCategory extends StatelessWidget {
             vertical: AppSpacing.md,
           ),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: AppColors.border,
-            ),
+            border: Border.all(color: AppColors.border),
             borderRadius: BorderRadius.circular(16),
           ),
           child: suggestions.isEmpty
@@ -83,9 +77,7 @@ class QuickAddCategory extends StatelessWidget {
                       InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
-                          onSuggestionTap(
-                            suggestions[index],
-                          );
+                          onSuggestionTap(suggestions[index]);
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -99,9 +91,7 @@ class QuickAddCategory extends StatelessWidget {
                                 color: AppColors.primary,
                               ),
 
-                              const SizedBox(
-                                width: AppSpacing.sm,
-                              ),
+                              const SizedBox(width: AppSpacing.sm),
 
                               Expanded(
                                 child: Text(
@@ -120,10 +110,7 @@ class QuickAddCategory extends StatelessWidget {
                       ),
 
                       if (index != suggestions.length - 1)
-                        const Divider(
-                          height: 1,
-                          color: AppColors.border,
-                        ),
+                        const Divider(height: 1, color: AppColors.border),
                     ],
                   ],
                 ),

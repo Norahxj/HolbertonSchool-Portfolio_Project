@@ -4,23 +4,20 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
-import '../../screens/parent_main_screen.dart';
 import '../controllers/add_task_controller.dart';
 import '../utils/add_task_localization.dart';
 import '../widgets/add_task_view.dart';
 
 class AddTaskScreen extends StatefulWidget {
   final int resetVersion;
-  final bool isArabic;
-  final VoidCallback onLanguageToggle;
   final int childrenVersion;
+  final VoidCallback onTaskSaved;
 
   const AddTaskScreen({
     super.key,
     this.resetVersion = 0,
-    this.isArabic = true,
     this.childrenVersion = 0,
-    required this.onLanguageToggle,
+    required this.onTaskSaved,
   });
 
   @override
@@ -32,12 +29,27 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   final ScrollController _scrollController = ScrollController();
 
+  String? _currentLanguageCode;
+
   @override
   void initState() {
     super.initState();
 
-    _controller = AddTaskController(languageCode: widget.isArabic ? 'ar' : 'en')
-      ..loadChildren();
+    _controller = AddTaskController(languageCode: 'ar')..loadChildren();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final languageCode = Localizations.localeOf(context).languageCode;
+
+    if (_currentLanguageCode == languageCode) {
+      return;
+    }
+
+    _currentLanguageCode = languageCode;
+    _controller.updateLanguage(languageCode);
   }
 
   @override
@@ -46,10 +58,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
     if (oldWidget.childrenVersion != widget.childrenVersion) {
       _controller.loadChildren();
-    }
-
-    if (oldWidget.isArabic != widget.isArabic) {
-      _controller.updateLanguage(widget.isArabic ? 'ar' : 'en');
     }
 
     if (oldWidget.resetVersion != widget.resetVersion) {
@@ -92,7 +100,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     final moved = _controller.goToPreviousStep();
 
     if (!moved) {
-      Navigator.pop(context);
+      _controller.reset();
+      _scrollToTop();
       return;
     }
 
@@ -136,12 +145,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   ),
                   itemBuilder: (context, index) {
                     final day = index + 1;
+
                     final isSelected = day == _controller.selectedMonthlyDay;
 
                     return InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () {
-                        Navigator.pop(context, day);
+                        Navigator.pop(sheetContext, day);
                       },
                       child: Container(
                         alignment: Alignment.center,
@@ -153,6 +163,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                         child: Text(
                           '$day',
+                          textDirection: TextDirection.ltr,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: isSelected
@@ -197,16 +208,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       return;
     }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return ParentMainScreen(
-            initialIndex: 2,
-          );
-        },
-      ),
-    );
+    _controller.reset();
+    _scrollToTop();
+
+    widget.onTaskSaved();
   }
 
   @override

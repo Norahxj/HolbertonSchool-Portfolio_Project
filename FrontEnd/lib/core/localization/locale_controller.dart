@@ -25,10 +25,6 @@ class LocaleController extends ChangeNotifier {
   }
 
   void toggleLocale() {
-    setLocale(
-      isArabic
-          ? const Locale('en')
-          : const Locale('ar'),
-    );
+    setLocale(isArabic ? const Locale('en') : const Locale('ar'));
   }
 }
