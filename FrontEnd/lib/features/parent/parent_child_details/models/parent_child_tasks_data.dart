@@ -1,5 +1,5 @@
-import '../../../models/task_assignment_model.dart';
-import '../../../models/task_model.dart';
+import '../../../../models/task_assignment_model.dart';
+import '../../../../models/task_model.dart';
 
 /// A recurring task that has not generated its next assignment yet.
 class UpcomingTaskItem {

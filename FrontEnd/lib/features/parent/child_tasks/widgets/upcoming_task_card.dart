@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../models/task_assignment_model.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../models/parent_child_tasks_data.dart';
+import '../../parent_child_details/models/parent_child_tasks_data.dart';
 import '../../../child/screens/child_task_details_screen.dart';
 
 class UpcomingTaskCard extends StatelessWidget {

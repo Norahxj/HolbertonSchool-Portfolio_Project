@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../models/task_assignment_model.dart';
-import '../../models/parent_child_tasks_data.dart';
+import '../models/parent_child_tasks_data.dart';
 import '../repositories/parent_child_details_repository.dart';
 
 class ParentChildDetailsController extends ChangeNotifier {
