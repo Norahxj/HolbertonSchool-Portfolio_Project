@@ -164,4 +164,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pointsRangeError => 'Points must be between 1 and 100';
+
+  @override
+  String get taskNameLengthError =>
+      'Task name must be between 2 and 100 characters';
+
+  @override
+  String get descriptionLengthError =>
+      'Description must be between 2 and 500 characters';
+
+  @override
+  String get saveTaskGenericError => 'An error occurred while saving the task';
+
+  @override
+  String get tasksInformation =>
+      'Tasks help children build habits and values while earning Noor points.';
+
+  @override
+  String get pointsInformation =>
+      'Noor points motivate children and encourage them to keep going.';
+
+  @override
+  String get trustChildQuestion =>
+      'Do you trust your child to complete this task seriously?';
+
+  @override
+  String get trustChildDescription =>
+      'If you do, the task will be approved automatically without your review.';
+
+  @override
+  String get dailyFrequencyDescription => 'The task is completed every day';
+
+  @override
+  String get weeklyFrequencyDescription => 'The task is completed once a week';
+
+  @override
+  String get monthlyFrequencyDescription =>
+      'The task is completed once a month';
 }

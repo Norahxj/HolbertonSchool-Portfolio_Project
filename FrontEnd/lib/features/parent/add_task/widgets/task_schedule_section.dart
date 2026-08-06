@@ -3,33 +3,30 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../controllers/add_task_controller.dart';
+import '../utils/add_task_localization.dart';
 import 'frequency_card.dart';
 import 'selectable_chip.dart';
 
 class TaskScheduleSection extends StatelessWidget {
-  final bool isArabic;
   final Future<void> Function() onMonthlyDayPicker;
 
   const TaskScheduleSection({
     super.key,
-    required this.isArabic,
     required this.onMonthlyDayPicker,
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+    final l10n = context.l10n;
 
     return Column(
       children: [
         FrequencyCard(
-          isArabic: isArabic,
-          title: controller.text('يوميًا', 'Daily'),
-          subtitle: controller.text(
-            'تُنفَّذ المهمة كل يوم',
-            'The task is completed every day',
-          ),
+          title: l10n.daily,
+          subtitle: l10n.dailyFrequencyDescription,
           isSelected: controller.selectedFrequency == 0,
           onTap: () {
             controller.selectFrequency(0);
@@ -39,59 +36,59 @@ class TaskScheduleSection extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
 
         FrequencyCard(
-          isArabic: isArabic,
-          title: controller.text('مرة في الأسبوع', 'Once a Week'),
-          subtitle: controller.text(
-            'تُنفَّذ المهمة مرة في الأسبوع',
-            'The task is completed once a week',
-          ),
+          title: l10n.weekly,
+          subtitle: l10n.weeklyFrequencyDescription,
           isSelected: controller.selectedFrequency == 1,
           onTap: () {
             controller.selectFrequency(1);
           },
           extraContent: controller.selectedFrequency == 1
-              ? _WeeklyDayPicker(isArabic: isArabic)
+              ? const _WeeklyDayPicker()
               : null,
         ),
 
         const SizedBox(height: AppSpacing.md),
 
         FrequencyCard(
-          isArabic: isArabic,
-          title: controller.text('شهريًا', 'Monthly'),
-          subtitle: controller.text(
-            'تُنفَّذ المهمة مرة في الشهر',
-            'The task is completed once a month',
-          ),
+          title: l10n.monthly,
+          subtitle: l10n.monthlyFrequencyDescription,
           isSelected: controller.selectedFrequency == 2,
           onTap: () {
             controller.selectFrequency(2);
           },
           extraContent: controller.selectedFrequency == 2
-              ? _MonthlyDayPicker(isArabic: isArabic, onTap: onMonthlyDayPicker)
+              ? _MonthlyDayPicker(
+                  onTap: onMonthlyDayPicker,
+                )
               : null,
         ),
 
-        if (controller.frequencyError != null) ...[
+        if (controller.frequencyBackendError != null) ...[
           const SizedBox(height: AppSpacing.sm),
 
           Align(
-            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
-              controller.frequencyError!,
-              style: const TextStyle(color: AppColors.error, fontSize: 12),
+              controller.frequencyBackendError!,
+              style: const TextStyle(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
             ),
           ),
         ],
 
-        if (controller.recurrenceDayError != null) ...[
+        if (controller.recurrenceDayBackendError != null) ...[
           const SizedBox(height: AppSpacing.sm),
 
           Align(
-            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
-              controller.recurrenceDayError!,
-              style: const TextStyle(color: AppColors.error, fontSize: 12),
+              controller.recurrenceDayBackendError!,
+              style: const TextStyle(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
             ),
           ),
         ],
@@ -101,21 +98,20 @@ class TaskScheduleSection extends StatelessWidget {
 }
 
 class _WeeklyDayPicker extends StatelessWidget {
-  final bool isArabic;
-
-  const _WeeklyDayPicker({required this.isArabic});
+  const _WeeklyDayPicker();
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Align(
-          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: AlignmentDirectional.centerStart,
           child: Text(
-            controller.text('اختر يوم الأسبوع', 'Choose a day of the week'),
+            l10n.chooseWeekDay,
             style: const TextStyle(
               fontSize: 12,
               color: AppColors.textSecondary,
@@ -131,7 +127,7 @@ class _WeeklyDayPicker extends StatelessWidget {
           children: [
             for (final day in controller.weekDays)
               SelectableChip(
-                label: controller.weekDayLabel(day),
+                label: day.localized(context),
                 isSelected: controller.selectedWeeklyDay == day,
                 onTap: () {
                   controller.selectWeeklyDay(day);
@@ -145,22 +141,24 @@ class _WeeklyDayPicker extends StatelessWidget {
 }
 
 class _MonthlyDayPicker extends StatelessWidget {
-  final bool isArabic;
   final Future<void> Function() onTap;
 
-  const _MonthlyDayPicker({required this.isArabic, required this.onTap});
+  const _MonthlyDayPicker({
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Align(
-          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: AlignmentDirectional.centerStart,
           child: Text(
-            controller.text('اختر تاريخ التكرار', 'Choose the repeat date'),
+            l10n.chooseRepeatDate,
             style: const TextStyle(
               fontSize: 12,
               color: AppColors.textSecondary,
@@ -182,7 +180,9 @@ class _MonthlyDayPicker extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(
+                  color: AppColors.border,
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

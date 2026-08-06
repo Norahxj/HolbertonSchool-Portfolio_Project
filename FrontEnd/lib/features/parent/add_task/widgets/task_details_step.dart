@@ -3,106 +3,100 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../controllers/add_task_controller.dart';
+import '../utils/add_task_localization.dart';
 import 'points_button.dart';
 import 'task_schedule_section.dart';
 import 'task_text_field.dart';
 
 class TaskDetailsStep extends StatelessWidget {
-  final bool isArabic;
   final Future<void> Function() onMonthlyDayPicker;
 
   const TaskDetailsStep({
     super.key,
-    required this.isArabic,
     required this.onMonthlyDayPicker,
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _FieldLabel(
-          text: controller.text('اسم المهمة', 'Task Name'),
-          isArabic: isArabic,
+          text: l10n.taskName,
         ),
 
         const SizedBox(height: AppSpacing.sm),
 
         TaskTextField(
           controller: controller.taskNameController,
-          hint: controller.text('مثال: ترتيب سريرك', 'Example: Make your bed'),
-          isArabic: isArabic,
-          errorText: controller.titleError,
+          hint: l10n.taskNameExample,
+          errorText: controller.titleError?.localized(context),
         ),
 
         const SizedBox(height: AppSpacing.lg),
 
         _FieldLabel(
-          text: controller.text('الوصف', 'Description'),
-          isArabic: isArabic,
+          text: l10n.taskDescription,
         ),
 
         const SizedBox(height: AppSpacing.sm),
 
         TaskTextField(
           controller: controller.taskDescriptionController,
-          hint: controller.text(
-            'صف المهمة باختصار...',
-            'Briefly describe the task...',
-          ),
-          isArabic: isArabic,
+          hint: l10n.taskDescriptionHint,
           maxLines: 2,
-          errorText: controller.descriptionError,
+          errorText: controller.descriptionError?.localized(context),
         ),
 
         const SizedBox(height: AppSpacing.lg),
 
         _FieldLabel(
-          text: controller.text('نقاط نور', 'Noor Points'),
-          isArabic: isArabic,
+          text: l10n.noorPoints,
         ),
 
         const SizedBox(height: AppSpacing.sm),
 
-        _PointsSelector(isArabic: isArabic),
+        const _PointsSelector(),
 
         if (controller.pointsError != null) ...[
           const SizedBox(height: AppSpacing.sm),
 
           Align(
-            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
-              controller.pointsError!,
-              style: const TextStyle(color: AppColors.error, fontSize: 12),
+              controller.pointsError!.localized(context),
+              style: const TextStyle(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
             ),
           ),
         ],
 
         const SizedBox(height: AppSpacing.md),
 
-        _PointsInformationBox(isArabic: isArabic),
+        const _PointsInformationBox(),
 
         const SizedBox(height: AppSpacing.xl),
 
         _FieldLabel(
-          text: controller.text('تكرار المهمة', 'Task Frequency'),
-          isArabic: isArabic,
+          text: l10n.taskFrequency,
         ),
 
         const SizedBox(height: AppSpacing.md),
 
         TaskScheduleSection(
-          isArabic: isArabic,
           onMonthlyDayPicker: onMonthlyDayPicker,
         ),
 
         const SizedBox(height: AppSpacing.xl),
 
-        _TrustChildCard(isArabic: isArabic),
+        const _TrustChildCard(),
       ],
     );
   }
@@ -110,14 +104,15 @@ class TaskDetailsStep extends StatelessWidget {
 
 class _FieldLabel extends StatelessWidget {
   final String text;
-  final bool isArabic;
 
-  const _FieldLabel({required this.text, required this.isArabic});
+  const _FieldLabel({
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: AlignmentDirectional.centerStart,
       child: Text(
         text,
         style: const TextStyle(
@@ -131,13 +126,12 @@ class _FieldLabel extends StatelessWidget {
 }
 
 class _PointsSelector extends StatelessWidget {
-  final bool isArabic;
-
-  const _PointsSelector({required this.isArabic});
+  const _PointsSelector();
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+    final l10n = context.l10n;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -147,22 +141,30 @@ class _PointsSelector extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Row(
         children: [
-          PointsButton(icon: Icons.add, onTap: controller.increasePoints),
+          PointsButton(
+            icon: Icons.add,
+            onTap: controller.increasePoints,
+          ),
 
           const SizedBox(width: AppSpacing.sm),
 
-          PointsButton(icon: Icons.remove, onTap: controller.decreasePoints),
+          PointsButton(
+            icon: Icons.remove,
+            onTap: controller.decreasePoints,
+          ),
 
           const Spacer(),
 
           Text(
-            isArabic
-                ? '${controller.taskPoints} نقطة'
-                : '${controller.taskPoints} points',
+            l10n.pointsValue(
+              controller.taskPoints,
+            ),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -172,7 +174,11 @@ class _PointsSelector extends StatelessWidget {
 
           const SizedBox(width: AppSpacing.xs),
 
-          const Icon(Icons.auto_awesome, color: AppColors.gold, size: 18),
+          const Icon(
+            Icons.auto_awesome,
+            color: AppColors.gold,
+            size: 18,
+          ),
         ],
       ),
     );
@@ -180,13 +186,11 @@ class _PointsSelector extends StatelessWidget {
 }
 
 class _PointsInformationBox extends StatelessWidget {
-  final bool isArabic;
-
-  const _PointsInformationBox({required this.isArabic});
+  const _PointsInformationBox();
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.read<AddTaskController>();
+    final l10n = context.l10n;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -198,11 +202,8 @@ class _PointsInformationBox extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              controller.text(
-                'نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.',
-                'Noor points motivate children and encourage them to keep going.',
-              ),
-              textAlign: isArabic ? TextAlign.right : TextAlign.left,
+              l10n.pointsInformation,
+              textAlign: TextAlign.start,
               style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.textPrimary,
@@ -212,7 +213,11 @@ class _PointsInformationBox extends StatelessWidget {
 
           const SizedBox(width: AppSpacing.sm),
 
-          const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
+          const Icon(
+            Icons.auto_awesome,
+            color: AppColors.primary,
+            size: 18,
+          ),
         ],
       ),
     );
@@ -220,20 +225,21 @@ class _PointsInformationBox extends StatelessWidget {
 }
 
 class _TrustChildCard extends StatelessWidget {
-  final bool isArabic;
-
-  const _TrustChildCard({required this.isArabic});
+  const _TrustChildCard();
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+    final l10n = context.l10n;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Row(
         children: [
@@ -243,12 +249,21 @@ class _TrustChildCard extends StatelessWidget {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: controller.trustChild ? AppColors.primary : Colors.white,
+                color: controller.trustChild
+                    ? AppColors.primary
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: AppColors.primary, width: 1.5),
+                border: Border.all(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
               ),
               child: controller.trustChild
-                  ? const Icon(Icons.check, color: Colors.white, size: 16)
+                  ? const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 16,
+                    )
                   : null,
             ),
           ),
@@ -257,16 +272,11 @@ class _TrustChildCard extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment: isArabic
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  controller.text(
-                    'هل تثق بجدية طفلك في هذه المهمة؟',
-                    'Do you trust your child to complete this task seriously?',
-                  ),
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  l10n.trustChildQuestion,
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -277,11 +287,8 @@ class _TrustChildCard extends StatelessWidget {
                 const SizedBox(height: 2),
 
                 Text(
-                  controller.text(
-                    'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك',
-                    'If you do, the task will be approved automatically without your review.',
-                  ),
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  l10n.trustChildDescription,
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,

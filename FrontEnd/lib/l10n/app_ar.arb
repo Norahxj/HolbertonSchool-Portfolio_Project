@@ -70,4 +70,15 @@
   "selectAtLeastOneChild": "الرجاء اختيار طفل واحد على الأقل",
   "selectTaskTypeError": "الرجاء اختيار نوع المهمة",
   "pointsRangeError": "عدد النقاط يجب أن يكون بين 1 و100"
+  ,
+"taskNameLengthError": "اسم المهمة يجب أن يكون بين حرفين و100 حرف",
+"descriptionLengthError": "الوصف يجب أن يكون بين حرفين و500 حرف",
+"saveTaskGenericError": "حدث خطأ أثناء حفظ المهمة",
+"tasksInformation": "المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.",
+"pointsInformation": "نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.",
+"trustChildQuestion": "هل تثق بجدية طفلك في هذه المهمة؟",
+"trustChildDescription": "إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك",
+"dailyFrequencyDescription": "تُنفَّذ المهمة كل يوم",
+"weeklyFrequencyDescription": "تُنفَّذ المهمة مرة في الأسبوع",
+"monthlyFrequencyDescription": "تُنفَّذ المهمة مرة في الشهر"
 }

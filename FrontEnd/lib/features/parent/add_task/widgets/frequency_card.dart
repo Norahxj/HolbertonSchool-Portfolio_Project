@@ -4,7 +4,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 
 class FrequencyCard extends StatelessWidget {
-  final bool isArabic;
   final String title;
   final String subtitle;
   final bool isSelected;
@@ -15,7 +14,6 @@ class FrequencyCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
-    required this.isArabic,
     required this.isSelected,
     required this.onTap,
     this.extraContent,
@@ -31,12 +29,15 @@ class FrequencyCard extends StatelessWidget {
           color: AppColors.card,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment:
+              CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
@@ -44,49 +45,66 @@ class FrequencyCard extends StatelessWidget {
                   width: 22,
                   height: 22,
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary : Colors.white,
+                    color: isSelected
+                        ? AppColors.primary
+                        : Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primary, width: 1.5),
+                    border: Border.all(
+                      color: AppColors.primary,
+                      width: 1.5,
+                    ),
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check, color: Colors.white, size: 14)
+                      ? const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 14,
+                        )
                       : null,
                 ),
+
                 const SizedBox(width: AppSpacing.sm),
+
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: isArabic
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                        textAlign: TextAlign.start,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color:
+                              AppColors.textPrimary,
                         ),
                       ),
+
                       const SizedBox(height: 2),
+
                       Text(
                         subtitle,
-                        textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                        textAlign: TextAlign.start,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color:
+                              AppColors.textSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
+
                 const SizedBox(width: AppSpacing.sm),
+
                 Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius:
+                        BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.calendar_today_outlined,
@@ -96,8 +114,11 @@ class FrequencyCard extends StatelessWidget {
                 ),
               ],
             ),
+
             if (extraContent != null) ...[
-              const SizedBox(height: AppSpacing.sm),
+              const SizedBox(
+                height: AppSpacing.sm,
+              ),
               extraContent!,
             ],
           ],

@@ -162,4 +162,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pointsRangeError => 'عدد النقاط يجب أن يكون بين 1 و100';
+
+  @override
+  String get taskNameLengthError => 'اسم المهمة يجب أن يكون بين حرفين و100 حرف';
+
+  @override
+  String get descriptionLengthError => 'الوصف يجب أن يكون بين حرفين و500 حرف';
+
+  @override
+  String get saveTaskGenericError => 'حدث خطأ أثناء حفظ المهمة';
+
+  @override
+  String get tasksInformation =>
+      'المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.';
+
+  @override
+  String get pointsInformation =>
+      'نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.';
+
+  @override
+  String get trustChildQuestion => 'هل تثق بجدية طفلك في هذه المهمة؟';
+
+  @override
+  String get trustChildDescription =>
+      'إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك';
+
+  @override
+  String get dailyFrequencyDescription => 'تُنفَّذ المهمة كل يوم';
+
+  @override
+  String get weeklyFrequencyDescription => 'تُنفَّذ المهمة مرة في الأسبوع';
+
+  @override
+  String get monthlyFrequencyDescription => 'تُنفَّذ المهمة مرة في الشهر';
 }

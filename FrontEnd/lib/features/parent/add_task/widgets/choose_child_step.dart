@@ -3,37 +3,37 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../controllers/add_task_controller.dart';
+import '../utils/add_task_localization.dart';
 import 'child_card.dart';
 import 'quick_add_category.dart';
 import 'task_type_section.dart';
 
 class ChooseChildStep extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onSuggestionApplied;
 
   const ChooseChildStep({
     super.key,
-    required this.isArabic,
     required this.onSuggestionApplied,
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<AddTaskController>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (controller.isLoadingChildren)
-          const Center(child: CircularProgressIndicator())
+          const Center(
+            child: CircularProgressIndicator(),
+          )
         else if (controller.children.isEmpty)
           Center(
             child: Text(
-              controller.text(
-                'لا يوجد أطفال بعد. الرجاء إضافة طفل أولاً.',
-                'No children yet. Please add a child first.',
-              ),
+              l10n.noChildrenYet,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 14,
@@ -46,7 +46,8 @@ class ChooseChildStep extends StatelessWidget {
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.md,
             children: controller.children.map((child) {
-              final isSelected = controller.selectedChildIds.contains(child.id);
+              final isSelected =
+                  controller.selectedChildIds.contains(child.id);
 
               return ChildCard(
                 name: child.name,
@@ -63,10 +64,13 @@ class ChooseChildStep extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           Align(
-            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
-              controller.childError!,
-              style: const TextStyle(color: AppColors.error, fontSize: 12),
+              controller.childError!.localized(context),
+              style: const TextStyle(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
             ),
           ),
         ],
@@ -74,9 +78,9 @@ class ChooseChildStep extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
 
         Align(
-          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: AlignmentDirectional.centerStart,
           child: Text(
-            controller.text('نوع المهمة', 'Task Type'),
+            l10n.taskType,
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -89,11 +93,8 @@ class ChooseChildStep extends StatelessWidget {
 
         Text(
           controller.selectedChildIds.isEmpty
-              ? controller.text(
-                  'اختر طفلًا أولًا لتفعيل أنواع المهام',
-                  'Select a child first to enable task types',
-                )
-              : controller.text('اختر نوع المهمة', 'Choose a task type'),
+              ? l10n.selectChildFirst
+              : l10n.chooseTaskType,
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 12,
@@ -105,24 +106,21 @@ class ChooseChildStep extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.md),
 
-        TaskTypeSection(isArabic: isArabic),
+        const TaskTypeSection(),
 
         const SizedBox(height: AppSpacing.xl),
 
         _TaskInformationBox(
-          text: controller.text(
-            'المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.',
-            'Tasks help children build habits and values while earning Noor points.',
-          ),
+          text: l10n.tasksInformation,
         ),
 
         const SizedBox(height: AppSpacing.lg),
 
         if (controller.selectedTaskType != null) ...[
           Align(
-            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
-              controller.text('إضافة سريعة', 'Quick Add'),
+              l10n.quickAdd,
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -140,30 +138,35 @@ class ChooseChildStep extends StatelessWidget {
                 child: CircularProgressIndicator(),
               ),
             )
-          else if (controller.suggestionsError != null)
+          else if (controller.hasSuggestionsError)
             Column(
               children: [
                 Text(
-                  controller.suggestionsError!,
+                  controller.suggestionsBackendMessage ??
+                      l10n.unableToLoadSuggestions,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.error, fontSize: 12),
+                  style: const TextStyle(
+                    color: AppColors.error,
+                    fontSize: 12,
+                  ),
                 ),
 
                 TextButton(
                   onPressed: controller.loadTaskSuggestions,
-                  child: Text(controller.text('إعادة المحاولة', 'Try Again')),
+                  child: Text(l10n.retry),
                 ),
               ],
             )
           else
             QuickAddCategory(
-              icon: TaskTypeSection.taskTypeIcon(controller.selectedTaskType!),
+              icon: TaskTypeSection.taskTypeIcon(
+                controller.selectedTaskType!,
+              ),
               label: TaskTypeSection.taskTypeLabel(
-                controller,
+                context,
                 controller.selectedTaskType!,
               ),
               suggestions: controller.taskSuggestions,
-              isArabic: isArabic,
               onSuggestionTap: (suggestion) {
                 controller.applyTaskSuggestion(suggestion);
                 onSuggestionApplied();
@@ -178,7 +181,9 @@ class ChooseChildStep extends StatelessWidget {
 class _TaskInformationBox extends StatelessWidget {
   final String text;
 
-  const _TaskInformationBox({required this.text});
+  const _TaskInformationBox({
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +208,11 @@ class _TaskInformationBox extends StatelessWidget {
 
           const SizedBox(width: AppSpacing.sm),
 
-          const Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
+          const Icon(
+            Icons.auto_awesome,
+            color: AppColors.primary,
+            size: 18,
+          ),
         ],
       ),
     );

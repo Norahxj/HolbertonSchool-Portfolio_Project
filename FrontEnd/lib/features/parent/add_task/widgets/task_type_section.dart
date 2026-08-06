@@ -3,13 +3,15 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../controllers/add_task_controller.dart';
+import '../utils/add_task_localization.dart';
 import 'task_type_card.dart';
 
 class TaskTypeSection extends StatelessWidget {
-  final bool isArabic;
-
-  const TaskTypeSection({super.key, required this.isArabic});
+  const TaskTypeSection({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,21 @@ class TaskTypeSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _buildTaskTypeCard(controller: controller, taskType: 0),
+              child: _buildTaskTypeCard(
+                context: context,
+                controller: controller,
+                taskType: 0,
+              ),
             ),
+
             const SizedBox(width: AppSpacing.md),
+
             Expanded(
-              child: _buildTaskTypeCard(controller: controller, taskType: 1),
+              child: _buildTaskTypeCard(
+                context: context,
+                controller: controller,
+                taskType: 1,
+              ),
             ),
           ],
         ),
@@ -34,11 +46,21 @@ class TaskTypeSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _buildTaskTypeCard(controller: controller, taskType: 2),
+              child: _buildTaskTypeCard(
+                context: context,
+                controller: controller,
+                taskType: 2,
+              ),
             ),
+
             const SizedBox(width: AppSpacing.md),
+
             Expanded(
-              child: _buildTaskTypeCard(controller: controller, taskType: 3),
+              child: _buildTaskTypeCard(
+                context: context,
+                controller: controller,
+                taskType: 3,
+              ),
             ),
           ],
         ),
@@ -47,12 +69,13 @@ class TaskTypeSection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Align(
-              alignment: isArabic
-                  ? Alignment.centerRight
-                  : Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: Text(
-                controller.categoryError!,
-                style: const TextStyle(color: AppColors.error, fontSize: 12),
+                controller.categoryError!.localized(context),
+                style: const TextStyle(
+                  color: AppColors.error,
+                  fontSize: 12,
+                ),
               ),
             ),
           ),
@@ -61,14 +84,20 @@ class TaskTypeSection extends StatelessWidget {
   }
 
   Widget _buildTaskTypeCard({
+    required BuildContext context,
     required AddTaskController controller,
     required int taskType,
   }) {
     return TaskTypeCard(
       icon: taskTypeIcon(taskType),
-      label: taskTypeLabel(controller, taskType),
-      isSelected: controller.selectedTaskType == taskType,
-      isEnabled: controller.selectedChildIds.isNotEmpty,
+      label: taskTypeLabel(
+        context,
+        taskType,
+      ),
+      isSelected:
+          controller.selectedTaskType == taskType,
+      isEnabled:
+          controller.selectedChildIds.isNotEmpty,
       onTap: () {
         controller.selectTaskType(taskType);
       },
@@ -79,28 +108,36 @@ class TaskTypeSection extends StatelessWidget {
     switch (taskType) {
       case 0:
         return Icons.mosque_outlined;
+
       case 1:
         return Icons.shopping_bag_outlined;
+
       case 2:
         return Icons.menu_book_outlined;
+
       default:
         return Icons.credit_card;
     }
   }
 
-  static String taskTypeLabel(AddTaskController controller, int taskType) {
+  static String taskTypeLabel(
+    BuildContext context,
+    int taskType,
+  ) {
+    final l10n = context.l10n;
+
     switch (taskType) {
       case 0:
-        return controller.text('المهام الثقافية', 'Cultural Tasks');
+        return l10n.culturalTasks;
 
       case 1:
-        return controller.text('المهام اليومية', 'Daily Tasks');
+        return l10n.dailyTasks;
 
       case 2:
-        return controller.text('المهام الدينية', 'Religious Tasks');
+        return l10n.religiousTasks;
 
       default:
-        return controller.text('المهام المالية', 'Financial Tasks');
+        return l10n.financialTasks;
     }
   }
 }

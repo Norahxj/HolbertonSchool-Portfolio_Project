@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../screens/parent_main_screen.dart';
 import '../controllers/add_task_controller.dart';
+import '../utils/add_task_localization.dart';
 import '../widgets/add_task_view.dart';
 
 class AddTaskScreen extends StatefulWidget {
@@ -34,7 +36,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   void initState() {
     super.initState();
 
-    _controller = AddTaskController(isArabic: widget.isArabic)..loadChildren();
+    _controller = AddTaskController(languageCode: widget.isArabic ? 'ar' : 'en')
+      ..loadChildren();
   }
 
   @override
@@ -45,10 +48,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       _controller.loadChildren();
     }
 
-    if (oldWidget.isArabic != widget.isArabic &&
-        _controller.selectedChildIds.isNotEmpty &&
-        _controller.selectedTaskType != null) {
-      _controller.loadTaskSuggestions();
+    if (oldWidget.isArabic != widget.isArabic) {
+      _controller.updateLanguage(widget.isArabic ? 'ar' : 'en');
     }
 
     if (oldWidget.resetVersion != widget.resetVersion) {
@@ -105,7 +106,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -113,10 +114,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _controller.text(
-                    'اختر يوم الشهر',
-                    'Choose a day of the month',
-                  ),
+                  sheetContext.l10n.chooseMonthDay,
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
@@ -186,7 +184,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
 
     if (!result.isSuccess) {
-      final message = result.errorMessage;
+      final message =
+          result.backendMessage ?? result.errorCode?.localized(context);
 
       if (message != null) {
         ScaffoldMessenger.of(
@@ -217,7 +216,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: AddTaskView(
-        isArabic: widget.isArabic,
         scrollController: _scrollController,
         onRefresh: _controller.loadChildren,
         onNext: _goToNextStep,

@@ -8,7 +8,6 @@ class TaskTextField extends StatelessWidget {
   final String hint;
   final int maxLines;
   final String? errorText;
-  final bool isArabic;
 
   const TaskTextField({
     super.key,
@@ -16,7 +15,6 @@ class TaskTextField extends StatelessWidget {
     required this.hint,
     this.maxLines = 1,
     this.errorText,
-    required this.isArabic,
   });
 
   @override
@@ -24,22 +22,26 @@ class TaskTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       maxLines: maxLines,
-      textAlign: isArabic ? TextAlign.right : TextAlign.left,
-      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textAlign: TextAlign.start,
       decoration: InputDecoration(
         hintText: hint,
+        errorText: errorText,
         filled: true,
         fillColor: AppColors.inputBackground,
         contentPadding: const EdgeInsets.all(AppSpacing.md),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: const BorderSide(
+            color: AppColors.border,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+            width: 1.5,
+          ),
         ),
-        errorText: errorText,
       ),
     );
   }

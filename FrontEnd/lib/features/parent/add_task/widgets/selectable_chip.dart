@@ -25,13 +25,16 @@ class SelectableChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : AppColors.primaryDark,
-          ),
-        ),
+  label,
+  textAlign: TextAlign.center,
+  style: TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.bold,
+    color: isSelected
+        ? Colors.white
+        : AppColors.primaryDark,
+  ),
+),
       ),
     );
   }

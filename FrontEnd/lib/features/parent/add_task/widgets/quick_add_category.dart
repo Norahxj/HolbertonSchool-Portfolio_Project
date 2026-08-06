@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/task_suggestion_model.dart';
 
 class QuickAddCategory extends StatelessWidget {
@@ -9,7 +10,6 @@ class QuickAddCategory extends StatelessWidget {
   final String label;
   final List<TaskSuggestionModel> suggestions;
   final ValueChanged<TaskSuggestionModel> onSuggestionTap;
-  final bool isArabic;
 
   const QuickAddCategory({
     super.key,
@@ -17,30 +17,37 @@ class QuickAddCategory extends StatelessWidget {
     required this.label,
     required this.suggestions,
     required this.onSuggestionTap,
-    required this.isArabic,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
-          mainAxisAlignment: isArabic
-              ? MainAxisAlignment.end
-              : MainAxisAlignment.start,
-          textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+            Icon(
+              icon,
+              color: AppColors.primaryDark,
+              size: 18,
+            ),
+
+            const SizedBox(width: AppSpacing.sm),
+
+            Expanded(
+              child: Text(
+                label,
+                textAlign: TextAlign.start,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
-            const SizedBox(width: AppSpacing.sm),
-            Icon(icon, color: AppColors.primaryDark, size: 18),
           ],
         ),
 
@@ -52,27 +59,33 @@ class QuickAddCategory extends StatelessWidget {
             vertical: AppSpacing.md,
           ),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
+            border: Border.all(
+              color: AppColors.border,
+            ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: suggestions.isEmpty
               ? Text(
-                  isArabic
-                      ? 'لا توجد مهام مقترحة حاليًا'
-                      : 'No suggested tasks available right now',
+                  l10n.noSuggestions,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
                   ),
                 )
               : Column(
                   children: [
-                    for (int i = 0; i < suggestions.length; i++) ...[
+                    for (
+                      int index = 0;
+                      index < suggestions.length;
+                      index++
+                    ) ...[
                       InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
-                          onSuggestionTap(suggestions[i]);
+                          onSuggestionTap(
+                            suggestions[index],
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -86,11 +99,13 @@ class QuickAddCategory extends StatelessWidget {
                                 color: AppColors.primary,
                               ),
 
-                              const SizedBox(width: AppSpacing.sm),
+                              const SizedBox(
+                                width: AppSpacing.sm,
+                              ),
 
                               Expanded(
                                 child: Text(
-                                  suggestions[i].title,
+                                  suggestions[index].title,
                                   textAlign: TextAlign.start,
                                   style: const TextStyle(
                                     fontSize: 13,
@@ -104,8 +119,11 @@ class QuickAddCategory extends StatelessWidget {
                         ),
                       ),
 
-                      if (i != suggestions.length - 1)
-                        const Divider(height: 1, color: AppColors.border),
+                      if (index != suggestions.length - 1)
+                        const Divider(
+                          height: 1,
+                          color: AppColors.border,
+                        ),
                     ],
                   ],
                 ),

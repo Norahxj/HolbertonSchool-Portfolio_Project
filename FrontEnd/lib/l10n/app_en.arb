@@ -70,4 +70,15 @@
   "selectAtLeastOneChild": "Please select at least one child",
   "selectTaskTypeError": "Please select a task type",
   "pointsRangeError": "Points must be between 1 and 100"
+  ,
+"taskNameLengthError": "Task name must be between 2 and 100 characters",
+"descriptionLengthError": "Description must be between 2 and 500 characters",
+"saveTaskGenericError": "An error occurred while saving the task",
+"tasksInformation": "Tasks help children build habits and values while earning Noor points.",
+"pointsInformation": "Noor points motivate children and encourage them to keep going.",
+"trustChildQuestion": "Do you trust your child to complete this task seriously?",
+"trustChildDescription": "If you do, the task will be approved automatically without your review.",
+"dailyFrequencyDescription": "The task is completed every day",
+"weeklyFrequencyDescription": "The task is completed once a week",
+"monthlyFrequencyDescription": "The task is completed once a month"
 }

@@ -403,6 +403,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Points must be between 1 and 100'**
   String get pointsRangeError;
+
+  /// No description provided for @taskNameLengthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Task name must be between 2 and 100 characters'**
+  String get taskNameLengthError;
+
+  /// No description provided for @descriptionLengthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Description must be between 2 and 500 characters'**
+  String get descriptionLengthError;
+
+  /// No description provided for @saveTaskGenericError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while saving the task'**
+  String get saveTaskGenericError;
+
+  /// No description provided for @tasksInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks help children build habits and values while earning Noor points.'**
+  String get tasksInformation;
+
+  /// No description provided for @pointsInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Noor points motivate children and encourage them to keep going.'**
+  String get pointsInformation;
+
+  /// No description provided for @trustChildQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you trust your child to complete this task seriously?'**
+  String get trustChildQuestion;
+
+  /// No description provided for @trustChildDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'If you do, the task will be approved automatically without your review.'**
+  String get trustChildDescription;
+
+  /// No description provided for @dailyFrequencyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The task is completed every day'**
+  String get dailyFrequencyDescription;
+
+  /// No description provided for @weeklyFrequencyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The task is completed once a week'**
+  String get weeklyFrequencyDescription;
+
+  /// No description provided for @monthlyFrequencyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The task is completed once a month'**
+  String get monthlyFrequencyDescription;
 }
 
 class _AppLocalizationsDelegate
