@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import 'core/constants/app_colors.dart';
+import 'core/localization/locale_controller.dart';
 import 'core/network/dio_factory.dart';
 import 'core/storage/secure_storage.dart';
 import 'features/auth/services/auth_api_service.dart';
 import 'features/child/widgets/child_nav.dart';
 import 'features/onboarding/screens/welcome_screen.dart';
 import 'features/parent/screens/parent_main_screen.dart';
+import 'l10n/app_localizations.dart';
 
 class AsalahApp extends StatefulWidget {
   const AsalahApp({super.key});
@@ -17,32 +20,21 @@ class AsalahApp extends StatefulWidget {
 }
 
 class _AsalahAppState extends State<AsalahApp> {
-  /// Gives us access to the app's Navigator from outside a screen.
-  ///
-  /// We use it when the refresh token expires so that we can close
-  /// any opened screens and return the user to the welcome screen.
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   bool _isLoading = true;
   bool _isLoggedIn = false;
   bool _isChild = false;
 
-  Locale _locale = const Locale('ar');
-
   @override
   void initState() {
     super.initState();
 
-    // DioFactory calls this method when the refresh token is no longer valid.
     DioFactory.onSessionExpired = _handleSessionExpired;
 
     _checkLogin();
   }
 
-  /// Checks whether the user has a saved login session.
-  ///
-  /// It also checks whether the saved account belongs to a child
-  /// or a parent so the correct navigation screen can be displayed.
   Future<void> _checkLogin() async {
     final isLoggedIn = await AuthApiService().isLoggedIn();
 
@@ -50,12 +42,13 @@ class _AsalahAppState extends State<AsalahApp> {
 
     if (isLoggedIn) {
       final childData = await SecureStorage.getChild();
+
       isChild = childData != null;
     }
 
-    // The widget might have been removed while the asynchronous
-    // storage operation was running.
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
       _isLoggedIn = isLoggedIn;
@@ -64,12 +57,10 @@ class _AsalahAppState extends State<AsalahApp> {
     });
   }
 
-  /// Runs when the refresh token is expired, invalid, or revoked.
-  ///
-  /// DioFactory already clears the tokens before calling this method.
-  /// Here, we update the app state and return the user to the welcome screen.
   Future<void> _handleSessionExpired() async {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
       _isLoggedIn = false;
@@ -77,48 +68,40 @@ class _AsalahAppState extends State<AsalahApp> {
       _isLoading = false;
     });
 
-    /*
-     * Wait until Flutter finishes rebuilding the app before closing
-     * any screens that may currently be open.
-     */
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       _navigatorKey.currentState?.popUntil((route) => route.isFirst);
     });
   }
 
-  /// Switches between Arabic and English.
-  void _toggleLanguage() {
-    setState(() {
-      _locale = _locale.languageCode == 'ar'
-          ? const Locale('en')
-          : const Locale('ar');
-    });
-  }
-
-  bool get isArabic => _locale.languageCode == 'ar';
-
   @override
   void dispose() {
-    /*
-     * Remove the callback when this widget is disposed.
-     *
-     * This prevents DioFactory from trying to call an old AsalahApp
-     * state object.
-     */
     DioFactory.onSessionExpired = null;
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final localeController = context.watch<LocaleController>();
+
     return MaterialApp(
       navigatorKey: _navigatorKey,
-      title: 'Asalah',
+
+      onGenerateTitle: (context) {
+        return AppLocalizations.of(context).appName;
+      },
+
       debugShowCheckedModeBanner: false,
-      locale: _locale,
+
+      locale: localeController.locale,
+
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+
+      supportedLocales: AppLocalizations.supportedLocales,
+
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.cairoTextTheme(),
@@ -129,30 +112,19 @@ class _AsalahAppState extends State<AsalahApp> {
         ),
       ),
 
-      /*
-       * Directionality is applied here so it wraps every screen,
-       * including screens opened using Navigator.push().
-       */
       builder: (context, child) {
         if (child == null) {
           return const SizedBox.shrink();
         }
 
-        final directionWrapped = Directionality(
-          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-          child: child,
-        );
+        final appContent = child;
 
-        /*
-         * On wide screens, such as Chrome on a computer, the app is
-         * displayed inside a mobile-sized frame.
-         */
         return LayoutBuilder(
           builder: (context, constraints) {
             final isWideScreen = constraints.maxWidth > 500;
 
             if (!isWideScreen) {
-              return directionWrapped;
+              return appContent;
             }
 
             return ColoredBox(
@@ -163,7 +135,7 @@ class _AsalahAppState extends State<AsalahApp> {
                   height: 844,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(32),
-                    child: directionWrapped,
+                    child: appContent,
                   ),
                 ),
               ),
@@ -172,31 +144,37 @@ class _AsalahAppState extends State<AsalahApp> {
         );
       },
 
-      home: _buildHomeScreen(),
+      home: _buildHomeScreen(context),
     );
   }
 
-  /// Chooses which screen should be displayed when the app starts
-  /// or when the authentication state changes.
-  Widget _buildHomeScreen() {
+  Widget _buildHomeScreen(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final localeController = context.read<LocaleController>();
+
+    final isArabic = localeController.locale.languageCode == 'ar';
+
+    void toggleLanguage() {
+      localeController.toggleLocale();
     }
 
     if (!_isLoggedIn) {
       return WelcomeScreen(
         isArabic: isArabic,
-        onLanguageToggle: _toggleLanguage,
+        onLanguageToggle: toggleLanguage,
       );
     }
 
     if (_isChild) {
-      return ChildNav(isArabic: isArabic, onLanguageToggle: _toggleLanguage);
+      return ChildNav(isArabic: isArabic, onLanguageToggle: toggleLanguage);
     }
 
     return ParentMainScreen(
       isArabic: isArabic,
-      onLanguageToggle: _toggleLanguage,
+      onLanguageToggle: toggleLanguage,
     );
   }
 }

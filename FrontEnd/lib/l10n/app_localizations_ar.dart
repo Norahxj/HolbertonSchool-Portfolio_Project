@@ -1,0 +1,165 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Arabic (`ar`).
+class AppLocalizationsAr extends AppLocalizations {
+  AppLocalizationsAr([String locale = 'ar']) : super(locale);
+
+  @override
+  String get appName => 'أصالة';
+
+  @override
+  String get arabic => 'العربية';
+
+  @override
+  String get english => 'الإنجليزية';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get back => 'رجوع';
+
+  @override
+  String get next => 'التالي';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get loading => 'جارٍ التحميل...';
+
+  @override
+  String get saving => 'جارٍ الحفظ...';
+
+  @override
+  String get addTask => 'إضافة مهمة';
+
+  @override
+  String get taskDetails => 'تفاصيل المهمة';
+
+  @override
+  String get saveTask => 'حفظ المهمة';
+
+  @override
+  String get taskName => 'اسم المهمة';
+
+  @override
+  String get taskDescription => 'الوصف';
+
+  @override
+  String get taskFrequency => 'تكرار المهمة';
+
+  @override
+  String get taskType => 'نوع المهمة';
+
+  @override
+  String get noorPoints => 'نقاط نور';
+
+  @override
+  String get daily => 'يوميًا';
+
+  @override
+  String get weekly => 'مرة في الأسبوع';
+
+  @override
+  String get monthly => 'شهريًا';
+
+  @override
+  String get chooseChildSubtitle => 'لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)';
+
+  @override
+  String get taskDetailsSubtitle => 'أضيفي تفاصيل المهمة وحددي تكرارها';
+
+  @override
+  String get selectChildFirst => 'اختر طفلًا أولًا لتفعيل أنواع المهام';
+
+  @override
+  String get chooseTaskType => 'اختر نوع المهمة';
+
+  @override
+  String get noChildrenYet => 'لا يوجد أطفال بعد. الرجاء إضافة طفل أولًا.';
+
+  @override
+  String get culturalTasks => 'المهام الثقافية';
+
+  @override
+  String get dailyTasks => 'المهام اليومية';
+
+  @override
+  String get religiousTasks => 'المهام الدينية';
+
+  @override
+  String get financialTasks => 'المهام المالية';
+
+  @override
+  String get quickAdd => 'إضافة سريعة';
+
+  @override
+  String get unableToLoadSuggestions => 'تعذّر تحميل المهام المقترحة';
+
+  @override
+  String get noSuggestions => 'لا توجد مهام مقترحة حاليًا';
+
+  @override
+  String get taskNameExample => 'مثال: ترتيب سريرك';
+
+  @override
+  String get taskDescriptionHint => 'صف المهمة باختصار...';
+
+  @override
+  String get chooseWeekDay => 'اختر يوم الأسبوع';
+
+  @override
+  String get chooseMonthDay => 'اختر يوم الشهر';
+
+  @override
+  String get chooseRepeatDate => 'اختر تاريخ التكرار';
+
+  @override
+  String get sunday => 'الأحد';
+
+  @override
+  String get monday => 'الإثنين';
+
+  @override
+  String get tuesday => 'الثلاثاء';
+
+  @override
+  String get wednesday => 'الأربعاء';
+
+  @override
+  String get thursday => 'الخميس';
+
+  @override
+  String get friday => 'الجمعة';
+
+  @override
+  String get saturday => 'السبت';
+
+  @override
+  String pointsValue(int points) {
+    return '$points نقطة';
+  }
+
+  @override
+  String get taskNameRequired => 'اسم المهمة مطلوب';
+
+  @override
+  String get descriptionRequired => 'الوصف مطلوب';
+
+  @override
+  String get selectAtLeastOneChild => 'الرجاء اختيار طفل واحد على الأقل';
+
+  @override
+  String get selectTaskTypeError => 'الرجاء اختيار نوع المهمة';
+
+  @override
+  String get pointsRangeError => 'عدد النقاط يجب أن يكون بين 1 و100';
+}
