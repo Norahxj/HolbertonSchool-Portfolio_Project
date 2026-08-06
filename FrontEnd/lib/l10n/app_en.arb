@@ -207,5 +207,13 @@
 "wishAchievedSuccessfully": "This wish was achieved successfully 🎉",
 "completedNoorPointsGoal": "The child completed the Noor Points goal",
 "failedToLoadWishes": "An error occurred while loading wishes. Please try again.",
-"noWishesYet": "No wishes yet."
+"noWishesYet": "No wishes yet.",
+"more": "More",
+"comingSoonMessage": "This feature is coming soon.",
+"personalProfile": "Personal profile",
+"familySettings": "Family settings",
+"language": "Language",
+"notifications": "Notifications",
+"helpAndSupport": "Help and support",
+"soon": "Soon"
 }

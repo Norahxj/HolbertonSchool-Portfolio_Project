@@ -463,4 +463,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noWishesYet => 'No wishes yet.';
+
+  @override
+  String get more => 'More';
+
+  @override
+  String get comingSoonMessage => 'This feature is coming soon.';
+
+  @override
+  String get personalProfile => 'Personal profile';
+
+  @override
+  String get familySettings => 'Family settings';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get helpAndSupport => 'Help and support';
+
+  @override
+  String get soon => 'Soon';
 }

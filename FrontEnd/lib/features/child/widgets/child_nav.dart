@@ -104,7 +104,6 @@ class _ChildNavigationView extends StatelessWidget {
       bottomNavigationBar: AppBottomNavigation(
         items: _navigationItems,
         currentIndex: navigation.currentIndex,
-        isArabic: currentIsArabic,
         onTap: navigation.selectTab,
       ),
     );

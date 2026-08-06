@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/more_settings_controller.dart';
 import 'logout_button.dart';
@@ -11,17 +12,13 @@ import 'settings_card.dart';
 import 'settings_error_state.dart';
 
 class MoreSettingsView extends StatelessWidget {
-  final bool isArabic;
   final Future<void> Function() onReload;
-  final VoidCallback onLanguageToggle;
   final VoidCallback onProfileTap;
   final VoidCallback onComingSoon;
 
   const MoreSettingsView({
     super.key,
-    required this.isArabic,
     required this.onReload,
-    required this.onLanguageToggle,
     required this.onProfileTap,
     required this.onComingSoon,
   });
@@ -30,24 +27,23 @@ class MoreSettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<MoreSettingsController>();
 
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
-      body: Directionality(
-        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-        child: ScreenBackground(
-          child: SafeArea(
-            bottom: false,
-            child: RefreshIndicator(
-              onRefresh: onReload,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.md,
-                  AppSpacing.lg,
-                  AppSpacing.xxl,
-                ),
-                child: _buildContent(context, controller),
+      body: ScreenBackground(
+        child: SafeArea(
+          bottom: false,
+          child: RefreshIndicator(
+            onRefresh: onReload,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
+                AppSpacing.xxl,
               ),
+              child: _buildContent(context, controller, isArabic),
             ),
           ),
         ),
@@ -58,6 +54,7 @@ class MoreSettingsView extends StatelessWidget {
   Widget _buildContent(
     BuildContext context,
     MoreSettingsController controller,
+    bool isArabic,
   ) {
     if (controller.isLoading) {
       return SizedBox(
@@ -76,7 +73,7 @@ class MoreSettingsView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          isArabic ? 'المزيد' : 'More',
+          context.l10n.more,
           textAlign: TextAlign.center,
           style: AppTextStyles.arabicTitle,
         ),
@@ -87,12 +84,7 @@ class MoreSettingsView extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
 
-        SettingsCard(
-          isArabic: isArabic,
-          onLanguageToggle: onLanguageToggle,
-          onProfileTap: onProfileTap,
-          onComingSoon: onComingSoon,
-        ),
+        SettingsCard(onProfileTap: onProfileTap, onComingSoon: onComingSoon),
 
         const SizedBox(height: AppSpacing.xl),
 

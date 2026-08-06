@@ -1,76 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/localization/locale_controller.dart';
 import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
 import '../add_task/screens/add_task_screen.dart';
-import '../more_settings/screens/more_settings_screen.dart';
 import '../dashboard/screens/parent_dashboard_screen.dart';
+import '../more_settings/screens/more_settings_screen.dart';
 import '../reward_management/screens/reward_management_screen.dart';
 import '../wishlist/screens/wishlist_approval_screen.dart';
 
-class ParentMainScreen extends StatefulWidget {
+class ParentMainScreen extends StatelessWidget {
   final int initialIndex;
-  final bool isArabic;
-  final VoidCallback onLanguageToggle;
 
-  const ParentMainScreen({
-    super.key,
-    this.initialIndex = 2,
-    this.isArabic = true,
-    required this.onLanguageToggle,
-  });
-
-  @override
-  State<ParentMainScreen> createState() => _ParentMainScreenState();
-}
-
-class _ParentMainScreenState extends State<ParentMainScreen> {
-  late bool _isArabic;
-
-  @override
-  void initState() {
-    super.initState();
-    _isArabic = widget.isArabic;
-  }
-
-  @override
-  void didUpdateWidget(covariant ParentMainScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.isArabic != widget.isArabic) {
-      _isArabic = widget.isArabic;
-    }
-  }
-
-  void _toggleLanguage() {
-    setState(() {
-      _isArabic = !_isArabic;
-    });
-
-    widget.onLanguageToggle();
-  }
+  const ParentMainScreen({super.key, this.initialIndex = 2});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AppNavigationController(initialIndex: widget.initialIndex),
-      child: _ParentNavigationView(
-        isArabic: _isArabic,
-        onLanguageToggle: _toggleLanguage,
-      ),
+      create: (_) {
+        return AppNavigationController(initialIndex: initialIndex);
+      },
+      child: const _ParentNavigationView(),
     );
   }
 }
 
 class _ParentNavigationView extends StatelessWidget {
-  final bool isArabic;
-  final VoidCallback onLanguageToggle;
-
-  const _ParentNavigationView({
-    required this.isArabic,
-    required this.onLanguageToggle,
-  });
+  const _ParentNavigationView();
 
   static const List<AppNavigationItem> _navigationItems = [
     AppNavigationItem(
@@ -114,22 +71,22 @@ class _ParentNavigationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigation = context.watch<AppNavigationController>();
 
+    final localeController = context.watch<LocaleController>();
+
+    final isArabic = localeController.isArabic;
+
     final pages = <Widget>[
-      // Tasks tab:
-      // Restore the original Add Task flow.
       navigation.isLoaded(0)
           ? AddTaskScreen(
               resetVersion: navigation.reselectionVersionFor(0),
               childrenVersion: navigation.childrenVersion,
               isArabic: isArabic,
-              onLanguageToggle: onLanguageToggle,
+              onLanguageToggle: context.read<LocaleController>().toggleLocale,
             )
           : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
-          ? RewardManagementScreen(
-              childrenVersion: navigation.childrenVersion,
-            )
+          ? RewardManagementScreen(childrenVersion: navigation.childrenVersion)
           : const SizedBox.shrink(),
 
       navigation.isLoaded(2)
@@ -144,10 +101,7 @@ class _ParentNavigationView extends StatelessWidget {
           : const SizedBox.shrink(),
 
       navigation.isLoaded(4)
-          ? MoreSettingsScreen(
-              isArabic: isArabic,
-              onLanguageToggle: onLanguageToggle,
-            )
+          ? const MoreSettingsScreen()
           : const SizedBox.shrink(),
     ];
 
@@ -156,7 +110,6 @@ class _ParentNavigationView extends StatelessWidget {
       bottomNavigationBar: AppBottomNavigation(
         items: _navigationItems,
         currentIndex: navigation.currentIndex,
-        isArabic: isArabic,
         onTap: navigation.selectTab,
       ),
     );

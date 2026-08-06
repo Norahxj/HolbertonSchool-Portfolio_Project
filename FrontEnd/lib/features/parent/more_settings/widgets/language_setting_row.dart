@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/locale_controller.dart';
+import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/language_toggle.dart';
 
 class LanguageRow extends StatelessWidget {
-  final bool isArabic;
-  final VoidCallback onTap;
-
-  const LanguageRow({super.key, required this.isArabic, required this.onTap});
+  const LanguageRow({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final localeController = context.watch<LocaleController>();
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: context.read<LocaleController>().toggleLocale,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.md,
           ),
           child: Row(
-            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
             children: [
               Container(
                 width: 40,
@@ -40,8 +43,8 @@ class LanguageRow extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  isArabic ? 'اللغة' : 'Language',
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                  context.l10n.language,
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -49,67 +52,13 @@ class LanguageRow extends StatelessWidget {
                   ),
                 ),
               ),
-              LanguageToggle(isArabic: isArabic),
+
+              LanguageToggle(
+                isArabic: localeController.isArabic,
+                onTap: context.read<LocaleController>().toggleLocale,
+              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class LanguageToggle extends StatelessWidget {
-  final bool isArabic;
-
-  const LanguageToggle({super.key, required this.isArabic});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        textDirection: TextDirection.ltr,
-        children: [
-          LanguageChoice(text: 'ع', isSelected: isArabic),
-          const SizedBox(width: 5),
-          LanguageChoice(text: 'EN', isSelected: !isArabic),
-        ],
-      ),
-    );
-  }
-}
-
-class LanguageChoice extends StatelessWidget {
-  final String text;
-  final bool isSelected;
-
-  const LanguageChoice({
-    super.key,
-    required this.text,
-    required this.isSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.primary : Colors.transparent,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          color: isSelected ? Colors.white : AppColors.primaryDark,
         ),
       ),
     );

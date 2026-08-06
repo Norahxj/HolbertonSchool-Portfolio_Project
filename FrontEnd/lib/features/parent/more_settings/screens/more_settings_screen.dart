@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/user_model.dart';
+import '../../profile/screens/profile_screen.dart';
 import '../controllers/more_settings_controller.dart';
 import '../widgets/more_settings_view.dart';
-import '../../profile/screens/profile_screen.dart';
 
 class MoreSettingsScreen extends StatefulWidget {
-  final bool isArabic;
-  final VoidCallback onLanguageToggle;
-
-  const MoreSettingsScreen({
-    super.key,
-    required this.isArabic,
-    required this.onLanguageToggle,
-  });
+  const MoreSettingsScreen({super.key});
 
   @override
-  State<MoreSettingsScreen> createState() => _MoreSettingsScreenState();
+  State<MoreSettingsScreen> createState() {
+    return _MoreSettingsScreenState();
+  }
 }
 
 class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
@@ -41,10 +37,14 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   }
 
   Future<void> _openProfileScreen() async {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     final updatedUser = await Navigator.push<UserModel>(
       context,
       MaterialPageRoute(
-        builder: (_) => ProfileScreen(isArabic: widget.isArabic),
+        builder: (_) {
+          return ProfileScreen(isArabic: isArabic);
+        },
       ),
     );
 
@@ -61,15 +61,9 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   }
 
   void _showComingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          widget.isArabic
-              ? 'هذه الميزة ستكون متاحة قريبًا.'
-              : 'This feature is coming soon.',
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.comingSoonMessage)));
   }
 
   @override
@@ -77,9 +71,7 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: MoreSettingsView(
-        isArabic: widget.isArabic,
         onReload: _reloadUser,
-        onLanguageToggle: widget.onLanguageToggle,
         onProfileTap: _openProfileScreen,
         onComingSoon: _showComingSoon,
       ),

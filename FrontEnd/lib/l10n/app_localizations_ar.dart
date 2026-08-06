@@ -449,4 +449,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noWishesYet => 'لا توجد أمنيات بعد.';
+
+  @override
+  String get more => 'المزيد';
+
+  @override
+  String get comingSoonMessage => 'هذه الميزة ستكون متاحة قريبًا.';
+
+  @override
+  String get personalProfile => 'الملف الشخصي';
+
+  @override
+  String get familySettings => 'إعدادات العائلة';
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get helpAndSupport => 'المساعدة والدعم';
+
+  @override
+  String get soon => 'قريبًا';
 }

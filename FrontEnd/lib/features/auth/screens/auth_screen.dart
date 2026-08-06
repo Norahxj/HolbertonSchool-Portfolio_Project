@@ -155,12 +155,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => ParentMainScreen(
-              isArabic: _isArabic,
-              onLanguageToggle: widget.onLanguageToggle,
-            ),
-          ),
+          MaterialPageRoute(builder: (_) => const ParentMainScreen()),
         );
       }
     } on DioException catch (error) {
@@ -255,12 +250,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => ParentMainScreen(
-              isArabic: _isArabic,
-              onLanguageToggle: widget.onLanguageToggle,
-            ),
-          ),
+          MaterialPageRoute(builder: (_) => const ParentMainScreen()),
         );
       }
     } on DioException catch (error) {

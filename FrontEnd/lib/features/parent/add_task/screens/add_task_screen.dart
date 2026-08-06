@@ -203,8 +203,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         builder: (_) {
           return ParentMainScreen(
             initialIndex: 2,
-            isArabic: widget.isArabic,
-            onLanguageToggle: widget.onLanguageToggle,
           );
         },
       ),

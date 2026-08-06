@@ -207,5 +207,13 @@
 "wishAchievedSuccessfully": "تم تحقيق هذه الأمنية بنجاح 🎉",
 "completedNoorPointsGoal": "أكمل الطفل هدف نقاط نور",
 "failedToLoadWishes": "حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.",
-"noWishesYet": "لا توجد أمنيات بعد."
+"noWishesYet": "لا توجد أمنيات بعد.",
+"more": "المزيد",
+"comingSoonMessage": "هذه الميزة ستكون متاحة قريبًا.",
+"personalProfile": "الملف الشخصي",
+"familySettings": "إعدادات العائلة",
+"language": "اللغة",
+"notifications": "الإشعارات",
+"helpAndSupport": "المساعدة والدعم",
+"soon": "قريبًا"
 }

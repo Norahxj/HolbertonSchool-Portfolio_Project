@@ -172,9 +172,6 @@ class _AsalahAppState extends State<AsalahApp> {
       return ChildNav(isArabic: isArabic, onLanguageToggle: toggleLanguage);
     }
 
-    return ParentMainScreen(
-      isArabic: isArabic,
-      onLanguageToggle: toggleLanguage,
-    );
+    return const ParentMainScreen();
   }
 }

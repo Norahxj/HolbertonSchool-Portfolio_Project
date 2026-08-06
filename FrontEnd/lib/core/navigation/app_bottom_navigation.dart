@@ -22,23 +22,22 @@ class AppNavigationItem {
   }
 }
 
-/// Shared bottom-navigation bar used by both parent and child interfaces.
 class AppBottomNavigation extends StatelessWidget {
   final List<AppNavigationItem> items;
   final int currentIndex;
-  final bool isArabic;
   final ValueChanged<int> onTap;
 
   const AppBottomNavigation({
     super.key,
     required this.items,
     required this.currentIndex,
-    required this.isArabic,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
+
     return SafeArea(
       top: false,
       child: Container(
@@ -55,9 +54,6 @@ class AppBottomNavigation extends StatelessWidget {
           ],
         ),
         child: Row(
-          // The first item appears on the right in Arabic
-          // and on the left in English.
-          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
           children: items.map((item) {
             return Expanded(
               child: _AppNavigationButton(

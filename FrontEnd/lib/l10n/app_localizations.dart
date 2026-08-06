@@ -925,6 +925,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No wishes yet.'**
   String get noWishesYet;
+
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get more;
+
+  /// No description provided for @comingSoonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is coming soon.'**
+  String get comingSoonMessage;
+
+  /// No description provided for @personalProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal profile'**
+  String get personalProfile;
+
+  /// No description provided for @familySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Family settings'**
+  String get familySettings;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help and support'**
+  String get helpAndSupport;
+
+  /// No description provided for @soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Soon'**
+  String get soon;
 }
 
 class _AppLocalizationsDelegate

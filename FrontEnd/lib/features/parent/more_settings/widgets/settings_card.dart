@@ -2,25 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../family_settings/screens/family_settings_screen.dart';
 import 'language_setting_row.dart';
 
 class SettingsCard extends StatelessWidget {
-  final bool isArabic;
-  final VoidCallback onLanguageToggle;
   final VoidCallback onProfileTap;
   final VoidCallback onComingSoon;
 
   const SettingsCard({
     super.key,
-    required this.isArabic,
-    required this.onLanguageToggle,
     required this.onProfileTap,
     required this.onComingSoon,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -37,8 +36,7 @@ class SettingsCard extends StatelessWidget {
         children: [
           SettingsRow(
             icon: Icons.person_outline,
-            label: isArabic ? 'الملف الشخصي' : 'Personal profile',
-            isArabic: isArabic,
+            label: l10n.personalProfile,
             onTap: onProfileTap,
           ),
 
@@ -46,13 +44,17 @@ class SettingsCard extends StatelessWidget {
 
           SettingsRow(
             icon: Icons.home_outlined,
-            label: isArabic ? 'إعدادات العائلة' : 'Family settings',
-            isArabic: isArabic,
+            label: l10n.familySettings,
             onTap: () {
+              final isArabic =
+                  Localizations.localeOf(context).languageCode == 'ar';
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => FamilySettingsScreen(isArabic: isArabic),
+                  builder: (_) {
+                    return FamilySettingsScreen(isArabic: isArabic);
+                  },
                 ),
               );
             },
@@ -60,14 +62,13 @@ class SettingsCard extends StatelessWidget {
 
           const Divider(height: 1, color: AppColors.border),
 
-          LanguageRow(isArabic: isArabic, onTap: onLanguageToggle),
+          const LanguageRow(),
 
           const Divider(height: 1, color: AppColors.border),
 
           SettingsRow(
             icon: Icons.notifications_none,
-            label: isArabic ? 'الإشعارات' : 'Notifications',
-            isArabic: isArabic,
+            label: l10n.notifications,
             showComingSoon: true,
             onTap: onComingSoon,
           ),
@@ -76,8 +77,7 @@ class SettingsCard extends StatelessWidget {
 
           SettingsRow(
             icon: Icons.help_outline,
-            label: isArabic ? 'المساعدة والدعم' : 'Help and support',
-            isArabic: isArabic,
+            label: l10n.helpAndSupport,
             showComingSoon: true,
             onTap: onComingSoon,
           ),
@@ -92,14 +92,12 @@ class SettingsRow extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final bool showComingSoon;
-  final bool isArabic;
 
   const SettingsRow({
     super.key,
     required this.icon,
     required this.label,
     required this.onTap,
-    required this.isArabic,
     this.showComingSoon = false,
   });
 
@@ -113,7 +111,6 @@ class SettingsRow extends StatelessWidget {
           vertical: AppSpacing.md,
         ),
         child: Row(
-          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
           children: [
             Container(
               width: 40,
@@ -129,12 +126,11 @@ class SettingsRow extends StatelessWidget {
 
             Expanded(
               child: Row(
-                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                 children: [
                   Flexible(
                     child: Text(
                       label,
-                      textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                      textAlign: TextAlign.start,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -145,14 +141,13 @@ class SettingsRow extends StatelessWidget {
 
                   if (showComingSoon) ...[
                     const SizedBox(width: AppSpacing.sm),
-
-                    ComingSoonTag(isArabic: isArabic),
+                    const ComingSoonTag(),
                   ],
                 ],
               ),
             ),
 
-            SettingsNavigationArrow(isArabic: isArabic),
+            const SettingsNavigationArrow(),
           ],
         ),
       ),
@@ -161,28 +156,22 @@ class SettingsRow extends StatelessWidget {
 }
 
 class SettingsNavigationArrow extends StatelessWidget {
-  final bool isArabic;
-
-  const SettingsNavigationArrow({super.key, required this.isArabic});
+  const SettingsNavigationArrow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      // Keep the icon direction fixed instead of letting RTL mirror it.
-      textDirection: TextDirection.ltr,
-      child: Icon(
-        isArabic ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
-        color: AppColors.textSecondary,
-        size: 22,
-      ),
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
+
+    return Icon(
+      isArabic ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+      color: AppColors.textSecondary,
+      size: 22,
     );
   }
 }
 
 class ComingSoonTag extends StatelessWidget {
-  final bool isArabic;
-
-  const ComingSoonTag({super.key, required this.isArabic});
+  const ComingSoonTag({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +182,7 @@ class ComingSoonTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        isArabic ? 'قريبًا' : 'Soon',
+        context.l10n.soon,
         style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
