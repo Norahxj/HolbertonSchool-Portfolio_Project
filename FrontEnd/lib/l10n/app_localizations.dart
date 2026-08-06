@@ -463,6 +463,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The task is completed once a month'**
   String get monthlyFrequencyDescription;
+
+  /// No description provided for @failedToLoadChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load children'**
+  String get failedToLoadChildren;
+
+  /// No description provided for @failedToLoadChildRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load child rewards'**
+  String get failedToLoadChildRewards;
+
+  /// No description provided for @failedToLoadRewardSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load suggested rewards'**
+  String get failedToLoadRewardSuggestions;
+
+  /// No description provided for @deleteRewardNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot delete this reward. Only the parent who added it can delete it.'**
+  String get deleteRewardNotAllowed;
+
+  /// No description provided for @deleteClaimedRewardNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'A claimed reward cannot be deleted.'**
+  String get deleteClaimedRewardNotAllowed;
+
+  /// No description provided for @failedToDeleteReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete the reward. Please try again.'**
+  String get failedToDeleteReward;
+
+  /// No description provided for @rewardAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward added successfully 🎉'**
+  String get rewardAddedSuccessfully;
+
+  /// No description provided for @deleteRewardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Reward'**
+  String get deleteRewardTitle;
+
+  /// No description provided for @deleteRewardConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to delete the reward \"{rewardName}\"?'**
+  String deleteRewardConfirmation(String rewardName);
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @rewardDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward deleted'**
+  String get rewardDeleted;
+
+  /// No description provided for @rewardManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward Management'**
+  String get rewardManagement;
+
+  /// No description provided for @rewardManagementSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly rewards based on the child’s performance'**
+  String get rewardManagementSubtitle;
+
+  /// No description provided for @noChildrenAddFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'No children yet. Add a child first.'**
+  String get noChildrenAddFirst;
+
+  /// No description provided for @currentChildRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Child Rewards'**
+  String get currentChildRewards;
+
+  /// No description provided for @noRewardsForChild.
+  ///
+  /// In en, this message translates to:
+  /// **'This child has no rewards yet'**
+  String get noRewardsForChild;
+
+  /// No description provided for @selectChildForSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a child first to view suggested rewards'**
+  String get selectChildForSuggestions;
+
+  /// No description provided for @rewardStatusUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked'**
+  String get rewardStatusUnlocked;
+
+  /// No description provided for @rewardStatusClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed'**
+  String get rewardStatusClaimed;
+
+  /// No description provided for @rewardStatusLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get rewardStatusLocked;
+
+  /// No description provided for @rewardUnlockDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward unlock day'**
+  String rewardUnlockDay(String day);
+
+  /// No description provided for @noSuggestedRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggested rewards available'**
+  String get noSuggestedRewards;
+
+  /// No description provided for @addReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Reward'**
+  String get addReward;
+
+  /// No description provided for @rewardNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the reward name first'**
+  String get rewardNameRequired;
+
+  /// No description provided for @couldNotSaveReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the reward'**
+  String get couldNotSaveReward;
+
+  /// No description provided for @saveRewardGenericError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while saving the reward'**
+  String get saveRewardGenericError;
+
+  /// No description provided for @newReward.
+  ///
+  /// In en, this message translates to:
+  /// **'New Reward'**
+  String get newReward;
+
+  /// No description provided for @rewardName.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward name'**
+  String get rewardName;
+
+  /// No description provided for @rewardNameExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: A trip to the park'**
+  String get rewardNameExample;
+
+  /// No description provided for @rewardDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward description'**
+  String get rewardDescription;
+
+  /// No description provided for @rewardDescriptionExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: A weekend visit to the park with the family'**
+  String get rewardDescriptionExample;
+
+  /// No description provided for @rewardAvailableEveryWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'The reward will become available to the child every {day}.'**
+  String rewardAvailableEveryWeek(String day);
+
+  /// No description provided for @saveReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Reward'**
+  String get saveReward;
+
+  /// No description provided for @rewardUnlockDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward unlock day'**
+  String get rewardUnlockDayLabel;
 }
 
 class _AppLocalizationsDelegate

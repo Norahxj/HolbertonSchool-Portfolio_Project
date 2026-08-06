@@ -128,7 +128,6 @@ class _ParentNavigationView extends StatelessWidget {
 
       navigation.isLoaded(1)
           ? RewardManagementScreen(
-              isArabic: isArabic,
               childrenVersion: navigation.childrenVersion,
             )
           : const SizedBox.shrink(),

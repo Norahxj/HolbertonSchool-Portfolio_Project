@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class AddRewardButton extends StatelessWidget {
   final bool enabled;
-  final bool isArabic;
   final VoidCallback onTap;
 
   const AddRewardButton({
     super.key,
     required this.enabled,
     required this.onTap,
-    required this.isArabic,
   });
 
   @override
@@ -39,7 +38,7 @@ class AddRewardButton extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
 
               Text(
-                isArabic ? 'إضافة مكافأة' : 'Add Reward',
+                context.l10n.addReward,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

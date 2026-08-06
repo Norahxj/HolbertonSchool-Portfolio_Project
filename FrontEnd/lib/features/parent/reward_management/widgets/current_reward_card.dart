@@ -2,32 +2,33 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/reward_model.dart';
 
 class CurrentRewardCard extends StatelessWidget {
   final RewardModel reward;
-  final bool isArabic;
   final bool isDeleting;
   final VoidCallback? onDelete;
 
   const CurrentRewardCard({
     super.key,
     required this.reward,
-    required this.isArabic,
     required this.isDeleting,
     required this.onDelete,
   });
 
-  String get statusLabel {
+  String _statusLabel(BuildContext context) {
+    final l10n = context.l10n;
+
     switch (reward.status.toUpperCase()) {
       case 'UNLOCKED':
-        return isArabic ? 'متاحة' : 'Unlocked';
+        return l10n.rewardStatusUnlocked;
 
       case 'CLAIMED':
-        return isArabic ? 'تم استلامها' : 'Claimed';
+        return l10n.rewardStatusClaimed;
 
       default:
-        return isArabic ? 'مقفلة' : 'Locked';
+        return l10n.rewardStatusLocked;
     }
   }
 
@@ -46,6 +47,9 @@ class CurrentRewardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -79,9 +83,6 @@ class CurrentRewardCard extends StatelessWidget {
                 Text(
                   reward.rewardName,
                   textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -96,9 +97,6 @@ class CurrentRewardCard extends StatelessWidget {
                   Text(
                     reward.description!,
                     textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                    textDirection: isArabic
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -116,7 +114,7 @@ class CurrentRewardCard extends StatelessWidget {
                       : MainAxisAlignment.start,
                   children: [
                     Text(
-                      statusLabel,
+                      _statusLabel(context),
                       style: const TextStyle(
                         fontSize: 10,
                         color: AppColors.primaryDark,
@@ -133,13 +131,8 @@ class CurrentRewardCard extends StatelessWidget {
                 const SizedBox(height: 3),
 
                 Text(
-                  isArabic
-                      ? 'تفتح يوم ${reward.unlockDayLabel}'
-                      : 'Unlocks on ${reward.unlockDayLabel}',
+                  l10n.rewardUnlockDay(reward.unlockDayLabel),
                   textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,

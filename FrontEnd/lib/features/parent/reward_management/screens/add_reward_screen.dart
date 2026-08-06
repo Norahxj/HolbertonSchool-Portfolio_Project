@@ -3,19 +3,14 @@ import 'package:provider/provider.dart';
 
 import '../../../../models/reward_suggestion_model.dart';
 import '../controllers/add_reward_controller.dart';
+import '../utils/add_reward_localization.dart';
 import '../widgets/add_reward_view.dart';
 
 class AddRewardScreen extends StatefulWidget {
   final String childId;
-  final bool isArabic;
   final RewardSuggestionModel? suggestion;
 
-  const AddRewardScreen({
-    super.key,
-    required this.childId,
-    required this.isArabic,
-    this.suggestion,
-  });
+  const AddRewardScreen({super.key, required this.childId, this.suggestion});
 
   @override
   State<AddRewardScreen> createState() => _AddRewardScreenState();
@@ -25,9 +20,8 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
   late final AddRewardController _controller;
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
 
-  bool get isArabic => widget.isArabic;
+  final TextEditingController descriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -35,7 +29,6 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
 
     _controller = AddRewardController(
       childId: widget.childId,
-      isArabic: widget.isArabic,
       suggestion: widget.suggestion,
     );
 
@@ -52,6 +45,7 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     _controller.dispose();
     nameController.dispose();
     descriptionController.dispose();
+
     super.dispose();
   }
 
@@ -66,7 +60,8 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     }
 
     if (!result.isSuccess) {
-      final message = result.errorMessage;
+      final message =
+          result.backendMessage ?? result.errorCode?.localized(context);
 
       if (message != null) {
         ScaffoldMessenger.of(
@@ -85,7 +80,6 @@ class _AddRewardScreenState extends State<AddRewardScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: AddRewardView(
-        isArabic: isArabic,
         nameController: nameController,
         descriptionController: descriptionController,
         onSave: _saveReward,

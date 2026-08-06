@@ -201,4 +201,120 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get monthlyFrequencyDescription =>
       'The task is completed once a month';
+
+  @override
+  String get failedToLoadChildren => 'Failed to load children';
+
+  @override
+  String get failedToLoadChildRewards => 'Failed to load child rewards';
+
+  @override
+  String get failedToLoadRewardSuggestions =>
+      'Failed to load suggested rewards';
+
+  @override
+  String get deleteRewardNotAllowed =>
+      'You cannot delete this reward. Only the parent who added it can delete it.';
+
+  @override
+  String get deleteClaimedRewardNotAllowed =>
+      'A claimed reward cannot be deleted.';
+
+  @override
+  String get failedToDeleteReward =>
+      'Failed to delete the reward. Please try again.';
+
+  @override
+  String get rewardAddedSuccessfully => 'Reward added successfully 🎉';
+
+  @override
+  String get deleteRewardTitle => 'Delete Reward';
+
+  @override
+  String deleteRewardConfirmation(String rewardName) {
+    return 'Do you want to delete the reward \"$rewardName\"?';
+  }
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get rewardDeleted => 'Reward deleted';
+
+  @override
+  String get rewardManagement => 'Reward Management';
+
+  @override
+  String get rewardManagementSubtitle =>
+      'Weekly rewards based on the child’s performance';
+
+  @override
+  String get noChildrenAddFirst => 'No children yet. Add a child first.';
+
+  @override
+  String get currentChildRewards => 'Current Child Rewards';
+
+  @override
+  String get noRewardsForChild => 'This child has no rewards yet';
+
+  @override
+  String get selectChildForSuggestions =>
+      'Select a child first to view suggested rewards';
+
+  @override
+  String get rewardStatusUnlocked => 'Unlocked';
+
+  @override
+  String get rewardStatusClaimed => 'Claimed';
+
+  @override
+  String get rewardStatusLocked => 'Locked';
+
+  @override
+  String rewardUnlockDay(String day) {
+    return 'Reward unlock day';
+  }
+
+  @override
+  String get noSuggestedRewards => 'No suggested rewards available';
+
+  @override
+  String get addReward => 'Add Reward';
+
+  @override
+  String get rewardNameRequired => 'Enter the reward name first';
+
+  @override
+  String get couldNotSaveReward => 'Could not save the reward';
+
+  @override
+  String get saveRewardGenericError =>
+      'An error occurred while saving the reward';
+
+  @override
+  String get newReward => 'New Reward';
+
+  @override
+  String get rewardName => 'Reward name';
+
+  @override
+  String get rewardNameExample => 'Example: A trip to the park';
+
+  @override
+  String get rewardDescription => 'Reward description';
+
+  @override
+  String get rewardDescriptionExample =>
+      'Example: A weekend visit to the park with the family';
+
+  @override
+  String rewardAvailableEveryWeek(String day) {
+    return 'The reward will become available to the child every $day.';
+  }
+
+  @override
+  String get saveReward => 'Save Reward';
+
+  @override
+  String get rewardUnlockDayLabel => 'Reward unlock day';
 }

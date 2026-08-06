@@ -6,7 +6,6 @@ import '../../../../core/constants/app_spacing.dart';
 class RewardTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
-  final bool isArabic;
   final int maxLines;
   final String? errorText;
 
@@ -14,7 +13,6 @@ class RewardTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hint,
-    required this.isArabic,
     this.maxLines = 1,
     this.errorText,
   });
@@ -24,8 +22,7 @@ class RewardTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       maxLines: maxLines,
-      textAlign: isArabic ? TextAlign.right : TextAlign.left,
-      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textAlign: TextAlign.start,
       decoration: InputDecoration(
         hintText: hint,
         errorText: errorText,

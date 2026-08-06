@@ -80,5 +80,61 @@
 "trustChildDescription": "إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك",
 "dailyFrequencyDescription": "تُنفَّذ المهمة كل يوم",
 "weeklyFrequencyDescription": "تُنفَّذ المهمة مرة في الأسبوع",
-"monthlyFrequencyDescription": "تُنفَّذ المهمة مرة في الشهر"
+"monthlyFrequencyDescription": "تُنفَّذ المهمة مرة في الشهر",
+"failedToLoadChildren": "تعذّر تحميل الأطفال",
+"failedToLoadChildRewards": "تعذّر تحميل مكافآت الطفل",
+"failedToLoadRewardSuggestions": "تعذّر تحميل المكافآت المقترحة",
+"deleteRewardNotAllowed": "لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.",
+"deleteClaimedRewardNotAllowed": "لا يمكن حذف المكافأة بعد استلامها.",
+"failedToDeleteReward": "تعذّر حذف المكافأة. حاول مرة أخرى.",
+"rewardAddedSuccessfully": "تمت إضافة المكافأة بنجاح 🎉",
+"deleteRewardTitle": "حذف المكافأة",
+"deleteRewardConfirmation": "هل تريد حذف مكافأة \"{rewardName}\"؟",
+"@deleteRewardConfirmation": {
+  "placeholders": {
+    "rewardName": {
+      "type": "String"
+    }
+  }
+},
+"delete": "حذف",
+"rewardDeleted": "تم حذف المكافأة",
+"rewardManagement": "إدارة المكافآت",
+"rewardManagementSubtitle": "مكافآت أسبوعية تُمنح حسب أداء الطفل",
+"noChildrenAddFirst": "لا يوجد أطفال بعد. أضف طفلًا أولًا.",
+"currentChildRewards": "مكافآت الطفل الحالية",
+"noRewardsForChild": "لا توجد مكافآت لهذا الطفل حتى الآن",
+"selectChildForSuggestions": "اختر طفلًا أولًا لعرض المكافآت المقترحة",
+"rewardStatusUnlocked": "متاحة",
+"rewardStatusClaimed": "تم استلامها",
+"rewardStatusLocked": "مقفلة",
+"rewardUnlockDay": "تفتح يوم {day}",
+"@rewardUnlockDay": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"noSuggestedRewards": "لا توجد مكافآت مقترحة حاليًا",
+"addReward": "إضافة مكافأة",
+"rewardNameRequired": "اكتب اسم المكافأة أولًا",
+"couldNotSaveReward": "تعذّر حفظ المكافأة",
+"saveRewardGenericError": "حدث خطأ أثناء حفظ المكافأة",
+"newReward": "مكافأة جديدة",
+"rewardName": "اسم المكافأة",
+"rewardNameExample": "مثال: رحلة إلى الحديقة",
+"rewardDescription": "وصف المكافأة",
+"rewardDescriptionExample": "مثال: زيارة الحديقة مع العائلة في نهاية الأسبوع",
+"rewardUnlockDay": "يوم إتاحة المكافأة",
+"rewardAvailableEveryWeek": "ستصبح المكافأة متاحة للطفل يوم {day} من كل أسبوع.",
+"@rewardAvailableEveryWeek": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"saveReward": "حفظ المكافأة",
+"rewardUnlockDayLabel": "يوم إتاحة المكافأة"
 }

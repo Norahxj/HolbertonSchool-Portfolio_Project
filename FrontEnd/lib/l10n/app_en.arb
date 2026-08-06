@@ -80,5 +80,61 @@
 "trustChildDescription": "If you do, the task will be approved automatically without your review.",
 "dailyFrequencyDescription": "The task is completed every day",
 "weeklyFrequencyDescription": "The task is completed once a week",
-"monthlyFrequencyDescription": "The task is completed once a month"
+"monthlyFrequencyDescription": "The task is completed once a month",
+"failedToLoadChildren": "Failed to load children",
+"failedToLoadChildRewards": "Failed to load child rewards",
+"failedToLoadRewardSuggestions": "Failed to load suggested rewards",
+"deleteRewardNotAllowed": "You cannot delete this reward. Only the parent who added it can delete it.",
+"deleteClaimedRewardNotAllowed": "A claimed reward cannot be deleted.",
+"failedToDeleteReward": "Failed to delete the reward. Please try again.",
+"rewardAddedSuccessfully": "Reward added successfully 🎉",
+"deleteRewardTitle": "Delete Reward",
+"deleteRewardConfirmation": "Do you want to delete the reward \"{rewardName}\"?",
+"@deleteRewardConfirmation": {
+  "placeholders": {
+    "rewardName": {
+      "type": "String"
+    }
+  }
+},
+"delete": "Delete",
+"rewardDeleted": "Reward deleted",
+"rewardManagement": "Reward Management",
+"rewardManagementSubtitle": "Weekly rewards based on the child’s performance",
+"noChildrenAddFirst": "No children yet. Add a child first.",
+"currentChildRewards": "Current Child Rewards",
+"noRewardsForChild": "This child has no rewards yet",
+"selectChildForSuggestions": "Select a child first to view suggested rewards",
+"rewardStatusUnlocked": "Unlocked",
+"rewardStatusClaimed": "Claimed",
+"rewardStatusLocked": "Locked",
+"rewardUnlockDay": "Unlocks on {day}",
+"@rewardUnlockDay": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"noSuggestedRewards": "No suggested rewards available",
+"addReward": "Add Reward",
+"rewardNameRequired": "Enter the reward name first",
+"couldNotSaveReward": "Could not save the reward",
+"saveRewardGenericError": "An error occurred while saving the reward",
+"newReward": "New Reward",
+"rewardName": "Reward name",
+"rewardNameExample": "Example: A trip to the park",
+"rewardDescription": "Reward description",
+"rewardDescriptionExample": "Example: A weekend visit to the park with the family",
+"rewardUnlockDay": "Reward unlock day",
+"rewardAvailableEveryWeek": "The reward will become available to the child every {day}.",
+"@rewardAvailableEveryWeek": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"saveReward": "Save Reward",
+"rewardUnlockDayLabel": "Reward unlock day"
 }

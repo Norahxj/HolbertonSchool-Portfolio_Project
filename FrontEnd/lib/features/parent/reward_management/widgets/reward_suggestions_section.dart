@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/reward_suggestion_model.dart';
 
 class RewardSuggestionsSection extends StatelessWidget {
   final List<RewardSuggestionModel> suggestions;
-  final bool isArabic;
 
   final ValueChanged<RewardSuggestionModel> onSuggestionTap;
 
   const RewardSuggestionsSection({
     super.key,
     required this.suggestions,
-    required this.isArabic,
     required this.onSuggestionTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -27,9 +28,7 @@ class RewardSuggestionsSection extends StatelessWidget {
       ),
       child: suggestions.isEmpty
           ? Text(
-              isArabic
-                  ? 'لا توجد مكافآت مقترحة حاليًا'
-                  : 'No suggested rewards available',
+              context.l10n.noSuggestedRewards,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
@@ -67,10 +66,6 @@ class RewardSuggestionsSection extends StatelessWidget {
                               children: [
                                 Text(
                                   suggestions[index].rewardName,
-                                  textAlign: TextAlign.start,
-                                  textDirection: isArabic
-                                      ? TextDirection.rtl
-                                      : TextDirection.ltr,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -85,10 +80,6 @@ class RewardSuggestionsSection extends StatelessWidget {
 
                                   Text(
                                     suggestions[index].description,
-                                    textAlign: TextAlign.start,
-                                    textDirection: isArabic
-                                        ? TextDirection.rtl
-                                        : TextDirection.ltr,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(

@@ -195,4 +195,116 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get monthlyFrequencyDescription => 'تُنفَّذ المهمة مرة في الشهر';
+
+  @override
+  String get failedToLoadChildren => 'تعذّر تحميل الأطفال';
+
+  @override
+  String get failedToLoadChildRewards => 'تعذّر تحميل مكافآت الطفل';
+
+  @override
+  String get failedToLoadRewardSuggestions => 'تعذّر تحميل المكافآت المقترحة';
+
+  @override
+  String get deleteRewardNotAllowed =>
+      'لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.';
+
+  @override
+  String get deleteClaimedRewardNotAllowed =>
+      'لا يمكن حذف المكافأة بعد استلامها.';
+
+  @override
+  String get failedToDeleteReward => 'تعذّر حذف المكافأة. حاول مرة أخرى.';
+
+  @override
+  String get rewardAddedSuccessfully => 'تمت إضافة المكافأة بنجاح 🎉';
+
+  @override
+  String get deleteRewardTitle => 'حذف المكافأة';
+
+  @override
+  String deleteRewardConfirmation(String rewardName) {
+    return 'هل تريد حذف مكافأة \"$rewardName\"؟';
+  }
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String get rewardDeleted => 'تم حذف المكافأة';
+
+  @override
+  String get rewardManagement => 'إدارة المكافآت';
+
+  @override
+  String get rewardManagementSubtitle => 'مكافآت أسبوعية تُمنح حسب أداء الطفل';
+
+  @override
+  String get noChildrenAddFirst => 'لا يوجد أطفال بعد. أضف طفلًا أولًا.';
+
+  @override
+  String get currentChildRewards => 'مكافآت الطفل الحالية';
+
+  @override
+  String get noRewardsForChild => 'لا توجد مكافآت لهذا الطفل حتى الآن';
+
+  @override
+  String get selectChildForSuggestions =>
+      'اختر طفلًا أولًا لعرض المكافآت المقترحة';
+
+  @override
+  String get rewardStatusUnlocked => 'متاحة';
+
+  @override
+  String get rewardStatusClaimed => 'تم استلامها';
+
+  @override
+  String get rewardStatusLocked => 'مقفلة';
+
+  @override
+  String rewardUnlockDay(String day) {
+    return 'يوم إتاحة المكافأة';
+  }
+
+  @override
+  String get noSuggestedRewards => 'لا توجد مكافآت مقترحة حاليًا';
+
+  @override
+  String get addReward => 'إضافة مكافأة';
+
+  @override
+  String get rewardNameRequired => 'اكتب اسم المكافأة أولًا';
+
+  @override
+  String get couldNotSaveReward => 'تعذّر حفظ المكافأة';
+
+  @override
+  String get saveRewardGenericError => 'حدث خطأ أثناء حفظ المكافأة';
+
+  @override
+  String get newReward => 'مكافأة جديدة';
+
+  @override
+  String get rewardName => 'اسم المكافأة';
+
+  @override
+  String get rewardNameExample => 'مثال: رحلة إلى الحديقة';
+
+  @override
+  String get rewardDescription => 'وصف المكافأة';
+
+  @override
+  String get rewardDescriptionExample =>
+      'مثال: زيارة الحديقة مع العائلة في نهاية الأسبوع';
+
+  @override
+  String rewardAvailableEveryWeek(String day) {
+    return 'ستصبح المكافأة متاحة للطفل يوم $day من كل أسبوع.';
+  }
+
+  @override
+  String get saveReward => 'حفظ المكافأة';
+
+  @override
+  String get rewardUnlockDayLabel => 'يوم إتاحة المكافأة';
 }
