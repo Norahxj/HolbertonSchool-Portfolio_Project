@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../models/child_model.dart';
-import '../../../models/task_suggestion_model.dart';
-import '../widgets/child_card.dart';
-import '../widgets/task_error_text.dart';
-import '../widgets/task_info_box.dart';
-import '../widgets/task_type_card.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../models/child_model.dart';
+import '../../../../models/task_suggestion_model.dart';
+import '../../widgets/child_card.dart';
+import '../../widgets/task_error_text.dart';
+import '../../widgets/task_info_box.dart';
+import '../../widgets/task_type_card.dart';
 
 class ChooseChildStep extends StatelessWidget {
   final List<ChildModel> children;

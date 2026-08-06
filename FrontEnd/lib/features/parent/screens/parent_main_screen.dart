@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
-import 'add_task_screen.dart';
+import '../add_task/screens/add_task_screen.dart';
 import '../more_settings/screens/more_settings_screen.dart';
 import '../dashboard/screens/parent_dashboard_screen.dart';
 import '../reward_management/screens/reward_management_screen.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_rtl_align.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_spacing.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
 import 'package:frontend/features/parent/widgets/task_error_text.dart';
 import 'package:frontend/features/parent/widgets/task_text_field.dart';
 import 'package:frontend/features/parent/widgets/points_selector.dart';
