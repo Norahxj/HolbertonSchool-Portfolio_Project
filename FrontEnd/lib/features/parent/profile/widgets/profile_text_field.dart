@@ -7,23 +7,37 @@ class ProfileTextField extends StatelessWidget {
   final TextEditingController controller;
   final IconData? trailingIcon;
   final TextInputType keyboardType;
+  final TextDirection? textDirection;
 
   const ProfileTextField({
     super.key,
     required this.controller,
     this.trailingIcon,
     this.keyboardType = TextInputType.text,
+    this.textDirection,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveTextDirection =
+        textDirection ?? Directionality.of(context);
+
+    final effectiveTextAlign =
+        effectiveTextDirection == TextDirection.rtl
+        ? TextAlign.right
+        : TextAlign.left;
+
     return Container(
       height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: AppColors.inputBackground,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Row(
         children: [
@@ -33,14 +47,19 @@ class ProfileTextField extends StatelessWidget {
             color: AppColors.textSecondary,
           ),
 
-          const SizedBox(width: AppSpacing.sm),
+          const SizedBox(
+            width: AppSpacing.sm,
+          ),
 
           Expanded(
             child: TextField(
               controller: controller,
               keyboardType: keyboardType,
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: AppColors.textPrimary),
+              textDirection: effectiveTextDirection,
+              textAlign: effectiveTextAlign,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+              ),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 isDense: true,
@@ -50,9 +69,15 @@ class ProfileTextField extends StatelessWidget {
           ),
 
           if (trailingIcon != null) ...[
-            const SizedBox(width: AppSpacing.sm),
+            const SizedBox(
+              width: AppSpacing.sm,
+            ),
 
-            Icon(trailingIcon, size: 18, color: AppColors.textSecondary),
+            Icon(
+              trailingIcon,
+              size: 18,
+              color: AppColors.textSecondary,
+            ),
           ],
         ],
       ),

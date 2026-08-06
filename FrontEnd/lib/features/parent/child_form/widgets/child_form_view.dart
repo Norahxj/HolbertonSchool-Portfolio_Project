@@ -158,7 +158,6 @@ class ChildFormView extends StatelessWidget {
                   icon: Icons.person_outline,
                   controller: nameController,
                   errorText: nameError,
-                  isArabic: isArabic,
                 ),
 
                 const SizedBox(height: AppSpacing.md),
@@ -210,7 +209,6 @@ class ChildFormView extends StatelessWidget {
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
                   errorText: phoneError,
-                  isArabic: isArabic,
                 ),
 
                 const SizedBox(height: AppSpacing.xxl),
