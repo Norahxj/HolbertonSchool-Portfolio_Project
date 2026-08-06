@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
-import '../../family_settings/screens/family_settings_screen.dart';
 import 'language_setting_row.dart';
 
 class SettingsCard extends StatelessWidget {
   final VoidCallback onProfileTap;
+  final VoidCallback onFamilySettingsTap;
   final VoidCallback onComingSoon;
 
   const SettingsCard({
     super.key,
     required this.onProfileTap,
+    required this.onFamilySettingsTap,
     required this.onComingSoon,
   });
 
@@ -39,39 +40,22 @@ class SettingsCard extends StatelessWidget {
             label: l10n.personalProfile,
             onTap: onProfileTap,
           ),
-
           const Divider(height: 1, color: AppColors.border),
-
           SettingsRow(
             icon: Icons.home_outlined,
             label: l10n.familySettings,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) {
-                    return const FamilySettingsScreen();
-                  },
-                ),
-              );
-            },
+            onTap: onFamilySettingsTap,
           ),
-
           const Divider(height: 1, color: AppColors.border),
-
           const LanguageRow(),
-
           const Divider(height: 1, color: AppColors.border),
-
           SettingsRow(
             icon: Icons.notifications_none,
             label: l10n.notifications,
             showComingSoon: true,
             onTap: onComingSoon,
           ),
-
           const Divider(height: 1, color: AppColors.border),
-
           SettingsRow(
             icon: Icons.help_outline,
             label: l10n.helpAndSupport,
@@ -100,52 +84,51 @@ class SettingsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(12),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.md,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: AppColors.primaryDark, size: 20),
               ),
-              child: Icon(icon, color: AppColors.primaryDark, size: 20),
-            ),
-
-            const SizedBox(width: AppSpacing.md),
-
-            Expanded(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      label,
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        label,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
-                  ),
-
-                  if (showComingSoon) ...[
-                    const SizedBox(width: AppSpacing.sm),
-                    const ComingSoonTag(),
+                    if (showComingSoon) ...[
+                      const SizedBox(width: AppSpacing.sm),
+                      const ComingSoonTag(),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-
-            const SettingsNavigationArrow(),
-          ],
+              const SettingsNavigationArrow(),
+            ],
+          ),
         ),
       ),
     );
@@ -157,10 +140,9 @@ class SettingsNavigationArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArabic = Directionality.of(context) == TextDirection.rtl;
-
-    return Icon(
-      isArabic ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+    return const Icon(
+      Icons.chevron_right_rounded,
+      textDirection: TextDirection.ltr,
       color: AppColors.textSecondary,
       size: 22,
     );
@@ -173,7 +155,10 @@ class ComingSoonTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 10,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(12),

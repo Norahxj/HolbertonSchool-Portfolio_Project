@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
-import 'wish_components.dart';
+import 'wish_header.dart';
+import 'wish_points_panel.dart';
+import 'wish_status_tag.dart';
 
 class AchievedWishCard extends StatelessWidget {
   final String childName;
@@ -38,19 +40,15 @@ class AchievedWishCard extends StatelessWidget {
             wishTitle: wishTitle,
             avatarIndex: avatarIndex,
           ),
-
           const SizedBox(height: AppSpacing.sm),
-
           Row(
             children: [
-              StatusTag(
+              WishStatusTag(
                 label: l10n.wishAchieved,
                 backgroundColor: AppColors.primaryDark,
                 textColor: Colors.white,
               ),
-
               const SizedBox(width: AppSpacing.sm),
-
               Expanded(
                 child: Text(
                   l10n.wishAchievedSuccessfully,
@@ -63,70 +61,11 @@ class AchievedWishCard extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: AppSpacing.md),
-
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEADFFF),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.emoji_events_rounded,
-                    color: AppColors.primaryDark,
-                    size: 21,
-                  ),
-                ),
-
-                const SizedBox(width: AppSpacing.sm),
-
-                Expanded(
-                  child: Text(
-                    l10n.completedNoorPointsGoal,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-
-                if (points > 0) ...[
-                  const SizedBox(width: AppSpacing.sm),
-
-                  const Icon(
-                    Icons.auto_awesome,
-                    color: AppColors.gold,
-                    size: 16,
-                  ),
-
-                  const SizedBox(width: 4),
-
-                  Text(
-                    '$points',
-                    textDirection: TextDirection.ltr,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryDark,
-                    ),
-                  ),
-                ],
-              ],
-            ),
+          WishPointsPanel(
+            label: l10n.completedNoorPointsGoal,
+            points: points,
+            leadingIcon: Icons.emoji_events_rounded,
           ),
         ],
       ),

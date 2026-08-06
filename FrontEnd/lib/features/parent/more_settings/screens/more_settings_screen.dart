@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/user_model.dart';
+import '../../family_settings/screens/family_settings_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../controllers/more_settings_controller.dart';
 import '../widgets/more_settings_view.dart';
@@ -34,18 +35,14 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
     super.dispose();
   }
 
-  Future<void> _reloadUser() async {
-    await _controller.refresh();
+  Future<void> _reloadUser() {
+    return _controller.refresh();
   }
 
   Future<void> _openProfileScreen() async {
     final updatedUser = await Navigator.push<UserModel>(
       context,
-      MaterialPageRoute(
-        builder: (_) {
-          return const ProfileScreen();
-        },
-      ),
+      MaterialPageRoute(builder: (_) => const ProfileScreen()),
     );
 
     if (!mounted) {
@@ -60,10 +57,21 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
     await _reloadUser();
   }
 
-  void _showComingSoon() {
-    ScaffoldMessenger.of(
+  Future<void> _openFamilySettings() async {
+    await Navigator.push<void>(
       context,
-    ).showSnackBar(SnackBar(content: Text(context.l10n.comingSoonMessage)));
+      MaterialPageRoute(builder: (_) => const FamilySettingsScreen()),
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    await _reloadUser();
+  }
+
+  void _showComingSoon() {
+    _showMessage(context.l10n.comingSoonMessage);
   }
 
   Future<void> _logout() async {
@@ -74,14 +82,19 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
     }
 
     if (!success) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.logoutFailed)));
-
+      _showMessage(context.l10n.logoutFailed);
       return;
     }
 
     widget.onLoggedOut();
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -91,6 +104,7 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
       child: MoreSettingsView(
         onReload: _reloadUser,
         onProfileTap: _openProfileScreen,
+        onFamilySettingsTap: _openFamilySettings,
         onComingSoon: _showComingSoon,
         onLogout: _logout,
       ),

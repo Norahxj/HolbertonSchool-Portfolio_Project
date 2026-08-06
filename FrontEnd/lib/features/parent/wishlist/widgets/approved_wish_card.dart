@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
-import 'wish_components.dart';
+import 'wish_header.dart';
+import 'wish_points_panel.dart';
+import 'wish_status_tag.dart';
 
 class ApprovedWishCard extends StatelessWidget {
   final String childName;
@@ -38,19 +40,15 @@ class ApprovedWishCard extends StatelessWidget {
             wishTitle: wishTitle,
             avatarIndex: avatarIndex,
           ),
-
           const SizedBox(height: AppSpacing.sm),
-
           Row(
             children: [
-              StatusTag(
+              WishStatusTag(
                 label: l10n.goalCreated,
                 backgroundColor: AppColors.primaryLight,
                 textColor: AppColors.primaryDark,
               ),
-
               const SizedBox(width: AppSpacing.sm),
-
               Expanded(
                 child: Text(
                   l10n.wishApprovedSubtitle,
@@ -63,55 +61,8 @@ class ApprovedWishCard extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: AppSpacing.md),
-
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l10n.selectedPointsGoal,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome,
-                      color: AppColors.gold,
-                      size: 16,
-                    ),
-
-                    const SizedBox(width: 4),
-
-                    Text(
-                      '$points',
-                      textDirection: TextDirection.ltr,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          WishPointsPanel(label: l10n.selectedPointsGoal, points: points),
         ],
       ),
     );

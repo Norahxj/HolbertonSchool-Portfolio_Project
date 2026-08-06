@@ -14,12 +14,14 @@ class LanguageRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final localeController = context.watch<LocaleController>();
 
+    final toggleLocale = context.read<LocaleController>().toggleLocale;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: context.read<LocaleController>().toggleLocale,
+        onTap: toggleLocale,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
+          padding: const EdgeInsetsDirectional.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.md,
           ),
@@ -38,9 +40,7 @@ class LanguageRow extends StatelessWidget {
                   size: 20,
                 ),
               ),
-
               const SizedBox(width: AppSpacing.md),
-
               Expanded(
                 child: Text(
                   context.l10n.language,
@@ -52,10 +52,9 @@ class LanguageRow extends StatelessWidget {
                   ),
                 ),
               ),
-
               LanguageToggle(
                 isArabic: localeController.isArabic,
-                onTap: context.read<LocaleController>().toggleLocale,
+                onTap: toggleLocale,
               ),
             ],
           ),

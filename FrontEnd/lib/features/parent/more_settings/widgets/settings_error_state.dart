@@ -15,22 +15,31 @@ class SettingsErrorState extends StatelessWidget {
     return SizedBox(
       height: MediaQuery.sizeOf(context).height * 0.65,
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              message ?? context.l10n.failedToLoadUserInformation,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.error),
-            ),
-
-            const SizedBox(height: AppSpacing.sm),
-
-            ElevatedButton(
-              onPressed: onRetry,
-              child: Text(context.l10n.tryAgain),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.error_outline_rounded,
+                color: AppColors.error,
+                size: 48,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                message ?? context.l10n.failedToLoadUserInformation,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.error),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              ElevatedButton(
+                onPressed: () {
+                  onRetry();
+                },
+                child: Text(context.l10n.tryAgain),
+              ),
+            ],
+          ),
         ),
       ),
     );

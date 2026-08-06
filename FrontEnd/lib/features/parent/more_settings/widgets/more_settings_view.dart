@@ -7,6 +7,7 @@ import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_refresh_indicator.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/more_settings_controller.dart';
+import '../utils/more_settings_localization.dart';
 import 'logout_button.dart';
 import 'profile_banner.dart';
 import 'settings_card.dart';
@@ -15,6 +16,7 @@ import 'settings_error_state.dart';
 class MoreSettingsView extends StatelessWidget {
   final Future<void> Function() onReload;
   final VoidCallback onProfileTap;
+  final VoidCallback onFamilySettingsTap;
   final VoidCallback onComingSoon;
   final Future<void> Function() onLogout;
 
@@ -22,6 +24,7 @@ class MoreSettingsView extends StatelessWidget {
     super.key,
     required this.onReload,
     required this.onProfileTap,
+    required this.onFamilySettingsTap,
     required this.onComingSoon,
     required this.onLogout,
   });
@@ -38,7 +41,7 @@ class MoreSettingsView extends StatelessWidget {
             onRefresh: onReload,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.lg,
                 AppSpacing.md,
                 AppSpacing.lg,
@@ -63,14 +66,12 @@ class MoreSettingsView extends StatelessWidget {
       );
     }
 
-    if (controller.errorMessage != null || controller.user == null) {
+    if (controller.errorCode != null || controller.user == null) {
       return SettingsErrorState(
-        message: controller.errorMessage,
+        message: controller.errorCode?.localized(context),
         onRetry: onReload,
       );
     }
-
-    final user = controller.user!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,19 +81,16 @@ class MoreSettingsView extends StatelessWidget {
           textAlign: TextAlign.center,
           style: AppTextStyles.arabicTitle,
         ),
-
         const SizedBox(height: AppSpacing.lg),
-
-        ProfileBanner(user: user),
-
+        ProfileBanner(user: controller.user!),
         const SizedBox(height: AppSpacing.lg),
-
-        SettingsCard(onProfileTap: onProfileTap, onComingSoon: onComingSoon),
-
+        SettingsCard(
+          onProfileTap: onProfileTap,
+          onFamilySettingsTap: onFamilySettingsTap,
+          onComingSoon: onComingSoon,
+        ),
         const SizedBox(height: AppSpacing.xl),
-
         LogoutButton(isLoading: controller.isLoggingOut, onLogout: onLogout),
-
         const SizedBox(height: AppSpacing.md),
       ],
     );

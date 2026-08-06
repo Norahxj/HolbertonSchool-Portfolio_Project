@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../models/user_model.dart';
 import '../../../../services/user_api_service.dart';
 import '../../../auth/services/auth_api_service.dart';
+import '../models/more_settings_error_code.dart';
 
 class MoreSettingsController extends ChangeNotifier {
   final UserApiService _userApiService;
@@ -26,34 +27,49 @@ class MoreSettingsController extends ChangeNotifier {
 
   bool get isLoggingOut => _isLoggingOut;
 
-  String? _errorMessage;
+  bool _isLoadRequestRunning = false;
 
-  String? get errorMessage => _errorMessage;
+  MoreSettingsErrorCode? _errorCode;
 
-  Future<void> loadUser() async {
-    _isLoading = true;
-    _errorMessage = null;
+  MoreSettingsErrorCode? get errorCode => _errorCode;
+
+  Future<void> loadUser({bool showLoading = true}) async {
+    if (_isLoadRequestRunning) {
+      return;
+    }
+
+    _isLoadRequestRunning = true;
+
+    if (showLoading) {
+      _isLoading = true;
+    }
+
+    _errorCode = null;
     notifyListeners();
 
     try {
       _user = await _userApiService.getCurrentUser();
-    } catch (error) {
-      debugPrint('Loading current user failed: $error');
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Loading current user failed: '
+        '$error\n$stackTrace',
+      );
 
-      _errorMessage = 'Unable to load user information.';
+      _errorCode = MoreSettingsErrorCode.loadUserFailed;
     } finally {
       _isLoading = false;
+      _isLoadRequestRunning = false;
       notifyListeners();
     }
   }
 
-  Future<void> refresh() async {
-    await loadUser();
+  Future<void> refresh() {
+    return loadUser(showLoading: false);
   }
 
   void updateUser(UserModel user) {
     _user = user;
-    _errorMessage = null;
+    _errorCode = null;
     notifyListeners();
   }
 
@@ -68,8 +84,11 @@ class MoreSettingsController extends ChangeNotifier {
     try {
       await _authApiService.logout();
       return true;
-    } catch (error) {
-      debugPrint('Parent logout failed: $error');
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Parent logout failed: '
+        '$error\n$stackTrace',
+      );
 
       return false;
     } finally {
