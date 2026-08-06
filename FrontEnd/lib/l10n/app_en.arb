@@ -435,5 +435,47 @@
     }
   }
 },
-"taskReviewGenericError": "An unexpected error occurred while reviewing the task."
+"taskReviewGenericError": "An unexpected error occurred while reviewing the task.",
+ "addChildSubtitle": "Add your child's information to begin their journey",
+  "editChildSubtitle": "Update the child information, then save",
+  "chooseAvatar": "Choose an avatar",
+
+  "childName": "Child name",
+  "dateOfBirth": "Date of birth",
+  "selectDateOfBirth": "Select date of birth",
+  "select": "Select",
+  "openCalendarToSelectDate": "Open the calendar to select a date",
+
+  "phoneNumberOptional": "Phone number (optional)",
+
+  "saveChanges": "Save Changes",
+
+  "childAddedSuccessfully": "Child added successfully",
+  "childUpdatedSuccessfully": "Child information updated successfully",
+
+  "childNameRequired": "Child name is required",
+  "childNameTooShort": "Child name must contain at least 2 characters",
+  "childNameTooLong": "Child name must not exceed 100 characters",
+  "childNameLettersOnly": "The name must contain letters only",
+
+  "birthDateRequired": "Date of birth is required",
+  "invalidChildAge": "Child age must be between 6 and 18 years",
+
+  "invalidSaudiPhone": "Enter a valid Saudi phone number starting with 05",
+
+  "failedToAddChild": "Could not add the child. Please try again.",
+  "failedToUpdateChild": "Could not update the child. Please try again.",
+
+  "phoneAlreadyUsed": "This phone number is already in use.",
+  "parentNotLinkedToFamily": "The parent account is not linked to a family.",
+  "onlyParentsCanAddChildren": "Only parents can add children.",
+  "onlyParentsCanUpdateChildren": "Only parents can update child information.",
+  "parentAccountNotFound": "The parent account could not be found.",
+  "childNotFound": "The child was not found.",
+  "couldNotCreateChild": "Could not create the child account.",
+  "couldNotSaveChildChanges": "Could not save the changes.",
+  "couldNotIdentifyChildToUpdate": "Could not identify the child to update.",
+
+  "unexpectedAddChildError": "An unexpected error occurred while adding the child.",
+  "unexpectedUpdateChildError": "An unexpected error occurred while updating the child."
 }

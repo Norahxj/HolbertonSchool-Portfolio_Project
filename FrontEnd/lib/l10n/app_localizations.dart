@@ -1645,6 +1645,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error occurred while reviewing the task.'**
   String get taskReviewGenericError;
+
+  /// No description provided for @addChildSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your child\'s information to begin their journey'**
+  String get addChildSubtitle;
+
+  /// No description provided for @editChildSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update the child information, then save'**
+  String get editChildSubtitle;
+
+  /// No description provided for @chooseAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an avatar'**
+  String get chooseAvatar;
+
+  /// No description provided for @childName.
+  ///
+  /// In en, this message translates to:
+  /// **'Child name'**
+  String get childName;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @selectDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date of birth'**
+  String get selectDateOfBirth;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @openCalendarToSelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the calendar to select a date'**
+  String get openCalendarToSelectDate;
+
+  /// No description provided for @phoneNumberOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (optional)'**
+  String get phoneNumberOptional;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @childAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Child added successfully'**
+  String get childAddedSuccessfully;
+
+  /// No description provided for @childUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Child information updated successfully'**
+  String get childUpdatedSuccessfully;
+
+  /// No description provided for @childNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Child name is required'**
+  String get childNameRequired;
+
+  /// No description provided for @childNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Child name must contain at least 2 characters'**
+  String get childNameTooShort;
+
+  /// No description provided for @childNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Child name must not exceed 100 characters'**
+  String get childNameTooLong;
+
+  /// No description provided for @childNameLettersOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The name must contain letters only'**
+  String get childNameLettersOnly;
+
+  /// No description provided for @birthDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth is required'**
+  String get birthDateRequired;
+
+  /// No description provided for @invalidChildAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Child age must be between 6 and 18 years'**
+  String get invalidChildAge;
+
+  /// No description provided for @invalidSaudiPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid Saudi phone number starting with 05'**
+  String get invalidSaudiPhone;
+
+  /// No description provided for @failedToAddChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not add the child. Please try again.'**
+  String get failedToAddChild;
+
+  /// No description provided for @failedToUpdateChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update the child. Please try again.'**
+  String get failedToUpdateChild;
+
+  /// No description provided for @phoneAlreadyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone number is already in use.'**
+  String get phoneAlreadyUsed;
+
+  /// No description provided for @parentNotLinkedToFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'The parent account is not linked to a family.'**
+  String get parentNotLinkedToFamily;
+
+  /// No description provided for @onlyParentsCanAddChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Only parents can add children.'**
+  String get onlyParentsCanAddChildren;
+
+  /// No description provided for @onlyParentsCanUpdateChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Only parents can update child information.'**
+  String get onlyParentsCanUpdateChildren;
+
+  /// No description provided for @childNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The child was not found.'**
+  String get childNotFound;
+
+  /// No description provided for @couldNotCreateChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create the child account.'**
+  String get couldNotCreateChild;
+
+  /// No description provided for @couldNotSaveChildChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the changes.'**
+  String get couldNotSaveChildChanges;
+
+  /// No description provided for @couldNotIdentifyChildToUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not identify the child to update.'**
+  String get couldNotIdentifyChildToUpdate;
+
+  /// No description provided for @unexpectedAddChildError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred while adding the child.'**
+  String get unexpectedAddChildError;
+
+  /// No description provided for @unexpectedUpdateChildError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred while updating the child.'**
+  String get unexpectedUpdateChildError;
 }
 
 class _AppLocalizationsDelegate

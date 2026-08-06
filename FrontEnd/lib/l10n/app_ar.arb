@@ -435,5 +435,48 @@
     }
   }
 },
-"taskReviewGenericError": "حدث خطأ غير متوقع أثناء مراجعة المهمة."
+"taskReviewGenericError": "حدث خطأ غير متوقع أثناء مراجعة المهمة.",
+  "addChildSubtitle": "أضف معلومات طفلك لبدء رحلته",
+  "editChildSubtitle": "عدّل معلومات الطفل ثم اضغط حفظ",
+  "chooseAvatar": "اختر صورة رمزية",
+
+  "childName": "اسم الطفل",
+  "dateOfBirth": "تاريخ الميلاد",
+  "selectDateOfBirth": "اختر تاريخ الميلاد",
+  "select": "اختيار",
+  "openCalendarToSelectDate": "يفتح التقويم لاختيار التاريخ",
+
+  "phoneNumberOptional": "رقم الجوال (اختياري)",
+
+  "saveChanges": "حفظ التعديلات",
+
+  "childAddedSuccessfully": "تمت إضافة الطفل بنجاح",
+  "childUpdatedSuccessfully": "تم تعديل بيانات الطفل بنجاح",
+
+  "childNameRequired": "اسم الطفل مطلوب",
+  "childNameTooShort": "يجب أن يتكون اسم الطفل من حرفين على الأقل",
+  "childNameTooLong": "يجب ألا يتجاوز اسم الطفل 100 حرف",
+  "childNameLettersOnly": "يجب أن يحتوي الاسم على حروف عربية أو إنجليزية فقط",
+
+  "birthDateRequired": "تاريخ الميلاد مطلوب",
+  "invalidChildAge": "يجب أن يكون عمر الطفل بين 6 و18 سنة",
+
+  "invalidSaudiPhone": "أدخل رقم جوال سعودي صحيح يبدأ بـ 05",
+
+  "failedToAddChild": "تعذّر إضافة الطفل. حاول مرة أخرى.",
+  "failedToUpdateChild": "تعذّر تعديل بيانات الطفل. حاول مرة أخرى.",
+
+  "phoneAlreadyUsed": "رقم الجوال مستخدم بالفعل.",
+  "parentNotLinkedToFamily": "حساب ولي الأمر غير مرتبط بأسرة.",
+  "onlyParentsCanAddChildren": "إضافة الأطفال متاحة لولي الأمر فقط.",
+  "onlyParentsCanUpdateChildren": "تعديل بيانات الطفل متاح لولي الأمر فقط.",
+  "parentAccountNotFound": "تعذّر العثور على حساب ولي الأمر.",
+  "childNotFound": "لم يتم العثور على الطفل.",
+  "couldNotCreateChild": "تعذّر إنشاء حساب الطفل.",
+  "couldNotSaveChildChanges": "تعذّر حفظ التعديلات.",
+  "couldNotIdentifyChildToUpdate": "تعذّر تحديد الطفل المطلوب تعديله.",
+
+  "unexpectedAddChildError": "حدث خطأ غير متوقع أثناء إضافة الطفل.",
+  "unexpectedUpdateChildError": "حدث خطأ غير متوقع أثناء تعديل الطفل."
+
 }

@@ -848,4 +848,101 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get taskReviewGenericError => 'حدث خطأ غير متوقع أثناء مراجعة المهمة.';
+
+  @override
+  String get addChildSubtitle => 'أضف معلومات طفلك لبدء رحلته';
+
+  @override
+  String get editChildSubtitle => 'عدّل معلومات الطفل ثم اضغط حفظ';
+
+  @override
+  String get chooseAvatar => 'اختر صورة رمزية';
+
+  @override
+  String get childName => 'اسم الطفل';
+
+  @override
+  String get dateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String get selectDateOfBirth => 'اختر تاريخ الميلاد';
+
+  @override
+  String get select => 'اختيار';
+
+  @override
+  String get openCalendarToSelectDate => 'يفتح التقويم لاختيار التاريخ';
+
+  @override
+  String get phoneNumberOptional => 'رقم الجوال (اختياري)';
+
+  @override
+  String get saveChanges => 'حفظ التعديلات';
+
+  @override
+  String get childAddedSuccessfully => 'تمت إضافة الطفل بنجاح';
+
+  @override
+  String get childUpdatedSuccessfully => 'تم تعديل بيانات الطفل بنجاح';
+
+  @override
+  String get childNameRequired => 'اسم الطفل مطلوب';
+
+  @override
+  String get childNameTooShort => 'يجب أن يتكون اسم الطفل من حرفين على الأقل';
+
+  @override
+  String get childNameTooLong => 'يجب ألا يتجاوز اسم الطفل 100 حرف';
+
+  @override
+  String get childNameLettersOnly =>
+      'يجب أن يحتوي الاسم على حروف عربية أو إنجليزية فقط';
+
+  @override
+  String get birthDateRequired => 'تاريخ الميلاد مطلوب';
+
+  @override
+  String get invalidChildAge => 'يجب أن يكون عمر الطفل بين 6 و18 سنة';
+
+  @override
+  String get invalidSaudiPhone => 'أدخل رقم جوال سعودي صحيح يبدأ بـ 05';
+
+  @override
+  String get failedToAddChild => 'تعذّر إضافة الطفل. حاول مرة أخرى.';
+
+  @override
+  String get failedToUpdateChild => 'تعذّر تعديل بيانات الطفل. حاول مرة أخرى.';
+
+  @override
+  String get phoneAlreadyUsed => 'رقم الجوال مستخدم بالفعل.';
+
+  @override
+  String get parentNotLinkedToFamily => 'حساب ولي الأمر غير مرتبط بأسرة.';
+
+  @override
+  String get onlyParentsCanAddChildren => 'إضافة الأطفال متاحة لولي الأمر فقط.';
+
+  @override
+  String get onlyParentsCanUpdateChildren =>
+      'تعديل بيانات الطفل متاح لولي الأمر فقط.';
+
+  @override
+  String get childNotFound => 'لم يتم العثور على الطفل.';
+
+  @override
+  String get couldNotCreateChild => 'تعذّر إنشاء حساب الطفل.';
+
+  @override
+  String get couldNotSaveChildChanges => 'تعذّر حفظ التعديلات.';
+
+  @override
+  String get couldNotIdentifyChildToUpdate =>
+      'تعذّر تحديد الطفل المطلوب تعديله.';
+
+  @override
+  String get unexpectedAddChildError => 'حدث خطأ غير متوقع أثناء إضافة الطفل.';
+
+  @override
+  String get unexpectedUpdateChildError =>
+      'حدث خطأ غير متوقع أثناء تعديل الطفل.';
 }

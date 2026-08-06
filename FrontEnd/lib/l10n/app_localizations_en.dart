@@ -871,4 +871,107 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get taskReviewGenericError =>
       'An unexpected error occurred while reviewing the task.';
+
+  @override
+  String get addChildSubtitle =>
+      'Add your child\'s information to begin their journey';
+
+  @override
+  String get editChildSubtitle => 'Update the child information, then save';
+
+  @override
+  String get chooseAvatar => 'Choose an avatar';
+
+  @override
+  String get childName => 'Child name';
+
+  @override
+  String get dateOfBirth => 'Date of birth';
+
+  @override
+  String get selectDateOfBirth => 'Select date of birth';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get openCalendarToSelectDate => 'Open the calendar to select a date';
+
+  @override
+  String get phoneNumberOptional => 'Phone number (optional)';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get childAddedSuccessfully => 'Child added successfully';
+
+  @override
+  String get childUpdatedSuccessfully =>
+      'Child information updated successfully';
+
+  @override
+  String get childNameRequired => 'Child name is required';
+
+  @override
+  String get childNameTooShort =>
+      'Child name must contain at least 2 characters';
+
+  @override
+  String get childNameTooLong => 'Child name must not exceed 100 characters';
+
+  @override
+  String get childNameLettersOnly => 'The name must contain letters only';
+
+  @override
+  String get birthDateRequired => 'Date of birth is required';
+
+  @override
+  String get invalidChildAge => 'Child age must be between 6 and 18 years';
+
+  @override
+  String get invalidSaudiPhone =>
+      'Enter a valid Saudi phone number starting with 05';
+
+  @override
+  String get failedToAddChild => 'Could not add the child. Please try again.';
+
+  @override
+  String get failedToUpdateChild =>
+      'Could not update the child. Please try again.';
+
+  @override
+  String get phoneAlreadyUsed => 'This phone number is already in use.';
+
+  @override
+  String get parentNotLinkedToFamily =>
+      'The parent account is not linked to a family.';
+
+  @override
+  String get onlyParentsCanAddChildren => 'Only parents can add children.';
+
+  @override
+  String get onlyParentsCanUpdateChildren =>
+      'Only parents can update child information.';
+
+  @override
+  String get childNotFound => 'The child was not found.';
+
+  @override
+  String get couldNotCreateChild => 'Could not create the child account.';
+
+  @override
+  String get couldNotSaveChildChanges => 'Could not save the changes.';
+
+  @override
+  String get couldNotIdentifyChildToUpdate =>
+      'Could not identify the child to update.';
+
+  @override
+  String get unexpectedAddChildError =>
+      'An unexpected error occurred while adding the child.';
+
+  @override
+  String get unexpectedUpdateChildError =>
+      'An unexpected error occurred while updating the child.';
 }
