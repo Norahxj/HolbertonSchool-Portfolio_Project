@@ -11,7 +11,10 @@ import '../widgets/daily_feedback_view.dart';
 class DailyFeedbackScreen extends StatefulWidget {
   final ChildModel child;
 
-  const DailyFeedbackScreen({super.key, required this.child});
+  const DailyFeedbackScreen({
+    super.key,
+    required this.child,
+  });
 
   @override
   State<DailyFeedbackScreen> createState() {
@@ -26,7 +29,9 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
   void initState() {
     super.initState();
 
-    _controller = DailyFeedbackController(child: widget.child)..loadFeedback();
+    _controller = DailyFeedbackController(
+      child: widget.child,
+    )..loadFeedback();
   }
 
   @override
@@ -47,7 +52,10 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
 
       if (message != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text(message),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
 
@@ -56,7 +64,9 @@ class _DailyFeedbackScreenState extends State<DailyFeedbackScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.l10n.feedbackSavedSuccessfully),
+        content: Text(
+          context.l10n.feedbackSavedSuccessfully,
+        ),
         backgroundColor: AppColors.success,
       ),
     );

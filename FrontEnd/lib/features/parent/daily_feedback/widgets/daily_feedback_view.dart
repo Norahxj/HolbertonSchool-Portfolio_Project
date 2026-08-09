@@ -44,34 +44,36 @@ class DailyFeedbackView extends StatelessWidget {
         ),
       ),
       body: controller.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : controller.errorCode != null
-          ? DailyFeedbackErrorState(
-              message: controller.errorCode!.localized(context),
-              onRetry: controller.loadFeedback,
+          ? const Center(
+              child: CircularProgressIndicator(),
             )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TodayFeedbackCard(
-                    childName: controller.child.name,
-                    todayFeedback: controller.todayFeedback,
-                    selectedMood: controller.selectedMood,
-                    isSubmitting: controller.isSubmitting,
-                    onMoodSelected: controller.selectMood,
-                    onSubmit: onSubmit,
-                  ),
+          : controller.errorCode != null
+              ? DailyFeedbackErrorState(
+                  message: controller.errorCode!.localized(context),
+                  onRetry: controller.loadFeedback,
+                )
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TodayFeedbackCard(
+                        childName: controller.child.name,
+                        todayFeedback: controller.todayFeedback,
+                        selectedMood: controller.selectedMood,
+                        isSubmitting: controller.isSubmitting,
+                        onMoodSelected: controller.selectMood,
+                        onSubmit: onSubmit,
+                      ),
 
-                  const SizedBox(height: AppSpacing.xl),
+                      const SizedBox(height: AppSpacing.xl),
 
-                  FeedbackHistorySection(
-                    feedbackHistory: controller.feedbackHistory,
+                      FeedbackHistorySection(
+                        feedbackHistory: controller.feedbackHistory,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
     );
   }
 }

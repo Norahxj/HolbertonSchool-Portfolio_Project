@@ -72,7 +72,9 @@ class TodayFeedbackCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
 
           ElevatedButton(
-            onPressed: selectedMood != null && !isSubmitting ? onSubmit : null,
+            onPressed: selectedMood != null && !isSubmitting
+                ? onSubmit
+                : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               minimumSize: const Size.fromHeight(52),

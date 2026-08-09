@@ -10,7 +10,10 @@ import 'daily_feedback_mood.dart';
 class FeedbackHistorySection extends StatelessWidget {
   final List<DailyFeedbackModel> feedbackHistory;
 
-  const FeedbackHistorySection({super.key, required this.feedbackHistory});
+  const FeedbackHistorySection({
+    super.key,
+    required this.feedbackHistory,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,10 @@ class FeedbackHistorySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(context.l10n.feedbackHistory, style: AppTextStyles.arabicTitle),
+        Text(
+          context.l10n.feedbackHistory,
+          style: AppTextStyles.arabicTitle,
+        ),
 
         const SizedBox(height: AppSpacing.md),
 
@@ -69,7 +75,9 @@ class FeedbackHistorySection extends StatelessWidget {
                         const SizedBox(height: 2),
 
                         Text(
-                          DailyFeedbackMood.formatDate(feedback.feedbackDate),
+                          DailyFeedbackMood.formatDate(
+                            feedback.feedbackDate,
+                          ),
                           textAlign: TextAlign.start,
                           style: const TextStyle(
                             fontSize: 12,

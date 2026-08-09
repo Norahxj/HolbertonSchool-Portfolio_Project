@@ -25,12 +25,17 @@ class DailyFeedbackErrorState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.error),
+              style: const TextStyle(
+                color: AppColors.error,
+              ),
             ),
 
             const SizedBox(height: AppSpacing.md),
 
-            ElevatedButton(onPressed: onRetry, child: Text(context.l10n.retry)),
+            ElevatedButton(
+              onPressed: onRetry,
+              child: Text(context.l10n.retry),
+            ),
           ],
         ),
       ),

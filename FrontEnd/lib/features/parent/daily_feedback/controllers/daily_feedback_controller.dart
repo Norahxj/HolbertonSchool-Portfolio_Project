@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../../../../models/child_model.dart';
 import '../../../../models/daily_feedback_model.dart';
-import '../../../../services/daily_feedback_api_service.dart';
+import '../repositories/daily_feedback_repository.dart';
 
-enum DailyFeedbackErrorCode { loadFeedback, saveFeedback }
+enum DailyFeedbackErrorCode {
+  loadFeedback,
+  saveFeedback,
+}
 
 class DailyFeedbackController extends ChangeNotifier {
-  final DailyFeedbackApiService _feedbackService;
+  final DailyFeedbackRepository _repository;
 
   DailyFeedbackController({
     required this.child,
-    DailyFeedbackApiService? feedbackService,
-  }) : _feedbackService = feedbackService ?? DailyFeedbackApiService();
+    DailyFeedbackRepository? repository,
+  }) : _repository = repository ?? DailyFeedbackRepository();
 
   final ChildModel child;
 
@@ -56,7 +59,7 @@ class DailyFeedbackController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final history = await _feedbackService.getFeedbackForChild(child.id);
+      final history = await _repository.getFeedbackForChild(child.id);
 
       history.sort((first, second) {
         return second.feedbackDate.compareTo(first.feedbackDate);
@@ -102,13 +105,15 @@ class DailyFeedbackController extends ChangeNotifier {
     try {
       late final DailyFeedbackModel savedFeedback;
 
-      if (_todayFeedback != null) {
-        savedFeedback = await _feedbackService.updateFeedback(
-          feedbackId: _todayFeedback!.id,
+      final todayFeedback = _todayFeedback;
+
+      if (todayFeedback != null) {
+        savedFeedback = await _repository.updateFeedback(
+          feedbackId: todayFeedback.id,
           mood: selectedMood,
         );
       } else {
-        savedFeedback = await _feedbackService.createFeedback(
+        savedFeedback = await _repository.createFeedback(
           childId: child.id,
           mood: selectedMood,
         );
@@ -127,7 +132,9 @@ class DailyFeedbackController extends ChangeNotifier {
         _feedbackHistory[existingIndex] = savedFeedback;
       }
 
-      return DailyFeedbackSubmitResult(feedback: savedFeedback);
+      return DailyFeedbackSubmitResult(
+        feedback: savedFeedback,
+      );
     } catch (error) {
       debugPrint('Saving daily feedback failed: $error');
 
@@ -151,7 +158,10 @@ class DailyFeedbackSubmitResult {
   final DailyFeedbackModel? feedback;
   final DailyFeedbackErrorCode? errorCode;
 
-  const DailyFeedbackSubmitResult({this.feedback, this.errorCode});
+  const DailyFeedbackSubmitResult({
+    this.feedback,
+    this.errorCode,
+  });
 
   bool get isSuccess => feedback != null;
 }
