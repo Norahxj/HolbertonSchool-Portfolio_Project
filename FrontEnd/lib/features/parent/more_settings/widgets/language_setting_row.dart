@@ -12,16 +12,19 @@ class LanguageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localeController = context.watch<LocaleController>();
+    final localeController =
+        context.watch<LocaleController>();
 
-    final toggleLocale = context.read<LocaleController>().toggleLocale;
+    final toggleLocale =
+        context.read<LocaleController>().toggleLocale;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: toggleLocale,
         child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(
+          padding:
+              const EdgeInsetsDirectional.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.md,
           ),
@@ -32,7 +35,8 @@ class LanguageRow extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.language,
@@ -40,20 +44,28 @@ class LanguageRow extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: AppSpacing.md),
+
+              const SizedBox(
+                width: AppSpacing.md,
+              ),
+
               Expanded(
                 child: Text(
                   context.l10n.language,
                   textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    fontWeight:
+                        FontWeight.w600,
+                    color:
+                        AppColors.textPrimary,
                   ),
                 ),
               ),
+
               LanguageToggle(
-                isArabic: localeController.isArabic,
+                isArabic:
+                    localeController.isArabic,
                 onTap: toggleLocale,
               ),
             ],

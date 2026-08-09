@@ -11,7 +11,10 @@ import '../widgets/more_settings_view.dart';
 class MoreSettingsScreen extends StatefulWidget {
   final VoidCallback onLoggedOut;
 
-  const MoreSettingsScreen({super.key, required this.onLoggedOut});
+  const MoreSettingsScreen({
+    super.key,
+    required this.onLoggedOut,
+  });
 
   @override
   State<MoreSettingsScreen> createState() {
@@ -19,14 +22,16 @@ class MoreSettingsScreen extends StatefulWidget {
   }
 }
 
-class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
+class _MoreSettingsScreenState
+    extends State<MoreSettingsScreen> {
   late final MoreSettingsController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = MoreSettingsController()..loadUser();
+    _controller = MoreSettingsController()
+      ..loadUser();
   }
 
   @override
@@ -40,9 +45,12 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   }
 
   Future<void> _openProfileScreen() async {
-    final updatedUser = await Navigator.push<UserModel>(
+    final updatedUser =
+        await Navigator.push<UserModel>(
       context,
-      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+      MaterialPageRoute(
+        builder: (_) => const ProfileScreen(),
+      ),
     );
 
     if (!mounted) {
@@ -60,7 +68,10 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   Future<void> _openFamilySettings() async {
     await Navigator.push<void>(
       context,
-      MaterialPageRoute(builder: (_) => const FamilySettingsScreen()),
+      MaterialPageRoute(
+        builder: (_) =>
+            const FamilySettingsScreen(),
+      ),
     );
 
     if (!mounted) {
@@ -71,7 +82,9 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   }
 
   void _showComingSoon() {
-    _showMessage(context.l10n.comingSoonMessage);
+    _showMessage(
+      context.l10n.comingSoonMessage,
+    );
   }
 
   Future<void> _logout() async {
@@ -82,7 +95,9 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
     }
 
     if (!success) {
-      _showMessage(context.l10n.logoutFailed);
+      _showMessage(
+        context.l10n.logoutFailed,
+      );
       return;
     }
 
@@ -90,11 +105,16 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
   }
 
   void _showMessage(String message) {
-    final messenger = ScaffoldMessenger.of(context);
+    final messenger =
+        ScaffoldMessenger.of(context);
 
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
   }
 
   @override
@@ -104,7 +124,8 @@ class _MoreSettingsScreenState extends State<MoreSettingsScreen> {
       child: MoreSettingsView(
         onReload: _reloadUser,
         onProfileTap: _openProfileScreen,
-        onFamilySettingsTap: _openFamilySettings,
+        onFamilySettingsTap:
+            _openFamilySettings,
         onComingSoon: _showComingSoon,
         onLogout: _logout,
       ),

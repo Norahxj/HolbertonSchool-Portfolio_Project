@@ -1,19 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../../models/user_model.dart';
-import '../../../../services/user_api_service.dart';
-import '../../../auth/services/auth_api_service.dart';
 import '../models/more_settings_error_code.dart';
+import '../repositories/more_settings_repository.dart';
 
 class MoreSettingsController extends ChangeNotifier {
-  final UserApiService _userApiService;
-  final AuthApiService _authApiService;
+  final MoreSettingsRepository _repository;
 
   MoreSettingsController({
-    UserApiService? userApiService,
-    AuthApiService? authApiService,
-  }) : _userApiService = userApiService ?? UserApiService(),
-       _authApiService = authApiService ?? AuthApiService();
+    MoreSettingsRepository? repository,
+  }) : _repository = repository ?? MoreSettingsRepository();
 
   UserModel? _user;
 
@@ -33,7 +29,9 @@ class MoreSettingsController extends ChangeNotifier {
 
   MoreSettingsErrorCode? get errorCode => _errorCode;
 
-  Future<void> loadUser({bool showLoading = true}) async {
+  Future<void> loadUser({
+    bool showLoading = true,
+  }) async {
     if (_isLoadRequestRunning) {
       return;
     }
@@ -48,14 +46,15 @@ class MoreSettingsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _user = await _userApiService.getCurrentUser();
+      _user = await _repository.getCurrentUser();
     } catch (error, stackTrace) {
       debugPrint(
         'Loading current user failed: '
         '$error\n$stackTrace',
       );
 
-      _errorCode = MoreSettingsErrorCode.loadUserFailed;
+      _errorCode =
+          MoreSettingsErrorCode.loadUserFailed;
     } finally {
       _isLoading = false;
       _isLoadRequestRunning = false;
@@ -64,7 +63,9 @@ class MoreSettingsController extends ChangeNotifier {
   }
 
   Future<void> refresh() {
-    return loadUser(showLoading: false);
+    return loadUser(
+      showLoading: false,
+    );
   }
 
   void updateUser(UserModel user) {
@@ -82,7 +83,8 @@ class MoreSettingsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authApiService.logout();
+      await _repository.logout();
+
       return true;
     } catch (error, stackTrace) {
       debugPrint(

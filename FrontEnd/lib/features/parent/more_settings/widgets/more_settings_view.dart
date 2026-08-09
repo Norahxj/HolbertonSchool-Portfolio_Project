@@ -31,7 +31,8 @@ class MoreSettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<MoreSettingsController>();
+    final controller =
+        context.watch<MoreSettingsController>();
 
     return Scaffold(
       body: ScreenBackground(
@@ -40,14 +41,19 @@ class MoreSettingsView extends StatelessWidget {
           child: AppRefreshIndicator(
             onRefresh: onReload,
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsetsDirectional.fromSTEB(
+              physics:
+                  const AlwaysScrollableScrollPhysics(),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.lg,
                 AppSpacing.md,
                 AppSpacing.lg,
                 AppSpacing.xxl,
               ),
-              child: _buildContent(context, controller),
+              child: _buildContent(
+                context,
+                controller,
+              ),
             ),
           ),
         ),
@@ -61,37 +67,70 @@ class MoreSettingsView extends StatelessWidget {
   ) {
     if (controller.isLoading) {
       return SizedBox(
-        height: MediaQuery.sizeOf(context).height * 0.65,
-        child: const Center(child: CircularProgressIndicator()),
+        height:
+            MediaQuery.sizeOf(context).height *
+            0.65,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
 
-    if (controller.errorCode != null || controller.user == null) {
+    final user = controller.user;
+
+    if (controller.errorCode != null ||
+        user == null) {
       return SettingsErrorState(
-        message: controller.errorCode?.localized(context),
+        message:
+            controller.errorCode?.localized(
+          context,
+        ),
         onRetry: onReload,
       );
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment:
+          CrossAxisAlignment.stretch,
       children: [
         Text(
           context.l10n.more,
           textAlign: TextAlign.center,
           style: AppTextStyles.arabicTitle,
         ),
-        const SizedBox(height: AppSpacing.lg),
-        ProfileBanner(user: controller.user!),
-        const SizedBox(height: AppSpacing.lg),
+
+        const SizedBox(
+          height: AppSpacing.lg,
+        ),
+
+        ProfileBanner(
+          user: user,
+        ),
+
+        const SizedBox(
+          height: AppSpacing.lg,
+        ),
+
         SettingsCard(
           onProfileTap: onProfileTap,
-          onFamilySettingsTap: onFamilySettingsTap,
+          onFamilySettingsTap:
+              onFamilySettingsTap,
           onComingSoon: onComingSoon,
         ),
-        const SizedBox(height: AppSpacing.xl),
-        LogoutButton(isLoading: controller.isLoggingOut, onLogout: onLogout),
-        const SizedBox(height: AppSpacing.md),
+
+        const SizedBox(
+          height: AppSpacing.xl,
+        ),
+
+        LogoutButton(
+          isLoading:
+              controller.isLoggingOut,
+          onLogout: onLogout,
+        ),
+
+        const SizedBox(
+          height: AppSpacing.md,
+        ),
       ],
     );
   }
