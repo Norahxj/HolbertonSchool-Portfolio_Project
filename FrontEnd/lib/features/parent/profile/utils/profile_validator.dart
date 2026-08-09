@@ -3,7 +3,9 @@ import '../models/profile_error_code.dart';
 class ProfileValidator {
   const ProfileValidator._();
 
-  static final RegExp _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+  static final RegExp _emailPattern = RegExp(
+    r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+  );
 
   static ProfileErrorCode? validate({
     required String firstName,

@@ -2,17 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../models/user_model.dart';
-import '../../../../services/user_api_service.dart';
 import '../models/profile_error_code.dart';
 import '../models/profile_save_result.dart';
+import '../repositories/profile_repository.dart';
 import '../utils/profile_error_mapper.dart';
 import '../utils/profile_validator.dart';
 
 class ProfileController extends ChangeNotifier {
-  final UserApiService _userApiService;
+  final ProfileRepository _repository;
 
-  ProfileController({UserApiService? userApiService})
-    : _userApiService = userApiService ?? UserApiService();
+  ProfileController({
+    ProfileRepository? repository,
+  }) : _repository = repository ?? ProfileRepository();
 
   UserModel? _user;
 
@@ -43,7 +44,7 @@ class ProfileController extends ChangeNotifier {
     _clearPageError();
 
     try {
-      final loadedUser = await _userApiService.getCurrentUser();
+      final loadedUser = await _repository.getCurrentUser();
 
       _user = loadedUser;
 
@@ -56,7 +57,8 @@ class ProfileController extends ChangeNotifier {
       );
 
       _pageErrorCode = ProfileErrorCode.loadFailed;
-      _pageBackendMessage = ProfileErrorMapper.readUnknownBackendMessage(error);
+      _pageBackendMessage =
+          ProfileErrorMapper.readUnknownBackendMessage(error);
 
       return null;
     } catch (error, stackTrace) {
@@ -93,13 +95,15 @@ class ProfileController extends ChangeNotifier {
     );
 
     if (validationError != null) {
-      return ProfileSaveResult(errorCode: validationError);
+      return ProfileSaveResult(
+        errorCode: validationError,
+      );
     }
 
     _setSaving(true);
 
     try {
-      final updatedUser = await _userApiService.updateCurrentUser(
+      final updatedUser = await _repository.updateCurrentUser(
         firstName: cleanFirstName,
         lastName: cleanLastName,
         email: cleanEmail,
@@ -108,7 +112,9 @@ class ProfileController extends ChangeNotifier {
 
       _user = updatedUser;
 
-      return ProfileSaveResult(user: updatedUser);
+      return ProfileSaveResult(
+        user: updatedUser,
+      );
     } on DioException catch (error) {
       debugPrint(
         'Updating profile failed: '
@@ -118,7 +124,8 @@ class ProfileController extends ChangeNotifier {
 
       return ProfileSaveResult(
         errorCode: ProfileErrorMapper.mapSaveError(error),
-        backendMessage: ProfileErrorMapper.readUnknownBackendMessage(error),
+        backendMessage:
+            ProfileErrorMapper.readUnknownBackendMessage(error),
       );
     } catch (error, stackTrace) {
       debugPrint('Updating profile failed: $error\n$stackTrace');

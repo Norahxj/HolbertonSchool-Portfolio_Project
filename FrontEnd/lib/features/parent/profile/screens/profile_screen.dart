@@ -20,11 +20,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late final ProfileController _controller;
 
   late final TextEditingController _firstNameController;
-
   late final TextEditingController _lastNameController;
-
   late final TextEditingController _emailController;
-
   late final TextEditingController _phoneController;
 
   @override
@@ -85,14 +82,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    _showMessage(context.l10n.profileUpdatedSuccessfully);
+    _showMessage(
+      context.l10n.profileUpdatedSuccessfully,
+    );
 
     Navigator.pop(context, result.user);
   }
 
   void _handleSaveFailure(ProfileSaveResult result) {
     final message =
-        result.backendMessage ?? result.errorCode?.localized(context);
+        result.backendMessage ??
+        result.errorCode?.localized(context);
 
     if (message == null || message.trim().isEmpty) {
       return;
@@ -106,7 +106,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
   }
 
   void _goBack() {

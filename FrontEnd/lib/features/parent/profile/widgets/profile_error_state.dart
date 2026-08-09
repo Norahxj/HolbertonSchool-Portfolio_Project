@@ -27,17 +27,21 @@ class ProfileErrorState extends StatelessWidget {
               size: 48,
               color: AppColors.error,
             ),
+
             const SizedBox(height: AppSpacing.md),
+
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.error),
+              style: const TextStyle(
+                color: AppColors.error,
+              ),
             ),
+
             const SizedBox(height: AppSpacing.md),
+
             ElevatedButton(
-              onPressed: () {
-                onRetry();
-              },
+              onPressed: onRetry,
               child: Text(context.l10n.tryAgain),
             ),
           ],

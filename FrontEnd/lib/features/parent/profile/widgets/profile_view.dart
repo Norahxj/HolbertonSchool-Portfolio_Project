@@ -42,7 +42,13 @@ class ProfileView extends StatelessWidget {
 
     return Scaffold(
       body: ScreenBackground(
-        child: SafeArea(child: _buildContent(context, controller, pageError)),
+        child: SafeArea(
+          child: _buildContent(
+            context,
+            controller,
+            pageError,
+          ),
+        ),
       ),
     );
   }
@@ -53,31 +59,45 @@ class ProfileView extends StatelessWidget {
     String? pageError,
   ) {
     if (controller.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
-    if (pageError != null || controller.user == null) {
+    final user = controller.user;
+
+    if (pageError != null || user == null) {
       return ProfileErrorState(
-        message: pageError ?? context.l10n.failedToLoadProfile,
+        message:
+            pageError ??
+            context.l10n.failedToLoadProfile,
         onRetry: onReload,
       );
     }
 
     final guardianType = guardianTypeLabel(
       context,
-      controller.user!.guardianType,
+      user.guardianType,
     );
 
     return SingleChildScrollView(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      keyboardDismissBehavior:
+          ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AppPageHeader(title: context.l10n.profile, onBack: onBack),
+          AppPageHeader(
+            title: context.l10n.profile,
+            onBack: onBack,
+          ),
+
           const SizedBox(height: AppSpacing.xl),
+
           const _ProfileAvatar(),
+
           const SizedBox(height: AppSpacing.xl),
+
           ProfileForm(
             firstNameController: firstNameController,
             lastNameController: lastNameController,
@@ -85,18 +105,22 @@ class ProfileView extends StatelessWidget {
             phoneController: phoneController,
             guardianType: guardianType,
           ),
+
           const SizedBox(height: AppSpacing.xxl),
+
           AppButton(
             text: controller.isSaving
                 ? context.l10n.saving
                 : context.l10n.saveChanges,
-            onPressed: controller.isSaving ? null : onSave,
+            onPressed:
+                controller.isSaving ? null : onSave,
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: AppColors.primaryGradient,
             ),
           ),
+
           const SizedBox(height: AppSpacing.lg),
         ],
       ),
@@ -117,7 +141,11 @@ class _ProfileAvatar extends StatelessWidget {
           color: AppColors.primaryLight,
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.person, color: AppColors.primaryDark, size: 48),
+        child: const Icon(
+          Icons.person,
+          color: AppColors.primaryDark,
+          size: 48,
+        ),
       ),
     );
   }
