@@ -7,16 +7,16 @@ import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_field_label.dart';
 import '../../../../core/widgets/app_page_header.dart';
+import '../../../../core/widgets/app_selectable_chip.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/add_reward_controller.dart';
 import '../utils/add_reward_localization.dart';
-import 'day_chip.dart';
 import 'reward_text_field.dart';
 
 class AddRewardView extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController descriptionController;
-  final Future Function() onSave;
+  final Future<void> Function() onSave;
   final VoidCallback onBack;
 
   const AddRewardView({
@@ -87,7 +87,7 @@ class AddRewardView extends StatelessWidget {
                   alignment: WrapAlignment.start,
                   children: [
                     for (final dayIndex in controller.weekDays)
-                      DayChip(
+                      AppSelectableChip(
                         label: _dayLabel(context, dayIndex),
                         isSelected:
                             controller.selectedUnlockDay == dayIndex,
@@ -142,9 +142,7 @@ class AddRewardView extends StatelessWidget {
                   text: controller.isSaving
                       ? l10n.saving
                       : l10n.saveReward,
-                  onPressed: controller.isSaving
-                      ? null
-                      : onSave,
+                  onPressed: controller.isSaving ? null : onSave,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
