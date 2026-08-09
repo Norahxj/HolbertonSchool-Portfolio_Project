@@ -13,10 +13,14 @@ import 'approved_wish_card.dart';
 import 'pending_wish_card.dart';
 import 'wishlist_states.dart';
 
-typedef ApproveWishCallback =
-    Future<void> Function({required String wishId, required int targetPoints});
+typedef ApproveWishCallback = Future<void> Function({
+  required String wishId,
+  required int targetPoints,
+});
 
-typedef RejectWishCallback = Future<void> Function({required String wishId});
+typedef RejectWishCallback = Future<void> Function({
+  required String wishId,
+});
 
 class WishlistApprovalView extends StatelessWidget {
   final Future<void> Function() onRefresh;
@@ -32,7 +36,8 @@ class WishlistApprovalView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<WishlistApprovalController>();
+    final controller =
+        context.watch<WishlistApprovalController>();
 
     return Scaffold(
       body: ScreenBackground(
@@ -40,21 +45,33 @@ class WishlistApprovalView extends StatelessWidget {
           child: AppRefreshIndicator(
             onRefresh: onRefresh,
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              physics:
+                  const AlwaysScrollableScrollPhysics(),
+              padding:
+                  const EdgeInsets.all(AppSpacing.lg),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment:
+                    CrossAxisAlignment.stretch,
                 children: [
-                  _WishlistPageHeader(),
-                  const SizedBox(height: AppSpacing.lg),
+                  const _WishlistPageHeader(),
+
+                  const SizedBox(
+                    height: AppSpacing.lg,
+                  ),
+
                   _WishlistContent(
                     controller: controller,
                     onApprove: onApprove,
                     onReject: onReject,
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+
+                  const SizedBox(
+                    height: AppSpacing.sm,
+                  ),
+
                   Padding(
-                    padding: const EdgeInsetsDirectional.symmetric(
+                    padding:
+                        const EdgeInsetsDirectional.symmetric(
                       horizontal: AppSpacing.md,
                     ),
                     child: Text(
@@ -62,11 +79,15 @@ class WishlistApprovalView extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color:
+                            AppColors.textSecondary,
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+
+                  const SizedBox(
+                    height: AppSpacing.lg,
+                  ),
                 ],
               ),
             ),
@@ -78,6 +99,8 @@ class WishlistApprovalView extends StatelessWidget {
 }
 
 class _WishlistPageHeader extends StatelessWidget {
+  const _WishlistPageHeader();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -87,7 +110,11 @@ class _WishlistPageHeader extends StatelessWidget {
           style: AppTextStyles.arabicTitle,
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: AppSpacing.sm),
+
+        const SizedBox(
+          height: AppSpacing.sm,
+        ),
+
         Text(
           context.l10n.childrenWishesSubtitle,
           style: AppTextStyles.body,
@@ -116,7 +143,9 @@ class _WishlistContent extends StatelessWidget {
     }
 
     if (controller.hasError && controller.isEmpty) {
-      return WishlistErrorState(onRetry: controller.loadWishes);
+      return WishlistErrorState(
+        onRetry: controller.loadWishes,
+      );
     }
 
     if (controller.isEmpty) {
@@ -124,16 +153,22 @@ class _WishlistContent extends StatelessWidget {
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment:
+          CrossAxisAlignment.stretch,
       children: [
-        for (final entry in controller.pendingWishes) ...[
+        for (final entry
+            in controller.pendingWishes) ...[
           PendingWishCard(
             key: ValueKey(entry.wish.id),
             childName: entry.childName,
             avatarIndex: entry.avatarIndex,
             wishTitle: entry.wish.name,
-            startingPoints: entry.wish.targetPoints ?? 250,
-            isProcessing: controller.isWishProcessing(entry.wish.id),
+            startingPoints:
+                entry.wish.targetPoints ?? 250,
+            isProcessing:
+                controller.isWishProcessing(
+              entry.wish.id,
+            ),
             onApprove: (targetPoints) {
               return onApprove(
                 wishId: entry.wish.id,
@@ -141,30 +176,49 @@ class _WishlistContent extends StatelessWidget {
               );
             },
             onReject: () {
-              return onReject(wishId: entry.wish.id);
+              return onReject(
+                wishId: entry.wish.id,
+              );
             },
           ),
-          const SizedBox(height: AppSpacing.md),
+
+          const SizedBox(
+            height: AppSpacing.md,
+          ),
         ],
-        for (final entry in controller.approvedWishes) ...[
+
+        for (final entry
+            in controller.approvedWishes) ...[
           ApprovedWishCard(
             key: ValueKey(entry.wish.id),
             childName: entry.childName,
             avatarIndex: entry.avatarIndex,
             wishTitle: entry.wish.name,
-            points: entry.approvedPoints ?? entry.wish.targetPoints ?? 0,
+            points:
+                entry.approvedPoints ??
+                entry.wish.targetPoints ??
+                0,
           ),
-          const SizedBox(height: AppSpacing.md),
+
+          const SizedBox(
+            height: AppSpacing.md,
+          ),
         ],
-        for (final entry in controller.achievedWishes) ...[
+
+        for (final entry
+            in controller.achievedWishes) ...[
           AchievedWishCard(
             key: ValueKey(entry.wish.id),
             childName: entry.childName,
             avatarIndex: entry.avatarIndex,
             wishTitle: entry.wish.name,
-            points: entry.wish.targetPoints ?? 0,
+            points:
+                entry.wish.targetPoints ?? 0,
           ),
-          const SizedBox(height: AppSpacing.md),
+
+          const SizedBox(
+            height: AppSpacing.md,
+          ),
         ],
       ],
     );

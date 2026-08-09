@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../../services/wishlist_api_service.dart';
 import '../models/wishlist_action_result.dart';
 import '../models/wishlist_entry.dart';
+import '../repositories/wishlist_repository.dart';
 
 class WishlistApprovalController extends ChangeNotifier {
-  final WishlistApiService _wishlistApiService;
+  final WishlistRepository _repository;
 
-  WishlistApprovalController({WishlistApiService? wishlistApiService})
-    : _wishlistApiService = wishlistApiService ?? WishlistApiService();
+  WishlistApprovalController({
+    WishlistRepository? repository,
+  }) : _repository = repository ?? WishlistRepository();
 
   final List<WishlistEntry> _pendingWishes = [];
   final List<WishlistEntry> _approvedWishes = [];
@@ -21,17 +22,14 @@ class WishlistApprovalController extends ChangeNotifier {
   bool _isLoadingRequestRunning = false;
   bool _isDisposed = false;
 
-  List<WishlistEntry> get pendingWishes {
-    return List.unmodifiable(_pendingWishes);
-  }
+  List<WishlistEntry> get pendingWishes =>
+      List.unmodifiable(_pendingWishes);
 
-  List<WishlistEntry> get approvedWishes {
-    return List.unmodifiable(_approvedWishes);
-  }
+  List<WishlistEntry> get approvedWishes =>
+      List.unmodifiable(_approvedWishes);
 
-  List<WishlistEntry> get achievedWishes {
-    return List.unmodifiable(_achievedWishes);
-  }
+  List<WishlistEntry> get achievedWishes =>
+      List.unmodifiable(_achievedWishes);
 
   bool get isLoading => _isLoading;
 
@@ -47,7 +45,9 @@ class WishlistApprovalController extends ChangeNotifier {
     return _processingWishIds.contains(wishId);
   }
 
-  Future<bool> loadWishes({bool showLoading = true}) async {
+  Future<bool> loadWishes({
+    bool showLoading = true,
+  }) async {
     if (_isLoadingRequestRunning) {
       return true;
     }
@@ -62,7 +62,7 @@ class WishlistApprovalController extends ChangeNotifier {
     _notify();
 
     try {
-      final wishes = await _wishlistApiService.getFamilyWishes();
+      final wishes = await _repository.getFamilyWishes();
 
       final pending = <WishlistEntry>[];
       final approved = <WishlistEntry>[];
@@ -108,7 +108,11 @@ class WishlistApprovalController extends ChangeNotifier {
         }
       }
 
-      _replaceWishes(pending: pending, approved: approved, achieved: achieved);
+      _replaceWishes(
+        pending: pending,
+        approved: approved,
+        achieved: achieved,
+      );
 
       return true;
     } catch (error, stackTrace) {
@@ -144,7 +148,7 @@ class WishlistApprovalController extends ChangeNotifier {
     _setWishProcessing(wishId, true);
 
     try {
-      final approvedWish = await _wishlistApiService.approveWish(
+      final approvedWish = await _repository.approveWish(
         wishId,
         targetPoints,
       );
@@ -156,9 +160,15 @@ class WishlistApprovalController extends ChangeNotifier {
       if (pendingIndex != -1) {
         final approvedEntry = _pendingWishes
             .removeAt(pendingIndex)
-            .copyWith(wish: approvedWish, approvedPoints: targetPoints);
+            .copyWith(
+              wish: approvedWish,
+              approvedPoints: targetPoints,
+            );
 
-        _approvedWishes.insert(0, approvedEntry);
+        _approvedWishes.insert(
+          0,
+          approvedEntry,
+        );
       }
 
       return const WishlistActionResult.success();
@@ -176,7 +186,9 @@ class WishlistApprovalController extends ChangeNotifier {
     }
   }
 
-  Future<WishlistActionResult> rejectWish({required String wishId}) async {
+  Future<WishlistActionResult> rejectWish({
+    required String wishId,
+  }) async {
     if (_processingWishIds.contains(wishId)) {
       return const WishlistActionResult.success();
     }
@@ -184,9 +196,11 @@ class WishlistApprovalController extends ChangeNotifier {
     _setWishProcessing(wishId, true);
 
     try {
-      await _wishlistApiService.rejectWish(wishId);
+      await _repository.rejectWish(wishId);
 
-      _pendingWishes.removeWhere((entry) => entry.wish.id == wishId);
+      _pendingWishes.removeWhere(
+        (entry) => entry.wish.id == wishId,
+      );
 
       return const WishlistActionResult.success();
     } catch (error, stackTrace) {
@@ -221,7 +235,10 @@ class WishlistApprovalController extends ChangeNotifier {
       ..addAll(achieved);
   }
 
-  void _setWishProcessing(String wishId, bool isProcessing) {
+  void _setWishProcessing(
+    String wishId,
+    bool isProcessing,
+  ) {
     if (isProcessing) {
       _processingWishIds.add(wishId);
     } else {
