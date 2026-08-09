@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../controllers/task_review_controller.dart';
+import '../models/task_review_error_code.dart';
 
 extension TaskReviewErrorLocalization on TaskReviewErrorCode {
   String localized(BuildContext context) {
@@ -25,14 +25,20 @@ extension TaskReviewErrorLocalization on TaskReviewErrorCode {
   }
 }
 
-String formatTaskCompletedTime(BuildContext context, DateTime? completedAt) {
+String formatTaskCompletedTime(
+  BuildContext context,
+  DateTime? completedAt,
+) {
   if (completedAt == null) {
     return context.l10n.completedRecently;
   }
 
-  final locale = Localizations.localeOf(context).toLanguageTag();
+  final locale =
+      Localizations.localeOf(context).toLanguageTag();
 
-  final formattedTime = DateFormat.jm(locale).format(completedAt.toLocal());
+  final formattedTime = DateFormat.jm(
+    locale,
+  ).format(completedAt.toLocal());
 
   return context.l10n.completedAt(formattedTime);
 }

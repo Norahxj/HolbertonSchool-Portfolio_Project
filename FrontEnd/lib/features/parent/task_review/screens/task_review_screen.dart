@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../controllers/task_review_controller.dart';
 import '../models/review_task.dart';
+import '../models/task_review_action_result.dart';
 import '../utils/task_review_localization.dart';
 import '../widgets/task_review_view.dart';
 
@@ -23,7 +24,8 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
   void initState() {
     super.initState();
 
-    _controller = TaskReviewController()..loadPendingTasks();
+    _controller = TaskReviewController()
+      ..loadPendingTasks();
   }
 
   @override
@@ -47,14 +49,19 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          context.l10n.taskAcceptedSuccessfully(item.assignment.task.title),
+          context.l10n.taskAcceptedSuccessfully(
+            item.assignment.task.title,
+          ),
         ),
       ),
     );
   }
 
-  Future<void> _sendBackForRetry(ReviewTask item) async {
-    final result = await _controller.sendBackForRetry(item);
+  Future<void> _sendBackForRetry(
+    ReviewTask item,
+  ) async {
+    final result =
+        await _controller.sendBackForRetry(item);
 
     if (!mounted) {
       return;
@@ -68,21 +75,27 @@ class _TaskReviewScreenState extends State<TaskReviewScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          context.l10n.taskSentForRetrySuccessfully(item.assignment.task.title),
+          context.l10n.taskSentForRetrySuccessfully(
+            item.assignment.task.title,
+          ),
         ),
       ),
     );
   }
 
-  void _showActionError(TaskReviewActionResult result) {
+  void _showActionError(
+    TaskReviewActionResult result,
+  ) {
     final message =
         result.backendMessage ??
         result.errorCode?.localized(context) ??
         context.l10n.taskReviewGenericError;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 
   @override

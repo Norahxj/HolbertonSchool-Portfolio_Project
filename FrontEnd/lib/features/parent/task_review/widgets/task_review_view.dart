@@ -26,10 +26,12 @@ class TaskReviewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<TaskReviewController>();
+    final controller =
+        context.watch<TaskReviewController>();
 
     final errorMessage =
-        controller.backendMessage ?? controller.errorCode?.localized(context);
+        controller.backendMessage ??
+        controller.errorCode?.localized(context);
 
     return Scaffold(
       body: ScreenBackground(
@@ -37,14 +39,22 @@ class TaskReviewView extends StatelessWidget {
           child: AppRefreshIndicator(
             onRefresh: controller.loadPendingTasks,
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              physics:
+                  const AlwaysScrollableScrollPhysics(),
+              padding:
+                  const EdgeInsets.all(AppSpacing.lg),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment:
+                    CrossAxisAlignment.stretch,
                 children: [
-                  AppPageHeader(title: context.l10n.taskReview, onBack: onBack),
+                  AppPageHeader(
+                    title: context.l10n.taskReview,
+                    onBack: onBack,
+                  ),
 
-                  const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(
+                    height: AppSpacing.sm,
+                  ),
 
                   Text(
                     context.l10n.reviewCompletedTasks,
@@ -52,51 +62,83 @@ class TaskReviewView extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(
+                    height: AppSpacing.lg,
+                  ),
 
-                  if (!controller.isLoading && errorMessage == null)
-                    PendingHeader(count: controller.pendingTasks.length),
+                  if (!controller.isLoading &&
+                      errorMessage == null)
+                    PendingHeader(
+                      count:
+                          controller.pendingTasks.length,
+                    ),
 
-                  const SizedBox(height: AppSpacing.md),
+                  const SizedBox(
+                    height: AppSpacing.md,
+                  ),
 
                   if (controller.isLoading)
                     const Padding(
-                      padding: EdgeInsets.all(AppSpacing.xl),
-                      child: Center(child: CircularProgressIndicator()),
+                      padding:
+                          EdgeInsets.all(AppSpacing.xl),
+                      child: Center(
+                        child:
+                            CircularProgressIndicator(),
+                      ),
                     )
                   else if (errorMessage != null)
                     TaskReviewErrorCard(
                       message: errorMessage,
-                      onRetry: controller.loadPendingTasks,
+                      onRetry:
+                          controller.loadPendingTasks,
                     )
-                  else if (controller.pendingTasks.isEmpty)
+                  else if (controller
+                      .pendingTasks.isEmpty)
                     const EmptyCard()
                   else
-                    ...controller.pendingTasks.map((item) {
-                      final assignmentId = item.assignment.id;
+                    ...controller.pendingTasks.map(
+                      (item) {
+                        final assignmentId =
+                            item.assignment.id;
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                        child: ReviewTaskCard(
-                          item: item,
-                          timeText: formatTaskCompletedTime(
-                            context,
-                            item.assignment.completedAt,
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(
+                            bottom: AppSpacing.md,
                           ),
-                          isUpdating: controller.isUpdating(assignmentId),
-                          isApproving: controller.isApproving(assignmentId),
-                          isRetrying: controller.isRetrying(assignmentId),
-                          onApprove: () {
-                            onApprove(item);
-                          },
-                          onRetry: () {
-                            onRetry(item);
-                          },
-                        ),
-                      );
-                    }),
+                          child: ReviewTaskCard(
+                            item: item,
+                            timeText:
+                                formatTaskCompletedTime(
+                              context,
+                              item.assignment.completedAt,
+                            ),
+                            isUpdating:
+                                controller.isUpdating(
+                              assignmentId,
+                            ),
+                            isApproving:
+                                controller.isApproving(
+                              assignmentId,
+                            ),
+                            isRetrying:
+                                controller.isRetrying(
+                              assignmentId,
+                            ),
+                            onApprove: () {
+                              onApprove(item);
+                            },
+                            onRetry: () {
+                              onRetry(item);
+                            },
+                          ),
+                        );
+                      },
+                    ),
 
-                  const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(
+                    height: AppSpacing.lg,
+                  ),
                 ],
               ),
             ),

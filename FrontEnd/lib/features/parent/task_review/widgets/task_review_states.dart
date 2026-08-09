@@ -282,19 +282,26 @@ class TaskReviewErrorCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Column(
         children: [
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.error),
+            style: const TextStyle(
+              color: AppColors.error,
+            ),
           ),
 
           const SizedBox(height: AppSpacing.sm),
 
-          TextButton(onPressed: onRetry, child: Text(context.l10n.retry)),
+          TextButton(
+            onPressed: onRetry,
+            child: Text(context.l10n.retry),
+          ),
         ],
       ),
     );

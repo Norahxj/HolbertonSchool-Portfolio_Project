@@ -1,34 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../services/task_api_service.dart';
 import '../models/review_task.dart';
-
-enum TaskReviewErrorCode {
-  loadTasks,
-  approveTask,
-  approveNotAllowed,
-  retryTask,
-  retryNotAllowed,
-}
-
-class TaskReviewActionResult {
-  final bool isSuccess;
-  final TaskReviewErrorCode? errorCode;
-  final String? backendMessage;
-
-  const TaskReviewActionResult({
-    this.isSuccess = false,
-    this.errorCode,
-    this.backendMessage,
-  });
-}
+import '../models/task_review_action.dart';
+import '../models/task_review_action_result.dart';
+import '../models/task_review_error_code.dart';
+import '../repositories/task_review_repository.dart';
+import '../utils/task_review_error_mapper.dart';
 
 class TaskReviewController extends ChangeNotifier {
-  final TaskApiService _taskApiService;
+  final TaskReviewRepository _repository;
 
-  TaskReviewController({TaskApiService? taskApiService})
-    : _taskApiService = taskApiService ?? TaskApiService();
+  TaskReviewController({
+    TaskReviewRepository? repository,
+  }) : _repository = repository ?? TaskReviewRepository();
 
   final List<ReviewTask> _pendingTasks = [];
 
@@ -40,9 +25,8 @@ class TaskReviewController extends ChangeNotifier {
   String? _updatingAssignmentId;
   TaskReviewAction? _updatingAction;
 
-  List<ReviewTask> get pendingTasks {
-    return List.unmodifiable(_pendingTasks);
-  }
+  List<ReviewTask> get pendingTasks =>
+      List.unmodifiable(_pendingTasks);
 
   bool get isLoading => _isLoading;
 
@@ -74,12 +58,16 @@ class TaskReviewController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final assignments = await _taskApiService.getPendingReviewAssignments();
+      final assignments =
+          await _repository.getPendingReviewAssignments();
 
       final reviewTasks = assignments
           .where((assignment) => assignment.child != null)
           .map((assignment) {
-            return ReviewTask(child: assignment.child!, assignment: assignment);
+            return ReviewTask(
+              child: assignment.child!,
+              assignment: assignment,
+            );
           })
           .toList();
 
@@ -112,7 +100,9 @@ class TaskReviewController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
-      _backendMessage = _readBackendMessage(error);
+      _backendMessage =
+          TaskReviewErrorMapper.readBackendMessage(error);
+
       _errorCode = TaskReviewErrorCode.loadTasks;
     } catch (error) {
       debugPrint('Review loading failed: $error');
@@ -124,21 +114,27 @@ class TaskReviewController extends ChangeNotifier {
     }
   }
 
-  Future<TaskReviewActionResult> approveTask(ReviewTask item) async {
+  Future<TaskReviewActionResult> approveTask(
+    ReviewTask item,
+  ) async {
     if (_updatingAssignmentId != null) {
       return const TaskReviewActionResult();
     }
 
-    _updatingAssignmentId = item.assignment.id;
+    final assignmentId = item.assignment.id;
+
+    _updatingAssignmentId = assignmentId;
     _updatingAction = TaskReviewAction.approve;
     notifyListeners();
 
     try {
-      await _taskApiService.approveAssignment(item.assignment.id);
+      await _repository.approveAssignment(assignmentId);
 
-      _removeTask(item.assignment.id);
+      _removeTask(assignmentId);
 
-      return const TaskReviewActionResult(isSuccess: true);
+      return const TaskReviewActionResult(
+        isSuccess: true,
+      );
     } on DioException catch (error) {
       debugPrint(
         'Approval failed: '
@@ -146,13 +142,15 @@ class TaskReviewController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
+      final isNotAllowed = error.response?.statusCode == 404;
+
       return TaskReviewActionResult(
-        errorCode: error.response?.statusCode == 404
+        errorCode: isNotAllowed
             ? TaskReviewErrorCode.approveNotAllowed
             : TaskReviewErrorCode.approveTask,
-        backendMessage: error.response?.statusCode == 404
+        backendMessage: isNotAllowed
             ? null
-            : _readBackendMessage(error),
+            : TaskReviewErrorMapper.readBackendMessage(error),
       );
     } catch (error) {
       debugPrint('Approval failed: $error');
@@ -166,21 +164,27 @@ class TaskReviewController extends ChangeNotifier {
     }
   }
 
-  Future<TaskReviewActionResult> sendBackForRetry(ReviewTask item) async {
+  Future<TaskReviewActionResult> sendBackForRetry(
+    ReviewTask item,
+  ) async {
     if (_updatingAssignmentId != null) {
       return const TaskReviewActionResult();
     }
 
-    _updatingAssignmentId = item.assignment.id;
+    final assignmentId = item.assignment.id;
+
+    _updatingAssignmentId = assignmentId;
     _updatingAction = TaskReviewAction.retry;
     notifyListeners();
 
     try {
-      await _taskApiService.rejectAssignment(item.assignment.id);
+      await _repository.rejectAssignment(assignmentId);
 
-      _removeTask(item.assignment.id);
+      _removeTask(assignmentId);
 
-      return const TaskReviewActionResult(isSuccess: true);
+      return const TaskReviewActionResult(
+        isSuccess: true,
+      );
     } on DioException catch (error) {
       debugPrint(
         'Retry request failed: '
@@ -188,13 +192,15 @@ class TaskReviewController extends ChangeNotifier {
         'data=${error.response?.data}',
       );
 
+      final isNotAllowed = error.response?.statusCode == 404;
+
       return TaskReviewActionResult(
-        errorCode: error.response?.statusCode == 404
+        errorCode: isNotAllowed
             ? TaskReviewErrorCode.retryNotAllowed
             : TaskReviewErrorCode.retryTask,
-        backendMessage: error.response?.statusCode == 404
+        backendMessage: isNotAllowed
             ? null
-            : _readBackendMessage(error),
+            : TaskReviewErrorMapper.readBackendMessage(error),
       );
     } catch (error) {
       debugPrint('Retry request failed: $error');
@@ -209,7 +215,9 @@ class TaskReviewController extends ChangeNotifier {
   }
 
   void _removeTask(String assignmentId) {
-    _pendingTasks.removeWhere((task) => task.assignment.id == assignmentId);
+    _pendingTasks.removeWhere(
+      (task) => task.assignment.id == assignmentId,
+    );
   }
 
   void _clearUpdatingState() {
@@ -221,16 +229,4 @@ class TaskReviewController extends ChangeNotifier {
     _errorCode = null;
     _backendMessage = null;
   }
-
-  String? _readBackendMessage(DioException error) {
-    final data = error.response?.data;
-
-    if (data is Map) {
-      return data['error']?.toString() ?? data['message']?.toString();
-    }
-
-    return null;
-  }
 }
-
-enum TaskReviewAction { approve, retry }
