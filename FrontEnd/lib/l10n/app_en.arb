@@ -508,5 +508,9 @@
 "parentNavigationWishes": "Wishes",
 "parentNavigationHome": "Home",
 "parentNavigationRewards": "Rewards",
-"parentNavigationMore": "More"
+"parentNavigationMore": "More",
+"childNavigationHome": "Home",
+"childNavigationWishes": "Wishes",
+"childNavigationRewards": "Rewards",
+"childNavigationProgress": "Progress"
 }

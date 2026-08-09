@@ -60,7 +60,6 @@ class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
         context,
         MaterialPageRoute(
           builder: (_) => ChildNav(
-            isArabic: widget.isArabic,
             onLanguageToggle: widget.onLanguageToggle,
           ),
         ),

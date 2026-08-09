@@ -1063,4 +1063,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parentNavigationMore => 'More';
+
+  @override
+  String get childNavigationHome => 'Home';
+
+  @override
+  String get childNavigationWishes => 'Wishes';
+
+  @override
+  String get childNavigationRewards => 'Rewards';
+
+  @override
+  String get childNavigationProgress => 'Progress';
 }

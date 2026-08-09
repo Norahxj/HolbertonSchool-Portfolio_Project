@@ -214,10 +214,8 @@ class _AsalahAppState extends State<AsalahApp> {
 
     if (_isChild) {
       return ChildNav(
-        isArabic: isArabic,
-        onLanguageToggle: localeController.toggleLocale,
-        onLoggedOut: _markLoggedOut,
-      );
+  onLanguageToggle: localeController.toggleLocale,
+);
     }
 
     return ParentMainScreen(onLoggedOut: _markLoggedOut);

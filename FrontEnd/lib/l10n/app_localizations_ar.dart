@@ -1032,4 +1032,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get parentNavigationMore => 'المزيد';
+
+  @override
+  String get childNavigationHome => 'الرئيسية';
+
+  @override
+  String get childNavigationWishes => 'أمنياتي';
+
+  @override
+  String get childNavigationRewards => 'المكافآت';
+
+  @override
+  String get childNavigationProgress => 'تقدّمي';
 }

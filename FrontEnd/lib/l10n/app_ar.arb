@@ -508,6 +508,9 @@
 "parentNavigationWishes": "الأمنيات",
 "parentNavigationHome": "الرئيسية",
 "parentNavigationRewards": "المكافآت",
-"parentNavigationMore": "المزيد"
-
+"parentNavigationMore": "المزيد",
+"childNavigationHome": "الرئيسية",
+"childNavigationWishes": "أمنياتي",
+"childNavigationRewards": "المكافآت",
+"childNavigationProgress": "تقدّمي"
 }

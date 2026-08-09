@@ -1999,6 +1999,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More'**
   String get parentNavigationMore;
+
+  /// No description provided for @childNavigationHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get childNavigationHome;
+
+  /// No description provided for @childNavigationWishes.
+  ///
+  /// In en, this message translates to:
+  /// **'Wishes'**
+  String get childNavigationWishes;
+
+  /// No description provided for @childNavigationRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get childNavigationRewards;
+
+  /// No description provided for @childNavigationProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get childNavigationProgress;
 }
 
 class _AppLocalizationsDelegate
