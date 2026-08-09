@@ -8,23 +8,30 @@ import '../../../../models/points_history_model.dart';
 class PointsHistoryCard extends StatelessWidget {
   final PointsHistoryModel item;
 
-  const PointsHistoryCard({super.key, required this.item});
+  const PointsHistoryCard({
+    super.key,
+    required this.item,
+  });
 
   bool get isAdded => item.points >= 0;
 
   String _title(BuildContext context) {
     final l10n = context.l10n;
 
-    if (item.taskAssignment != null) {
-      final taskTitle = item.taskAssignment!.task.title;
+    final taskAssignment = item.taskAssignment;
 
-      return l10n.taskCompletedPointsHistory(taskTitle);
+    if (taskAssignment != null) {
+      return l10n.taskCompletedPointsHistory(
+        taskAssignment.task.title,
+      );
     }
 
-    if (item.wishlist != null) {
-      final wishName = item.wishlist!.name;
+    final wishlist = item.wishlist;
 
-      return l10n.wishAchievedPointsHistory(wishName);
+    if (wishlist != null) {
+      return l10n.wishAchievedPointsHistory(
+        wishlist.name,
+      );
     }
 
     return l10n.pointsUpdate;
@@ -50,7 +57,9 @@ class PointsHistoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Row(
         children: [
@@ -58,12 +67,18 @@ class PointsHistoryCard extends StatelessWidget {
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: isAdded ? AppColors.primaryLight : AppColors.goldLight,
+              color: isAdded
+                  ? AppColors.primaryLight
+                  : AppColors.goldLight,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
-              isAdded ? Icons.add_circle_outline : Icons.card_giftcard,
-              color: isAdded ? AppColors.primary : AppColors.gold,
+              isAdded
+                  ? Icons.add_circle_outline
+                  : Icons.card_giftcard,
+              color: isAdded
+                  ? AppColors.primary
+                  : AppColors.gold,
             ),
           ),
 
@@ -105,7 +120,9 @@ class PointsHistoryCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: isAdded ? AppColors.primary : AppColors.error,
+              color: isAdded
+                  ? AppColors.primary
+                  : AppColors.error,
             ),
           ),
         ],

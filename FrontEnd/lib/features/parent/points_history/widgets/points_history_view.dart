@@ -46,37 +46,47 @@ class PointsHistoryView extends StatelessWidget {
       ),
       body: ScreenBackground(
         child: controller.isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : controller.errorMessage != null
-            ? PointsHistoryErrorState(onRetry: controller.loadHistory)
-            : controller.history.isEmpty
-            ? RefreshIndicator(
-                onRefresh: controller.refresh,
-                child: ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.55,
-                      child: const PointsHistoryEmptyState(),
-                    ),
-                  ],
-                ),
+            ? const Center(
+                child: CircularProgressIndicator(),
               )
-            : RefreshIndicator(
-                onRefresh: controller.refresh,
-                child: ListView.separated(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  itemCount: controller.history.length,
-                  separatorBuilder: (_, _) {
-                    return const SizedBox(height: AppSpacing.md);
-                  },
-                  itemBuilder: (context, index) {
-                    return PointsHistoryCard(item: controller.history[index]);
-                  },
-                ),
-              ),
+            : controller.hasError
+                ? PointsHistoryErrorState(
+                    onRetry: controller.loadHistory,
+                  )
+                : controller.history.isEmpty
+                    ? RefreshIndicator(
+                        onRefresh: controller.refresh,
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          children: [
+                            SizedBox(
+                              height:
+                                  MediaQuery.sizeOf(context).height * 0.55,
+                              child: const PointsHistoryEmptyState(),
+                            ),
+                          ],
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: controller.refresh,
+                        child: ListView.separated(
+                          physics:
+                              const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          itemCount: controller.history.length,
+                          separatorBuilder: (_, _) {
+                            return const SizedBox(
+                              height: AppSpacing.md,
+                            );
+                          },
+                          itemBuilder: (context, index) {
+                            return PointsHistoryCard(
+                              item: controller.history[index],
+                            );
+                          },
+                        ),
+                      ),
       ),
     );
   }

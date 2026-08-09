@@ -27,8 +27,9 @@ class _PointsHistoryScreenState extends State<PointsHistoryScreen> {
   void initState() {
     super.initState();
 
-    _controller = PointsHistoryController(childId: widget.childId)
-      ..loadHistory();
+    _controller = PointsHistoryController(
+      childId: widget.childId,
+    )..loadHistory();
   }
 
   @override

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/points_history_model.dart';
-import '../../../../services/points_history_api_service.dart';
+import '../repositories/points_history_repository.dart';
 
 class PointsHistoryController extends ChangeNotifier {
-  final PointsHistoryApiService _service;
+  final PointsHistoryRepository _repository;
 
   PointsHistoryController({
     required this.childId,
-    PointsHistoryApiService? service,
-  }) : _service = service ?? PointsHistoryApiService();
+    PointsHistoryRepository? repository,
+  }) : _repository = repository ?? PointsHistoryRepository();
 
   final String childId;
 
@@ -21,17 +21,17 @@ class PointsHistoryController extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
-  String? _errorMessage;
+  bool _hasError = false;
 
-  String? get errorMessage => _errorMessage;
+  bool get hasError => _hasError;
 
   Future<void> loadHistory() async {
     _isLoading = true;
-    _errorMessage = null;
+    _hasError = false;
     notifyListeners();
 
     try {
-      final loadedHistory = await _service.getChildHistory(childId);
+      final loadedHistory = await _repository.getChildHistory(childId);
 
       _history
         ..clear()
@@ -39,7 +39,7 @@ class PointsHistoryController extends ChangeNotifier {
     } catch (error) {
       debugPrint('Loading points history failed: $error');
 
-      _errorMessage = error.toString();
+      _hasError = true;
     } finally {
       _isLoading = false;
       notifyListeners();
