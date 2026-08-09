@@ -5,11 +5,11 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/profile_controller.dart';
 import '../utils/profile_localization.dart';
-import 'profile_error_state.dart';
 import 'profile_form.dart';
 
 class ProfileView extends StatelessWidget {
@@ -67,11 +67,12 @@ class ProfileView extends StatelessWidget {
     final user = controller.user;
 
     if (pageError != null || user == null) {
-      return ProfileErrorState(
+      return AppErrorState(
         message:
             pageError ??
             context.l10n.failedToLoadProfile,
         onRetry: onReload,
+        retryLabel: context.l10n.tryAgain,
       );
     }
 

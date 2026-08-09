@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/widgets/app_refresh_indicator.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/more_settings_controller.dart';
@@ -11,7 +12,6 @@ import '../utils/more_settings_localization.dart';
 import 'logout_button.dart';
 import 'profile_banner.dart';
 import 'settings_card.dart';
-import 'settings_error_state.dart';
 
 class MoreSettingsView extends StatelessWidget {
   final Future<void> Function() onReload;
@@ -80,12 +80,15 @@ class MoreSettingsView extends StatelessWidget {
 
     if (controller.errorCode != null ||
         user == null) {
-      return SettingsErrorState(
+      return AppErrorState(
         message:
-            controller.errorCode?.localized(
-          context,
-        ),
+            controller.errorCode?.localized(context) ??
+            context.l10n.failedToLoadUserInformation,
         onRetry: onReload,
+        retryLabel: context.l10n.tryAgain,
+        height:
+            MediaQuery.sizeOf(context).height *
+            0.65,
       );
     }
 

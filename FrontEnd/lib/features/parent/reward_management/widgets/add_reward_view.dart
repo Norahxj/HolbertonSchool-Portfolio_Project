@@ -6,12 +6,12 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_field_label.dart';
+import '../../../../core/widgets/app_outlined_text_field.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/app_selectable_chip.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/add_reward_controller.dart';
 import '../utils/add_reward_localization.dart';
-import 'reward_text_field.dart';
 
 class AddRewardView extends StatelessWidget {
   final TextEditingController nameController;
@@ -53,7 +53,7 @@ class AddRewardView extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                RewardTextField(
+                AppOutlinedTextField(
                   controller: nameController,
                   hint: l10n.rewardNameExample,
                   errorText: controller.nameError?.localized(context),
@@ -67,7 +67,7 @@ class AddRewardView extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                RewardTextField(
+                AppOutlinedTextField(
                   controller: descriptionController,
                   hint: l10n.rewardDescriptionExample,
                   maxLines: 3,

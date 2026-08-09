@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../controllers/daily_feedback_controller.dart';
 import '../utils/daily_feedback_localization.dart';
-import 'daily_feedback_error_state.dart';
 import 'feedback_history_section.dart';
 import 'today_feedback_card.dart';
 
@@ -23,7 +23,8 @@ class DailyFeedbackView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<DailyFeedbackController>();
+    final controller =
+        context.watch<DailyFeedbackController>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -48,28 +49,39 @@ class DailyFeedbackView extends StatelessWidget {
               child: CircularProgressIndicator(),
             )
           : controller.errorCode != null
-              ? DailyFeedbackErrorState(
-                  message: controller.errorCode!.localized(context),
+              ? AppErrorState(
+                  message:
+                      controller.errorCode!.localized(context),
                   onRetry: controller.loadFeedback,
+                  retryLabel: context.l10n.retry,
+                  showIcon: false,
                 )
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.stretch,
                     children: [
                       TodayFeedbackCard(
                         childName: controller.child.name,
-                        todayFeedback: controller.todayFeedback,
-                        selectedMood: controller.selectedMood,
-                        isSubmitting: controller.isSubmitting,
-                        onMoodSelected: controller.selectMood,
+                        todayFeedback:
+                            controller.todayFeedback,
+                        selectedMood:
+                            controller.selectedMood,
+                        isSubmitting:
+                            controller.isSubmitting,
+                        onMoodSelected:
+                            controller.selectMood,
                         onSubmit: onSubmit,
                       ),
 
-                      const SizedBox(height: AppSpacing.xl),
+                      const SizedBox(
+                        height: AppSpacing.xl,
+                      ),
 
                       FeedbackHistorySection(
-                        feedbackHistory: controller.feedbackHistory,
+                        feedbackHistory:
+                            controller.feedbackHistory,
                       ),
                     ],
                   ),

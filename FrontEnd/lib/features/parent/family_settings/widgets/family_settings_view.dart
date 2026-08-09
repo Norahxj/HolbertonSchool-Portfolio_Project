@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/app_refresh_indicator.dart';
 import '../../../../core/widgets/screen_background.dart';
@@ -39,7 +39,8 @@ class FamilySettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<FamilySettingsController>();
+    final controller =
+        context.watch<FamilySettingsController>();
 
     final pageError =
         controller.pageBackendMessage ??
@@ -64,23 +65,33 @@ class FamilySettingsView extends StatelessWidget {
     required String? pageError,
   }) {
     if (controller.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
     if (pageError != null) {
-      return _FamilySettingsErrorState(message: pageError, onRetry: onReload);
+      return AppErrorState(
+        message: pageError,
+        onRetry: onReload,
+        retryLabel: context.l10n.tryAgain,
+      );
     }
 
     return AppRefreshIndicator(
       onRefresh: onReload,
       child: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.onDrag,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppPageHeader(title: context.l10n.familySettings, onBack: onBack),
+            AppPageHeader(
+              title: context.l10n.familySettings,
+              onBack: onBack,
+            ),
 
             const SizedBox(height: AppSpacing.xl),
 
@@ -99,13 +110,16 @@ class FamilySettingsView extends StatelessWidget {
 
             const SizedBox(height: AppSpacing.xl),
 
-            PendingInvitationsSection(invitations: controller.sentInvitations),
+            PendingInvitationsSection(
+              invitations: controller.sentInvitations,
+            ),
 
             const SizedBox(height: AppSpacing.xl),
 
             IncomingInvitationsSection(
               invitations: controller.incomingInvitations,
-              isProcessingInvitation: controller.isProcessingInvitation,
+              isProcessingInvitation:
+                  controller.isProcessingInvitation,
               onAccept: onAcceptInvitation,
               onReject: onRejectInvitation,
             ),
@@ -119,49 +133,6 @@ class FamilySettingsView extends StatelessWidget {
             ),
 
             const SizedBox(height: AppSpacing.lg),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FamilySettingsErrorState extends StatelessWidget {
-  final String message;
-  final Future<void> Function() onRetry;
-
-  const _FamilySettingsErrorState({
-    required this.message,
-    required this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.error_outline, color: AppColors.error, size: 42),
-
-            const SizedBox(height: AppSpacing.md),
-
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 15,
-              ),
-            ),
-
-            const SizedBox(height: AppSpacing.md),
-
-            ElevatedButton(
-              onPressed: onRetry,
-              child: Text(context.l10n.tryAgain),
-            ),
           ],
         ),
       ),
