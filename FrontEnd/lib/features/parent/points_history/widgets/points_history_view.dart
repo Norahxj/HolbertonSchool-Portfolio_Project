@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/points_history_controller.dart';
 import 'points_history_card.dart';
 import 'points_history_empty_state.dart';
-import 'points_history_error_state.dart';
 
 class PointsHistoryView extends StatelessWidget {
   final String childName;
@@ -50,20 +50,28 @@ class PointsHistoryView extends StatelessWidget {
                 child: CircularProgressIndicator(),
               )
             : controller.hasError
-                ? PointsHistoryErrorState(
+                ? AppErrorState(
+                    message: l10n.failedToLoadPointsHistory,
                     onRetry: controller.loadHistory,
+                    retryLabel: l10n.retry,
+                    showIcon: false,
                   )
                 : controller.history.isEmpty
                     ? RefreshIndicator(
                         onRefresh: controller.refresh,
                         child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          physics:
+                              const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(
+                            AppSpacing.lg,
+                          ),
                           children: [
                             SizedBox(
                               height:
-                                  MediaQuery.sizeOf(context).height * 0.55,
-                              child: const PointsHistoryEmptyState(),
+                                  MediaQuery.sizeOf(context).height *
+                                  0.55,
+                              child:
+                                  const PointsHistoryEmptyState(),
                             ),
                           ],
                         ),
@@ -73,7 +81,9 @@ class PointsHistoryView extends StatelessWidget {
                         child: ListView.separated(
                           physics:
                               const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          padding: const EdgeInsets.all(
+                            AppSpacing.lg,
+                          ),
                           itemCount: controller.history.length,
                           separatorBuilder: (_, _) {
                             return const SizedBox(

@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/widgets/app_refresh_indicator.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/wishlist_approval_controller.dart';
@@ -45,13 +46,10 @@ class WishlistApprovalView extends StatelessWidget {
           child: AppRefreshIndicator(
             onRefresh: onRefresh,
             child: SingleChildScrollView(
-              physics:
-                  const AlwaysScrollableScrollPhysics(),
-              padding:
-                  const EdgeInsets.all(AppSpacing.lg),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const _WishlistPageHeader(),
 
@@ -79,8 +77,7 @@ class WishlistApprovalView extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 12,
-                        color:
-                            AppColors.textSecondary,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -143,8 +140,10 @@ class _WishlistContent extends StatelessWidget {
     }
 
     if (controller.hasError && controller.isEmpty) {
-      return WishlistErrorState(
+      return AppErrorState(
+        message: context.l10n.failedToLoadWishes,
         onRetry: controller.loadWishes,
+        retryLabel: context.l10n.retry,
       );
     }
 
@@ -153,11 +152,9 @@ class _WishlistContent extends StatelessWidget {
     }
 
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final entry
-            in controller.pendingWishes) ...[
+        for (final entry in controller.pendingWishes) ...[
           PendingWishCard(
             key: ValueKey(entry.wish.id),
             childName: entry.childName,
@@ -187,8 +184,7 @@ class _WishlistContent extends StatelessWidget {
           ),
         ],
 
-        for (final entry
-            in controller.approvedWishes) ...[
+        for (final entry in controller.approvedWishes) ...[
           ApprovedWishCard(
             key: ValueKey(entry.wish.id),
             childName: entry.childName,
@@ -205,8 +201,7 @@ class _WishlistContent extends StatelessWidget {
           ),
         ],
 
-        for (final entry
-            in controller.achievedWishes) ...[
+        for (final entry in controller.achievedWishes) ...[
           AchievedWishCard(
             key: ValueKey(entry.wish.id),
             childName: entry.childName,

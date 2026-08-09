@@ -18,44 +18,6 @@ class WishlistLoadingState extends StatelessWidget {
   }
 }
 
-class WishlistErrorState extends StatelessWidget {
-  final Future<void> Function() onRetry;
-
-  const WishlistErrorState({super.key, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.error_outline_rounded,
-              size: 48,
-              color: AppColors.error,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              context.l10n.failedToLoadWishes,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.error),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            ElevatedButton(
-              onPressed: () {
-                onRetry();
-              },
-              child: Text(context.l10n.retry),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class WishlistEmptyState extends StatelessWidget {
   const WishlistEmptyState({super.key});
 
@@ -72,7 +34,9 @@ class WishlistEmptyState extends StatelessWidget {
               size: 48,
               color: AppColors.textSecondary,
             ),
+
             const SizedBox(height: AppSpacing.md),
+
             Text(
               context.l10n.noWishesYet,
               textAlign: TextAlign.center,
