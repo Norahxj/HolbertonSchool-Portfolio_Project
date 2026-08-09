@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../constants/app_colors.dart';
 
-class RewardFieldLabel extends StatelessWidget {
+class AppFieldLabel extends StatelessWidget {
   final String text;
 
-  const RewardFieldLabel({super.key, required this.text});
+  const AppFieldLabel({
+    super.key,
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +16,7 @@ class RewardFieldLabel extends StatelessWidget {
       alignment: AlignmentDirectional.centerStart,
       child: Text(
         text,
+        textAlign: TextAlign.start,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,

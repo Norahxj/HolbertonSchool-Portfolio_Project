@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_navigation_arrow.dart';
 import 'language_setting_row.dart';
 
 class SettingsCard extends StatelessWidget {
@@ -40,22 +41,42 @@ class SettingsCard extends StatelessWidget {
             label: l10n.personalProfile,
             onTap: onProfileTap,
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           SettingsRow(
             icon: Icons.home_outlined,
             label: l10n.familySettings,
             onTap: onFamilySettingsTap,
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           const LanguageRow(),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           SettingsRow(
             icon: Icons.notifications_none,
             label: l10n.notifications,
             showComingSoon: true,
             onTap: onComingSoon,
           ),
-          const Divider(height: 1, color: AppColors.border),
+
+          const Divider(
+            height: 1,
+            color: AppColors.border,
+          ),
+
           SettingsRow(
             icon: Icons.help_outline,
             label: l10n.helpAndSupport,
@@ -102,9 +123,15 @@ class SettingsRow extends StatelessWidget {
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: AppColors.primaryDark, size: 20),
+                child: Icon(
+                  icon,
+                  color: AppColors.primaryDark,
+                  size: 20,
+                ),
               ),
+
               const SizedBox(width: AppSpacing.md),
+
               Expanded(
                 child: Row(
                   children: [
@@ -119,6 +146,7 @@ class SettingsRow extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     if (showComingSoon) ...[
                       const SizedBox(width: AppSpacing.sm),
                       const ComingSoonTag(),
@@ -126,25 +154,12 @@ class SettingsRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SettingsNavigationArrow(),
+
+              const AppNavigationArrow(),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class SettingsNavigationArrow extends StatelessWidget {
-  const SettingsNavigationArrow({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Icon(
-      Icons.chevron_right_rounded,
-      textDirection: TextDirection.ltr,
-      color: AppColors.textSecondary,
-      size: 22,
     );
   }
 }

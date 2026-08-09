@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_navigation_arrow.dart';
 import '../../../../core/widgets/child_avatar.dart';
 import '../models/parent_dashboard_data.dart';
 
@@ -40,8 +41,13 @@ class DashboardChildCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                ChildAvatar(avatarIndex: item.child.avatarIndex, size: 64),
+                ChildAvatar(
+                  avatarIndex: item.child.avatarIndex,
+                  size: 64,
+                ),
+
                 const SizedBox(width: 12),
+
                 Expanded(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -59,9 +65,13 @@ class DashboardChildCard extends StatelessWidget {
                           color: AppColors.textPrimary,
                         ),
                       ),
+
                       const SizedBox(height: 4),
+
                       Text(
-                        context.l10n.childAgeYears(dashboard.childAge),
+                        context.l10n.childAgeYears(
+                          dashboard.childAge,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.start,
@@ -70,15 +80,28 @@ class DashboardChildCard extends StatelessWidget {
                           color: AppColors.textSecondary,
                         ),
                       ),
+
                       const SizedBox(height: 5),
-                      _ChildPointsBadge(points: item.points),
+
+                      _ChildPointsBadge(
+                        points: item.points,
+                      ),
                     ],
                   ),
                 ),
+
                 const SizedBox(width: 12),
-                _ProgressRing(percent: progress),
+
+                _ProgressRing(
+                  percent: progress,
+                ),
+
                 const SizedBox(width: 8),
-                const _ChildCardNavigationArrow(),
+
+                const AppNavigationArrow(
+                  style: AppNavigationArrowStyle.ios,
+                  size: 18,
+                ),
               ],
             ),
           ),
@@ -91,7 +114,9 @@ class DashboardChildCard extends StatelessWidget {
 class _ChildPointsBadge extends StatelessWidget {
   final int? points;
 
-  const _ChildPointsBadge({required this.points});
+  const _ChildPointsBadge({
+    required this.points,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +139,9 @@ class _ChildPointsBadge extends StatelessWidget {
             color: AppColors.gold,
             size: 14,
           ),
+
           const SizedBox(width: 5),
+
           Text(
             context.l10n.pointsCount(safePoints),
             style: const TextStyle(
@@ -132,7 +159,9 @@ class _ChildPointsBadge extends StatelessWidget {
 class _ProgressRing extends StatelessWidget {
   final int percent;
 
-  const _ProgressRing({required this.percent});
+  const _ProgressRing({
+    required this.percent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +186,7 @@ class _ProgressRing extends StatelessWidget {
               ),
             ),
           ),
+
           Text(
             '$safePercent%',
             textDirection: TextDirection.ltr,
@@ -168,20 +198,6 @@ class _ProgressRing extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _ChildCardNavigationArrow extends StatelessWidget {
-  const _ChildCardNavigationArrow();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Icon(
-      Icons.arrow_forward_ios_rounded,
-      textDirection: TextDirection.ltr,
-      size: 18,
-      color: AppColors.textSecondary,
     );
   }
 }

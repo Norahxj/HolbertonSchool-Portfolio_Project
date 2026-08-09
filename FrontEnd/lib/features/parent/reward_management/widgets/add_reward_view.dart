@@ -5,18 +5,18 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_field_label.dart';
 import '../../../../core/widgets/app_page_header.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../controllers/add_reward_controller.dart';
 import '../utils/add_reward_localization.dart';
 import 'day_chip.dart';
-import 'reward_field_label.dart';
 import 'reward_text_field.dart';
 
 class AddRewardView extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController descriptionController;
-  final Future<void> Function() onSave;
+  final Future Function() onSave;
   final VoidCallback onBack;
 
   const AddRewardView({
@@ -40,11 +40,16 @@ class AddRewardView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AppPageHeader(title: l10n.newReward, onBack: onBack),
+                AppPageHeader(
+                  title: l10n.newReward,
+                  onBack: onBack,
+                ),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                RewardFieldLabel(text: l10n.rewardName),
+                AppFieldLabel(
+                  text: l10n.rewardName,
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
@@ -56,7 +61,9 @@ class AddRewardView extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                RewardFieldLabel(text: l10n.rewardDescription),
+                AppFieldLabel(
+                  text: l10n.rewardDescription,
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
@@ -68,7 +75,9 @@ class AddRewardView extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                RewardFieldLabel(text: l10n.rewardUnlockDayLabel),
+                AppFieldLabel(
+                  text: l10n.rewardUnlockDayLabel,
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
@@ -80,7 +89,8 @@ class AddRewardView extends StatelessWidget {
                     for (final dayIndex in controller.weekDays)
                       DayChip(
                         label: _dayLabel(context, dayIndex),
-                        isSelected: controller.selectedUnlockDay == dayIndex,
+                        isSelected:
+                            controller.selectedUnlockDay == dayIndex,
                         onTap: () {
                           controller.selectUnlockDay(dayIndex);
                         },
@@ -109,7 +119,10 @@ class AddRewardView extends StatelessWidget {
                       Expanded(
                         child: Text(
                           l10n.rewardAvailableEveryWeek(
-                            _dayLabel(context, controller.selectedUnlockDay),
+                            _dayLabel(
+                              context,
+                              controller.selectedUnlockDay,
+                            ),
                           ),
                           textAlign: TextAlign.start,
                           style: const TextStyle(
@@ -126,8 +139,12 @@ class AddRewardView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xxl),
 
                 AppButton(
-                  text: controller.isSaving ? l10n.saving : l10n.saveReward,
-                  onPressed: controller.isSaving ? null : onSave,
+                  text: controller.isSaving
+                      ? l10n.saving
+                      : l10n.saveReward,
+                  onPressed: controller.isSaving
+                      ? null
+                      : onSave,
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -144,7 +161,10 @@ class AddRewardView extends StatelessWidget {
     );
   }
 
-  String _dayLabel(BuildContext context, int dayIndex) {
+  String _dayLabel(
+    BuildContext context,
+    int dayIndex,
+  ) {
     final l10n = context.l10n;
 
     switch (dayIndex) {
