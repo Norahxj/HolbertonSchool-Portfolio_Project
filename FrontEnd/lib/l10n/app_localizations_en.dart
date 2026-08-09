@@ -1075,4 +1075,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get childNavigationProgress => 'Progress';
+
+  @override
+  String get switchLanguage => 'English';
 }

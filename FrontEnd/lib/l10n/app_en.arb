@@ -512,5 +512,7 @@
 "childNavigationHome": "Home",
 "childNavigationWishes": "Wishes",
 "childNavigationRewards": "Rewards",
-"childNavigationProgress": "Progress"
+"childNavigationProgress": "Progress",
+"switchLanguage": "English"
+
 }

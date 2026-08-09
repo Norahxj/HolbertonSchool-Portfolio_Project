@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
+import '../localization/localization_extension.dart';
 
 class LanguageToggle extends StatelessWidget {
   final bool isArabic;
@@ -15,55 +16,37 @@ class LanguageToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(24),
+      elevation: 2,
+      shadowColor: AppColors.primary.withValues(alpha: 0.2),
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 10,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            textDirection: TextDirection.ltr,
             children: [
-              _LanguageChoice(text: 'ع', isSelected: isArabic),
-
-              const SizedBox(width: 5),
-
-              _LanguageChoice(text: 'EN', isSelected: !isArabic),
+              const Icon(
+                Icons.language,
+                size: 18,
+                color: AppColors.textPrimary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                context.l10n.switchLanguage,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LanguageChoice extends StatelessWidget {
-  final String text;
-  final bool isSelected;
-
-  const _LanguageChoice({required this.text, required this.isSelected});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.primary : Colors.transparent,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          color: isSelected ? Colors.white : AppColors.primaryDark,
         ),
       ),
     );

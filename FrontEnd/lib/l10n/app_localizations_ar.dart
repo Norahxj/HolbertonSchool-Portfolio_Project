@@ -1044,4 +1044,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get childNavigationProgress => 'تقدّمي';
+
+  @override
+  String get switchLanguage => 'العربية';
 }

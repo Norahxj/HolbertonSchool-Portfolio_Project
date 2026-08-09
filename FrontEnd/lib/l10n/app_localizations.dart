@@ -2023,6 +2023,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Progress'**
   String get childNavigationProgress;
+
+  /// No description provided for @switchLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get switchLanguage;
 }
 
 class _AppLocalizationsDelegate
