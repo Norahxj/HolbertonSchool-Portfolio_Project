@@ -6,7 +6,6 @@ import '../../models/child_model.dart';
 import '../../models/child_dashboard_model.dart';
 part 'api_service.g.dart';
 
-
 @RestApi()
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
@@ -66,9 +65,7 @@ abstract class ApiService {
   );
 
   @DELETE('/tasks/{taskId}')
-Future<HttpResponse<dynamic>> deleteTask(
-  @Path('taskId') String taskId,
-);
+  Future<HttpResponse<dynamic>> deleteTask(@Path('taskId') String taskId);
 
   @GET('/tasks/child/{childId}')
   Future<HttpResponse<List<TaskModel>>> getTasksByChild(
@@ -101,7 +98,6 @@ Future<HttpResponse<dynamic>> deleteTask(
     @Path('assignmentId') String assignmentId,
   );
 
-
   @PUT('/task-assignments/{assignmentId}/reject')
   Future<HttpResponse<dynamic>> rejectAssignment(
     @Path('assignmentId') String assignmentId,
@@ -116,8 +112,9 @@ Future<HttpResponse<dynamic>> deleteTask(
     @Path('childId') String childId,
   );
 
-   @GET('/task-assignments/pending-review')
-Future<HttpResponse<dynamic>> getPendingReviewAssignments();
+  @GET('/task-assignments/pending-review')
+  Future<HttpResponse<dynamic>> getPendingReviewAssignments();
+
   /// whish
 
   @POST('/wishlists/')

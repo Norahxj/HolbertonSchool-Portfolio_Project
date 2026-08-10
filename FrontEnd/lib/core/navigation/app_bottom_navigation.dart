@@ -6,34 +6,25 @@ class AppNavigationItem {
   final int index;
   final IconData icon;
   final IconData selectedIcon;
-  final String arabicLabel;
-  final String englishLabel;
+  final String label;
 
   const AppNavigationItem({
     required this.index,
     required this.icon,
     required this.selectedIcon,
-    required this.arabicLabel,
-    required this.englishLabel,
+    required this.label,
   });
-
-  String label(bool isArabic) {
-    return isArabic ? arabicLabel : englishLabel;
-  }
 }
 
-/// Shared bottom-navigation bar used by both parent and child interfaces.
 class AppBottomNavigation extends StatelessWidget {
   final List<AppNavigationItem> items;
   final int currentIndex;
-  final bool isArabic;
   final ValueChanged<int> onTap;
 
   const AppBottomNavigation({
     super.key,
     required this.items,
     required this.currentIndex,
-    required this.isArabic,
     required this.onTap,
   });
 
@@ -55,21 +46,17 @@ class AppBottomNavigation extends StatelessWidget {
           ],
         ),
         child: Row(
-          // The first item appears on the right in Arabic
-          // and on the left in English.
-          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-          children: items.map((item) {
-            return Expanded(
-              child: _AppNavigationButton(
-                item: item,
-                label: item.label(isArabic),
-                isSelected: currentIndex == item.index,
-                onTap: () {
-                  onTap(item.index);
-                },
-              ),
-            );
-          }).toList(),
+          children: items
+              .map((item) {
+                return Expanded(
+                  child: _AppNavigationButton(
+                    item: item,
+                    isSelected: currentIndex == item.index,
+                    onTap: () => onTap(item.index),
+                  ),
+                );
+              })
+              .toList(growable: false),
         ),
       ),
     );
@@ -78,13 +65,11 @@ class AppBottomNavigation extends StatelessWidget {
 
 class _AppNavigationButton extends StatelessWidget {
   final AppNavigationItem item;
-  final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _AppNavigationButton({
     required this.item,
-    required this.label,
     required this.isSelected,
     required this.onTap,
   });
@@ -111,6 +96,7 @@ class _AppNavigationButton extends StatelessWidget {
             children: [
               AnimatedScale(
                 duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOut,
                 scale: isSelected ? 1.12 : 1,
                 child: Icon(
                   isSelected ? item.selectedIcon : item.icon,
@@ -118,11 +104,9 @@ class _AppNavigationButton extends StatelessWidget {
                   color: color,
                 ),
               ),
-
               const SizedBox(height: 3),
-
               Text(
-                label,
+                item.label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,

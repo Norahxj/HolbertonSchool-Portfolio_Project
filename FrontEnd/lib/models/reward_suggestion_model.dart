@@ -9,9 +9,7 @@ class RewardSuggestionModel {
     required this.unlockDay,
   });
 
-  factory RewardSuggestionModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory RewardSuggestionModel.fromJson(Map<String, dynamic> json) {
     return RewardSuggestionModel(
       rewardName: json['reward_name']?.toString() ?? '',
       description: json['description']?.toString() ?? '',

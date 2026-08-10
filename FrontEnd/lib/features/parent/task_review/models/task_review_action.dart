@@ -1,0 +1,4 @@
+enum TaskReviewAction {
+  approve,
+  retry,
+}

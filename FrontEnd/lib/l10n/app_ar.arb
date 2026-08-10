@@ -1,0 +1,736 @@
+{
+  "@@locale": "ar",
+
+  "appName": "أصالة",
+  "arabic": "العربية",
+  "english": "الإنجليزية",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "back": "رجوع",
+  "next": "التالي",
+  "retry": "إعادة المحاولة",
+  "loading": "جارٍ التحميل...",
+  "saving": "جارٍ الحفظ...",
+
+  "addTask": "إضافة مهمة",
+  "taskDetails": "تفاصيل المهمة",
+  "saveTask": "حفظ المهمة",
+  "taskName": "اسم المهمة",
+  "taskDescription": "الوصف",
+  "taskFrequency": "تكرار المهمة",
+  "taskType": "نوع المهمة",
+  "noorPoints": "نقاط نور",
+
+  "daily": "يوميًا",
+  "weekly": "مرة في الأسبوع",
+  "monthly": "شهريًا",
+
+  "chooseChildSubtitle": "لمن هذه المهمة؟ (يمكن اختيار أكثر من طفل)",
+  "taskDetailsSubtitle": "أضيفي تفاصيل المهمة وحددي تكرارها",
+
+  "selectChildFirst": "اختر طفلًا أولًا لتفعيل أنواع المهام",
+  "chooseTaskType": "اختر نوع المهمة",
+  "noChildrenYet": "لا يوجد أطفال بعد. الرجاء إضافة طفل أولًا.",
+
+  "culturalTasks": "المهام الثقافية",
+  "dailyTasks": "المهام اليومية",
+  "religiousTasks": "المهام الدينية",
+  "financialTasks": "المهام المالية",
+
+  "quickAdd": "إضافة سريعة",
+  "unableToLoadSuggestions": "تعذّر تحميل المهام المقترحة",
+  "noSuggestions": "لا توجد مهام مقترحة حاليًا",
+
+  "taskNameExample": "مثال: ترتيب سريرك",
+  "taskDescriptionHint": "صف المهمة باختصار...",
+
+  "chooseWeekDay": "اختر يوم الأسبوع",
+  "chooseMonthDay": "اختر يوم الشهر",
+  "chooseRepeatDate": "اختر تاريخ التكرار",
+
+  "sunday": "الأحد",
+  "monday": "الإثنين",
+  "tuesday": "الثلاثاء",
+  "wednesday": "الأربعاء",
+  "thursday": "الخميس",
+  "friday": "الجمعة",
+  "saturday": "السبت",
+
+  "pointsValue": "{points} نقطة",
+  "@pointsValue": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "taskNameRequired": "اسم المهمة مطلوب",
+  "descriptionRequired": "الوصف مطلوب",
+  "selectAtLeastOneChild": "الرجاء اختيار طفل واحد على الأقل",
+  "selectTaskTypeError": "الرجاء اختيار نوع المهمة",
+  "pointsRangeError": "عدد النقاط يجب أن يكون بين 1 و100"
+  ,
+"taskNameLengthError": "اسم المهمة يجب أن يكون بين حرفين و100 حرف",
+"descriptionLengthError": "الوصف يجب أن يكون بين حرفين و500 حرف",
+"saveTaskGenericError": "حدث خطأ أثناء حفظ المهمة",
+"tasksInformation": "المهام تساعد الأطفال على بناء العادات والقيم وكسب نقاط نور.",
+"pointsInformation": "نقاط نور تحفّز الأطفال وتشجعهم على الاستمرار.",
+"trustChildQuestion": "هل تثق بجدية طفلك في هذه المهمة؟",
+"trustChildDescription": "إذا وثقت، ستُعتمد المهمة تلقائيًا بدون الحاجة لمراجعتك",
+"dailyFrequencyDescription": "تُنفَّذ المهمة كل يوم",
+"weeklyFrequencyDescription": "تُنفَّذ المهمة مرة في الأسبوع",
+"monthlyFrequencyDescription": "تُنفَّذ المهمة مرة في الشهر",
+"failedToLoadChildren": "تعذّر تحميل الأطفال",
+"failedToLoadChildRewards": "تعذّر تحميل مكافآت الطفل",
+"failedToLoadRewardSuggestions": "تعذّر تحميل المكافآت المقترحة",
+"deleteRewardNotAllowed": "لا يمكنك حذف هذه المكافأة؛ يمكن حذفها فقط بواسطة ولي الأمر الذي أضافها.",
+"deleteClaimedRewardNotAllowed": "لا يمكن حذف المكافأة بعد استلامها.",
+"failedToDeleteReward": "تعذّر حذف المكافأة. حاول مرة أخرى.",
+"rewardAddedSuccessfully": "تمت إضافة المكافأة بنجاح 🎉",
+"deleteRewardTitle": "حذف المكافأة",
+"deleteRewardConfirmation": "هل تريد حذف مكافأة \"{rewardName}\"؟",
+"@deleteRewardConfirmation": {
+  "placeholders": {
+    "rewardName": {
+      "type": "String"
+    }
+  }
+},
+"delete": "حذف",
+"rewardDeleted": "تم حذف المكافأة",
+"rewardManagement": "إدارة المكافآت",
+"rewardManagementSubtitle": "مكافآت أسبوعية تُمنح حسب أداء الطفل",
+"noChildrenAddFirst": "لا يوجد أطفال بعد. أضف طفلًا أولًا.",
+"currentChildRewards": "مكافآت الطفل الحالية",
+"noRewardsForChild": "لا توجد مكافآت لهذا الطفل حتى الآن",
+"selectChildForSuggestions": "اختر طفلًا أولًا لعرض المكافآت المقترحة",
+"rewardStatusUnlocked": "متاحة",
+"rewardStatusClaimed": "تم استلامها",
+"rewardStatusLocked": "مقفلة",
+"rewardUnlockDay": "تفتح يوم {day}",
+"@rewardUnlockDay": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"noSuggestedRewards": "لا توجد مكافآت مقترحة حاليًا",
+"addReward": "إضافة مكافأة",
+"rewardNameRequired": "اكتب اسم المكافأة أولًا",
+"couldNotSaveReward": "تعذّر حفظ المكافأة",
+"saveRewardGenericError": "حدث خطأ أثناء حفظ المكافأة",
+"newReward": "مكافأة جديدة",
+"rewardName": "اسم المكافأة",
+"rewardNameExample": "مثال: رحلة إلى الحديقة",
+"rewardDescription": "وصف المكافأة",
+"rewardDescriptionExample": "مثال: زيارة الحديقة مع العائلة في نهاية الأسبوع",
+"rewardUnlockDay": "يوم إتاحة المكافأة",
+"rewardAvailableEveryWeek": "ستصبح المكافأة متاحة للطفل يوم {day} من كل أسبوع.",
+"@rewardAvailableEveryWeek": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"saveReward": "حفظ المكافأة",
+"rewardUnlockDayLabel": "يوم إتاحة المكافأة",
+"failedToLoadFeedbackHistory": "تعذّر تحميل سجل التقييم",
+"failedToSaveFeedback": "تعذّر حفظ التقييم. حاول مرة أخرى.",
+"feedbackSavedSuccessfully": "تم حفظ التقييم بنجاح ✓",
+"dailyFeedback": "التقييم اليومي",
+"feedbackHistory": "سجل التقييمات",
+"todayFeedbackEditable": "تقييم اليوم (يمكنك التعديل)",
+"howWasChildDay": "كيف كان يوم {childName}؟",
+"@howWasChildDay": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"updateFeedback": "تحديث التقييم",
+"saveFeedback": "حفظ التقييم",
+"moodHappy": "سعيد",
+"moodProud": "فخور",
+"moodGreat": "رائع",
+"moodLoved": "محبوب",
+"moodStrong": "قوي",
+"moodStar": "نجم",
+"childPointsHistory": "سجل نقاط {childName}",
+"@childPointsHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"taskCompletedPointsHistory": "إكمال مهمة: {taskTitle}",
+"@taskCompletedPointsHistory": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"wishAchievedPointsHistory": "تحقيق أمنية: {wishName}",
+"@wishAchievedPointsHistory": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"pointsUpdate": "تحديث في النقاط",
+"noPointsHistoryYet": "لا يوجد سجل نقاط حتى الآن",
+"pointsHistoryDescription": "ستظهر هنا النقاط المكتسبة والمخصومة.",
+"failedToLoadPointsHistory": "تعذّر تحميل سجل النقاط.",
+"childrenWishes": "أمنيات الأطفال",
+"childrenWishesSubtitle": "راجع أمنية طفلك وحدد عدد نقاط نور التي يحتاج لجمعها حتى يتمكن من تحقيقها",
+"failedToRefreshWishes": "تعذّر تحديث الأمنيات",
+"failedToApproveWish": "تعذّرت الموافقة على الأمنية",
+"failedToRejectWish": "تعذّر رفض الأمنية",
+"wishApprovalExplanation": "بعد اعتماد الأمنية، يبدأ الطفل بجمع نقاط نور حتى يصل إلى الهدف المحدد.",
+"pendingApproval": "بانتظار الموافقة",
+"pendingWishSubtitle": "طلب هذه الأمنية وينتظر منك تحديد هدف النقاط",
+"pointsGoal": "هدف النقاط",
+"convertWishExplanation": "بعد تحويل الأمنية إلى هدف، يبدأ الطفل بجمع هذا العدد من نقاط نور لتحقيقها.",
+"pointsMustBePositive": "يجب أن تكون النقاط أكبر من صفر",
+"convertToGoal": "تحويل إلى هدف",
+"reject": "رفض",
+"goalCreated": "هدف معتمد",
+"wishApprovedSubtitle": "تمت الموافقة على هذه الأمنية",
+"selectedPointsGoal": "هدف النقاط المحدد",
+"wishAchieved": "تم تحقيقها",
+"wishAchievedSuccessfully": "تم تحقيق هذه الأمنية بنجاح 🎉",
+"completedNoorPointsGoal": "أكمل الطفل هدف نقاط نور",
+"failedToLoadWishes": "حدث خطأ أثناء تحميل الأمنيات. حاول مرة أخرى.",
+"noWishesYet": "لا توجد أمنيات بعد.",
+"more": "المزيد",
+"comingSoonMessage": "هذه الميزة ستكون متاحة قريبًا.",
+"personalProfile": "الملف الشخصي",
+"familySettings": "إعدادات العائلة",
+"language": "اللغة",
+"switchLanguage": "العربية",
+"notifications": "الإشعارات",
+"helpAndSupport": "المساعدة والدعم",
+"soon": "قريبًا",
+"logOut": "تسجيل الخروج",
+"logoutFailed": "تعذّر تسجيل الخروج. حاول مرة أخرى.",
+"failedToLoadDashboard": "تعذّر تحميل لوحة التحكم.",
+"failedToRefreshDashboard": "تعذّر تحديث لوحة التحكم.",
+"failedToDeleteChild": "تعذّر حذف الطفل. حاول مرة أخرى.",
+"childNotFoundForFamily": "لم يتم العثور على الطفل، أو أنه لم يعد مرتبطًا بهذه الأسرة.",
+"parentAccountNotFound": "تعذّر العثور على حساب ولي الأمر.",
+"parentAccessRequired": "هذا الإجراء متاح لحساب ولي الأمر فقط.",
+"failedToDeleteChildRelatedData": "تعذّر حذف الطفل والبيانات المرتبطة به.",
+"yourChildren": "أطفالك",
+"addChild": "إضافة طفل",
+"reviewTasks": "مراجعة المهام",
+"childAgeYears": "{age} سنوات",
+"@childAgeYears": {
+  "placeholders": {
+    "age": {
+      "type": "int"
+    }
+  }
+},
+"pointsCount": "{count} نقطة",
+"@pointsCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"noChildrenAddedYet": "لا يوجد أطفال بعد",
+"welcome": "مرحبًا",
+"buildingWonderfulGeneration": "أنتِ تبنين جيلاً رائعًا",
+"failedToLoadChildTasks": "تعذّر تحميل مهام الطفل.",
+"failedToRefreshChildTasks": "تعذّر تحديث مهام الطفل.",
+"couldNotIdentifyChild": "تعذّر تحديد الطفل.",
+"onlyCreatorCanDeleteTask": "يمكنك حذف المهام التي أنشأتها فقط.",
+"failedToDeleteTask": "تعذّر حذف المهمة.",
+"deleteChildConfirmationTitle": "حذف {childName}؟",
+"@deleteChildConfirmationTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"deleteChildConfirmationDescription": "سيتم حذف حساب الطفل وجميع البيانات المرتبطة به نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+"childDeletedSuccessfully": "تم حذف الطفل بنجاح",
+"childDetails": "بيانات الطفل",
+"noorPoints": "نقاط نور",
+"weeklyProgress": "تقدم الأسبوع",
+"noorPointsHistory": "سجل نقاط نور",
+"viewPointsHistory": "عرض سجل النقاط",
+"rateChildDayAndViewHistory": "قيّمي يوم {childName} وراجعي السجل",
+"@rateChildDayAndViewHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"viewChildTasks": "عرض مهام {childName}",
+"@viewChildTasks": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"editChildInformation": "تعديل بيانات الطفل",
+"deleting": "جارٍ الحذف...",
+"deleteChild": "حذف الطفل",
+"childAccessCode": "رمز دخول الطفل",
+"childAccessCodeCopied": "تم نسخ رمز دخول الطفل",
+"copyCode": "نسخ الرمز",
+"tasks": "المهام",
+"deleteTaskTitle": "حذف المهمة؟",
+"deleteTaskConfirmation": "سيتم حذف مهمة \"{taskTitle}\" نهائيًا، ولا يمكن التراجع عن هذا الإجراء.",
+"@deleteTaskConfirmation": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskDeletedSuccessfully": "تم حذف المهمة بنجاح",
+"childTasksTitle": "مهام {childName}",
+"@childTasksTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"all": "الكل",
+"upcoming": "قادمة",
+"active": "نشطة",
+"awaitingReview": "بانتظار المراجعة",
+"completed": "مكتملة",
+"rejected": "مرفوضة",
+"noTasks": "لا توجد مهام",
+"noUpcomingTasks": "لا توجد مهام قادمة",
+"noActiveTasks": "لا توجد مهام نشطة",
+"noTasksAwaitingReview": "لا توجد مهام بانتظار المراجعة",
+"noCompletedTasks": "لا توجد مهام مكتملة",
+"noRejectedTasks": "لا توجد مهام مرفوضة",
+"childHasNoTasks": "لا توجد مهام لهذا الطفل حتى الآن",
+"failedToLoadTasks": "تعذّر تحميل المهام",
+"weekly": "أسبوعية",
+"monthly": "شهرية",
+"nextTaskDate": "الموعد القادم: {date}",
+"@nextTaskDate": {
+  "placeholders": {
+    "date": {
+      "type": "String"
+    }
+  }
+},
+"deleteTask": "حذف المهمة",
+"failedToLoadFamilySettings": "تعذّر تحميل إعدادات العائلة.",
+"familyNameTooShort": "اسم العائلة يجب أن يكون حرفين على الأقل.",
+"invalidGuardianEmail": "اكتبي بريدًا إلكترونيًا صحيحًا.",
+"failedToUpdateFamilyName": "تعذّر تحديث اسم العائلة.",
+"failedToSendInvitation": "تعذّر إرسال الدعوة.",
+"failedToAcceptInvitation": "تعذّر قبول الدعوة.",
+"failedToRejectInvitation": "تعذّر رفض الدعوة.",
+"familySettingsGenericError": "حدث خطأ غير متوقع.",
+"familyName": "اسم العائلة",
+"saveFamilyName": "حفظ الاسم",
+"guardians": "أولياء الأمور",
+"noGuardians": "لا يوجد أولياء أمور",
+"father": "أب",
+"mother": "أم",
+"guardian": "ولي أمر",
+"you": "أنت",
+"incomingInvitations": "الدعوات الواردة",
+"noIncomingInvitations": "لا توجد دعوات واردة حاليًا",
+"incomingInvitationsDescription": "ستظهر هنا دعوات الانضمام إلى العائلات",
+"family": "العائلة",
+"invitationToJoinFamily": "دعوة للانضمام إلى {familyName}",
+"@invitationToJoinFamily": {
+  "placeholders": {
+    "familyName": {
+      "type": "String"
+    }
+  }
+},
+"invitationSentBy": "مرسلة من {name}",
+"@invitationSentBy": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"accept": "قبول",
+"inviteAnotherGuardian": "دعوة ولي أمر آخر",
+"guardianEmailAddress": "البريد الإلكتروني لولي الأمر",
+"sending": "جارٍ الإرسال...",
+"sendInvitation": "إرسال دعوة",
+"guardianInvitationExplanation": "يجب أن يكون لدى ولي الأمر حساب مسجل مسبقًا، وستظهر الدعوة داخل حسابه.",
+"pendingSentInvitations": "الدعوات المرسلة المعلّقة",
+"noPendingSentInvitations": "لا توجد دعوات مرسلة معلّقة حاليًا",
+"pendingInvitationsDescription": "ستظهر هنا الدعوات التي أرسلتها ولم تُقبل بعد",
+"waitingForInvitationAcceptance": "بانتظار قبول الدعوة",
+"invitationAcceptedSuccessfully": "تم قبول الدعوة والانضمام إلى العائلة",
+"invitationRejectedSuccessfully": "تم رفض الدعوة",
+"familyNameUpdatedSuccessfully": "تم تحديث اسم العائلة",
+"invitationSentSuccessfully": "تم إرسال الدعوة بنجاح",
+"familyNameDisplay": "عائلة {name}",
+"@familyNameDisplay": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"unableToLoadReviewTasks": "تعذّر تحميل المهام للمراجعة.",
+"unableToApproveTask": "تعذّر قبول المهمة.",
+"onlyTaskCreatorCanApprove": "يمكن قبول المهمة فقط بواسطة ولي الأمر الذي أضافها.",
+"unableToSendTaskForRetry": "تعذّر إرسال المهمة لإعادة المحاولة.",
+"onlyTaskCreatorCanRequestRetry": "يمكن إرسال المهمة لإعادة المحاولة فقط بواسطة ولي الأمر الذي أضافها.",
+"completedRecently": "أُنجزت مؤخرًا",
+"completedAt": "أُنجزت في {time}",
+"@completedAt": {
+  "placeholders": {
+    "time": {
+      "type": "String"
+    }
+  }
+},
+"taskReview": "مراجعة المهام",
+"reviewCompletedTasks": "راجع ما أنجزه أطفالك",
+"pendingReview": "بانتظار المراجعة",
+"tasksCount": "{count} مهام",
+"@tasksCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"acceptTask": "قبول",
+"tryAgain": "إعادة المحاولة",
+"noTasksPendingReview": "لا توجد مهام بانتظار المراجعة",
+"taskAcceptedSuccessfully": "تم قبول مهمة \"{taskTitle}\"",
+"@taskAcceptedSuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskSentForRetrySuccessfully": "تم إرسال المهمة لإعادة المحاولة: \"{taskTitle}\"",
+"@taskSentForRetrySuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskReviewGenericError": "حدث خطأ غير متوقع أثناء مراجعة المهمة.",
+  "addChildSubtitle": "أضف معلومات طفلك لبدء رحلته",
+  "editChildSubtitle": "عدّل معلومات الطفل ثم اضغط حفظ",
+  "chooseAvatar": "اختر صورة رمزية",
+
+  "childName": "اسم الطفل",
+  "dateOfBirth": "تاريخ الميلاد",
+  "selectDateOfBirth": "اختر تاريخ الميلاد",
+  "select": "اختيار",
+  "openCalendarToSelectDate": "يفتح التقويم لاختيار التاريخ",
+
+  "phoneNumberOptional": "رقم الجوال (اختياري)",
+
+  "saveChanges": "حفظ التعديلات",
+
+  "childAddedSuccessfully": "تمت إضافة الطفل بنجاح",
+  "childUpdatedSuccessfully": "تم تعديل بيانات الطفل بنجاح",
+
+  "childNameRequired": "اسم الطفل مطلوب",
+  "childNameTooShort": "يجب أن يتكون اسم الطفل من حرفين على الأقل",
+  "childNameTooLong": "يجب ألا يتجاوز اسم الطفل 100 حرف",
+  "childNameLettersOnly": "يجب أن يحتوي الاسم على حروف عربية أو إنجليزية فقط",
+
+  "birthDateRequired": "تاريخ الميلاد مطلوب",
+  "invalidChildAge": "يجب أن يكون عمر الطفل بين 6 و18 سنة",
+
+  "invalidSaudiPhone": "أدخل رقم جوال سعودي صحيح يبدأ بـ 05",
+
+  "failedToAddChild": "تعذّر إضافة الطفل. حاول مرة أخرى.",
+  "failedToUpdateChild": "تعذّر تعديل بيانات الطفل. حاول مرة أخرى.",
+
+  "phoneAlreadyUsed": "رقم الجوال مستخدم بالفعل.",
+  "parentNotLinkedToFamily": "حساب ولي الأمر غير مرتبط بأسرة.",
+  "onlyParentsCanAddChildren": "إضافة الأطفال متاحة لولي الأمر فقط.",
+  "onlyParentsCanUpdateChildren": "تعديل بيانات الطفل متاح لولي الأمر فقط.",
+  "parentAccountNotFound": "تعذّر العثور على حساب ولي الأمر.",
+  "childNotFound": "لم يتم العثور على الطفل.",
+  "couldNotCreateChild": "تعذّر إنشاء حساب الطفل.",
+  "couldNotSaveChildChanges": "تعذّر حفظ التعديلات.",
+  "couldNotIdentifyChildToUpdate": "تعذّر تحديد الطفل المطلوب تعديله.",
+
+  "unexpectedAddChildError": "حدث خطأ غير متوقع أثناء إضافة الطفل.",
+  "unexpectedUpdateChildError": "حدث خطأ غير متوقع أثناء تعديل الطفل.",
+  "profile": "الملف الشخصي",
+"firstName": "الاسم الأول",
+"lastName": "اسم العائلة",
+"email": "البريد الإلكتروني",
+"phoneNumber": "رقم الجوال",
+"familyRelationship": "صلتي بالأسرة",
+
+"profileUpdatedSuccessfully": "تم حفظ التغييرات بنجاح ✓",
+
+"failedToLoadProfile": "تعذّر تحميل بيانات الملف الشخصي.",
+"failedToSaveProfile": "تعذّر حفظ التغييرات.",
+"unexpectedProfileSaveError": "حدث خطأ أثناء حفظ التغييرات.",
+
+"firstNameTooShort": "يجب أن يتكون الاسم الأول من حرفين على الأقل.",
+"lastNameTooShort": "يجب أن يتكون اسم العائلة من حرفين على الأقل.",
+"invalidEmailAddress": "يرجى إدخال بريد إلكتروني صحيح.",
+"phoneNumberRequired": "يرجى إدخال رقم الجوال.",
+"emailAlreadyUsed": "البريد الإلكتروني مستخدم بالفعل.",
+"failedToLoadUserInformation": "تعذّر تحميل بيانات المستخدم.",
+"invitedUserNotFound": "لا يوجد حساب ولي أمر بهذا البريد الإلكتروني.",
+"cannotInviteYourself": "لا يمكنك دعوة حسابك نفسه.",
+"userAlreadyInFamily": "ولي الأمر موجود بالفعل في العائلة.",
+"guardianTypeAlreadyExists": "يوجد بالفعل ولي أمر من النوع نفسه في العائلة.",
+"invitationAlreadyPending": "توجد دعوة معلّقة لهذا البريد بالفعل.",
+"familyInformationNotFound": "تعذّر العثور على بيانات العائلة.",
+"invalidEnteredData": "تأكدي من صحة البيانات المدخلة.",
+"parentNavigationTasks": "المهام",
+"parentNavigationWishes": "الأمنيات",
+"parentNavigationHome": "الرئيسية",
+"parentNavigationRewards": "المكافآت",
+"parentNavigationMore": "المزيد",
+"childNavigationHome": "الرئيسية",
+"childNavigationWishes": "أمنياتي",
+"childNavigationRewards": "المكافآت",
+"childNavigationProgress": "تقدّمي",
+"childTaskAutoApprovedSuccess": "أحسنت! اكتملت المهمة وأُضيفت نقاطك.",
+"childTaskSentForReviewSuccess": "أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.",
+"childTaskCompleteFailed": "تعذّر إكمال المهمة. حاول مرة أخرى.",
+"childTaskUnexpectedError": "حدث خطأ أثناء إكمال المهمة.",
+"childTaskCompletedApproved": "مكتملة ومعتمدة",
+"childTaskWaitingGuardianReview": "بانتظار مراجعة ولي الأمر",
+"childTaskReadyToComplete": "جاهزة للإنجاز",
+"childTaskApproved": "تم اعتماد المهمة",
+"childTaskCompleteButton": "أنجزت المهمة",
+"childTaskAutoVerificationMessage": "ستُعتمد هذه المهمة تلقائيًا عند إتمامها، وتُضاف النقاط مباشرة إلى رصيدك.",
+"childTaskGuardianVerificationMessage": "عند إتمامك المهمة سيراجعها ولي أمرك، وبعد الاعتماد تُضاف النقاط إلى رصيدك.",
+"childTaskNoDescription": "لا يوجد وصف لهذه المهمة.",
+"noorPointsCount": "{points} نقاط نور",
+"@noorPointsCount": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"notSpecified": "غير محدد",
+"once": "مرة واحدة",
+"childNoTasksToday": "لا توجد مهام اليوم",
+"childNoTasksMessage": "استمتع بوقتك، وعد لاحقًا لرؤية مهام جديدة.",
+"childEncouragementMessage": "كل مهمة تنجزها تقرّبك من هدف جديد ومكافأة أجمل!",
+"childTodayEncouragement": "تشجيع اليوم",
+"childFromFamily": "من العائلة",
+"childTodayGoal": "هدف اليوم",
+"childNoTasksGoalMessage": "لا توجد مهام اليوم، استمتع بيومك!",
+"childAllTasksCompletedMessage": "رائع! أنجزت جميع مهام اليوم 🎉",
+"childOneTaskRemainingMessage": "بقيت لك مهمة واحدة لإكمال هدف اليوم!",
+"childTasksRemainingMessage": "بقيت لك {count} مهام لإكمال هدف اليوم",
+"@childTasksRemainingMessage": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"todayTasks": "مهام اليوم",
+"approved": "تم الاعتماد",
+"ready": "جاهزة للإنجاز",
+"childGreetingGirl": "أهلًا يا بطلة! 👋",
+"childGreetingBoy": "أهلًا يا بطل! 👋",
+"childHomeSubtitle": "يوم جديد وإنجازات جديدة بانتظارك",
+"settings": "الإعدادات",
+"childHomeChildNotFound": "لم نتمكن من العثور على بيانات الطفل.",
+"childHomeLoadFailed": "تعذّر تحميل الصفحة.",
+"childAccount": "حساب الطفل",
+"childSwitchLanguage": "التبديل إلى الإنجليزية",
+"childLogoutConfirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+"childRewardsLoadFailed": "تعذّر تحميل المكافآت",
+"childRewardsSubtitle": "مكافأة أسبوعية ترتبط بتقدّمك",
+"childRewardsEmpty": "لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!",
+"childRewardClaimedSuccess": "تم استلام المكافأة! 🎉",
+"childRewardClaimFailed": "تعذّر استلام المكافأة",
+"childRewardClaim": "استلام",
+"childRewardClaimedBadge": "🎉 تم",
+"childRewardAvailableNow": "متاحة الآن! اضغط للاستلام ✓",
+"childRewardClaimedStatus": "تم الاستلام 🎉",
+"childRewardUnlocksOn": "تُفتح يوم {day}",
+"@childRewardUnlocksOn": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"wishlistApprovedStatus": "مقبولة ✓",
+"wishlistRejectedStatus": "مرفوضة ✗",
+"wishlistAchievedStatus": "تحققت! 🌟",
+"wishlistPendingStatus": "في الانتظار...",
+"wishlistTargetPoints": "الهدف: {points} نقطة",
+"@wishlistTargetPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistCurrentPoints": "لديك: {points} نقطة",
+"@wishlistCurrentPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistTargetNotSpecified": "لم يتم تحديد النقاط المطلوبة",
+"wishlistAchieveButton": "لقد حققت أمنيتي! 🌟",
+"wishlistCollectMorePoints": "اجمع المزيد من النقاط",
+"childWishlistLoadFailed": "تعذّر تحميل الأمنيات.",
+"childWishlistTitle": "أمنياتي",
+"childWishlistSubtitle": "اختر أمنية واجمع نقاط نور لتحقيقها",
+"childWishlistPoints": "رصيدك الحالي: {points} نقطة",
+"@childWishlistPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"childAddWish": "إضافة أمنية",
+"childWishlistEmpty": "لا توجد أمنيات بعد",
+"childWishlistEmptySubtitle": "أضف أمنيتك الأولى وابدأ بجمع النقاط لتحقيقها",
+"deleteWishTitle": "حذف الأمنية",
+"deleteWishConfirmation": "هل تريد حذف أمنية \"{wishName}\"؟",
+"@deleteWishConfirmation": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"deleteWishFailed": "تعذّر حذف الأمنية.",
+"deleteWishSuccess": "تم حذف الأمنية.",
+"achieveWishFailed": "تعذّر تحقيق الأمنية.",
+"achieveWishSuccess": "تم تحقيق الأمنية! 🌟",
+"createWishFailed": "تعذّر إضافة الأمنية.",
+"wishlistLimitReached": "وصلت للحد الأقصى من الأمنيات المعلقة.",
+"wishNameTooShort": "اسم الأمنية قصير جدًا.",
+"wishNameTooLong": "اسم الأمنية طويل جدًا.",
+"addWishTitle": "إضافة أمنية",
+"chooseWishesCarefully": "اختر أمنياتك بعناية",
+"pendingWishesCount": "لديك {count} من أصل {maximum} أمنيات بانتظار المراجعة",
+"@pendingWishesCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    },
+    "maximum": {
+      "type": "int"
+    }
+  }
+},
+"wishNameLabel": "اسم الأمنية",
+"wishNameHint": "مثال: دراجة هوائية",
+"wishlistLimitExplanation": "يمكنك إضافة حتى 5 أمنيات بانتظار مراجعة ولي أمرك. بعد قبول الأمنية سيحدد ولي أمرك عدد النقاط المطلوبة لتحقيقها.",
+"maximumWishLimitReached": "وصلتِ إلى الحد الأقصى",
+"saveWish": "حفظ الأمنية",
+"childProgressTitle": "تقدّمي",
+"progressThisWeek": "هذا الأسبوع",
+"progressLoadFailed": "تعذّر تحميل بيانات التقدم.",
+"progressNoTasksThisWeek": "لا توجد مهام مسندة هذا الأسبوع",
+"progressAllTasksCompleted": "رائع! أنجزت جميع مهام هذا الأسبوع",
+"progressCompletedOfTotal": "أحسنت! أنجزت {completed} من {total} مهام هذا الأسبوع",
+"@progressCompletedOfTotal": {
+  "placeholders": {
+    "completed": {
+      "type": "int"
+    },
+    "total": {
+      "type": "int"
+    }
+  }
+},
+"progressDayStreak": "أيام متتالية",
+"progressCompletedTasks": "مهمة مكتملة",
+"progressPointsBalance": "رصيد النقاط",
+"progressMyBadges": "أوسمتي",
+"progressBadgeUnlockExplanation": "يفتح كل وسام بعد إنجاز 5 مهام من فئته",
+"progressDailyTasksBadge": "المهام\nاليومية",
+"progressCulturalTasksBadge": "المهام\nالثقافية",
+"progressFinancialTasksBadge": "المهام\nالمالية",
+"progressReligiousTasksBadge": "المهام\nالدينية",
+"progressBadgeCompleted": "مكتمل ٥/٥",
+"progressBadgeCount": "{count}/٥",
+"@progressBadgeCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"progressWeeklyActivity": "نشاط الأسبوع",
+"progressSundayShort": "أحد",
+"progressMondayShort": "إثنين",
+"progressTuesdayShort": "ثلاثاء",
+"progressWednesdayShort": "أربعاء",
+"progressThursdayShort": "خميس",
+"progressFridayShort": "جمعة",
+"progressSaturdayShort": "سبت",
+"childPinWelcome": "أهلاً بك!",
+"childPinInstructions": "أدخل الرمز الذي أعطاك إياه ولي أمرك",
+"childPinAccessCode": "رمز الدخول",
+"childPinVerifying": "جاري التحقق...",
+"childPinLogin": "دخول",
+"childPinIncompleteCode": "أدخل رمز الدخول كاملًا",
+"childPinInvalidCode": "رمز الدخول غير صحيح",
+"childPinLoginFailed": "تعذّر تسجيل الدخول. حاول مرة أخرى.",
+"authWelcomeBack": "مرحبًا بعودتك!",
+"authCreateAccountTitle": "إنشاء حساب جديد",
+"authSignInSubtitle": "سجّل الدخول أو أنشئ حسابًا جديدًا",
+"authRegisterSubtitle": "يرجى تعبئة البيانات لإنشاء حسابك",
+"authNoAccount": "ليس لديك حساب؟",
+"authCreateAccountButton": "إنشاء حساب",
+"authEnterEmail": "أدخل بريدك الإلكتروني",
+"authEnterPassword": "أدخل كلمة المرور",
+"authSignInButton": "تسجيل الدخول",
+"authEnterFirstName": "أدخل الاسم الأول",
+"authEnterFamilyName": "أدخل اسم العائلة",
+"authEnterPhone": "أدخل رقم الجوال",
+"authConfirmPasswordHint": "أعد إدخال كلمة المرور",
+"authPasswordsDoNotMatch": "كلمتا المرور غير متطابقتين",
+"authLoginSuccess": "تم تسجيل الدخول بنجاح",
+"authAccountCreatedSuccess": "تم إنشاء الحساب بنجاح",
+"authServerError": "حدث خطأ في الخادم",
+"authEmailAlreadyRegistered": "البريد الإلكتروني مسجل مسبقًا",
+"authPhoneAlreadyUsed": "رقم الجوال مستخدم مسبقًا",
+"authEmailOrPhoneAlreadyRegistered": "البريد الإلكتروني أو رقم الجوال مسجل مسبقًا",
+"password": "كلمة المرور",
+"confirmPassword": "تأكيد كلمة المرور",
+"welcomeTitle": "مرحبًا بك في أصالة",
+"welcomeTagline": "حيثُ تُبنى القيم وتُكافئ الإنجازات",
+"welcomeSubtitle": "منصة تساعد الأطفال على بناء عادات مالية وتنمية قيمهم",
+"parentRole": "ولي أمر",
+"parentRoleDescription": "إدارة أطفالك ومتابعة المهام والمكافآت",
+"childRole": "طفل",
+"childRoleDescription": "أنجز المهام واجمع النقاط واحصل على المكافآت"
+}
