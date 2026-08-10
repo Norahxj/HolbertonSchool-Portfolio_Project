@@ -1355,4 +1355,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saveWish => 'Save wish';
+
+  @override
+  String get childProgressTitle => 'My Progress';
+
+  @override
+  String get progressThisWeek => 'This week';
+
+  @override
+  String get progressLoadFailed => 'Could not load progress data.';
+
+  @override
+  String get progressNoTasksThisWeek => 'No tasks assigned this week';
+
+  @override
+  String get progressAllTasksCompleted =>
+      'Great! You completed all tasks this week';
+
+  @override
+  String progressCompletedOfTotal(int completed, int total) {
+    return 'Well done! You completed $completed of $total tasks this week';
+  }
+
+  @override
+  String get progressDayStreak => 'Day streak';
+
+  @override
+  String get progressCompletedTasks => 'Completed tasks';
+
+  @override
+  String get progressPointsBalance => 'Points balance';
+
+  @override
+  String get progressMyBadges => 'My Badges';
+
+  @override
+  String get progressBadgeUnlockExplanation =>
+      'Each badge unlocks after completing 5 tasks in its category';
+
+  @override
+  String get progressDailyTasksBadge => 'Daily\nTasks';
+
+  @override
+  String get progressCulturalTasksBadge => 'Cultural\nTasks';
+
+  @override
+  String get progressFinancialTasksBadge => 'Financial\nTasks';
+
+  @override
+  String get progressReligiousTasksBadge => 'Religious\nTasks';
+
+  @override
+  String get progressBadgeCompleted => 'Completed 5/5';
+
+  @override
+  String progressBadgeCount(int count) {
+    return '$count/5';
+  }
+
+  @override
+  String get progressWeeklyActivity => 'Weekly Activity';
+
+  @override
+  String get progressSundayShort => 'Sun';
+
+  @override
+  String get progressMondayShort => 'Mon';
+
+  @override
+  String get progressTuesdayShort => 'Tue';
+
+  @override
+  String get progressWednesdayShort => 'Wed';
+
+  @override
+  String get progressThursdayShort => 'Thu';
+
+  @override
+  String get progressFridayShort => 'Fri';
+
+  @override
+  String get progressSaturdayShort => 'Sat';
 }

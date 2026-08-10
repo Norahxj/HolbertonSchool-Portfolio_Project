@@ -653,5 +653,47 @@
 "wishNameHint": "مثال: دراجة هوائية",
 "wishlistLimitExplanation": "يمكنك إضافة حتى 5 أمنيات بانتظار مراجعة ولي أمرك. بعد قبول الأمنية سيحدد ولي أمرك عدد النقاط المطلوبة لتحقيقها.",
 "maximumWishLimitReached": "وصلتِ إلى الحد الأقصى",
-"saveWish": "حفظ الأمنية"
+"saveWish": "حفظ الأمنية",
+"childProgressTitle": "تقدّمي",
+"progressThisWeek": "هذا الأسبوع",
+"progressLoadFailed": "تعذّر تحميل بيانات التقدم.",
+"progressNoTasksThisWeek": "لا توجد مهام مسندة هذا الأسبوع",
+"progressAllTasksCompleted": "رائع! أنجزت جميع مهام هذا الأسبوع",
+"progressCompletedOfTotal": "أحسنت! أنجزت {completed} من {total} مهام هذا الأسبوع",
+"@progressCompletedOfTotal": {
+  "placeholders": {
+    "completed": {
+      "type": "int"
+    },
+    "total": {
+      "type": "int"
+    }
+  }
+},
+"progressDayStreak": "أيام متتالية",
+"progressCompletedTasks": "مهمة مكتملة",
+"progressPointsBalance": "رصيد النقاط",
+"progressMyBadges": "أوسمتي",
+"progressBadgeUnlockExplanation": "يفتح كل وسام بعد إنجاز 5 مهام من فئته",
+"progressDailyTasksBadge": "المهام\nاليومية",
+"progressCulturalTasksBadge": "المهام\nالثقافية",
+"progressFinancialTasksBadge": "المهام\nالمالية",
+"progressReligiousTasksBadge": "المهام\nالدينية",
+"progressBadgeCompleted": "مكتمل ٥/٥",
+"progressBadgeCount": "{count}/٥",
+"@progressBadgeCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"progressWeeklyActivity": "نشاط الأسبوع",
+"progressSundayShort": "أحد",
+"progressMondayShort": "إثنين",
+"progressTuesdayShort": "ثلاثاء",
+"progressWednesdayShort": "أربعاء",
+"progressThursdayShort": "خميس",
+"progressFridayShort": "جمعة",
+"progressSaturdayShort": "سبت"
 }

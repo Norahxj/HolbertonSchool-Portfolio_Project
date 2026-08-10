@@ -6,7 +6,7 @@ import '../../../core/localization/localization_extension.dart';
 import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
 import '../home/screens/child_home_screen.dart';
-import '../screens/child_progress_screen.dart';
+import '../progress/screens/child_progress_screen.dart';
 import '../rewards/screens/child_rewards_screen.dart';
 import '../wishlist/screens/child_wishlist_screen.dart';
 
@@ -44,9 +44,6 @@ class _ChildNavigationView extends StatelessWidget {
         context.watch<AppNavigationController>();
 
     final l10n = context.l10n;
-
-    final isArabic =
-        Localizations.localeOf(context).languageCode == 'ar';
 
     final navigationItems = [
       AppNavigationItem(
@@ -91,10 +88,8 @@ class _ChildNavigationView extends StatelessWidget {
           : const SizedBox.shrink(),
 
       navigation.isLoaded(3)
-          ? ChildProgressScreen(
-              isArabic: isArabic,
-            )
-          : const SizedBox.shrink(),
+    ? const ChildProgressScreen()
+    : const SizedBox.shrink(),
     ];
 
     return Scaffold(

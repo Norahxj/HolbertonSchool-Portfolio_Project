@@ -2515,6 +2515,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save wish'**
   String get saveWish;
+
+  /// No description provided for @childProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Progress'**
+  String get childProgressTitle;
+
+  /// No description provided for @progressThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get progressThisWeek;
+
+  /// No description provided for @progressLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load progress data.'**
+  String get progressLoadFailed;
+
+  /// No description provided for @progressNoTasksThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks assigned this week'**
+  String get progressNoTasksThisWeek;
+
+  /// No description provided for @progressAllTasksCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Great! You completed all tasks this week'**
+  String get progressAllTasksCompleted;
+
+  /// No description provided for @progressCompletedOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Well done! You completed {completed} of {total} tasks this week'**
+  String progressCompletedOfTotal(int completed, int total);
+
+  /// No description provided for @progressDayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Day streak'**
+  String get progressDayStreak;
+
+  /// No description provided for @progressCompletedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed tasks'**
+  String get progressCompletedTasks;
+
+  /// No description provided for @progressPointsBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Points balance'**
+  String get progressPointsBalance;
+
+  /// No description provided for @progressMyBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'My Badges'**
+  String get progressMyBadges;
+
+  /// No description provided for @progressBadgeUnlockExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Each badge unlocks after completing 5 tasks in its category'**
+  String get progressBadgeUnlockExplanation;
+
+  /// No description provided for @progressDailyTasksBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily\nTasks'**
+  String get progressDailyTasksBadge;
+
+  /// No description provided for @progressCulturalTasksBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural\nTasks'**
+  String get progressCulturalTasksBadge;
+
+  /// No description provided for @progressFinancialTasksBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial\nTasks'**
+  String get progressFinancialTasksBadge;
+
+  /// No description provided for @progressReligiousTasksBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Religious\nTasks'**
+  String get progressReligiousTasksBadge;
+
+  /// No description provided for @progressBadgeCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed 5/5'**
+  String get progressBadgeCompleted;
+
+  /// No description provided for @progressBadgeCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/5'**
+  String progressBadgeCount(int count);
+
+  /// No description provided for @progressWeeklyActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Activity'**
+  String get progressWeeklyActivity;
+
+  /// No description provided for @progressSundayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get progressSundayShort;
+
+  /// No description provided for @progressMondayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get progressMondayShort;
+
+  /// No description provided for @progressTuesdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get progressTuesdayShort;
+
+  /// No description provided for @progressWednesdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get progressWednesdayShort;
+
+  /// No description provided for @progressThursdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get progressThursdayShort;
+
+  /// No description provided for @progressFridayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get progressFridayShort;
+
+  /// No description provided for @progressSaturdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get progressSaturdayShort;
 }
 
 class _AppLocalizationsDelegate

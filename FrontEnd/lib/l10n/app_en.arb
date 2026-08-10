@@ -653,5 +653,47 @@
 "wishNameHint": "Example: A bicycle",
 "wishlistLimitExplanation": "You can add up to 5 wishes awaiting your guardian's review. After a wish is approved, your guardian will set the number of points required to achieve it.",
 "maximumWishLimitReached": "Maximum limit reached",
-"saveWish": "Save wish"
+"saveWish": "Save wish",
+"childProgressTitle": "My Progress",
+"progressThisWeek": "This week",
+"progressLoadFailed": "Could not load progress data.",
+"progressNoTasksThisWeek": "No tasks assigned this week",
+"progressAllTasksCompleted": "Great! You completed all tasks this week",
+"progressCompletedOfTotal": "Well done! You completed {completed} of {total} tasks this week",
+"@progressCompletedOfTotal": {
+  "placeholders": {
+    "completed": {
+      "type": "int"
+    },
+    "total": {
+      "type": "int"
+    }
+  }
+},
+"progressDayStreak": "Day streak",
+"progressCompletedTasks": "Completed tasks",
+"progressPointsBalance": "Points balance",
+"progressMyBadges": "My Badges",
+"progressBadgeUnlockExplanation": "Each badge unlocks after completing 5 tasks in its category",
+"progressDailyTasksBadge": "Daily\nTasks",
+"progressCulturalTasksBadge": "Cultural\nTasks",
+"progressFinancialTasksBadge": "Financial\nTasks",
+"progressReligiousTasksBadge": "Religious\nTasks",
+"progressBadgeCompleted": "Completed 5/5",
+"progressBadgeCount": "{count}/5",
+"@progressBadgeCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"progressWeeklyActivity": "Weekly Activity",
+"progressSundayShort": "Sun",
+"progressMondayShort": "Mon",
+"progressTuesdayShort": "Tue",
+"progressWednesdayShort": "Wed",
+"progressThursdayShort": "Thu",
+"progressFridayShort": "Fri",
+"progressSaturdayShort": "Sat"
 }

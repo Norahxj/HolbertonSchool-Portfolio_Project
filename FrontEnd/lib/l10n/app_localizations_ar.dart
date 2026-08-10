@@ -1316,4 +1316,84 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get saveWish => 'حفظ الأمنية';
+
+  @override
+  String get childProgressTitle => 'تقدّمي';
+
+  @override
+  String get progressThisWeek => 'هذا الأسبوع';
+
+  @override
+  String get progressLoadFailed => 'تعذّر تحميل بيانات التقدم.';
+
+  @override
+  String get progressNoTasksThisWeek => 'لا توجد مهام مسندة هذا الأسبوع';
+
+  @override
+  String get progressAllTasksCompleted => 'رائع! أنجزت جميع مهام هذا الأسبوع';
+
+  @override
+  String progressCompletedOfTotal(int completed, int total) {
+    return 'أحسنت! أنجزت $completed من $total مهام هذا الأسبوع';
+  }
+
+  @override
+  String get progressDayStreak => 'أيام متتالية';
+
+  @override
+  String get progressCompletedTasks => 'مهمة مكتملة';
+
+  @override
+  String get progressPointsBalance => 'رصيد النقاط';
+
+  @override
+  String get progressMyBadges => 'أوسمتي';
+
+  @override
+  String get progressBadgeUnlockExplanation =>
+      'يفتح كل وسام بعد إنجاز 5 مهام من فئته';
+
+  @override
+  String get progressDailyTasksBadge => 'المهام\nاليومية';
+
+  @override
+  String get progressCulturalTasksBadge => 'المهام\nالثقافية';
+
+  @override
+  String get progressFinancialTasksBadge => 'المهام\nالمالية';
+
+  @override
+  String get progressReligiousTasksBadge => 'المهام\nالدينية';
+
+  @override
+  String get progressBadgeCompleted => 'مكتمل ٥/٥';
+
+  @override
+  String progressBadgeCount(int count) {
+    return '$count/٥';
+  }
+
+  @override
+  String get progressWeeklyActivity => 'نشاط الأسبوع';
+
+  @override
+  String get progressSundayShort => 'أحد';
+
+  @override
+  String get progressMondayShort => 'إثنين';
+
+  @override
+  String get progressTuesdayShort => 'ثلاثاء';
+
+  @override
+  String get progressWednesdayShort => 'أربعاء';
+
+  @override
+  String get progressThursdayShort => 'خميس';
+
+  @override
+  String get progressFridayShort => 'جمعة';
+
+  @override
+  String get progressSaturdayShort => 'سبت';
 }
