@@ -12,8 +12,6 @@ class LanguageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localeController =
-        context.watch<LocaleController>();
 
     final toggleLocale =
         context.read<LocaleController>().toggleLocale;

@@ -202,11 +202,8 @@ class _AsalahAppState extends State<AsalahApp> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final isArabic = localeController.locale.languageCode == 'ar';
-
     if (!_isLoggedIn) {
       return WelcomeScreen(
-        isArabic: isArabic,
         onLanguageToggle: localeController.toggleLocale,
         onParentAuthenticated: _handleAuthenticated,
       );

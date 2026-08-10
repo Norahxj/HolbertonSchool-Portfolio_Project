@@ -1,7 +1,3 @@
-/// Model for a weekend reward, matching the backend RewardResponseSchema.
-///
-/// [status] values: 'locked' | 'unlocked' | 'claimed'
-/// [unlockDay] is an integer 0-6 (0=Sunday, 1=Monday, ..., 6=Saturday).
 class RewardModel {
   final String id;
   final String childId;
@@ -34,22 +30,5 @@ class RewardModel {
       assignedBy: json['assigned_by'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
-  }
-
-  /// Arabic label for the unlock day.
-  String get unlockDayLabel {
-    const days = [
-      'الأحد',
-      'الاثنين',
-      'الثلاثاء',
-      'الأربعاء',
-      'الخميس',
-      'الجمعة',
-      'السبت',
-    ];
-    if (unlockDay >= 0 && unlockDay < days.length) {
-      return days[unlockDay];
-    }
-    return 'غير محدد';
   }
 }

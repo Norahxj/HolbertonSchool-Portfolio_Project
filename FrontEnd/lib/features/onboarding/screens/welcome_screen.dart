@@ -11,13 +11,11 @@ import '../../child/pin_login/screens/child_pin_login_screen.dart';
 import '../widgets/role_card.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onLanguageToggle;
   final Future<void> Function() onParentAuthenticated;
 
   const WelcomeScreen({
     super.key,
-    required this.isArabic,
     required this.onLanguageToggle,
     required this.onParentAuthenticated,
   });

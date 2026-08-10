@@ -45,16 +45,51 @@ class CurrentRewardCard extends StatelessWidget {
     }
   }
 
+  String _unlockDayLabel(
+    BuildContext context,
+    int unlockDay,
+  ) {
+    switch (unlockDay) {
+      case 0:
+        return context.l10n.sunday;
+
+      case 1:
+        return context.l10n.monday;
+
+      case 2:
+        return context.l10n.tuesday;
+
+      case 3:
+        return context.l10n.wednesday;
+
+      case 4:
+        return context.l10n.thursday;
+
+      case 5:
+        return context.l10n.friday;
+
+      case 6:
+        return context.l10n.saturday;
+
+      default:
+        return context.l10n.notSpecified;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
+      margin: const EdgeInsetsDirectional.only(
+        bottom: AppSpacing.sm,
+      ),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Row(
         children: [
@@ -70,7 +105,9 @@ class CurrentRewardCard extends StatelessWidget {
               color: AppColors.primary,
             ),
           ),
+
           const SizedBox(width: AppSpacing.md),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,8 +123,10 @@ class CurrentRewardCard extends StatelessWidget {
                     color: AppColors.textPrimary,
                   ),
                 ),
+
                 if (reward.description?.trim().isNotEmpty == true) ...[
                   const SizedBox(height: 4),
+
                   Text(
                     reward.description!,
                     textAlign: TextAlign.start,
@@ -99,12 +138,20 @@ class CurrentRewardCard extends StatelessWidget {
                     ),
                   ),
                 ],
+
                 const SizedBox(height: 6),
+
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(_statusIcon, size: 17, color: AppColors.primary),
+                    Icon(
+                      _statusIcon,
+                      size: 17,
+                      color: AppColors.primary,
+                    ),
+
                     const SizedBox(width: 4),
+
                     Text(
                       _statusLabel(context),
                       style: const TextStyle(
@@ -115,9 +162,16 @@ class CurrentRewardCard extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 3),
+
                 Text(
-                  context.l10n.rewardUnlockDay(reward.unlockDayLabel),
+                  context.l10n.rewardUnlockDay(
+                    _unlockDayLabel(
+                      context,
+                      reward.unlockDay,
+                    ),
+                  ),
                   textAlign: TextAlign.start,
                   style: const TextStyle(
                     fontSize: 11,
@@ -127,8 +181,10 @@ class CurrentRewardCard extends StatelessWidget {
               ],
             ),
           ),
+
           if (onDelete != null) ...[
             const SizedBox(width: AppSpacing.sm),
+
             IconButton(
               onPressed: isDeleting ? null : onDelete,
               tooltip: context.l10n.delete,
@@ -141,7 +197,10 @@ class CurrentRewardCard extends StatelessWidget {
                         color: AppColors.error,
                       ),
                     )
-                  : const Icon(Icons.delete_outline, color: AppColors.error),
+                  : const Icon(
+                      Icons.delete_outline,
+                      color: AppColors.error,
+                    ),
             ),
           ],
         ],
