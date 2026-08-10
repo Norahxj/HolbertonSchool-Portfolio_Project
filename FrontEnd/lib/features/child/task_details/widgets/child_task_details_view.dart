@@ -220,7 +220,7 @@ class ChildTaskDetailsView extends StatelessWidget {
     }
 
     if (controller.isPendingReview) {
-      return context.l10n.waitingForReview;
+      return context.l10n.awaitingReview;
     }
 
     if (controller.isRejected) {
@@ -311,7 +311,7 @@ class _TaskDescriptionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            context.l10n.description,
+            context.l10n.taskDescription,
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,

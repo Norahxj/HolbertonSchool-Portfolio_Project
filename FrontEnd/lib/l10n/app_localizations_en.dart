@@ -1125,4 +1125,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String noorPointsCount(int points) {
     return '$points Noor Points';
   }
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get once => 'One time';
 }

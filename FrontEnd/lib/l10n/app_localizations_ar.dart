@@ -1092,4 +1092,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String noorPointsCount(int points) {
     return '$points نقاط نور';
   }
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String get once => 'مرة واحدة';
 }

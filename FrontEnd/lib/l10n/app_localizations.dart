@@ -2107,6 +2107,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{points} Noor Points'**
   String noorPointsCount(int points);
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No description provided for @once.
+  ///
+  /// In en, this message translates to:
+  /// **'One time'**
+  String get once;
 }
 
 class _AppLocalizationsDelegate

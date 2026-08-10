@@ -533,6 +533,7 @@
       "type": "int"
     }
   }
-}
-
+},
+"notSpecified": "Not specified",
+"once": "One time"
 }
