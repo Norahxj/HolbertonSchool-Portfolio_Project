@@ -2861,7 +2861,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Choose how you would like to continue'**
+  /// **'A platform that helps children build financial habits and develop their values'**
   String get welcomeSubtitle;
 
   /// No description provided for @parentRole.

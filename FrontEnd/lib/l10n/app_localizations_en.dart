@@ -1538,7 +1538,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Where values are built and achievements are rewarded.';
 
   @override
-  String get welcomeSubtitle => 'Choose how you would like to continue';
+  String get welcomeSubtitle =>
+      'A platform that helps children build financial habits and develop their values';
 
   @override
   String get parentRole => 'Parent';

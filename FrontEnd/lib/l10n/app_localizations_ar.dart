@@ -1495,7 +1495,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeTagline => 'حيثُ تُبنى القيم وتُكافئ الإنجازات';
 
   @override
-  String get welcomeSubtitle => 'اختر طريقة الدخول للمتابعة';
+  String get welcomeSubtitle =>
+      'منصة تساعد الأطفال على بناء عادات مالية وتنمية قيمهم';
 
   @override
   String get parentRole => 'ولي أمر';
