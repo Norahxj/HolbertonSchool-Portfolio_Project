@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/task_assignment_model.dart';
-import '../../../child/screens/child_task_details_screen.dart';
 import '../controllers/child_tasks_controller.dart';
 import '../models/child_task_action_result.dart';
 import '../models/upcoming_child_task.dart';
 import '../utils/child_tasks_localization.dart';
 import '../widgets/child_tasks_view.dart';
+import 'parent_child_task_details_screen.dart';
 
 class ChildTasksScreen extends StatefulWidget {
   final String childId;
@@ -34,7 +34,8 @@ class _ChildTasksScreenState extends State<ChildTasksScreen> {
   void initState() {
     super.initState();
 
-    _controller = ChildTasksController()..loadTasks(widget.childId);
+    _controller = ChildTasksController()
+      ..loadTasks(widget.childId);
   }
 
   @override
@@ -51,7 +52,10 @@ class _ChildTasksScreenState extends State<ChildTasksScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(context.l10n.deleteTaskTitle, textAlign: TextAlign.start),
+          title: Text(
+            context.l10n.deleteTaskTitle,
+            textAlign: TextAlign.start,
+          ),
           content: Text(
             context.l10n.deleteTaskConfirmation(taskTitle),
             textAlign: TextAlign.start,
@@ -67,7 +71,9 @@ class _ChildTasksScreenState extends State<ChildTasksScreen> {
               onPressed: () {
                 Navigator.pop(dialogContext, true);
               },
-              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.error,
+              ),
               child: Text(context.l10n.delete),
             ),
           ],
@@ -90,30 +96,30 @@ class _ChildTasksScreenState extends State<ChildTasksScreen> {
       return;
     }
 
-    _showMessage(context.l10n.taskDeletedSuccessfully);
+    _showMessage(
+      context.l10n.taskDeletedSuccessfully,
+    );
   }
 
-  void _openAssignmentDetails(TaskAssignmentModel assignment) {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-
+  void _openAssignmentDetails(
+    TaskAssignmentModel assignment,
+  ) {
     Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return ChildTaskDetailsScreen(
+          return ParentChildTaskDetailsScreen(
             assignment: assignment,
             icon: Icons.task_alt_outlined,
-            isArabic: isArabic,
-            parentView: true,
           );
         },
       ),
     );
   }
 
-  void _openUpcomingTaskDetails(UpcomingChildTask item) {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-
+  void _openUpcomingTaskDetails(
+    UpcomingChildTask item,
+  ) {
     final assignment = TaskAssignmentModel(
       id: '',
       status: 'PENDING',
@@ -134,18 +140,18 @@ class _ChildTasksScreenState extends State<ChildTasksScreen> {
       context,
       MaterialPageRoute(
         builder: (_) {
-          return ChildTaskDetailsScreen(
+          return ParentChildTaskDetailsScreen(
             assignment: assignment,
             icon: Icons.event_available_outlined,
-            isArabic: isArabic,
-            parentView: true,
           );
         },
       ),
     );
   }
 
-  void _showActionError(ChildTaskActionResult result) {
+  void _showActionError(
+    ChildTaskActionResult result,
+  ) {
     final message =
         result.backendMessage ??
         result.errorCode?.localized(context) ??
@@ -159,7 +165,11 @@ class _ChildTasksScreenState extends State<ChildTasksScreen> {
 
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
   }
 
   void _goBack() {
