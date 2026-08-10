@@ -1239,4 +1239,120 @@ class AppLocalizationsEn extends AppLocalizations {
   String childRewardUnlocksOn(String day) {
     return 'Unlocks on $day';
   }
+
+  @override
+  String get wishlistApprovedStatus => 'Approved ✓';
+
+  @override
+  String get wishlistRejectedStatus => 'Rejected ✗';
+
+  @override
+  String get wishlistAchievedStatus => 'Achieved! 🌟';
+
+  @override
+  String get wishlistPendingStatus => 'Pending...';
+
+  @override
+  String wishlistTargetPoints(int points) {
+    return 'Target: $points points';
+  }
+
+  @override
+  String wishlistCurrentPoints(int points) {
+    return 'You have: $points points';
+  }
+
+  @override
+  String get wishlistTargetNotSpecified => 'Required points were not specified';
+
+  @override
+  String get wishlistAchieveButton => 'I achieved my wish! 🌟';
+
+  @override
+  String get wishlistCollectMorePoints => 'Collect more points';
+
+  @override
+  String get childWishlistLoadFailed => 'Could not load wishes.';
+
+  @override
+  String get childWishlistTitle => 'My Wishes';
+
+  @override
+  String get childWishlistSubtitle =>
+      'Choose a wish and collect Noor Points to achieve it';
+
+  @override
+  String childWishlistPoints(int points) {
+    return 'Your current balance: $points points';
+  }
+
+  @override
+  String get childAddWish => 'Add a Wish';
+
+  @override
+  String get childWishlistEmpty => 'No wishes yet';
+
+  @override
+  String get childWishlistEmptySubtitle =>
+      'Add your first wish and start collecting points to achieve it';
+
+  @override
+  String get deleteWishTitle => 'Delete Wish';
+
+  @override
+  String deleteWishConfirmation(String wishName) {
+    return 'Do you want to delete the wish \"$wishName\"?';
+  }
+
+  @override
+  String get deleteWishFailed => 'Could not delete the wish.';
+
+  @override
+  String get deleteWishSuccess => 'Wish deleted.';
+
+  @override
+  String get achieveWishFailed => 'Could not achieve the wish.';
+
+  @override
+  String get achieveWishSuccess => 'Wish achieved! 🌟';
+
+  @override
+  String get createWishFailed => 'Could not add the wish.';
+
+  @override
+  String get wishlistLimitReached =>
+      'You have reached the maximum number of pending wishes.';
+
+  @override
+  String get wishNameTooShort => 'The wish name is too short.';
+
+  @override
+  String get wishNameTooLong => 'The wish name is too long.';
+
+  @override
+  String get addWishTitle => 'Add a Wish';
+
+  @override
+  String get chooseWishesCarefully => 'Choose your wishes carefully';
+
+  @override
+  String pendingWishesCount(int count, int maximum) {
+    return 'You have $count of $maximum wishes awaiting review';
+  }
+
+  @override
+  String get wishNameLabel => 'Wish name';
+
+  @override
+  String get wishNameHint => 'Example: A bicycle';
+
+  @override
+  String get wishlistLimitExplanation =>
+      'You can add up to 5 wishes awaiting your guardian\'s review. After a wish is approved, your guardian will set the number of points required to achieve it.';
+
+  @override
+  String get maximumWishLimitReached => 'Maximum limit reached';
+
+  @override
+  String get saveWish => 'Save wish';
 }

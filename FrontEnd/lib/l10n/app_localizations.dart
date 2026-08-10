@@ -2311,6 +2311,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlocks on {day}'**
   String childRewardUnlocksOn(String day);
+
+  /// No description provided for @wishlistApprovedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved ✓'**
+  String get wishlistApprovedStatus;
+
+  /// No description provided for @wishlistRejectedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected ✗'**
+  String get wishlistRejectedStatus;
+
+  /// No description provided for @wishlistAchievedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Achieved! 🌟'**
+  String get wishlistAchievedStatus;
+
+  /// No description provided for @wishlistPendingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending...'**
+  String get wishlistPendingStatus;
+
+  /// No description provided for @wishlistTargetPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Target: {points} points'**
+  String wishlistTargetPoints(int points);
+
+  /// No description provided for @wishlistCurrentPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'You have: {points} points'**
+  String wishlistCurrentPoints(int points);
+
+  /// No description provided for @wishlistTargetNotSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points were not specified'**
+  String get wishlistTargetNotSpecified;
+
+  /// No description provided for @wishlistAchieveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I achieved my wish! 🌟'**
+  String get wishlistAchieveButton;
+
+  /// No description provided for @wishlistCollectMorePoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect more points'**
+  String get wishlistCollectMorePoints;
+
+  /// No description provided for @childWishlistLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load wishes.'**
+  String get childWishlistLoadFailed;
+
+  /// No description provided for @childWishlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Wishes'**
+  String get childWishlistTitle;
+
+  /// No description provided for @childWishlistSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a wish and collect Noor Points to achieve it'**
+  String get childWishlistSubtitle;
+
+  /// No description provided for @childWishlistPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current balance: {points} points'**
+  String childWishlistPoints(int points);
+
+  /// No description provided for @childAddWish.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a Wish'**
+  String get childAddWish;
+
+  /// No description provided for @childWishlistEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No wishes yet'**
+  String get childWishlistEmpty;
+
+  /// No description provided for @childWishlistEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first wish and start collecting points to achieve it'**
+  String get childWishlistEmptySubtitle;
+
+  /// No description provided for @deleteWishTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Wish'**
+  String get deleteWishTitle;
+
+  /// No description provided for @deleteWishConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to delete the wish \"{wishName}\"?'**
+  String deleteWishConfirmation(String wishName);
+
+  /// No description provided for @deleteWishFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete the wish.'**
+  String get deleteWishFailed;
+
+  /// No description provided for @deleteWishSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Wish deleted.'**
+  String get deleteWishSuccess;
+
+  /// No description provided for @achieveWishFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not achieve the wish.'**
+  String get achieveWishFailed;
+
+  /// No description provided for @achieveWishSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Wish achieved! 🌟'**
+  String get achieveWishSuccess;
+
+  /// No description provided for @createWishFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not add the wish.'**
+  String get createWishFailed;
+
+  /// No description provided for @wishlistLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You have reached the maximum number of pending wishes.'**
+  String get wishlistLimitReached;
+
+  /// No description provided for @wishNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'The wish name is too short.'**
+  String get wishNameTooShort;
+
+  /// No description provided for @wishNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'The wish name is too long.'**
+  String get wishNameTooLong;
+
+  /// No description provided for @addWishTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a Wish'**
+  String get addWishTitle;
+
+  /// No description provided for @chooseWishesCarefully.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your wishes carefully'**
+  String get chooseWishesCarefully;
+
+  /// No description provided for @pendingWishesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} of {maximum} wishes awaiting review'**
+  String pendingWishesCount(int count, int maximum);
+
+  /// No description provided for @wishNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wish name'**
+  String get wishNameLabel;
+
+  /// No description provided for @wishNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: A bicycle'**
+  String get wishNameHint;
+
+  /// No description provided for @wishlistLimitExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add up to 5 wishes awaiting your guardian\'s review. After a wish is approved, your guardian will set the number of points required to achieve it.'**
+  String get wishlistLimitExplanation;
+
+  /// No description provided for @maximumWishLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum limit reached'**
+  String get maximumWishLimitReached;
+
+  /// No description provided for @saveWish.
+  ///
+  /// In en, this message translates to:
+  /// **'Save wish'**
+  String get saveWish;
 }
 
 class _AppLocalizationsDelegate

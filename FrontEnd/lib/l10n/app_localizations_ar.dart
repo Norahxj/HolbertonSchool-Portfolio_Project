@@ -1202,4 +1202,118 @@ class AppLocalizationsAr extends AppLocalizations {
   String childRewardUnlocksOn(String day) {
     return 'تُفتح يوم $day';
   }
+
+  @override
+  String get wishlistApprovedStatus => 'مقبولة ✓';
+
+  @override
+  String get wishlistRejectedStatus => 'مرفوضة ✗';
+
+  @override
+  String get wishlistAchievedStatus => 'تحققت! 🌟';
+
+  @override
+  String get wishlistPendingStatus => 'في الانتظار...';
+
+  @override
+  String wishlistTargetPoints(int points) {
+    return 'الهدف: $points نقطة';
+  }
+
+  @override
+  String wishlistCurrentPoints(int points) {
+    return 'لديك: $points نقطة';
+  }
+
+  @override
+  String get wishlistTargetNotSpecified => 'لم يتم تحديد النقاط المطلوبة';
+
+  @override
+  String get wishlistAchieveButton => 'لقد حققت أمنيتي! 🌟';
+
+  @override
+  String get wishlistCollectMorePoints => 'اجمع المزيد من النقاط';
+
+  @override
+  String get childWishlistLoadFailed => 'تعذّر تحميل الأمنيات.';
+
+  @override
+  String get childWishlistTitle => 'أمنياتي';
+
+  @override
+  String get childWishlistSubtitle => 'اختر أمنية واجمع نقاط نور لتحقيقها';
+
+  @override
+  String childWishlistPoints(int points) {
+    return 'رصيدك الحالي: $points نقطة';
+  }
+
+  @override
+  String get childAddWish => 'إضافة أمنية';
+
+  @override
+  String get childWishlistEmpty => 'لا توجد أمنيات بعد';
+
+  @override
+  String get childWishlistEmptySubtitle =>
+      'أضف أمنيتك الأولى وابدأ بجمع النقاط لتحقيقها';
+
+  @override
+  String get deleteWishTitle => 'حذف الأمنية';
+
+  @override
+  String deleteWishConfirmation(String wishName) {
+    return 'هل تريد حذف أمنية \"$wishName\"؟';
+  }
+
+  @override
+  String get deleteWishFailed => 'تعذّر حذف الأمنية.';
+
+  @override
+  String get deleteWishSuccess => 'تم حذف الأمنية.';
+
+  @override
+  String get achieveWishFailed => 'تعذّر تحقيق الأمنية.';
+
+  @override
+  String get achieveWishSuccess => 'تم تحقيق الأمنية! 🌟';
+
+  @override
+  String get createWishFailed => 'تعذّر إضافة الأمنية.';
+
+  @override
+  String get wishlistLimitReached => 'وصلت للحد الأقصى من الأمنيات المعلقة.';
+
+  @override
+  String get wishNameTooShort => 'اسم الأمنية قصير جدًا.';
+
+  @override
+  String get wishNameTooLong => 'اسم الأمنية طويل جدًا.';
+
+  @override
+  String get addWishTitle => 'إضافة أمنية';
+
+  @override
+  String get chooseWishesCarefully => 'اختر أمنياتك بعناية';
+
+  @override
+  String pendingWishesCount(int count, int maximum) {
+    return 'لديك $count من أصل $maximum أمنيات بانتظار المراجعة';
+  }
+
+  @override
+  String get wishNameLabel => 'اسم الأمنية';
+
+  @override
+  String get wishNameHint => 'مثال: دراجة هوائية';
+
+  @override
+  String get wishlistLimitExplanation =>
+      'يمكنك إضافة حتى 5 أمنيات بانتظار مراجعة ولي أمرك. بعد قبول الأمنية سيحدد ولي أمرك عدد النقاط المطلوبة لتحقيقها.';
+
+  @override
+  String get maximumWishLimitReached => 'وصلتِ إلى الحد الأقصى';
+
+  @override
+  String get saveWish => 'حفظ الأمنية';
 }

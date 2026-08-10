@@ -581,5 +581,77 @@
       "type": "String"
     }
   }
-}
+},
+"wishlistApprovedStatus": "Approved ✓",
+"wishlistRejectedStatus": "Rejected ✗",
+"wishlistAchievedStatus": "Achieved! 🌟",
+"wishlistPendingStatus": "Pending...",
+"wishlistTargetPoints": "Target: {points} points",
+"@wishlistTargetPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistCurrentPoints": "You have: {points} points",
+"@wishlistCurrentPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistTargetNotSpecified": "Required points were not specified",
+"wishlistAchieveButton": "I achieved my wish! 🌟",
+"wishlistCollectMorePoints": "Collect more points",
+"childWishlistLoadFailed": "Could not load wishes.",
+"childWishlistTitle": "My Wishes",
+"childWishlistSubtitle": "Choose a wish and collect Noor Points to achieve it",
+"childWishlistPoints": "Your current balance: {points} points",
+"@childWishlistPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"childAddWish": "Add a Wish",
+"childWishlistEmpty": "No wishes yet",
+"childWishlistEmptySubtitle": "Add your first wish and start collecting points to achieve it",
+"deleteWishTitle": "Delete Wish",
+"deleteWishConfirmation": "Do you want to delete the wish \"{wishName}\"?",
+"@deleteWishConfirmation": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"deleteWishFailed": "Could not delete the wish.",
+"deleteWishSuccess": "Wish deleted.",
+"achieveWishFailed": "Could not achieve the wish.",
+"achieveWishSuccess": "Wish achieved! 🌟",
+"createWishFailed": "Could not add the wish.",
+"wishlistLimitReached": "You have reached the maximum number of pending wishes.",
+"wishNameTooShort": "The wish name is too short.",
+"wishNameTooLong": "The wish name is too long.",
+"addWishTitle": "Add a Wish",
+"chooseWishesCarefully": "Choose your wishes carefully",
+"pendingWishesCount": "You have {count} of {maximum} wishes awaiting review",
+"@pendingWishesCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    },
+    "maximum": {
+      "type": "int"
+    }
+  }
+},
+"wishNameLabel": "Wish name",
+"wishNameHint": "Example: A bicycle",
+"wishlistLimitExplanation": "You can add up to 5 wishes awaiting your guardian's review. After a wish is approved, your guardian will set the number of points required to achieve it.",
+"maximumWishLimitReached": "Maximum limit reached",
+"saveWish": "Save wish"
 }

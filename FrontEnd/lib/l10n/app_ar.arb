@@ -581,5 +581,77 @@
       "type": "String"
     }
   }
-}
+},
+"wishlistApprovedStatus": "مقبولة ✓",
+"wishlistRejectedStatus": "مرفوضة ✗",
+"wishlistAchievedStatus": "تحققت! 🌟",
+"wishlistPendingStatus": "في الانتظار...",
+"wishlistTargetPoints": "الهدف: {points} نقطة",
+"@wishlistTargetPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistCurrentPoints": "لديك: {points} نقطة",
+"@wishlistCurrentPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistTargetNotSpecified": "لم يتم تحديد النقاط المطلوبة",
+"wishlistAchieveButton": "لقد حققت أمنيتي! 🌟",
+"wishlistCollectMorePoints": "اجمع المزيد من النقاط",
+"childWishlistLoadFailed": "تعذّر تحميل الأمنيات.",
+"childWishlistTitle": "أمنياتي",
+"childWishlistSubtitle": "اختر أمنية واجمع نقاط نور لتحقيقها",
+"childWishlistPoints": "رصيدك الحالي: {points} نقطة",
+"@childWishlistPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"childAddWish": "إضافة أمنية",
+"childWishlistEmpty": "لا توجد أمنيات بعد",
+"childWishlistEmptySubtitle": "أضف أمنيتك الأولى وابدأ بجمع النقاط لتحقيقها",
+"deleteWishTitle": "حذف الأمنية",
+"deleteWishConfirmation": "هل تريد حذف أمنية \"{wishName}\"؟",
+"@deleteWishConfirmation": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"deleteWishFailed": "تعذّر حذف الأمنية.",
+"deleteWishSuccess": "تم حذف الأمنية.",
+"achieveWishFailed": "تعذّر تحقيق الأمنية.",
+"achieveWishSuccess": "تم تحقيق الأمنية! 🌟",
+"createWishFailed": "تعذّر إضافة الأمنية.",
+"wishlistLimitReached": "وصلت للحد الأقصى من الأمنيات المعلقة.",
+"wishNameTooShort": "اسم الأمنية قصير جدًا.",
+"wishNameTooLong": "اسم الأمنية طويل جدًا.",
+"addWishTitle": "إضافة أمنية",
+"chooseWishesCarefully": "اختر أمنياتك بعناية",
+"pendingWishesCount": "لديك {count} من أصل {maximum} أمنيات بانتظار المراجعة",
+"@pendingWishesCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    },
+    "maximum": {
+      "type": "int"
+    }
+  }
+},
+"wishNameLabel": "اسم الأمنية",
+"wishNameHint": "مثال: دراجة هوائية",
+"wishlistLimitExplanation": "يمكنك إضافة حتى 5 أمنيات بانتظار مراجعة ولي أمرك. بعد قبول الأمنية سيحدد ولي أمرك عدد النقاط المطلوبة لتحقيقها.",
+"maximumWishLimitReached": "وصلتِ إلى الحد الأقصى",
+"saveWish": "حفظ الأمنية"
 }
