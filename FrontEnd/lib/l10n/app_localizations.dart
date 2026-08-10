@@ -2251,6 +2251,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to log out?'**
   String get childLogoutConfirmation;
+
+  /// No description provided for @childRewardsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load rewards'**
+  String get childRewardsLoadFailed;
+
+  /// No description provided for @childRewardsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A weekly reward connected to your progress'**
+  String get childRewardsSubtitle;
+
+  /// No description provided for @childRewardsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no rewards yet.\nAsk your parents to add a reward!'**
+  String get childRewardsEmpty;
+
+  /// No description provided for @childRewardClaimedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward claimed! 🎉'**
+  String get childRewardClaimedSuccess;
+
+  /// No description provided for @childRewardClaimFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not claim the reward'**
+  String get childRewardClaimFailed;
+
+  /// No description provided for @childRewardClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim'**
+  String get childRewardClaim;
+
+  /// No description provided for @childRewardClaimedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 Claimed'**
+  String get childRewardClaimedBadge;
+
+  /// No description provided for @childRewardAvailableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Available now! Tap to claim ✓'**
+  String get childRewardAvailableNow;
+
+  /// No description provided for @childRewardClaimedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed 🎉'**
+  String get childRewardClaimedStatus;
+
+  /// No description provided for @childRewardUnlocksOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks on {day}'**
+  String childRewardUnlocksOn(String day);
 }
 
 class _AppLocalizationsDelegate

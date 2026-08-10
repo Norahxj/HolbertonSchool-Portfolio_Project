@@ -564,5 +564,22 @@
 "childHomeLoadFailed": "The page could not be loaded.",
 "childAccount": "Child account",
 "childSwitchLanguage": "Switch to Arabic",
-"childLogoutConfirmation": "Are you sure you want to log out?"
+"childLogoutConfirmation": "Are you sure you want to log out?",
+"childRewardsLoadFailed": "Could not load rewards",
+"childRewardsSubtitle": "A weekly reward connected to your progress",
+"childRewardsEmpty": "There are no rewards yet.\nAsk your parents to add a reward!",
+"childRewardClaimedSuccess": "Reward claimed! 🎉",
+"childRewardClaimFailed": "Could not claim the reward",
+"childRewardClaim": "Claim",
+"childRewardClaimedBadge": "🎉 Claimed",
+"childRewardAvailableNow": "Available now! Tap to claim ✓",
+"childRewardClaimedStatus": "Claimed 🎉",
+"childRewardUnlocksOn": "Unlocks on {day}",
+"@childRewardUnlocksOn": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+}
 }

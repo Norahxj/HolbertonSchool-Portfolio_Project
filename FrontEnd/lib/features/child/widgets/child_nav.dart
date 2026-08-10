@@ -7,7 +7,7 @@ import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
 import '../home/screens/child_home_screen.dart';
 import '../screens/child_progress_screen.dart';
-import '../screens/child_rewards_screen.dart';
+import '../rewards/screens/child_rewards_screen.dart';
 import '../screens/child_wishlist_screen.dart';
 
 class ChildNav extends StatelessWidget {
@@ -89,8 +89,7 @@ class _ChildNavigationView extends StatelessWidget {
           : const SizedBox.shrink(),
 
       navigation.isLoaded(2)
-          ? ChildRewardsScreen(
-              isArabic: isArabic,
+          ? const  ChildRewardsScreen(
             )
           : const SizedBox.shrink(),
 

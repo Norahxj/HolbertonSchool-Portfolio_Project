@@ -1205,4 +1205,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get childLogoutConfirmation => 'Are you sure you want to log out?';
+
+  @override
+  String get childRewardsLoadFailed => 'Could not load rewards';
+
+  @override
+  String get childRewardsSubtitle =>
+      'A weekly reward connected to your progress';
+
+  @override
+  String get childRewardsEmpty =>
+      'There are no rewards yet.\nAsk your parents to add a reward!';
+
+  @override
+  String get childRewardClaimedSuccess => 'Reward claimed! 🎉';
+
+  @override
+  String get childRewardClaimFailed => 'Could not claim the reward';
+
+  @override
+  String get childRewardClaim => 'Claim';
+
+  @override
+  String get childRewardClaimedBadge => '🎉 Claimed';
+
+  @override
+  String get childRewardAvailableNow => 'Available now! Tap to claim ✓';
+
+  @override
+  String get childRewardClaimedStatus => 'Claimed 🎉';
+
+  @override
+  String childRewardUnlocksOn(String day) {
+    return 'Unlocks on $day';
+  }
 }

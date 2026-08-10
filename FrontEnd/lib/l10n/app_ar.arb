@@ -564,5 +564,22 @@
 "childHomeLoadFailed": "تعذّر تحميل الصفحة.",
 "childAccount": "حساب الطفل",
 "childSwitchLanguage": "التبديل إلى الإنجليزية",
-"childLogoutConfirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
+"childLogoutConfirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+"childRewardsLoadFailed": "تعذّر تحميل المكافآت",
+"childRewardsSubtitle": "مكافأة أسبوعية ترتبط بتقدّمك",
+"childRewardsEmpty": "لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!",
+"childRewardClaimedSuccess": "تم استلام المكافأة! 🎉",
+"childRewardClaimFailed": "تعذّر استلام المكافأة",
+"childRewardClaim": "استلام",
+"childRewardClaimedBadge": "🎉 تم",
+"childRewardAvailableNow": "متاحة الآن! اضغط للاستلام ✓",
+"childRewardClaimedStatus": "تم الاستلام 🎉",
+"childRewardUnlocksOn": "تُفتح يوم {day}",
+"@childRewardUnlocksOn": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+}
 }

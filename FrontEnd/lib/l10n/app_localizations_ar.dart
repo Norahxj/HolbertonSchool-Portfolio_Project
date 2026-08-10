@@ -1169,4 +1169,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get childLogoutConfirmation => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
+
+  @override
+  String get childRewardsLoadFailed => 'تعذّر تحميل المكافآت';
+
+  @override
+  String get childRewardsSubtitle => 'مكافأة أسبوعية ترتبط بتقدّمك';
+
+  @override
+  String get childRewardsEmpty =>
+      'لا توجد مكافآت بعد.\nتحدّث مع والديك لإضافة مكافأة!';
+
+  @override
+  String get childRewardClaimedSuccess => 'تم استلام المكافأة! 🎉';
+
+  @override
+  String get childRewardClaimFailed => 'تعذّر استلام المكافأة';
+
+  @override
+  String get childRewardClaim => 'استلام';
+
+  @override
+  String get childRewardClaimedBadge => '🎉 تم';
+
+  @override
+  String get childRewardAvailableNow => 'متاحة الآن! اضغط للاستلام ✓';
+
+  @override
+  String get childRewardClaimedStatus => 'تم الاستلام 🎉';
+
+  @override
+  String childRewardUnlocksOn(String day) {
+    return 'تُفتح يوم $day';
+  }
 }
