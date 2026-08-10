@@ -513,5 +513,25 @@
 "childNavigationHome": "الرئيسية",
 "childNavigationWishes": "أمنياتي",
 "childNavigationRewards": "المكافآت",
-"childNavigationProgress": "تقدّمي"
+"childNavigationProgress": "تقدّمي",
+"childTaskAutoApprovedSuccess": "أحسنت! اكتملت المهمة وأُضيفت نقاطك.",
+"childTaskSentForReviewSuccess": "أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.",
+"childTaskCompleteFailed": "تعذّر إكمال المهمة. حاول مرة أخرى.",
+"childTaskUnexpectedError": "حدث خطأ أثناء إكمال المهمة.",
+"childTaskCompletedApproved": "مكتملة ومعتمدة",
+"childTaskWaitingGuardianReview": "بانتظار مراجعة ولي الأمر",
+"childTaskReadyToComplete": "جاهزة للإنجاز",
+"childTaskApproved": "تم اعتماد المهمة",
+"childTaskCompleteButton": "أنجزت المهمة",
+"childTaskAutoVerificationMessage": "ستُعتمد هذه المهمة تلقائيًا عند إتمامها، وتُضاف النقاط مباشرة إلى رصيدك.",
+"childTaskGuardianVerificationMessage": "عند إتمامك المهمة سيراجعها ولي أمرك، وبعد الاعتماد تُضاف النقاط إلى رصيدك.",
+"childTaskNoDescription": "لا يوجد وصف لهذه المهمة.",
+"noorPointsCount": "{points} نقاط نور",
+"@noorPointsCount": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+}
 }

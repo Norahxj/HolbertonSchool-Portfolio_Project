@@ -513,6 +513,26 @@
 "childNavigationWishes": "Wishes",
 "childNavigationRewards": "Rewards",
 "childNavigationProgress": "Progress",
-"switchLanguage": "English"
+"switchLanguage": "English",
+"childTaskAutoApprovedSuccess": "Well done! The task is complete and your points were added.",
+"childTaskSentForReviewSuccess": "Well done! The task was sent to your guardian for review.",
+"childTaskCompleteFailed": "Could not complete the task. Please try again.",
+"childTaskUnexpectedError": "An error occurred while completing the task.",
+"childTaskCompletedApproved": "Completed and approved",
+"childTaskWaitingGuardianReview": "Waiting for guardian review",
+"childTaskReadyToComplete": "Ready to complete",
+"childTaskApproved": "Task approved",
+"childTaskCompleteButton": "I completed the task",
+"childTaskAutoVerificationMessage": "This task will be approved automatically when completed, and the points will be added directly to your balance.",
+"childTaskGuardianVerificationMessage": "After you complete the task, your guardian will review it. Once approved, the points will be added to your balance.",
+"childTaskNoDescription": "There is no description for this task.",
+"noorPointsCount": "{points} Noor Points",
+"@noorPointsCount": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+}
 
 }
