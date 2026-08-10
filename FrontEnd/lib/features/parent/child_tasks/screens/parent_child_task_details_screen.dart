@@ -35,8 +35,6 @@ class ParentChildTaskDetailsScreen extends StatelessWidget {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: AppBackButton(
-                    isArabic:
-                        Directionality.of(context) == TextDirection.rtl,
                     onTap: () {
                       Navigator.pop(context);
                     },

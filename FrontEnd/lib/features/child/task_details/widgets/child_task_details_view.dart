@@ -25,9 +25,6 @@ class ChildTaskDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<ChildTaskDetailsController>();
     final task = controller.assignment.task;
-
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-
     final statusStyle = _statusStyle(controller);
 
     return Scaffold(
@@ -42,7 +39,6 @@ class ChildTaskDetailsView extends StatelessWidget {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: AppBackButton(
-                    isArabic: isRtl,
                     onTap: onBack,
                   ),
                 ),
