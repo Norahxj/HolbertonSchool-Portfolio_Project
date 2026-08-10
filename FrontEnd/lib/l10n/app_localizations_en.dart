@@ -1196,4 +1196,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get childHomeLoadFailed => 'The page could not be loaded.';
+
+  @override
+  String get childAccount => 'Child account';
+
+  @override
+  String get childSwitchLanguage => 'Switch to Arabic';
+
+  @override
+  String get childLogoutConfirmation => 'Are you sure you want to log out?';
 }

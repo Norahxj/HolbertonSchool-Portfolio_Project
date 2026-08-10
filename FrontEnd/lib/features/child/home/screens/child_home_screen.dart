@@ -5,18 +5,16 @@ import '../../../../app.dart';
 import '../../../../models/task_assignment_model.dart';
 import '../../../auth/services/auth_api_service.dart';
 import '../../screens/child_settings_screen.dart';
-import '../../screens/child_task_details_screen.dart';
+import '../../task_details/screens/child_task_details_screen.dart';
 import '../controllers/child_home_controller.dart';
 import '../models/child_home_action_result.dart';
 import '../widgets/child_home_view.dart';
 
 class ChildHomeScreen extends StatefulWidget {
-  final bool isArabic;
   final VoidCallback onLanguageToggle;
 
   const ChildHomeScreen({
     super.key,
-    required this.isArabic,
     required this.onLanguageToggle,
   });
 
@@ -89,7 +87,6 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
           return ChildTaskDetailsScreen(
             assignment: assignment,
             icon: icon,
-            isArabic: widget.isArabic,
           );
         },
       ),
@@ -116,7 +113,6 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
           return ChildSettingsScreen(
             childName: child.name,
             avatarIndex: child.avatarIndex,
-            isArabic: widget.isArabic,
             onLanguageToggle: widget.onLanguageToggle,
             onLogout: _logout,
           );

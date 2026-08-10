@@ -561,5 +561,8 @@
 "childHomeSubtitle": "A new day and new achievements await you",
 "settings": "Settings",
 "childHomeChildNotFound": "We could not find the child's information.",
-"childHomeLoadFailed": "The page could not be loaded."
+"childHomeLoadFailed": "The page could not be loaded.",
+"childAccount": "Child account",
+"childSwitchLanguage": "Switch to Arabic",
+"childLogoutConfirmation": "Are you sure you want to log out?"
 }

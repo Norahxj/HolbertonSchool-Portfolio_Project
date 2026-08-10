@@ -2233,6 +2233,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The page could not be loaded.'**
   String get childHomeLoadFailed;
+
+  /// No description provided for @childAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Child account'**
+  String get childAccount;
+
+  /// No description provided for @childSwitchLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Arabic'**
+  String get childSwitchLanguage;
+
+  /// No description provided for @childLogoutConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out?'**
+  String get childLogoutConfirmation;
 }
 
 class _AppLocalizationsDelegate

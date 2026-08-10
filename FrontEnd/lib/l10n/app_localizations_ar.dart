@@ -1160,4 +1160,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get childHomeLoadFailed => 'تعذّر تحميل الصفحة.';
+
+  @override
+  String get childAccount => 'حساب الطفل';
+
+  @override
+  String get childSwitchLanguage => 'التبديل إلى الإنجليزية';
+
+  @override
+  String get childLogoutConfirmation => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
 }

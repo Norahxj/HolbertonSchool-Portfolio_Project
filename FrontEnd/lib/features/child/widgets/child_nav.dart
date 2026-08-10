@@ -78,7 +78,6 @@ class _ChildNavigationView extends StatelessWidget {
     final pages = <Widget>[
       navigation.isLoaded(0)
           ? ChildHomeScreen(
-              isArabic: isArabic,
               onLanguageToggle: onLanguageToggle,
             )
           : const SizedBox.shrink(),

@@ -561,5 +561,8 @@
 "childHomeSubtitle": "يوم جديد وإنجازات جديدة بانتظارك",
 "settings": "الإعدادات",
 "childHomeChildNotFound": "لم نتمكن من العثور على بيانات الطفل.",
-"childHomeLoadFailed": "تعذّر تحميل الصفحة."
+"childHomeLoadFailed": "تعذّر تحميل الصفحة.",
+"childAccount": "حساب الطفل",
+"childSwitchLanguage": "التبديل إلى الإنجليزية",
+"childLogoutConfirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
 }
