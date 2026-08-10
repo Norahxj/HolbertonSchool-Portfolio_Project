@@ -2713,6 +2713,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not log in. Please try again.'**
   String get childPinLoginFailed;
+
+  /// No description provided for @authWelcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back!'**
+  String get authWelcomeBack;
+
+  /// No description provided for @authCreateAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new account'**
+  String get authCreateAccountTitle;
+
+  /// No description provided for @authSignInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in or create a new account'**
+  String get authSignInSubtitle;
+
+  /// No description provided for @authRegisterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in your details to create your account'**
+  String get authRegisterSubtitle;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get authNoAccount;
+
+  /// No description provided for @authCreateAccountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get authCreateAccountButton;
+
+  /// No description provided for @authEnterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get authEnterEmail;
+
+  /// No description provided for @authEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get authEnterPassword;
+
+  /// No description provided for @authSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get authSignInButton;
+
+  /// No description provided for @authEnterFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your first name'**
+  String get authEnterFirstName;
+
+  /// No description provided for @authEnterFamilyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your family name'**
+  String get authEnterFamilyName;
+
+  /// No description provided for @authEnterPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number'**
+  String get authEnterPhone;
+
+  /// No description provided for @authConfirmPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter your password'**
+  String get authConfirmPasswordHint;
+
+  /// No description provided for @authPasswordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authPasswordsDoNotMatch;
+
+  /// No description provided for @authLoginSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Login successful'**
+  String get authLoginSuccess;
+
+  /// No description provided for @authAccountCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully'**
+  String get authAccountCreatedSuccess;
+
+  /// No description provided for @authServerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Server error'**
+  String get authServerError;
+
+  /// No description provided for @authEmailAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Email already registered'**
+  String get authEmailAlreadyRegistered;
+
+  /// No description provided for @authPhoneAlreadyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number already used'**
+  String get authPhoneAlreadyUsed;
+
+  /// No description provided for @authEmailOrPhoneAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or phone number already registered'**
+  String get authEmailOrPhoneAlreadyRegistered;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
 }
 
 class _AppLocalizationsDelegate

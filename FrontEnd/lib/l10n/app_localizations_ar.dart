@@ -1420,4 +1420,71 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get childPinLoginFailed => 'تعذّر تسجيل الدخول. حاول مرة أخرى.';
+
+  @override
+  String get authWelcomeBack => 'مرحبًا بعودتك!';
+
+  @override
+  String get authCreateAccountTitle => 'إنشاء حساب جديد';
+
+  @override
+  String get authSignInSubtitle => 'سجّل الدخول أو أنشئ حسابًا جديدًا';
+
+  @override
+  String get authRegisterSubtitle => 'يرجى تعبئة البيانات لإنشاء حسابك';
+
+  @override
+  String get authNoAccount => 'ليس لديك حساب؟';
+
+  @override
+  String get authCreateAccountButton => 'إنشاء حساب';
+
+  @override
+  String get authEnterEmail => 'أدخل بريدك الإلكتروني';
+
+  @override
+  String get authEnterPassword => 'أدخل كلمة المرور';
+
+  @override
+  String get authSignInButton => 'تسجيل الدخول';
+
+  @override
+  String get authEnterFirstName => 'أدخل الاسم الأول';
+
+  @override
+  String get authEnterFamilyName => 'أدخل اسم العائلة';
+
+  @override
+  String get authEnterPhone => 'أدخل رقم الجوال';
+
+  @override
+  String get authConfirmPasswordHint => 'أعد إدخال كلمة المرور';
+
+  @override
+  String get authPasswordsDoNotMatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get authLoginSuccess => 'تم تسجيل الدخول بنجاح';
+
+  @override
+  String get authAccountCreatedSuccess => 'تم إنشاء الحساب بنجاح';
+
+  @override
+  String get authServerError => 'حدث خطأ في الخادم';
+
+  @override
+  String get authEmailAlreadyRegistered => 'البريد الإلكتروني مسجل مسبقًا';
+
+  @override
+  String get authPhoneAlreadyUsed => 'رقم الجوال مستخدم مسبقًا';
+
+  @override
+  String get authEmailOrPhoneAlreadyRegistered =>
+      'البريد الإلكتروني أو رقم الجوال مسجل مسبقًا';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get confirmPassword => 'تأكيد كلمة المرور';
 }

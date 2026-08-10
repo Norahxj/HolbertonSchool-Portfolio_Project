@@ -1461,4 +1461,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get childPinLoginFailed => 'Could not log in. Please try again.';
+
+  @override
+  String get authWelcomeBack => 'Welcome back!';
+
+  @override
+  String get authCreateAccountTitle => 'Create a new account';
+
+  @override
+  String get authSignInSubtitle => 'Sign in or create a new account';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Please fill in your details to create your account';
+
+  @override
+  String get authNoAccount => 'Don\'t have an account?';
+
+  @override
+  String get authCreateAccountButton => 'Create account';
+
+  @override
+  String get authEnterEmail => 'Enter your email';
+
+  @override
+  String get authEnterPassword => 'Enter your password';
+
+  @override
+  String get authSignInButton => 'Sign In';
+
+  @override
+  String get authEnterFirstName => 'Enter your first name';
+
+  @override
+  String get authEnterFamilyName => 'Enter your family name';
+
+  @override
+  String get authEnterPhone => 'Enter your phone number';
+
+  @override
+  String get authConfirmPasswordHint => 'Re-enter your password';
+
+  @override
+  String get authPasswordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get authLoginSuccess => 'Login successful';
+
+  @override
+  String get authAccountCreatedSuccess => 'Account created successfully';
+
+  @override
+  String get authServerError => 'Server error';
+
+  @override
+  String get authEmailAlreadyRegistered => 'Email already registered';
+
+  @override
+  String get authPhoneAlreadyUsed => 'Phone number already used';
+
+  @override
+  String get authEmailOrPhoneAlreadyRegistered =>
+      'Email or phone number already registered';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get confirmPassword => 'Confirm password';
 }

@@ -478,7 +478,6 @@ class _AuthScreenState extends State<AuthScreen> {
       children: [
         ParentGenderToggle(
           selectedType: guardianType,
-          isArabic: isArabic,
           onTypeSelected: (type) {
             setState(() {
               guardianType = type;
