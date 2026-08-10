@@ -1098,4 +1098,66 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get once => 'مرة واحدة';
+
+  @override
+  String get childNoTasksToday => 'لا توجد مهام اليوم';
+
+  @override
+  String get childNoTasksMessage =>
+      'استمتع بوقتك، وعد لاحقًا لرؤية مهام جديدة.';
+
+  @override
+  String get childEncouragementMessage =>
+      'كل مهمة تنجزها تقرّبك من هدف جديد ومكافأة أجمل!';
+
+  @override
+  String get childTodayEncouragement => 'تشجيع اليوم';
+
+  @override
+  String get childFromFamily => 'من العائلة';
+
+  @override
+  String get childTodayGoal => 'هدف اليوم';
+
+  @override
+  String get childNoTasksGoalMessage => 'لا توجد مهام اليوم، استمتع بيومك!';
+
+  @override
+  String get childAllTasksCompletedMessage => 'رائع! أنجزت جميع مهام اليوم 🎉';
+
+  @override
+  String get childOneTaskRemainingMessage =>
+      'بقيت لك مهمة واحدة لإكمال هدف اليوم!';
+
+  @override
+  String childTasksRemainingMessage(int count) {
+    return 'بقيت لك $count مهام لإكمال هدف اليوم';
+  }
+
+  @override
+  String get todayTasks => 'مهام اليوم';
+
+  @override
+  String get approved => 'تم الاعتماد';
+
+  @override
+  String get ready => 'جاهزة للإنجاز';
+
+  @override
+  String get childGreetingGirl => 'أهلًا يا بطلة! 👋';
+
+  @override
+  String get childGreetingBoy => 'أهلًا يا بطل! 👋';
+
+  @override
+  String get childHomeSubtitle => 'يوم جديد وإنجازات جديدة بانتظارك';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get childHomeChildNotFound => 'لم نتمكن من العثور على بيانات الطفل.';
+
+  @override
+  String get childHomeLoadFailed => 'تعذّر تحميل الصفحة.';
 }

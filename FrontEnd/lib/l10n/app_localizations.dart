@@ -2119,6 +2119,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'One time'**
   String get once;
+
+  /// No description provided for @childNoTasksToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks today'**
+  String get childNoTasksToday;
+
+  /// No description provided for @childNoTasksMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy your time and come back later for new tasks.'**
+  String get childNoTasksMessage;
+
+  /// No description provided for @childEncouragementMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Every task you complete brings you closer to a new goal and a better reward!'**
+  String get childEncouragementMessage;
+
+  /// No description provided for @childTodayEncouragement.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Encouragement'**
+  String get childTodayEncouragement;
+
+  /// No description provided for @childFromFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'From your family'**
+  String get childFromFamily;
+
+  /// No description provided for @childTodayGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Goal'**
+  String get childTodayGoal;
+
+  /// No description provided for @childNoTasksGoalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no tasks today. Enjoy your day!'**
+  String get childNoTasksGoalMessage;
+
+  /// No description provided for @childAllTasksCompletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Great! You completed all of today\'s tasks 🎉'**
+  String get childAllTasksCompletedMessage;
+
+  /// No description provided for @childOneTaskRemainingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have one task left to complete today\'s goal!'**
+  String get childOneTaskRemainingMessage;
+
+  /// No description provided for @childTasksRemainingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} tasks left to complete today\'s goal'**
+  String childTasksRemainingMessage(int count);
+
+  /// No description provided for @todayTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Tasks'**
+  String get todayTasks;
+
+  /// No description provided for @approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get approved;
+
+  /// No description provided for @ready.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get ready;
+
+  /// No description provided for @childGreetingGirl.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, champion! 👋'**
+  String get childGreetingGirl;
+
+  /// No description provided for @childGreetingBoy.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, champion! 👋'**
+  String get childGreetingBoy;
+
+  /// No description provided for @childHomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A new day and new achievements await you'**
+  String get childHomeSubtitle;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @childHomeChildNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not find the child\'s information.'**
+  String get childHomeChildNotFound;
+
+  /// No description provided for @childHomeLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The page could not be loaded.'**
+  String get childHomeLoadFailed;
 }
 
 class _AppLocalizationsDelegate

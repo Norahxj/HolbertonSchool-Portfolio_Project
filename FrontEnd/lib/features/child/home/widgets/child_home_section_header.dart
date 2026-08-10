@@ -6,19 +6,16 @@ import '../../../../core/constants/app_text_styles.dart';
 class ChildHomeSectionHeader extends StatelessWidget {
   final String title;
   final String count;
-  final bool isArabic;
 
   const ChildHomeSectionHeader({
     super.key,
     required this.title,
     required this.count,
-    required this.isArabic,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       children: [
         Text(
           title,

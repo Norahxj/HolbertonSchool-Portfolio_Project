@@ -1131,4 +1131,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get once => 'One time';
+
+  @override
+  String get childNoTasksToday => 'No tasks today';
+
+  @override
+  String get childNoTasksMessage =>
+      'Enjoy your time and come back later for new tasks.';
+
+  @override
+  String get childEncouragementMessage =>
+      'Every task you complete brings you closer to a new goal and a better reward!';
+
+  @override
+  String get childTodayEncouragement => 'Today\'s Encouragement';
+
+  @override
+  String get childFromFamily => 'From your family';
+
+  @override
+  String get childTodayGoal => 'Today\'s Goal';
+
+  @override
+  String get childNoTasksGoalMessage =>
+      'There are no tasks today. Enjoy your day!';
+
+  @override
+  String get childAllTasksCompletedMessage =>
+      'Great! You completed all of today\'s tasks 🎉';
+
+  @override
+  String get childOneTaskRemainingMessage =>
+      'You have one task left to complete today\'s goal!';
+
+  @override
+  String childTasksRemainingMessage(int count) {
+    return 'You have $count tasks left to complete today\'s goal';
+  }
+
+  @override
+  String get todayTasks => 'Today\'s Tasks';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get ready => 'Ready';
+
+  @override
+  String get childGreetingGirl => 'Hello, champion! 👋';
+
+  @override
+  String get childGreetingBoy => 'Hello, champion! 👋';
+
+  @override
+  String get childHomeSubtitle => 'A new day and new achievements await you';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get childHomeChildNotFound =>
+      'We could not find the child\'s information.';
+
+  @override
+  String get childHomeLoadFailed => 'The page could not be loaded.';
 }

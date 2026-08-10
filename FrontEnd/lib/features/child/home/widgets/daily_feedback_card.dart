@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/daily_feedback_model.dart';
 
 class DailyFeedbackCard extends StatelessWidget {
   final DailyFeedbackModel feedback;
-  final bool isArabic;
 
   const DailyFeedbackCard({
     super.key,
     required this.feedback,
-    required this.isArabic,
   });
 
   String get _emoji {
@@ -34,39 +33,20 @@ class DailyFeedbackCard extends StatelessWidget {
     }
   }
 
-  String get _label {
-    if (isArabic) {
-      switch (feedback.mood) {
-        case 'HAPPY':
-          return 'سعيد';
-        case 'PROUD':
-          return 'فخور بك';
-        case 'GREAT':
-          return 'رائع';
-        case 'LOVE':
-          return 'محبوب';
-        case 'STRONG':
-          return 'قوي';
-        case 'STAR':
-          return 'نجم';
-        default:
-          return feedback.mood;
-      }
-    }
-
+  String _label(BuildContext context) {
     switch (feedback.mood) {
       case 'HAPPY':
-        return 'Happy';
+        return context.l10n.moodHappy;
       case 'PROUD':
-        return 'Proud of you';
+        return context.l10n.moodProud;
       case 'GREAT':
-        return 'Great';
+        return context.l10n.moodGreat;
       case 'LOVE':
-        return 'Loved';
+        return context.l10n.moodLoved;
       case 'STRONG':
-        return 'Strong';
+        return context.l10n.moodStrong;
       case 'STAR':
-        return 'Star';
+        return context.l10n.moodStar;
       default:
         return feedback.mood;
     }
@@ -91,7 +71,6 @@ class DailyFeedbackCard extends StatelessWidget {
         ],
       ),
       child: Row(
-        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
         children: [
           Container(
             width: 52,
@@ -106,46 +85,28 @@ class DailyFeedbackCard extends StatelessWidget {
               style: const TextStyle(fontSize: 28),
             ),
           ),
-
           const SizedBox(width: AppSpacing.md),
-
           Expanded(
             child: Column(
-              crossAxisAlignment: isArabic
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isArabic
-                      ? 'تشجيع اليوم'
-                      : 'Today\'s Encouragement',
-                  textAlign: isArabic
-                      ? TextAlign.right
-                      : TextAlign.left,
+                  context.l10n.childTodayEncouragement,
+                  textAlign: TextAlign.start,
                   style: AppTextStyles.caption,
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
-                  _label,
-                  textAlign: isArabic
-                      ? TextAlign.right
-                      : TextAlign.left,
+                  _label(context),
+                  textAlign: TextAlign.start,
                   style: AppTextStyles.sectionTitle.copyWith(
                     fontSize: 17,
                   ),
                 ),
-
                 const SizedBox(height: 2),
-
                 Text(
-                  isArabic
-                      ? 'من العائلة'
-                      : 'From your family',
-                  textAlign: isArabic
-                      ? TextAlign.right
-                      : TextAlign.left,
+                  context.l10n.childFromFamily,
+                  textAlign: TextAlign.start,
                   style: AppTextStyles.caption,
                 ),
               ],

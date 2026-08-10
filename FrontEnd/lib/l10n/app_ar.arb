@@ -535,5 +535,31 @@
   }
 },
 "notSpecified": "غير محدد",
-"once": "مرة واحدة"
+"once": "مرة واحدة",
+"childNoTasksToday": "لا توجد مهام اليوم",
+"childNoTasksMessage": "استمتع بوقتك، وعد لاحقًا لرؤية مهام جديدة.",
+"childEncouragementMessage": "كل مهمة تنجزها تقرّبك من هدف جديد ومكافأة أجمل!",
+"childTodayEncouragement": "تشجيع اليوم",
+"childFromFamily": "من العائلة",
+"childTodayGoal": "هدف اليوم",
+"childNoTasksGoalMessage": "لا توجد مهام اليوم، استمتع بيومك!",
+"childAllTasksCompletedMessage": "رائع! أنجزت جميع مهام اليوم 🎉",
+"childOneTaskRemainingMessage": "بقيت لك مهمة واحدة لإكمال هدف اليوم!",
+"childTasksRemainingMessage": "بقيت لك {count} مهام لإكمال هدف اليوم",
+"@childTasksRemainingMessage": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"todayTasks": "مهام اليوم",
+"approved": "تم الاعتماد",
+"ready": "جاهزة للإنجاز",
+"childGreetingGirl": "أهلًا يا بطلة! 👋",
+"childGreetingBoy": "أهلًا يا بطل! 👋",
+"childHomeSubtitle": "يوم جديد وإنجازات جديدة بانتظارك",
+"settings": "الإعدادات",
+"childHomeChildNotFound": "لم نتمكن من العثور على بيانات الطفل.",
+"childHomeLoadFailed": "تعذّر تحميل الصفحة."
 }

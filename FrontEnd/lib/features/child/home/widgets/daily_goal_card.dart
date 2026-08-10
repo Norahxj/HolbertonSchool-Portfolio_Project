@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class DailyGoalCard extends StatelessWidget {
   final int completedTasks;
   final int totalTasks;
-  final bool isArabic;
 
   const DailyGoalCard({
     super.key,
     required this.completedTasks,
     required this.totalTasks,
-    required this.isArabic,
   });
 
   @override
@@ -29,21 +28,15 @@ class DailyGoalCard extends StatelessWidget {
     String message;
 
     if (totalTasks == 0) {
-      message = isArabic
-          ? 'لا توجد مهام اليوم، استمتع بيومك!'
-          : 'There are no tasks today. Enjoy your day!';
+      message = context.l10n.childNoTasksGoalMessage;
     } else if (remainingTasks == 0) {
-      message = isArabic
-          ? 'رائع! أنجزت جميع مهام اليوم 🎉'
-          : 'Great! You completed all of today\'s tasks 🎉';
+      message = context.l10n.childAllTasksCompletedMessage;
     } else if (remainingTasks == 1) {
-      message = isArabic
-          ? 'بقيت لك مهمة واحدة لإكمال هدف اليوم!'
-          : 'You have one task left to complete today\'s goal!';
+      message = context.l10n.childOneTaskRemainingMessage;
     } else {
-      message = isArabic
-          ? 'بقيت لك $remainingTasks مهام لإكمال هدف اليوم'
-          : 'You have $remainingTasks tasks left to complete today\'s goal';
+      message = context.l10n.childTasksRemainingMessage(
+        remainingTasks,
+      );
     }
 
     return Container(
@@ -73,15 +66,9 @@ class DailyGoalCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            textDirection: isArabic
-                ? TextDirection.rtl
-                : TextDirection.ltr,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
-                textDirection: isArabic
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
                 children: [
                   Container(
                     width: 36,
@@ -100,9 +87,7 @@ class DailyGoalCard extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
 
                   Text(
-                    isArabic
-                        ? 'هدف اليوم'
-                        : 'Today\'s Goal',
+                    context.l10n.childTodayGoal,
                     style: AppTextStyles.sectionTitle.copyWith(
                       fontSize: 17,
                     ),
@@ -126,14 +111,10 @@ class DailyGoalCard extends StatelessWidget {
           const SizedBox(height: 6),
 
           Align(
-            alignment: isArabic
-                ? Alignment.centerRight
-                : Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
               message,
-              textAlign: isArabic
-                  ? TextAlign.right
-                  : TextAlign.left,
+              textAlign: TextAlign.start,
               style: AppTextStyles.caption,
             ),
           ),

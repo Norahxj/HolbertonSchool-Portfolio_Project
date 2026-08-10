@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class ChildHomeErrorState extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
-  final bool isArabic;
 
   const ChildHomeErrorState({
     super.key,
     required this.message,
     required this.onRetry,
-    required this.isArabic,
   });
 
   @override
@@ -48,9 +47,7 @@ class ChildHomeErrorState extends StatelessWidget {
               FilledButton.icon(
                 onPressed: () => onRetry(),
                 icon: const Icon(Icons.refresh_rounded),
-                label: Text(
-                  isArabic ? 'إعادة المحاولة' : 'Try Again',
-                ),
+                label: Text(context.l10n.retry),
               ),
             ],
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../app.dart';
 import '../../../../models/task_assignment_model.dart';
 import '../../../auth/services/auth_api_service.dart';
@@ -55,19 +55,14 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
     }
 
     _showMessage(
-      widget.isArabic
-          ? 'أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.'
-          : 'Well done! The task was sent to your guardian for review.',
-    );
+  context.l10n.childTaskSentForReviewSuccess,
+);
   }
 
   void _showCompleteError(ChildHomeActionResult result) {
     final message =
-        result.backendMessage ??
-        (widget.isArabic
-            ? 'تعذّر إكمال المهمة. حاول مرة أخرى.'
-            : 'The task could not be completed. Please try again.');
-
+    result.backendMessage ??
+    context.l10n.childTaskCompleteFailed;
     _showMessage(message);
   }
 
@@ -159,7 +154,6 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
     return ChangeNotifierProvider.value(
       value: _controller,
       child: ChildHomeView(
-        isArabic: widget.isArabic,
         onSettingsPressed: _openSettings,
         onRefresh: _refresh,
         onRetry: _retry,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../models/task_assignment_model.dart';
 
 class ChildAssignmentCard extends StatelessWidget {
@@ -9,14 +10,12 @@ class ChildAssignmentCard extends StatelessWidget {
   final VoidCallback? onComplete;
   final VoidCallback onTap;
   final bool isUpdating;
-  final bool isArabic;
 
   const ChildAssignmentCard({
     super.key,
     required this.assignment,
     required this.onTap,
     required this.isUpdating,
-    required this.isArabic,
     this.onComplete,
   });
 
@@ -24,12 +23,11 @@ class ChildAssignmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final category = childHomeCategoryStyle(
       assignment.task.category,
-      isArabic,
     );
 
     final status = _statusStyle(
+      context,
       assignment.status,
-      isArabic,
     );
 
     final normalizedStatus = assignment.status.toLowerCase();
@@ -80,17 +78,13 @@ class ChildAssignmentCard extends StatelessWidget {
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment: isArabic
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       assignment.task.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      textAlign: isArabic
-                          ? TextAlign.right
-                          : TextAlign.left,
+                      textAlign: TextAlign.start,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -101,9 +95,7 @@ class ChildAssignmentCard extends StatelessWidget {
                     const SizedBox(height: AppSpacing.sm),
 
                     Wrap(
-                      alignment: isArabic
-                          ? WrapAlignment.end
-                          : WrapAlignment.start,
+                      alignment: WrapAlignment.start,
                       spacing: 6,
                       runSpacing: 6,
                       children: [
@@ -116,9 +108,9 @@ class ChildAssignmentCard extends StatelessWidget {
 
                         _SmallBadge(
                           icon: Icons.auto_awesome_rounded,
-                          text: isArabic
-                              ? '${assignment.task.points} نقاط'
-                              : '${assignment.task.points} points',
+                          text: context.l10n.pointsValue(
+                            assignment.task.points,
+                          ),
                           foreground: const Color(0xFFB77700),
                           background: AppColors.goldLight,
                         ),
@@ -248,13 +240,11 @@ class _SmallBadge extends StatelessWidget {
 }
 
 class ChildHomeCategoryStyle {
-  final String label;
   final IconData icon;
   final Color color;
   final Color background;
 
   const ChildHomeCategoryStyle({
-    required this.label,
     required this.icon,
     required this.color,
     required this.background,
@@ -263,44 +253,38 @@ class ChildHomeCategoryStyle {
 
 ChildHomeCategoryStyle childHomeCategoryStyle(
   String? category,
-  bool isArabic,
 ) {
   switch (category?.toLowerCase()) {
     case 'religious':
-      return ChildHomeCategoryStyle(
-        label: isArabic ? 'قيمة دينية' : 'Religious Value',
+      return const ChildHomeCategoryStyle(
         icon: Icons.mosque_rounded,
         color: AppColors.primaryDark,
         background: AppColors.primaryLight,
       );
 
     case 'financial':
-      return ChildHomeCategoryStyle(
-        label: isArabic ? 'مهارة مالية' : 'Financial Skill',
+      return const ChildHomeCategoryStyle(
         icon: Icons.monetization_on_rounded,
-        color: const Color(0xFFB77700),
+        color: Color(0xFFB77700),
         background: AppColors.goldLight,
       );
 
     case 'moral':
-      return ChildHomeCategoryStyle(
-        label: isArabic ? 'قيمة أخلاقية' : 'Moral Value',
+      return const ChildHomeCategoryStyle(
         icon: Icons.volunteer_activism_rounded,
         color: AppColors.pink,
         background: AppColors.pinkLight,
       );
 
     case 'social':
-      return ChildHomeCategoryStyle(
-        label: isArabic ? 'مهمة اجتماعية' : 'Social Task',
+      return const ChildHomeCategoryStyle(
         icon: Icons.groups_rounded,
         color: AppColors.sky,
         background: AppColors.skyLight,
       );
 
     default:
-      return ChildHomeCategoryStyle(
-        label: isArabic ? 'مهمة يومية' : 'Daily Task',
+      return const ChildHomeCategoryStyle(
         icon: Icons.task_alt_rounded,
         color: AppColors.mint,
         background: AppColors.mintLight,
@@ -323,15 +307,13 @@ class _StatusStyle {
 }
 
 _StatusStyle _statusStyle(
+  BuildContext context,
   String status,
-  bool isArabic,
 ) {
   switch (status.toLowerCase()) {
     case 'approved':
       return _StatusStyle(
-        label: isArabic
-            ? 'تم الاعتماد'
-            : 'Approved',
+        label: context.l10n.approved,
         icon: Icons.verified_rounded,
         color: AppColors.mint,
         background: AppColors.mintLight,
@@ -340,9 +322,7 @@ _StatusStyle _statusStyle(
     case 'completed':
     case 'pending_review':
       return _StatusStyle(
-        label: isArabic
-            ? 'بانتظار المراجعة'
-            : 'Waiting for Review',
+        label: context.l10n.awaitingReview,
         icon: Icons.hourglass_top_rounded,
         color: AppColors.orange,
         background: AppColors.orangeLight,
@@ -350,9 +330,7 @@ _StatusStyle _statusStyle(
 
     case 'rejected':
       return _StatusStyle(
-        label: isArabic
-            ? 'حاول مرة أخرى'
-            : 'Try Again',
+        label: context.l10n.tryAgain,
         icon: Icons.refresh_rounded,
         color: AppColors.coral,
         background: AppColors.coralLight,
@@ -361,9 +339,7 @@ _StatusStyle _statusStyle(
     case 'pending':
     default:
       return _StatusStyle(
-        label: isArabic
-            ? 'جاهزة للإنجاز'
-            : 'Ready',
+        label: context.l10n.ready,
         icon: Icons.play_arrow_rounded,
         color: AppColors.sky,
         background: AppColors.skyLight,

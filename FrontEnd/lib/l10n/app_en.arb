@@ -535,5 +535,31 @@
   }
 },
 "notSpecified": "Not specified",
-"once": "One time"
+"once": "One time",
+"childNoTasksToday": "No tasks today",
+"childNoTasksMessage": "Enjoy your time and come back later for new tasks.",
+"childEncouragementMessage": "Every task you complete brings you closer to a new goal and a better reward!",
+"childTodayEncouragement": "Today's Encouragement",
+"childFromFamily": "From your family",
+"childTodayGoal": "Today's Goal",
+"childNoTasksGoalMessage": "There are no tasks today. Enjoy your day!",
+"childAllTasksCompletedMessage": "Great! You completed all of today's tasks 🎉",
+"childOneTaskRemainingMessage": "You have one task left to complete today's goal!",
+"childTasksRemainingMessage": "You have {count} tasks left to complete today's goal",
+"@childTasksRemainingMessage": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"todayTasks": "Today's Tasks",
+"approved": "Approved",
+"ready": "Ready",
+"childGreetingGirl": "Hello, champion! 👋",
+"childGreetingBoy": "Hello, champion! 👋",
+"childHomeSubtitle": "A new day and new achievements await you",
+"settings": "Settings",
+"childHomeChildNotFound": "We could not find the child's information.",
+"childHomeLoadFailed": "The page could not be loaded."
 }

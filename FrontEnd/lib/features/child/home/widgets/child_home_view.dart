@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/child_home_action_result.dart';
+
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/screen_background.dart';
 import '../../../../models/task_assignment_model.dart';
 import '../controllers/child_home_controller.dart';
+import '../models/child_home_action_result.dart';
 import 'child_assignment_card.dart';
 import 'child_home_error_state.dart';
 import 'child_home_header.dart';
@@ -15,26 +17,21 @@ import 'empty_tasks_card.dart';
 import 'encouragement_card.dart';
 
 class ChildHomeView extends StatelessWidget {
-  final bool isArabic;
-
   final VoidCallback onSettingsPressed;
 
   final Future<void> Function() onRefresh;
 
   final Future<void> Function() onRetry;
 
-  final Future<void> Function(String assignmentId)
-  onCompleteAssignment;
+  final Future<void> Function(String assignmentId) onCompleteAssignment;
 
   final Future<void> Function(
     TaskAssignmentModel assignment,
     IconData icon,
-  )
-  onAssignmentTap;
+  ) onAssignmentTap;
 
   const ChildHomeView({
     super.key,
-    required this.isArabic,
     required this.onSettingsPressed,
     required this.onRefresh,
     required this.onRetry,
@@ -63,12 +60,8 @@ class ChildHomeView extends StatelessWidget {
       final message =
           controller.backendMessage ??
           (controller.errorCode == ChildHomeErrorCode.childNotFound
-              ? (isArabic
-                    ? 'لم نتمكن من العثور على بيانات الطفل.'
-                    : 'We could not find the child\'s information.')
-              : (isArabic
-                    ? 'تعذّر تحميل الصفحة.'
-                    : 'The page could not be loaded.'));
+              ? context.l10n.childHomeChildNotFound
+              : context.l10n.childHomeLoadFailed);
 
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -76,7 +69,6 @@ class ChildHomeView extends StatelessWidget {
           child: ChildHomeErrorState(
             message: message,
             onRetry: onRetry,
-            isArabic: isArabic,
           ),
         ),
       );
@@ -97,7 +89,6 @@ class ChildHomeView extends StatelessWidget {
                 points: controller.points,
                 completedTasks: completedCount,
                 totalTasks: assignments.length,
-                isArabic: isArabic,
                 onSettingsPressed: onSettingsPressed,
               ),
             ),
@@ -114,7 +105,6 @@ class ChildHomeView extends StatelessWidget {
                       DailyGoalCard(
                         completedTasks: completedCount,
                         totalTasks: assignments.length,
-                        isArabic: isArabic,
                       ),
 
                       if (controller.todayFeedback != null) ...[
@@ -122,26 +112,20 @@ class ChildHomeView extends StatelessWidget {
 
                         DailyFeedbackCard(
                           feedback: controller.todayFeedback!,
-                          isArabic: isArabic,
                         ),
                       ],
 
                       const SizedBox(height: AppSpacing.xl),
 
                       ChildHomeSectionHeader(
-                        title: isArabic
-                            ? 'مهام اليوم'
-                            : 'Today\'s Tasks',
+                        title: context.l10n.todayTasks,
                         count: '${assignments.length}',
-                        isArabic: isArabic,
                       ),
 
                       const SizedBox(height: AppSpacing.md),
 
                       if (assignments.isEmpty)
-                        EmptyTasksCard(
-                          isArabic: isArabic,
-                        )
+                        const EmptyTasksCard()
                       else
                         ...assignments.map(
                           (assignment) => Padding(
@@ -150,7 +134,6 @@ class ChildHomeView extends StatelessWidget {
                             ),
                             child: ChildAssignmentCard(
                               assignment: assignment,
-                              isArabic: isArabic,
                               isUpdating:
                                   controller.isUpdatingAssignment(
                                     assignment.id,
@@ -167,7 +150,6 @@ class ChildHomeView extends StatelessWidget {
                                 final category =
                                     childHomeCategoryStyle(
                                       assignment.task.category,
-                                      isArabic,
                                     );
 
                                 onAssignmentTap(
@@ -182,9 +164,7 @@ class ChildHomeView extends StatelessWidget {
                       if (assignments.isNotEmpty) ...[
                         const SizedBox(height: AppSpacing.sm),
 
-                        EncouragementCard(
-                          isArabic: isArabic,
-                        ),
+                        const EncouragementCard(),
                       ],
 
                       const SizedBox(height: AppSpacing.lg),

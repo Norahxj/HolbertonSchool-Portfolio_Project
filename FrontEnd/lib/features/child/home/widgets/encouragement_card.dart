@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 class EncouragementCard extends StatelessWidget {
-  final bool isArabic;
-
   const EncouragementCard({
     super.key,
-    required this.isArabic,
   });
 
   @override
@@ -29,10 +27,8 @@ class EncouragementCard extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              isArabic
-                  ? 'كل مهمة تنجزها تقرّبك من هدف جديد ومكافأة أجمل!'
-                  : 'Every task you complete brings you closer to a new goal and a better reward!',
-              textAlign: isArabic ? TextAlign.right : TextAlign.left,
+              context.l10n.childEncouragementMessage,
+              textAlign: TextAlign.start,
               style: const TextStyle(
                 fontSize: 13,
                 height: 1.5,
