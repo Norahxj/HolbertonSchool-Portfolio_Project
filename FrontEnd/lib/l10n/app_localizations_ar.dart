@@ -1047,4 +1047,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get switchLanguage => 'العربية';
+
+  @override
+  String get childTaskAutoApprovedSuccess =>
+      'أحسنت! اكتملت المهمة وأُضيفت نقاطك.';
+
+  @override
+  String get childTaskSentForReviewSuccess =>
+      'أحسنت! أُرسلت المهمة إلى ولي أمرك للمراجعة.';
+
+  @override
+  String get childTaskCompleteFailed => 'تعذّر إكمال المهمة. حاول مرة أخرى.';
+
+  @override
+  String get childTaskUnexpectedError => 'حدث خطأ أثناء إكمال المهمة.';
+
+  @override
+  String get childTaskCompletedApproved => 'مكتملة ومعتمدة';
+
+  @override
+  String get childTaskWaitingGuardianReview => 'بانتظار مراجعة ولي الأمر';
+
+  @override
+  String get childTaskReadyToComplete => 'جاهزة للإنجاز';
+
+  @override
+  String get childTaskApproved => 'تم اعتماد المهمة';
+
+  @override
+  String get childTaskCompleteButton => 'أنجزت المهمة';
+
+  @override
+  String get childTaskAutoVerificationMessage =>
+      'ستُعتمد هذه المهمة تلقائيًا عند إتمامها، وتُضاف النقاط مباشرة إلى رصيدك.';
+
+  @override
+  String get childTaskGuardianVerificationMessage =>
+      'عند إتمامك المهمة سيراجعها ولي أمرك، وبعد الاعتماد تُضاف النقاط إلى رصيدك.';
+
+  @override
+  String get childTaskNoDescription => 'لا يوجد وصف لهذه المهمة.';
+
+  @override
+  String noorPointsCount(int points) {
+    return '$points نقاط نور';
+  }
 }

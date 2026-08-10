@@ -2029,6 +2029,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get switchLanguage;
+
+  /// No description provided for @childTaskAutoApprovedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Well done! The task is complete and your points were added.'**
+  String get childTaskAutoApprovedSuccess;
+
+  /// No description provided for @childTaskSentForReviewSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Well done! The task was sent to your guardian for review.'**
+  String get childTaskSentForReviewSuccess;
+
+  /// No description provided for @childTaskCompleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the task. Please try again.'**
+  String get childTaskCompleteFailed;
+
+  /// No description provided for @childTaskUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while completing the task.'**
+  String get childTaskUnexpectedError;
+
+  /// No description provided for @childTaskCompletedApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed and approved'**
+  String get childTaskCompletedApproved;
+
+  /// No description provided for @childTaskWaitingGuardianReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for guardian review'**
+  String get childTaskWaitingGuardianReview;
+
+  /// No description provided for @childTaskReadyToComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to complete'**
+  String get childTaskReadyToComplete;
+
+  /// No description provided for @childTaskApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Task approved'**
+  String get childTaskApproved;
+
+  /// No description provided for @childTaskCompleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I completed the task'**
+  String get childTaskCompleteButton;
+
+  /// No description provided for @childTaskAutoVerificationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This task will be approved automatically when completed, and the points will be added directly to your balance.'**
+  String get childTaskAutoVerificationMessage;
+
+  /// No description provided for @childTaskGuardianVerificationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'After you complete the task, your guardian will review it. Once approved, the points will be added to your balance.'**
+  String get childTaskGuardianVerificationMessage;
+
+  /// No description provided for @childTaskNoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no description for this task.'**
+  String get childTaskNoDescription;
+
+  /// No description provided for @noorPointsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} Noor Points'**
+  String noorPointsCount(int points);
 }
 
 class _AppLocalizationsDelegate

@@ -1078,4 +1078,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get switchLanguage => 'English';
+
+  @override
+  String get childTaskAutoApprovedSuccess =>
+      'Well done! The task is complete and your points were added.';
+
+  @override
+  String get childTaskSentForReviewSuccess =>
+      'Well done! The task was sent to your guardian for review.';
+
+  @override
+  String get childTaskCompleteFailed =>
+      'Could not complete the task. Please try again.';
+
+  @override
+  String get childTaskUnexpectedError =>
+      'An error occurred while completing the task.';
+
+  @override
+  String get childTaskCompletedApproved => 'Completed and approved';
+
+  @override
+  String get childTaskWaitingGuardianReview => 'Waiting for guardian review';
+
+  @override
+  String get childTaskReadyToComplete => 'Ready to complete';
+
+  @override
+  String get childTaskApproved => 'Task approved';
+
+  @override
+  String get childTaskCompleteButton => 'I completed the task';
+
+  @override
+  String get childTaskAutoVerificationMessage =>
+      'This task will be approved automatically when completed, and the points will be added directly to your balance.';
+
+  @override
+  String get childTaskGuardianVerificationMessage =>
+      'After you complete the task, your guardian will review it. Once approved, the points will be added to your balance.';
+
+  @override
+  String get childTaskNoDescription => 'There is no description for this task.';
+
+  @override
+  String noorPointsCount(int points) {
+    return '$points Noor Points';
+  }
 }

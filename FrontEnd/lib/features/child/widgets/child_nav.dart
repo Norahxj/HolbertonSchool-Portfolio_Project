@@ -5,7 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/localization/localization_extension.dart';
 import '../../../core/navigation/app_bottom_navigation.dart';
 import '../../../core/navigation/app_navigation_controller.dart';
-import '../screens/child_home_screen.dart';
+import '../home/screens/child_home_screen.dart';
 import '../screens/child_progress_screen.dart';
 import '../screens/child_rewards_screen.dart';
 import '../screens/child_wishlist_screen.dart';
