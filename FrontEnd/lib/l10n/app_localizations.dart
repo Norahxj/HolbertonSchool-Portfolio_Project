@@ -2845,6 +2845,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm password'**
   String get confirmPassword;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Asalah'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Where values are built and achievements are rewarded.'**
+  String get welcomeTagline;
+
+  /// No description provided for @welcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how you would like to continue'**
+  String get welcomeSubtitle;
+
+  /// No description provided for @parentRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent'**
+  String get parentRole;
+
+  /// No description provided for @parentRoleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your children, tasks, and rewards'**
+  String get parentRoleDescription;
+
+  /// No description provided for @childRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Child'**
+  String get childRole;
+
+  /// No description provided for @childRoleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete tasks, earn points, and unlock rewards'**
+  String get childRoleDescription;
 }
 
 class _AppLocalizationsDelegate

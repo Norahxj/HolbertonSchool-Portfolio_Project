@@ -725,5 +725,12 @@
 "authPhoneAlreadyUsed": "رقم الجوال مستخدم مسبقًا",
 "authEmailOrPhoneAlreadyRegistered": "البريد الإلكتروني أو رقم الجوال مسجل مسبقًا",
 "password": "كلمة المرور",
-"confirmPassword": "تأكيد كلمة المرور"
+"confirmPassword": "تأكيد كلمة المرور",
+"welcomeTitle": "مرحبًا بك في أصالة",
+"welcomeTagline": "حيثُ تُبنى القيم وتُكافئ الإنجازات",
+"welcomeSubtitle": "اختر طريقة الدخول للمتابعة",
+"parentRole": "ولي أمر",
+"parentRoleDescription": "إدارة أطفالك ومتابعة المهام والمكافآت",
+"childRole": "طفل",
+"childRoleDescription": "أنجز المهام واجمع النقاط واحصل على المكافآت"
 }

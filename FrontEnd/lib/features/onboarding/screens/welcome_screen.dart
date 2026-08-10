@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/localization/localization_extension.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../auth/screens/auth_screen.dart';
@@ -28,7 +28,6 @@ class WelcomeScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) {
           return AuthScreen(
-            isArabic: isArabic,
             onLanguageToggle: onLanguageToggle,
             onAuthenticated: onParentAuthenticated,
           );
@@ -62,11 +61,12 @@ class WelcomeScreen extends StatelessWidget {
                 Align(
                   alignment: AlignmentDirectional.centerEnd,
                   child: LanguageToggle(
-                    isArabic: isArabic,
                     onTap: onLanguageToggle,
                   ),
                 ),
+
                 const SizedBox(height: AppSpacing.md),
+
                 Stack(
                   alignment: Alignment.center,
                   clipBehavior: Clip.none,
@@ -74,13 +74,21 @@ class WelcomeScreen extends StatelessWidget {
                     const PositionedDirectional(
                       top: 0,
                       start: 4,
-                      child: _SoftPill(width: 74, height: 22),
+                      child: _SoftPill(
+                        width: 74,
+                        height: 22,
+                      ),
                     ),
+
                     const PositionedDirectional(
                       top: 50,
                       end: 0,
-                      child: _SoftPill(width: 58, height: 20),
+                      child: _SoftPill(
+                        width: 58,
+                        height: 20,
+                      ),
                     ),
+
                     const PositionedDirectional(
                       top: -8,
                       end: 56,
@@ -90,6 +98,7 @@ class WelcomeScreen extends StatelessWidget {
                         color: AppColors.gold,
                       ),
                     ),
+
                     const PositionedDirectional(
                       top: 34,
                       start: 40,
@@ -99,6 +108,7 @@ class WelcomeScreen extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
+
                     const PositionedDirectional(
                       bottom: 6,
                       end: 30,
@@ -108,6 +118,7 @@ class WelcomeScreen extends StatelessWidget {
                         color: AppColors.gold,
                       ),
                     ),
+
                     Column(
                       children: [
                         Text(
@@ -124,17 +135,19 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: AppSpacing.md),
+
                 Text(
-                  AppStrings.welcomeTitle(isArabic),
+                  context.l10n.welcomeTitle,
                   style: AppTextStyles.arabicTitle,
                   textAlign: TextAlign.center,
                 ),
+
                 const SizedBox(height: AppSpacing.sm),
+
                 Text(
-                  isArabic
-                      ? 'حيثُ تُبنى القيم وتُكافئ الإنجازات'
-                      : 'Where values are built and achievements are rewarded.',
+                  context.l10n.welcomeTagline,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -143,36 +156,39 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
+
                 const SizedBox(height: AppSpacing.md),
+
                 Text(
-                  AppStrings.welcomeSubtitle(isArabic),
+                  context.l10n.welcomeSubtitle,
                   style: AppTextStyles.body,
                   textAlign: TextAlign.center,
                 ),
+
                 const SizedBox(height: 60),
+
                 RoleCard(
                   imagePath: 'assets/role_selection/parent1.png',
-                  title: isArabic ? 'ولي أمر' : 'Parent',
-                  description: isArabic
-                      ? 'إدارة أطفالك ومتابعة المهام والمكافآت'
-                      : 'Manage your children, tasks, and rewards',
-                  isArabic: isArabic,
+                  title: context.l10n.parentRole,
+                  description:
+                      context.l10n.parentRoleDescription,
                   onTap: () {
                     _openParentAuthentication(context);
                   },
                 ),
+
                 const SizedBox(height: AppSpacing.md),
+
                 RoleCard(
                   imagePath: 'assets/role_selection/child.png',
-                  title: isArabic ? 'طفل' : 'Child',
-                  description: isArabic
-                      ? 'أنجز المهام واجمع النقاط واحصل على المكافآت'
-                      : 'Complete tasks, earn points, and unlock rewards',
-                  isArabic: isArabic,
+                  title: context.l10n.childRole,
+                  description:
+                      context.l10n.childRoleDescription,
                   onTap: () {
                     _openChildLogin(context);
                   },
                 ),
+
                 const SizedBox(height: AppSpacing.md),
               ],
             ),
@@ -187,7 +203,10 @@ class _SoftPill extends StatelessWidget {
   final double width;
   final double height;
 
-  const _SoftPill({required this.width, required this.height});
+  const _SoftPill({
+    required this.width,
+    required this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +215,9 @@ class _SoftPill extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(height / 2),
+        borderRadius: BorderRadius.circular(
+          height / 2,
+        ),
       ),
     );
   }

@@ -1,25 +1,17 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/features/auth/services/auth_api_service.dart';
-import 'package:frontend/features/auth/widgets/parent_gender_toggle.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/widgets/app_back_button.dart';
-import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_text_field.dart';
-import '../../../core/widgets/language_toggle.dart';
-import '../../../core/widgets/screen_background.dart';
+import '../../../core/localization/localization_extension.dart';
+import '../controllers/auth_controller.dart';
+import '../models/auth_action_result.dart';
+import '../widgets/auth_view.dart';
 
 class AuthScreen extends StatefulWidget {
-  final bool isArabic;
   final VoidCallback onLanguageToggle;
   final Future<void> Function() onAuthenticated;
 
   const AuthScreen({
     super.key,
-    required this.isArabic,
     required this.onLanguageToggle,
     required this.onAuthenticated,
   });
@@ -31,537 +23,324 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool isSignInSelected = true;
-  bool isLoading = false;
-  bool _isArabic = true;
+  late final AuthController _controller;
 
-  String guardianType = 'mother';
+  bool _isSignInSelected = true;
+  String _guardianType = 'mother';
 
-  final TextEditingController emailController = TextEditingController();
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _familyNameController;
+  late final TextEditingController _registerEmailController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _registerPasswordController;
+  late final TextEditingController _confirmPasswordController;
 
-  final TextEditingController passwordController = TextEditingController();
+  String? _loginEmailErrorText;
+  String? _loginPasswordErrorText;
 
-  final TextEditingController firstNameController = TextEditingController();
-
-  final TextEditingController familyNameController = TextEditingController();
-
-  final TextEditingController registerEmailController = TextEditingController();
-
-  final TextEditingController phoneController = TextEditingController();
-
-  final TextEditingController registerPasswordController =
-      TextEditingController();
-
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
-
-  // Login errors
-  String? loginEmailErrorText;
-  String? loginPasswordErrorText;
-
-  // Register errors
-  String? firstNameErrorText;
-  String? familyNameErrorText;
-  String? registerEmailErrorText;
-  String? phoneErrorText;
-  String? registerPasswordErrorText;
-  String? confirmPasswordErrorText;
-
-  final AuthApiService _authApiService = AuthApiService();
+  String? _firstNameErrorText;
+  String? _familyNameErrorText;
+  String? _registerEmailErrorText;
+  String? _phoneErrorText;
+  String? _registerPasswordErrorText;
+  String? _confirmPasswordErrorText;
 
   @override
   void initState() {
     super.initState();
 
-    // Start with the language received from the previous screen.
-    _isArabic = widget.isArabic;
-  }
+    _controller = AuthController();
 
-  void _showMessage(String message) {
-    final messenger = ScaffoldMessenger.of(context);
-
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  @override
-  void didUpdateWidget(covariant AuthScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // Keep this screen synchronized if the language
-    // is changed by another parent widget.
-    if (oldWidget.isArabic != widget.isArabic) {
-      _isArabic = widget.isArabic;
-    }
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _firstNameController = TextEditingController();
+    _familyNameController = TextEditingController();
+    _registerEmailController = TextEditingController();
+    _phoneController = TextEditingController();
+    _registerPasswordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
   }
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    firstNameController.dispose();
-    familyNameController.dispose();
-    registerEmailController.dispose();
-    phoneController.dispose();
-    registerPasswordController.dispose();
-    confirmPasswordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _firstNameController.dispose();
+    _familyNameController.dispose();
+    _registerEmailController.dispose();
+    _phoneController.dispose();
+    _registerPasswordController.dispose();
+    _confirmPasswordController.dispose();
+
+    _controller.dispose();
 
     super.dispose();
   }
 
-  void _toggleLanguage() {
-    setState(() {
-      _isArabic = !_isArabic;
-    });
-
-    // Also update the language state in the main app.
-    widget.onLanguageToggle();
-  }
-
   void _clearErrors() {
     setState(() {
-      firstNameErrorText = null;
-      familyNameErrorText = null;
-      registerEmailErrorText = null;
-      registerPasswordErrorText = null;
-      phoneErrorText = null;
-      loginEmailErrorText = null;
-      loginPasswordErrorText = null;
-      confirmPasswordErrorText = null;
+      _loginEmailErrorText = null;
+      _loginPasswordErrorText = null;
+
+      _firstNameErrorText = null;
+      _familyNameErrorText = null;
+      _registerEmailErrorText = null;
+      _phoneErrorText = null;
+      _registerPasswordErrorText = null;
+      _confirmPasswordErrorText = null;
     });
   }
 
-  Future<void> _handleMainButton() async {
+  Future<void> _submit() async {
     _clearErrors();
 
-    if (isSignInSelected) {
+    if (_isSignInSelected) {
       await _login();
-    } else {
-      await _register();
+      return;
     }
+
+    await _register();
   }
 
   Future<void> _login() async {
-    setState(() {
-      isLoading = true;
-    });
+    final result = await _controller.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
 
-    try {
-      final response = await _authApiService.login(
-        email: emailController.text.trim(),
-        password: passwordController.text,
-      );
-
-      if (!mounted) return;
-
-      if (response.response.statusCode == 200) {
-        _showMessage(_isArabic ? 'تم تسجيل الدخول بنجاح' : 'Login successful');
-
-        await widget.onAuthenticated();
-      }
-    } on DioException catch (error) {
-      if (!mounted) return;
-
-      if (error.response?.statusCode == 400) {
-        final errors = error.response?.data['errors'] as Map<String, dynamic>?;
-
-        if (errors != null) {
-          setState(() {
-            loginEmailErrorText = (errors['email'] as List?)?.join('\n');
-
-            loginPasswordErrorText = (errors['password'] as List?)?.join('\n');
-          });
-
-          return;
-        }
-      }
-
-      if (error.response?.statusCode == 401) {
-        final message = error.response?.data['error']?.toString();
-
-        setState(() {
-          loginEmailErrorText = message;
-          loginPasswordErrorText = message;
-        });
-
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_isArabic ? 'حدث خطأ في الخادم' : 'Server error'),
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+    if (!mounted) {
+      return;
     }
+
+    if (!result.isSuccess) {
+      _applyLoginError(result);
+      return;
+    }
+
+    _showMessage(
+      context.l10n.authLoginSuccess,
+    );
+
+    await widget.onAuthenticated();
   }
 
-  Future<void> _register() async {
-    if (registerPasswordController.text != confirmPasswordController.text) {
+  void _applyLoginError(AuthActionResult result) {
+    if (result.fieldErrors.isNotEmpty) {
       setState(() {
-        confirmPasswordErrorText = _isArabic
-            ? 'كلمتا المرور غير متطابقتين'
-            : 'Passwords do not match';
+        _loginEmailErrorText =
+            result.fieldErrors['email'];
+
+        _loginPasswordErrorText =
+            result.fieldErrors['password'];
       });
 
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
+    _showMessage(
+      result.backendMessage ??
+          context.l10n.authServerError,
+    );
+  }
 
-    try {
-      final response = await _authApiService.register(
-        firstName: firstNameController.text.trim(),
-        lastName: familyNameController.text.trim(),
-        phone: phoneController.text.trim(),
-        email: registerEmailController.text.trim(),
-        password: registerPasswordController.text,
-        guardianType: guardianType,
-      );
+  Future<void> _register() async {
+    if (_registerPasswordController.text !=
+        _confirmPasswordController.text) {
+      setState(() {
+        _confirmPasswordErrorText =
+            context.l10n.authPasswordsDoNotMatch;
+      });
 
-      if (!mounted) return;
+      return;
+    }
 
-      if (response.response.statusCode == 200 ||
-          response.response.statusCode == 201) {
-        firstNameController.clear();
-        familyNameController.clear();
-        registerEmailController.clear();
-        phoneController.clear();
-        registerPasswordController.clear();
-        confirmPasswordController.clear();
+    final result = await _controller.register(
+      firstName: _firstNameController.text.trim(),
+      lastName: _familyNameController.text.trim(),
+      phone: _phoneController.text.trim(),
+      email: _registerEmailController.text.trim(),
+      password: _registerPasswordController.text,
+      guardianType: _guardianType,
+    );
 
-        if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isArabic
-                  ? 'تم إنشاء الحساب بنجاح'
-                  : 'Account created successfully',
-            ),
-          ),
-        );
+    if (!result.isSuccess) {
+      _applyRegisterError(result);
+      return;
+    }
 
-        await widget.onAuthenticated();
-      }
-    } on DioException catch (error) {
-      if (!mounted) return;
+    _clearRegisterFields();
 
-      if (error.response?.statusCode == 400) {
-        final errors = error.response?.data['errors'] as Map<String, dynamic>?;
+    _showMessage(
+      context.l10n.authAccountCreatedSuccess,
+    );
 
-        if (errors != null) {
-          setState(() {
-            firstNameErrorText = errors['first_name']?.first?.toString();
+    await widget.onAuthenticated();
+  }
 
-            familyNameErrorText = errors['last_name']?.first?.toString();
+  void _applyRegisterError(
+    AuthActionResult result,
+  ) {
+    if (result.fieldErrors.isNotEmpty) {
+      setState(() {
+        _firstNameErrorText =
+            result.fieldErrors['first_name'];
 
-            registerEmailErrorText = (errors['email'] as List?)?.join('\n');
+        _familyNameErrorText =
+            result.fieldErrors['last_name'];
 
-            phoneErrorText = (errors['phone'] as List?)?.join('\n');
+        _registerEmailErrorText =
+            result.fieldErrors['email'];
 
-            registerPasswordErrorText = errors['password']?.first?.toString();
-          });
+        _phoneErrorText =
+            result.fieldErrors['phone'];
 
-          return;
-        }
-      }
+        _registerPasswordErrorText =
+            result.fieldErrors['password'];
+      });
 
-      if (error.response?.statusCode == 409) {
-        final message = error.response?.data['error']?.toString();
+      return;
+    }
 
-        setState(() {
-          if (message == 'Email already registered') {
-            registerEmailErrorText = _isArabic
-                ? 'البريد الإلكتروني مسجل مسبقًا'
-                : message;
-          } else if (message == 'Phone number already used') {
-            phoneErrorText = _isArabic ? 'رقم الجوال مستخدم مسبقًا' : message;
-          } else if (message == 'Email or phone number already registered') {
-            registerEmailErrorText = _isArabic
-                ? 'البريد الإلكتروني أو رقم الجوال مسجل مسبقًا'
-                : message;
+    final backendMessage = result.backendMessage;
 
-            phoneErrorText = registerEmailErrorText;
-          }
-        });
+    if (backendMessage == 'Email already registered') {
+      setState(() {
+        _registerEmailErrorText =
+            context.l10n.authEmailAlreadyRegistered;
+      });
 
-        return;
-      }
+      return;
+    }
 
-      ScaffoldMessenger.of(context).showSnackBar(
+    if (backendMessage == 'Phone number already used') {
+      setState(() {
+        _phoneErrorText =
+            context.l10n.authPhoneAlreadyUsed;
+      });
+
+      return;
+    }
+
+    if (backendMessage ==
+        'Email or phone number already registered') {
+      final message =
+          context.l10n.authEmailOrPhoneAlreadyRegistered;
+
+      setState(() {
+        _registerEmailErrorText = message;
+        _phoneErrorText = message;
+      });
+
+      return;
+    }
+
+    _showMessage(
+      backendMessage ??
+          context.l10n.authServerError,
+    );
+  }
+
+  void _clearRegisterFields() {
+    _firstNameController.clear();
+    _familyNameController.clear();
+    _registerEmailController.clear();
+    _phoneController.clear();
+    _registerPasswordController.clear();
+    _confirmPasswordController.clear();
+  }
+
+  void _showMessage(String message) {
+    final messenger =
+        ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
         SnackBar(
-          content: Text(_isArabic ? 'حدث خطأ في الخادم' : 'Server error'),
+          content: Text(message),
         ),
       );
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
+  }
+
+  void _showRegister() {
+    _clearErrors();
+
+    setState(() {
+      _isSignInSelected = false;
+    });
+  }
+
+  void _changeGuardianType(String type) {
+    setState(() {
+      _guardianType = type;
+    });
   }
 
   void _handleBack() {
-    if (isSignInSelected) {
+    if (_isSignInSelected) {
       Navigator.pop(context);
-    } else {
-      setState(() {
-        isSignInSelected = true;
-      });
+      return;
     }
+
+    _clearErrors();
+
+    setState(() {
+      _isSignInSelected = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isArabic = _isArabic;
+    return ChangeNotifierProvider.value(
+      value: _controller,
+      child: AuthView(
+        isSignInSelected: _isSignInSelected,
+        guardianType: _guardianType,
 
-    return Scaffold(
-      body: ScreenBackground(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    AppBackButton(onTap: _handleBack),
+        emailController: _emailController,
+        passwordController: _passwordController,
+        firstNameController: _firstNameController,
+        familyNameController: _familyNameController,
+        registerEmailController:
+            _registerEmailController,
+        phoneController: _phoneController,
+        registerPasswordController:
+            _registerPasswordController,
+        confirmPasswordController:
+            _confirmPasswordController,
 
-                    const Spacer(),
+        loginEmailErrorText:
+            _loginEmailErrorText,
+        loginPasswordErrorText:
+            _loginPasswordErrorText,
 
-                    LanguageToggle(isArabic: isArabic, onTap: _toggleLanguage),
-                  ],
-                ),
+        firstNameErrorText:
+            _firstNameErrorText,
+        familyNameErrorText:
+            _familyNameErrorText,
+        registerEmailErrorText:
+            _registerEmailErrorText,
+        phoneErrorText:
+            _phoneErrorText,
+        registerPasswordErrorText:
+            _registerPasswordErrorText,
+        confirmPasswordErrorText:
+            _confirmPasswordErrorText,
 
-                const SizedBox(height: AppSpacing.lg),
-
-                Text(
-                  isSignInSelected
-                      ? (isArabic ? 'مرحبًا بعودتك!' : 'Welcome back!')
-                      : (isArabic ? 'إنشاء حساب جديد' : 'Create a new account'),
-                  style: AppTextStyles.arabicTitle,
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: AppSpacing.sm),
-
-                Text(
-                  isSignInSelected
-                      ? (isArabic
-                            ? 'سجّل الدخول أو أنشئ حسابًا جديدًا'
-                            : 'Sign in or create a new account')
-                      : (isArabic
-                            ? 'يرجى تعبئة البيانات لإنشاء حسابك'
-                            : 'Please fill in your details to create your account'),
-                  style: AppTextStyles.body,
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.10),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: isSignInSelected
-                      ? _buildSignInForm(isArabic)
-                      : _buildRegisterForm(isArabic),
-                ),
-
-                if (isSignInSelected) ...[
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  Text(
-                    isArabic ? 'ليس لديك حساب؟' : "Don't have an account?",
-                    style: const TextStyle(color: AppColors.textSecondary),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          isSignInSelected = false;
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                          color: AppColors.primary,
-                          width: 1.5,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                      child: Text(
-                        isArabic ? 'إنشاء حساب' : 'Create account',
-                        style: const TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
+        onBack: _handleBack,
+        onLanguageToggle:
+            widget.onLanguageToggle,
+        onCreateAccount: _showRegister,
+        onGuardianTypeChanged:
+            _changeGuardianType,
+        onSubmit: _submit,
       ),
-    );
-  }
-
-  Widget _buildSignInForm(bool isArabic) {
-    return Column(
-      children: [
-        AppTextField(
-          label: isArabic ? 'البريد الإلكتروني' : 'Email',
-          hint: isArabic ? 'أدخل بريدك الإلكتروني' : 'Enter your email',
-          icon: Icons.email_outlined,
-          controller: emailController,
-          keyboardType: TextInputType.emailAddress,
-          errorText: loginEmailErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        AppTextField(
-          label: isArabic ? 'كلمة المرور' : 'Password',
-          hint: isArabic ? 'أدخل كلمة المرور' : 'Enter your password',
-          icon: Icons.lock_outline,
-          isPassword: true,
-          controller: passwordController,
-          errorText: loginPasswordErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        AppButton(
-          text: isArabic ? 'تسجيل الدخول' : 'Sign In',
-          onPressed: _handleMainButton,
-          isLoading: isLoading,
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.primaryGradient,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRegisterForm(bool isArabic) {
-    return Column(
-      children: [
-        ParentGenderToggle(
-          selectedType: guardianType,
-          onTypeSelected: (type) {
-            setState(() {
-              guardianType = type;
-            });
-          },
-        ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        AppTextField(
-          label: isArabic ? 'الاسم الأول' : 'First name',
-          hint: isArabic ? 'أدخل الاسم الأول' : 'Enter your first name',
-          icon: Icons.person_outline,
-          controller: firstNameController,
-          errorText: firstNameErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        AppTextField(
-          label: isArabic ? 'اسم العائلة' : 'Family name',
-          hint: isArabic ? 'أدخل اسم العائلة' : 'Enter your family name',
-          icon: Icons.person_outline,
-          controller: familyNameController,
-          errorText: familyNameErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        AppTextField(
-          label: isArabic ? 'البريد الإلكتروني' : 'Email',
-          hint: isArabic ? 'أدخل بريدك الإلكتروني' : 'Enter your email',
-          icon: Icons.email_outlined,
-          controller: registerEmailController,
-          keyboardType: TextInputType.emailAddress,
-          errorText: registerEmailErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        AppTextField(
-          label: isArabic ? 'رقم الجوال' : 'Phone number',
-          hint: isArabic ? 'أدخل رقم الجوال' : 'Enter your phone number',
-          icon: Icons.phone_outlined,
-          controller: phoneController,
-          keyboardType: TextInputType.phone,
-          errorText: phoneErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        AppTextField(
-          label: isArabic ? 'كلمة المرور' : 'Password',
-          hint: isArabic ? 'أدخل كلمة المرور' : 'Enter your password',
-          icon: Icons.lock_outline,
-          isPassword: true,
-          controller: registerPasswordController,
-          errorText: registerPasswordErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.md),
-
-        AppTextField(
-          label: isArabic ? 'تأكيد كلمة المرور' : 'Confirm password',
-          hint: isArabic ? 'أعد إدخال كلمة المرور' : 'Re-enter your password',
-          icon: Icons.lock_outline,
-          isPassword: true,
-          controller: confirmPasswordController,
-          errorText: confirmPasswordErrorText,
-        ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        AppButton(
-          text: isArabic ? 'التالي' : 'Next',
-          onPressed: _handleMainButton,
-          isLoading: isLoading,
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.primaryGradient,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -34,10 +34,6 @@ class ChildPinLoginView extends StatelessWidget {
     final controller =
         context.watch<ChildPinLoginController>();
 
-    final isArabic =
-        Directionality.of(context) ==
-            TextDirection.rtl;
-
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
@@ -55,7 +51,6 @@ class ChildPinLoginView extends StatelessWidget {
                     const AppBackButton(),
 
                     LanguageToggle(
-                      isArabic: isArabic,
                       onTap: onLanguageToggle,
                     ),
                   ],

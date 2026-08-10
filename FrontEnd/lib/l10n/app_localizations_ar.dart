@@ -1487,4 +1487,26 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get welcomeTitle => 'مرحبًا بك في أصالة';
+
+  @override
+  String get welcomeTagline => 'حيثُ تُبنى القيم وتُكافئ الإنجازات';
+
+  @override
+  String get welcomeSubtitle => 'اختر طريقة الدخول للمتابعة';
+
+  @override
+  String get parentRole => 'ولي أمر';
+
+  @override
+  String get parentRoleDescription => 'إدارة أطفالك ومتابعة المهام والمكافآت';
+
+  @override
+  String get childRole => 'طفل';
+
+  @override
+  String get childRoleDescription =>
+      'أنجز المهام واجمع النقاط واحصل على المكافآت';
 }

@@ -4,12 +4,10 @@ import '../constants/app_colors.dart';
 import '../localization/localization_extension.dart';
 
 class LanguageToggle extends StatelessWidget {
-  final bool isArabic;
   final VoidCallback onTap;
 
   const LanguageToggle({
     super.key,
-    required this.isArabic,
     required this.onTap,
   });
 

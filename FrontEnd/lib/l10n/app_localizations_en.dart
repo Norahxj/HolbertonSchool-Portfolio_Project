@@ -1529,4 +1529,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmPassword => 'Confirm password';
+
+  @override
+  String get welcomeTitle => 'Welcome to Asalah';
+
+  @override
+  String get welcomeTagline =>
+      'Where values are built and achievements are rewarded.';
+
+  @override
+  String get welcomeSubtitle => 'Choose how you would like to continue';
+
+  @override
+  String get parentRole => 'Parent';
+
+  @override
+  String get parentRoleDescription =>
+      'Manage your children, tasks, and rewards';
+
+  @override
+  String get childRole => 'Child';
+
+  @override
+  String get childRoleDescription =>
+      'Complete tasks, earn points, and unlock rewards';
 }

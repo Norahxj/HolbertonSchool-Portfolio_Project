@@ -72,9 +72,6 @@ class AuthView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<AuthController>();
 
-    final isArabic =
-        Directionality.of(context) == TextDirection.rtl;
-
     return Scaffold(
       body: ScreenBackground(
         child: SafeArea(
@@ -91,7 +88,6 @@ class AuthView extends StatelessWidget {
                     const Spacer(),
 
                     LanguageToggle(
-                      isArabic: isArabic,
                       onTap: onLanguageToggle,
                     ),
                   ],

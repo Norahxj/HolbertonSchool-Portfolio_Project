@@ -64,8 +64,6 @@ class LanguageRow extends StatelessWidget {
               ),
 
               LanguageToggle(
-                isArabic:
-                    localeController.isArabic,
                 onTap: toggleLocale,
               ),
             ],

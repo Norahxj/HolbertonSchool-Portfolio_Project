@@ -725,5 +725,12 @@
 "authPhoneAlreadyUsed": "Phone number already used",
 "authEmailOrPhoneAlreadyRegistered": "Email or phone number already registered",
 "password": "Password",
-"confirmPassword": "Confirm password"
+"confirmPassword": "Confirm password",
+"welcomeTitle": "Welcome to Asalah",
+"welcomeTagline": "Where values are built and achievements are rewarded.",
+"welcomeSubtitle": "Choose how you would like to continue",
+"parentRole": "Parent",
+"parentRoleDescription": "Manage your children, tasks, and rewards",
+"childRole": "Child",
+"childRoleDescription": "Complete tasks, earn points, and unlock rewards"
 }
