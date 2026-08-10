@@ -61,7 +61,6 @@ class InviteGuardianSection extends StatelessWidget {
             icon: Icons.mail_outline,
             controller: controller,
             keyboardType: TextInputType.emailAddress,
-            textDirection: TextDirection.ltr,
           ),
 
           const SizedBox(height: AppSpacing.md),

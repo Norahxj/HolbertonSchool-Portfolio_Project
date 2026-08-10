@@ -13,8 +13,13 @@ class ChildWishlistView extends StatelessWidget {
   final VoidCallback onAddWish;
   final Future<void> Function() onRetry;
   final Future<void> Function() onRefresh;
-  final Future<void> Function(String wishId, String wishName) onDeleteWish;
-  final Future<void> Function(String wishId) onAchieveWish;
+  final Future<void> Function(
+    String wishId,
+    String wishName,
+  ) onDeleteWish;
+  final Future<void> Function(
+    String wishId,
+  ) onAchieveWish;
 
   const ChildWishlistView({
     super.key,
@@ -27,52 +32,38 @@ class ChildWishlistView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<ChildWishlistController>();
+    final controller =
+        context.watch<ChildWishlistController>();
 
-    if (controller.isLoading) {
-      return const Scaffold(
-        backgroundColor: Colors.transparent,
-        body: ScreenBackground(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
-
-    if (controller.hasError) {
-      final message =
-          controller.backendMessage ??
-          context.l10n.childWishlistLoadFailed;
-
+    if (controller.hasError &&
+        controller.wishes.isEmpty &&
+        !controller.isLoading) {
       return Scaffold(
         backgroundColor: Colors.transparent,
         body: ScreenBackground(
           child: SafeArea(
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
+                padding: const EdgeInsets.all(
+                  AppSpacing.lg,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.cloud_off_rounded,
-                      color: AppColors.error,
-                      size: 52,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
                     Text(
-                      message,
+                      controller.backendMessage ??
+                          context.l10n.childWishlistLoadFailed,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.sectionTitle,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    FilledButton.icon(
-                      onPressed: onRetry,
-                      icon: const Icon(
-                        Icons.refresh_rounded,
+                      style: const TextStyle(
+                        color: AppColors.error,
                       ),
-                      label: Text(
+                    ),
+                    const SizedBox(
+                      height: AppSpacing.md,
+                    ),
+                    ElevatedButton(
+                      onPressed: onRetry,
+                      child: Text(
                         context.l10n.retry,
                       ),
                     ),
@@ -94,134 +85,222 @@ class ChildWishlistView extends StatelessWidget {
           child: RefreshIndicator(
             onRefresh: onRefresh,
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              physics:
+                  const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(
+                AppSpacing.lg,
+              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment:
+                    CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    context.l10n.childWishlistTitle,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.arabicTitle,
+                  Row(
+                    children: [
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.goldLight,
+                          borderRadius:
+                              BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          mainAxisSize:
+                              MainAxisSize.min,
+                          children: [
+                            Text(
+                              controller.isLoading
+                                  ? '—'
+                                  : '${controller.points}',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight:
+                                    FontWeight.bold,
+                                color:
+                                    AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.auto_awesome,
+                              color: AppColors.gold,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Expanded(
+                        child: Text(
+                          context.l10n.childWishlistTitle,
+                          textAlign: TextAlign.center,
+                          style:
+                              AppTextStyles.arabicTitle,
+                        ),
+                      ),
+
+                      const SizedBox(width: 56),
+                    ],
                   ),
 
-                  const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(
+                    height: AppSpacing.sm,
+                  ),
 
                   Text(
                     context.l10n.childWishlistSubtitle,
-                    textAlign: TextAlign.center,
                     style: AppTextStyles.body,
+                    textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: AppSpacing.lg),
-
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.auto_awesome_rounded,
-                          color: AppColors.primary,
-                          size: 22,
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: Text(
-                            context.l10n.childWishlistPoints(
-                              controller.points,
-                            ),
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(
+                    height: AppSpacing.lg,
                   ),
 
-                  const SizedBox(height: AppSpacing.lg),
-
-                  FilledButton.icon(
-                    onPressed: onAddWish,
-                    icon: const Icon(
-                      Icons.add_rounded,
-                    ),
-                    label: Text(
-                      context.l10n.childAddWish,
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                  if (wishes.isEmpty)
-                    Container(
-                      padding: const EdgeInsets.all(
-                        AppSpacing.xl,
+                  if (controller.isLoading &&
+                      wishes.isEmpty)
+                    const Center(
+                      child: Padding(
+                        padding:
+                            EdgeInsets.all(32),
+                        child:
+                            CircularProgressIndicator(),
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColors.card,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.star_border_rounded,
-                            color: AppColors.primary,
-                            size: 48,
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          Text(
-                            context.l10n.childWishlistEmpty,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.sectionTitle,
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Text(
-                            context.l10n.childWishlistEmptySubtitle,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.body,
-                          ),
-                        ],
-                      ),
+                    )
+                  else if (wishes.isEmpty)
+                    _EmptyWishlistState(
+                      onAddWish: onAddWish,
                     )
                   else
                     ListView.separated(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics:
+                          const NeverScrollableScrollPhysics(),
                       itemCount: wishes.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(
-                            height: AppSpacing.md,
-                          ),
-                      itemBuilder: (context, index) {
+                      separatorBuilder:
+                          (context, index) =>
+                              const SizedBox(
+                        height: AppSpacing.md,
+                      ),
+                      itemBuilder:
+                          (context, index) {
                         final wish = wishes[index];
 
                         return WishCard(
                           wish: wish,
-                          currentPoints: controller.points,
-                          onDelete: () => onDeleteWish(
-                            wish.id,
-                            wish.name,
-                          ),
-                          onAchieve: () => onAchieveWish(
-                            wish.id,
-                          ),
+                          currentPoints:
+                              controller.points,
+                          onDelete: () {
+                            onDeleteWish(
+                              wish.id,
+                              wish.name,
+                            );
+                          },
+                          onAchieve: () {
+                            onAchieveWish(
+                              wish.id,
+                            );
+                          },
                         );
                       },
                     ),
 
-                  const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(
+                    height: AppSpacing.xl,
+                  ),
+
+                  GestureDetector(
+                    onTap: onAddWish,
+                    child: Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: AppColors.card,
+                        borderRadius:
+                            BorderRadius.circular(18),
+                        border: Border.all(
+                          color: AppColors.border,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            context.l10n.childAddWish,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight:
+                                  FontWeight.bold,
+                              color:
+                                  AppColors.primary,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: AppSpacing.sm,
+                          ),
+                          const Icon(
+                            Icons.add,
+                            color: AppColors.primary,
+                            size: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _EmptyWishlistState extends StatelessWidget {
+  final VoidCallback onAddWish;
+
+  const _EmptyWishlistState({
+    required this.onAddWish,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(
+        AppSpacing.xl,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.star_border_rounded,
+            color: AppColors.primary,
+            size: 48,
+          ),
+          const SizedBox(
+            height: AppSpacing.md,
+          ),
+          Text(
+            context.l10n.childWishlistEmpty,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.sectionTitle,
+          ),
+          const SizedBox(
+            height: AppSpacing.sm,
+          ),
+          Text(
+            context.l10n.childWishlistEmptySubtitle,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.body,
+          ),
+        ],
       ),
     );
   }

@@ -161,7 +161,6 @@ class ChildFormView extends StatelessWidget {
                   icon: Icons.phone_outlined,
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
-                  textDirection: TextDirection.ltr,
                   errorText: phoneError,
                 ),
                 const SizedBox(height: AppSpacing.xxl),

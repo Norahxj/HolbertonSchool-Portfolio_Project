@@ -18,7 +18,7 @@ class AppNavigationArrow extends StatelessWidget {
     this.size = 22,
     this.color = AppColors.textSecondary,
     this.style = AppNavigationArrowStyle.chevron,
-    this.followTextDirection = false,
+    this.followTextDirection = true,
   });
 
   @override
