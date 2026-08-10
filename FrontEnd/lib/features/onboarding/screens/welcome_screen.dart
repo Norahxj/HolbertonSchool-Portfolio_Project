@@ -13,11 +13,13 @@ import '../widgets/role_card.dart';
 class WelcomeScreen extends StatelessWidget {
   final VoidCallback onLanguageToggle;
   final Future<void> Function() onParentAuthenticated;
+  final Future<void> Function() onChildAuthenticated;
 
   const WelcomeScreen({
     super.key,
     required this.onLanguageToggle,
     required this.onParentAuthenticated,
+    required this.onChildAuthenticated,
   });
 
   void _openParentAuthentication(BuildContext context) {
@@ -41,6 +43,7 @@ class WelcomeScreen extends StatelessWidget {
         builder: (_) {
           return ChildPinLoginScreen(
             onLanguageToggle: onLanguageToggle,
+            onAuthenticated: onChildAuthenticated,
           );
         },
       ),
@@ -168,8 +171,7 @@ class WelcomeScreen extends StatelessWidget {
                 RoleCard(
                   imagePath: 'assets/role_selection/parent1.png',
                   title: context.l10n.parentRole,
-                  description:
-                      context.l10n.parentRoleDescription,
+                  description: context.l10n.parentRoleDescription,
                   onTap: () {
                     _openParentAuthentication(context);
                   },
@@ -180,8 +182,7 @@ class WelcomeScreen extends StatelessWidget {
                 RoleCard(
                   imagePath: 'assets/role_selection/child.png',
                   title: context.l10n.childRole,
-                  description:
-                      context.l10n.childRoleDescription,
+                  description: context.l10n.childRoleDescription,
                   onTap: () {
                     _openChildLogin(context);
                   },

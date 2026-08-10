@@ -2,34 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../widgets/child_nav.dart';
 import '../controllers/child_pin_login_controller.dart';
 import '../models/child_pin_login_result.dart';
 import '../widgets/child_pin_login_view.dart';
 
-class ChildPinLoginScreen
-    extends StatefulWidget {
+class ChildPinLoginScreen extends StatefulWidget {
   final VoidCallback onLanguageToggle;
+  final Future<void> Function() onAuthenticated;
 
   const ChildPinLoginScreen({
     super.key,
     required this.onLanguageToggle,
+    required this.onAuthenticated,
   });
 
   @override
-  State<ChildPinLoginScreen>
-      createState() {
+  State<ChildPinLoginScreen> createState() {
     return _ChildPinLoginScreenState();
   }
 }
 
-class _ChildPinLoginScreenState
-    extends State<ChildPinLoginScreen> {
-  late final ChildPinLoginController
-      _controller;
+class _ChildPinLoginScreenState extends State<ChildPinLoginScreen> {
+  late final ChildPinLoginController _controller;
 
-  late final TextEditingController
-      _pinController;
+  late final TextEditingController _pinController;
 
   late final FocusNode _pinFocusNode;
 
@@ -39,11 +35,9 @@ class _ChildPinLoginScreenState
   void initState() {
     super.initState();
 
-    _controller =
-        ChildPinLoginController();
+    _controller = ChildPinLoginController();
 
-    _pinController =
-        TextEditingController();
+    _pinController = TextEditingController();
 
     _pinFocusNode = FocusNode();
   }
@@ -62,8 +56,7 @@ class _ChildPinLoginScreenState
       _errorMessage = null;
     });
 
-    final result =
-        await _controller.login();
+    final result = await _controller.login();
 
     if (!mounted) {
       return;
@@ -71,24 +64,13 @@ class _ChildPinLoginScreenState
 
     if (!result.isSuccess) {
       setState(() {
-        _errorMessage =
-            _errorText(result);
+        _errorMessage = _errorText(result);
       });
 
       return;
     }
 
-    Navigator.pushReplacement<void, void>(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return ChildNav(
-            onLanguageToggle:
-                widget.onLanguageToggle,
-          );
-        },
-      ),
-    );
+    await widget.onAuthenticated();
   }
 
   String _errorText(
@@ -100,24 +82,15 @@ class _ChildPinLoginScreenState
     }
 
     switch (result.errorCode) {
-      case ChildPinLoginErrorCode
-            .incompleteCode:
-        return context
-            .l10n
-            .childPinIncompleteCode;
+      case ChildPinLoginErrorCode.incompleteCode:
+        return context.l10n.childPinIncompleteCode;
 
-      case ChildPinLoginErrorCode
-            .invalidCode:
-        return context
-            .l10n
-            .childPinInvalidCode;
+      case ChildPinLoginErrorCode.invalidCode:
+        return context.l10n.childPinInvalidCode;
 
-      case ChildPinLoginErrorCode
-            .loginFailed:
+      case ChildPinLoginErrorCode.loginFailed:
       case null:
-        return context
-            .l10n
-            .childPinLoginFailed;
+        return context.l10n.childPinLoginFailed;
     }
   }
 
@@ -126,15 +99,11 @@ class _ChildPinLoginScreenState
     return ChangeNotifierProvider.value(
       value: _controller,
       child: ChildPinLoginView(
-        pinController:
-            _pinController,
-        pinFocusNode:
-            _pinFocusNode,
-        onLanguageToggle:
-            widget.onLanguageToggle,
+        pinController: _pinController,
+        pinFocusNode: _pinFocusNode,
+        onLanguageToggle: widget.onLanguageToggle,
         onLogin: _loginChild,
-        errorMessage:
-            _errorMessage,
+        errorMessage: _errorMessage,
       ),
     );
   }

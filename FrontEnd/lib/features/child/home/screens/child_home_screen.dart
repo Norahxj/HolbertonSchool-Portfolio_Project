@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../../core/localization/localization_extension.dart';
-import '../../../../app.dart';
 import '../../../../models/task_assignment_model.dart';
 import '../../../auth/services/auth_api_service.dart';
 import '../../screens/child_settings_screen.dart';
@@ -12,10 +12,12 @@ import '../widgets/child_home_view.dart';
 
 class ChildHomeScreen extends StatefulWidget {
   final VoidCallback onLanguageToggle;
+  final VoidCallback onLoggedOut;
 
   const ChildHomeScreen({
     super.key,
     required this.onLanguageToggle,
+    required this.onLoggedOut,
   });
 
   @override
@@ -31,7 +33,8 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
   void initState() {
     super.initState();
 
-    _controller = ChildHomeController()..loadHome();
+    _controller = ChildHomeController()
+      ..loadHome();
   }
 
   @override
@@ -40,8 +43,13 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
     super.dispose();
   }
 
-  Future<void> _completeAssignment(String assignmentId) async {
-    final result = await _controller.completeAssignment(assignmentId);
+  Future<void> _completeAssignment(
+    String assignmentId,
+  ) async {
+    final result =
+        await _controller.completeAssignment(
+      assignmentId,
+    );
 
     if (!mounted) {
       return;
@@ -53,19 +61,23 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
     }
 
     _showMessage(
-  context.l10n.childTaskSentForReviewSuccess,
-);
+      context.l10n.childTaskSentForReviewSuccess,
+    );
   }
 
-  void _showCompleteError(ChildHomeActionResult result) {
+  void _showCompleteError(
+    ChildHomeActionResult result,
+  ) {
     final message =
-    result.backendMessage ??
-    context.l10n.childTaskCompleteFailed;
+        result.backendMessage ??
+        context.l10n.childTaskCompleteFailed;
+
     _showMessage(message);
   }
 
   void _showMessage(String message) {
-    final messenger = ScaffoldMessenger.of(context);
+    final messenger =
+        ScaffoldMessenger.of(context);
 
     messenger
       ..hideCurrentSnackBar()
@@ -113,7 +125,8 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
           return ChildSettingsScreen(
             childName: child.name,
             avatarIndex: child.avatarIndex,
-            onLanguageToggle: widget.onLanguageToggle,
+            onLanguageToggle:
+                widget.onLanguageToggle,
             onLogout: _logout,
           );
         },
@@ -128,13 +141,7 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
       return;
     }
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const AsalahApp(),
-      ),
-      (route) => false,
-    );
+    widget.onLoggedOut();
   }
 
   Future<void> _refresh() async {
@@ -153,8 +160,10 @@ class _ChildHomeScreenState extends State<ChildHomeScreen> {
         onSettingsPressed: _openSettings,
         onRefresh: _refresh,
         onRetry: _retry,
-        onCompleteAssignment: _completeAssignment,
-        onAssignmentTap: _openAssignmentDetails,
+        onCompleteAssignment:
+            _completeAssignment,
+        onAssignmentTap:
+            _openAssignmentDetails,
       ),
     );
   }

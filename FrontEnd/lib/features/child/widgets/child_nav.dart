@@ -12,10 +12,12 @@ import '../wishlist/screens/child_wishlist_screen.dart';
 
 class ChildNav extends StatelessWidget {
   final VoidCallback onLanguageToggle;
+  final VoidCallback onLoggedOut;
 
   const ChildNav({
     super.key,
     required this.onLanguageToggle,
+    required this.onLoggedOut,
   });
 
   @override
@@ -26,6 +28,7 @@ class ChildNav extends StatelessWidget {
       ),
       child: _ChildNavigationView(
         onLanguageToggle: onLanguageToggle,
+        onLoggedOut: onLoggedOut,
       ),
     );
   }
@@ -33,9 +36,11 @@ class ChildNav extends StatelessWidget {
 
 class _ChildNavigationView extends StatelessWidget {
   final VoidCallback onLanguageToggle;
+  final VoidCallback onLoggedOut;
 
   const _ChildNavigationView({
     required this.onLanguageToggle,
+    required this.onLoggedOut,
   });
 
   @override
@@ -76,20 +81,21 @@ class _ChildNavigationView extends StatelessWidget {
       navigation.isLoaded(0)
           ? ChildHomeScreen(
               onLanguageToggle: onLanguageToggle,
+              onLoggedOut: onLoggedOut,
             )
           : const SizedBox.shrink(),
 
       navigation.isLoaded(1)
-          ? const  ChildWishlistScreen()
+          ? const ChildWishlistScreen()
           : const SizedBox.shrink(),
 
       navigation.isLoaded(2)
-          ? const  ChildRewardsScreen()
+          ? const ChildRewardsScreen()
           : const SizedBox.shrink(),
 
       navigation.isLoaded(3)
-    ? const ChildProgressScreen()
-    : const SizedBox.shrink(),
+          ? const ChildProgressScreen()
+          : const SizedBox.shrink(),
     ];
 
     return Scaffold(

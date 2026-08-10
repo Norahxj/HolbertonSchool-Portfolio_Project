@@ -13,7 +13,9 @@ import 'features/parent/screens/parent_main_screen.dart';
 import 'l10n/app_localizations.dart';
 
 class AsalahApp extends StatefulWidget {
-  const AsalahApp({super.key});
+  const AsalahApp({
+    super.key,
+  });
 
   @override
   State<AsalahApp> createState() {
@@ -22,7 +24,8 @@ class AsalahApp extends StatefulWidget {
 }
 
 class _AsalahAppState extends State<AsalahApp> {
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _navigatorKey =
+      GlobalKey<NavigatorState>();
 
   final AuthApiService _authApiService = AuthApiService();
 
@@ -47,12 +50,14 @@ class _AsalahAppState extends State<AsalahApp> {
     }
 
     try {
-      final isLoggedIn = await _authApiService.isLoggedIn();
+      final isLoggedIn =
+          await _authApiService.isLoggedIn();
 
       var isChild = false;
 
       if (isLoggedIn) {
-        final childData = await SecureStorage.getChild();
+        final childData =
+            await SecureStorage.getChild();
 
         isChild = childData != null;
       }
@@ -85,12 +90,14 @@ class _AsalahAppState extends State<AsalahApp> {
   }
 
   Future<void> _handleAuthenticated() async {
-    final isLoggedIn = await _authApiService.isLoggedIn();
+    final isLoggedIn =
+        await _authApiService.isLoggedIn();
 
     var isChild = false;
 
     if (isLoggedIn) {
-      final childData = await SecureStorage.getChild();
+      final childData =
+          await SecureStorage.getChild();
 
       isChild = childData != null;
     }
@@ -132,19 +139,23 @@ class _AsalahAppState extends State<AsalahApp> {
         return;
       }
 
-      _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+      _navigatorKey.currentState?.popUntil(
+        (route) => route.isFirst,
+      );
     });
   }
 
   @override
   void dispose() {
     DioFactory.onSessionExpired = null;
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final localeController = context.watch<LocaleController>();
+    final localeController =
+        context.watch<LocaleController>();
 
     return MaterialApp(
       navigatorKey: _navigatorKey,
@@ -153,12 +164,15 @@ class _AsalahAppState extends State<AsalahApp> {
       },
       debugShowCheckedModeBanner: false,
       locale: localeController.locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates:
+          AppLocalizations.localizationsDelegates,
+      supportedLocales:
+          AppLocalizations.supportedLocales,
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.cairoTextTheme(),
-        scaffoldBackgroundColor: AppColors.background,
+        scaffoldBackgroundColor:
+            AppColors.background,
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           primary: AppColors.primary,
@@ -171,7 +185,8 @@ class _AsalahAppState extends State<AsalahApp> {
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            final isWideScreen = constraints.maxWidth > 500;
+            final isWideScreen =
+                constraints.maxWidth > 500;
 
             if (!isWideScreen) {
               return child;
@@ -184,7 +199,8 @@ class _AsalahAppState extends State<AsalahApp> {
                   width: 390,
                   height: 844,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
+                    borderRadius:
+                        BorderRadius.circular(32),
                     child: child,
                   ),
                 ),
@@ -193,28 +209,44 @@ class _AsalahAppState extends State<AsalahApp> {
           },
         );
       },
-      home: _buildHomeScreen(localeController: localeController),
+      home: _buildHomeScreen(
+        localeController: localeController,
+      ),
     );
   }
 
-  Widget _buildHomeScreen({required LocaleController localeController}) {
+  Widget _buildHomeScreen({
+    required LocaleController localeController,
+  }) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     if (!_isLoggedIn) {
       return WelcomeScreen(
-        onLanguageToggle: localeController.toggleLocale,
-        onParentAuthenticated: _handleAuthenticated,
+        onLanguageToggle:
+            localeController.toggleLocale,
+        onParentAuthenticated:
+            _handleAuthenticated,
+        onChildAuthenticated:
+            _handleAuthenticated,
       );
     }
 
     if (_isChild) {
       return ChildNav(
-  onLanguageToggle: localeController.toggleLocale,
-);
+        onLanguageToggle:
+            localeController.toggleLocale,
+        onLoggedOut: _markLoggedOut,
+      );
     }
 
-    return ParentMainScreen(onLoggedOut: _markLoggedOut);
+    return ParentMainScreen(
+      onLoggedOut: _markLoggedOut,
+    );
   }
 }
