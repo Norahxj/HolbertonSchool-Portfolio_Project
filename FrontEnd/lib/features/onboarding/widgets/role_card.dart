@@ -4,7 +4,6 @@ class RoleCard extends StatefulWidget {
   final String imagePath;
   final String title;
   final String description;
-  final bool isArabic;
   final VoidCallback onTap;
 
   const RoleCard({
@@ -12,12 +11,13 @@ class RoleCard extends StatefulWidget {
     required this.imagePath,
     required this.title,
     required this.description,
-    required this.isArabic,
     required this.onTap,
   });
 
   @override
-  State<RoleCard> createState() => _RoleCardState();
+  State<RoleCard> createState() {
+    return _RoleCardState();
+  }
 }
 
 class _RoleCardState extends State<RoleCard> {
@@ -26,6 +26,9 @@ class _RoleCardState extends State<RoleCard> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+
+    final isRtl =
+        Directionality.of(context) == TextDirection.rtl;
 
     return Center(
       child: SizedBox(
@@ -61,7 +64,9 @@ class _RoleCardState extends State<RoleCard> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha:0.08),
+                      color: Colors.black.withValues(
+                        alpha: 0.08,
+                      ),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),
@@ -76,14 +81,12 @@ class _RoleCardState extends State<RoleCard> {
                         vertical: 12,
                       ),
                       child: Row(
-                        textDirection: widget.isArabic
-                            ? TextDirection.rtl
-                            : TextDirection.ltr,
                         children: [
                           Expanded(
                             flex: 7,
                             child: Padding(
-                              padding: EdgeInsetsDirectional.only(
+                              padding:
+                                  const EdgeInsetsDirectional.only(
                                 top: 3,
                                 bottom: 3,
                                 end: 6,
@@ -108,95 +111,99 @@ class _RoleCardState extends State<RoleCard> {
                               ),
                             ),
                           ),
+
                           Expanded(
                             flex: 4,
-                            child: Directionality(
-                              textDirection: widget.isArabic
-                                  ? TextDirection.rtl
-                                  : TextDirection.ltr,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: widget.isArabic
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    widget.title,
-                                    textAlign: widget.isArabic
-                                        ? TextAlign.right
-                                        : TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Color(0xFF7047C7),
-                                      fontSize: 23,
-                                      fontWeight: FontWeight.w800,
-                                      height: 1.2,
-                                    ),
+                            child: Column(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.title,
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                    color: Color(0xFF7047C7),
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.w800,
+                                    height: 1.2,
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    widget.description,
-                                    textAlign: widget.isArabic
-                                        ? TextAlign.right
-                                        : TextAlign.left,
-                                    maxLines: 4,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Color(0xFF676174),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.5,
-                                    ),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                Text(
+                                  widget.description,
+                                  textAlign: TextAlign.start,
+                                  maxLines: 4,
+                                  overflow:
+                                      TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Color(0xFF676174),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.5,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
+
                           const SizedBox(width: 8),
+
                           Transform.translate(
                             offset: const Offset(0, 35),
                             child: Container(
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF7047C7),
+                                color:
+                                    const Color(0xFF7047C7),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(
-                                      0xFF7047C7,
-                                    ).withValues(alpha:0.25),
+                                    color:
+                                        const Color(
+                                          0xFF7047C7,
+                                        ).withValues(
+                                          alpha: 0.25,
+                                        ),
                                     blurRadius: 10,
-                                    offset: const Offset(0, 6),
+                                    offset:
+                                        const Offset(0, 6),
                                   ),
                                 ],
                               ),
-                              child: Directionality(
-  textDirection: TextDirection.ltr,
-  child: Transform.flip(
-    flipX: !widget.isArabic,
-    child: const Icon(
-      Icons.arrow_back_rounded,
-      color: Colors.white,
-      size: 27,
-    ),
-  ),
-),
+                              child: Transform.flip(
+                                flipX: !isRtl,
+                                child: const Icon(
+                                  Icons.arrow_back_rounded,
+                                  color: Colors.white,
+                                  size: 27,
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
 
-                    // طبقة الـ Hover فوق جميع محتويات الكرت.
                     IgnorePointer(
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 160),
+                        duration:
+                            const Duration(
+                          milliseconds: 160,
+                        ),
                         curve: Curves.easeOut,
                         decoration: BoxDecoration(
                           color: _isHovered
-                              ? Colors.black.withValues(alpha:0.055)
+                              ? Colors.black.withValues(
+                                  alpha: 0.055,
+                                )
                               : Colors.transparent,
-                          borderRadius: BorderRadius.circular(28),
+                          borderRadius:
+                              BorderRadius.circular(28),
                         ),
                       ),
                     ),

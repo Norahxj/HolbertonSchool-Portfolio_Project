@@ -5,7 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:provider/provider.dart';
+import 'package:frontend/core/localization/locale_controller.dart';
 import 'package:frontend/app.dart';
 
 void main() {
@@ -22,7 +23,12 @@ void main() {
     // one (no saved token), same as a brand new install.
     FlutterSecureStorage.setMockInitialValues({});
 
-    await tester.pumpWidget(const AsalahApp());
+   await tester.pumpWidget(
+  ChangeNotifierProvider(
+    create: (_) => LocaleController(),
+    child: const AsalahApp(),
+  ),
+);
 
     // The app briefly shows a loading spinner while it checks if the user
     // is already logged in. Wait for that to finish before checking for

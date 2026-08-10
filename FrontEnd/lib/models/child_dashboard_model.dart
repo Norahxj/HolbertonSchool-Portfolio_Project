@@ -3,10 +3,10 @@ class ChildDashboardModel {
   final String childName;
   final int childAge;
   final String birthDate;
-final String? phone;
-final String accessCode;
-final String role;
-final int avatarIndex;
+  final String? phone;
+  final String accessCode;
+  final String role;
+  final int avatarIndex;
   final String weekStart;
   final String weekEnd;
   final double progressPercentage;
@@ -24,10 +24,10 @@ final int avatarIndex;
     required this.childName,
     required this.childAge,
     required this.birthDate,
-this.phone,
-required this.accessCode,
-required this.role,
-required this.avatarIndex,
+    this.phone,
+    required this.accessCode,
+    required this.role,
+    required this.avatarIndex,
     required this.weekStart,
     required this.weekEnd,
     required this.progressPercentage,
@@ -38,7 +38,7 @@ required this.avatarIndex,
     required this.rejectedTasks,
     required this.remainingTasks,
     required this.totalTasks,
-    required this.totalPoints
+    required this.totalPoints,
   });
 
   factory ChildDashboardModel.fromJson(Map<String, dynamic> json) {
@@ -47,29 +47,21 @@ required this.avatarIndex,
       childName: json['child_name']?.toString() ?? '',
       childAge: (json['child_age'] as num?)?.toInt() ?? 0,
       birthDate: json['birth_date']?.toString() ?? '',
-phone: json['phone']?.toString(),
-accessCode: json['access_code']?.toString() ?? '',
-role: json['role']?.toString() ?? 'child',
-avatarIndex:
-    (json['avatar_index'] as num?)?.toInt() ?? 0,
+      phone: json['phone']?.toString(),
+      accessCode: json['access_code']?.toString() ?? '',
+      role: json['role']?.toString() ?? 'child',
+      avatarIndex: (json['avatar_index'] as num?)?.toInt() ?? 0,
       weekStart: json['week_start']?.toString() ?? '',
       weekEnd: json['week_end']?.toString() ?? '',
       progressPercentage:
           (json['progress_percentage'] as num?)?.toDouble() ?? 0,
-      completedTasks:
-          (json['completed_tasks'] as num?)?.toInt() ?? 0,
-      approvedTasks:
-          (json['approved_tasks'] as num?)?.toInt() ?? 0,
-      pendingReviewTasks:
-          (json['pending_review_tasks'] as num?)?.toInt() ?? 0,
-      pendingTasks:
-          (json['pending_tasks'] as num?)?.toInt() ?? 0,
-      rejectedTasks:
-          (json['rejected_tasks'] as num?)?.toInt() ?? 0,
-      remainingTasks:
-          (json['remaining_tasks'] as num?)?.toInt() ?? 0,
-      totalTasks:
-          (json['total_tasks'] as num?)?.toInt() ?? 0,
+      completedTasks: (json['completed_tasks'] as num?)?.toInt() ?? 0,
+      approvedTasks: (json['approved_tasks'] as num?)?.toInt() ?? 0,
+      pendingReviewTasks: (json['pending_review_tasks'] as num?)?.toInt() ?? 0,
+      pendingTasks: (json['pending_tasks'] as num?)?.toInt() ?? 0,
+      rejectedTasks: (json['rejected_tasks'] as num?)?.toInt() ?? 0,
+      remainingTasks: (json['remaining_tasks'] as num?)?.toInt() ?? 0,
+      totalTasks: (json['total_tasks'] as num?)?.toInt() ?? 0,
       totalPoints: (json['total_points'] as num?)?.toInt() ?? 0,
     );
   }

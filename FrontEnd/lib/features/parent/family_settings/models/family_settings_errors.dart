@@ -1,0 +1,16 @@
+enum FamilySettingsErrorCode {
+  loadFamilyData,
+  familyNameTooShort,
+  invalidInvitationEmail,
+  updateFamilyName,
+  sendInvitation,
+  acceptInvitation,
+  rejectInvitation,
+  invitedUserNotFound,
+  cannotInviteYourself,
+  userAlreadyInFamily,
+  guardianTypeAlreadyExists,
+  invitationAlreadyPending,
+  familyNotFound,
+  invalidEnteredData,
+}

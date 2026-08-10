@@ -1,0 +1,736 @@
+{
+  "@@locale": "en",
+
+  "appName": "Asalah",
+  "arabic": "Arabic",
+  "english": "English",
+  "save": "Save",
+  "cancel": "Cancel",
+  "back": "Back",
+  "next": "Next",
+  "retry": "Try Again",
+  "loading": "Loading...",
+  "saving": "Saving...",
+
+  "addTask": "Add Task",
+  "taskDetails": "Task Details",
+  "saveTask": "Save Task",
+  "taskName": "Task Name",
+  "taskDescription": "Description",
+  "taskFrequency": "Task Frequency",
+  "taskType": "Task Type",
+  "noorPoints": "Noor Points",
+
+  "daily": "Daily",
+  "weekly": "Once a Week",
+  "monthly": "Monthly",
+
+  "chooseChildSubtitle": "Who is this task for? (You can select more than one child)",
+  "taskDetailsSubtitle": "Add the task details and choose how often it repeats",
+
+  "selectChildFirst": "Select a child first to enable task types",
+  "chooseTaskType": "Choose a task type",
+  "noChildrenYet": "No children yet. Please add a child first.",
+
+  "culturalTasks": "Cultural Tasks",
+  "dailyTasks": "Daily Tasks",
+  "religiousTasks": "Religious Tasks",
+  "financialTasks": "Financial Tasks",
+
+  "quickAdd": "Quick Add",
+  "unableToLoadSuggestions": "Unable to load suggested tasks",
+  "noSuggestions": "No suggested tasks available right now",
+
+  "taskNameExample": "Example: Make your bed",
+  "taskDescriptionHint": "Briefly describe the task...",
+
+  "chooseWeekDay": "Choose a day of the week",
+  "chooseMonthDay": "Choose a day of the month",
+  "chooseRepeatDate": "Choose the repeat date",
+
+  "sunday": "Sunday",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+
+  "pointsValue": "{points} points",
+  "@pointsValue": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "taskNameRequired": "Task name is required",
+  "descriptionRequired": "Description is required",
+  "selectAtLeastOneChild": "Please select at least one child",
+  "selectTaskTypeError": "Please select a task type",
+  "pointsRangeError": "Points must be between 1 and 100"
+  ,
+"taskNameLengthError": "Task name must be between 2 and 100 characters",
+"descriptionLengthError": "Description must be between 2 and 500 characters",
+"saveTaskGenericError": "An error occurred while saving the task",
+"tasksInformation": "Tasks help children build habits and values while earning Noor points.",
+"pointsInformation": "Noor points motivate children and encourage them to keep going.",
+"trustChildQuestion": "Do you trust your child to complete this task seriously?",
+"trustChildDescription": "If you do, the task will be approved automatically without your review.",
+"dailyFrequencyDescription": "The task is completed every day",
+"weeklyFrequencyDescription": "The task is completed once a week",
+"monthlyFrequencyDescription": "The task is completed once a month",
+"failedToLoadChildren": "Failed to load children",
+"failedToLoadChildRewards": "Failed to load child rewards",
+"failedToLoadRewardSuggestions": "Failed to load suggested rewards",
+"deleteRewardNotAllowed": "You cannot delete this reward. Only the parent who added it can delete it.",
+"deleteClaimedRewardNotAllowed": "A claimed reward cannot be deleted.",
+"failedToDeleteReward": "Failed to delete the reward. Please try again.",
+"rewardAddedSuccessfully": "Reward added successfully 🎉",
+"deleteRewardTitle": "Delete Reward",
+"deleteRewardConfirmation": "Do you want to delete the reward \"{rewardName}\"?",
+"@deleteRewardConfirmation": {
+  "placeholders": {
+    "rewardName": {
+      "type": "String"
+    }
+  }
+},
+"delete": "Delete",
+"rewardDeleted": "Reward deleted",
+"rewardManagement": "Reward Management",
+"rewardManagementSubtitle": "Weekly rewards based on the child’s performance",
+"noChildrenAddFirst": "No children yet. Add a child first.",
+"currentChildRewards": "Current Child Rewards",
+"noRewardsForChild": "This child has no rewards yet",
+"selectChildForSuggestions": "Select a child first to view suggested rewards",
+"rewardStatusUnlocked": "Unlocked",
+"rewardStatusClaimed": "Claimed",
+"rewardStatusLocked": "Locked",
+"rewardUnlockDay": "Unlocks on {day}",
+"@rewardUnlockDay": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"noSuggestedRewards": "No suggested rewards available",
+"addReward": "Add Reward",
+"rewardNameRequired": "Enter the reward name first",
+"couldNotSaveReward": "Could not save the reward",
+"saveRewardGenericError": "An error occurred while saving the reward",
+"newReward": "New Reward",
+"rewardName": "Reward name",
+"rewardNameExample": "Example: A trip to the park",
+"rewardDescription": "Reward description",
+"rewardDescriptionExample": "Example: A weekend visit to the park with the family",
+"rewardUnlockDay": "Reward unlock day",
+"rewardAvailableEveryWeek": "The reward will become available to the child every {day}.",
+"@rewardAvailableEveryWeek": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"saveReward": "Save Reward",
+"rewardUnlockDayLabel": "Reward unlock day",
+"failedToLoadFeedbackHistory": "Unable to load feedback history",
+"failedToSaveFeedback": "Unable to save feedback. Please try again.",
+"feedbackSavedSuccessfully": "Feedback saved successfully ✓",
+"dailyFeedback": "Daily Feedback",
+"feedbackHistory": "Feedback History",
+"todayFeedbackEditable": "Today's Feedback (You Can Edit It)",
+"howWasChildDay": "How was {childName}'s day?",
+"@howWasChildDay": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"updateFeedback": "Update Feedback",
+"saveFeedback": "Save Feedback",
+"moodHappy": "Happy",
+"moodProud": "Proud",
+"moodGreat": "Great",
+"moodLoved": "Loved",
+"moodStrong": "Strong",
+"moodStar": "Star",
+"childPointsHistory": "{childName}'s Points History",
+"@childPointsHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"taskCompletedPointsHistory": "Task completed: {taskTitle}",
+"@taskCompletedPointsHistory": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"wishAchievedPointsHistory": "Wish achieved: {wishName}",
+"@wishAchievedPointsHistory": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"pointsUpdate": "Points update",
+"noPointsHistoryYet": "No points history yet",
+"pointsHistoryDescription": "Earned and deducted points will appear here.",
+"failedToLoadPointsHistory": "Could not load points history.",
+"childrenWishes": "Children’s Wishes",
+"childrenWishesSubtitle": "Review your child’s wish and set how many Noor points they need to collect to achieve it",
+"failedToRefreshWishes": "Unable to refresh wishes",
+"failedToApproveWish": "Unable to approve the wish",
+"failedToRejectWish": "Unable to reject the wish",
+"wishApprovalExplanation": "After the wish is approved, the child starts collecting Noor points until reaching the selected goal.",
+"pendingApproval": "Pending Approval",
+"pendingWishSubtitle": "Requested this wish and is waiting for you to set the points goal",
+"pointsGoal": "Points Goal",
+"convertWishExplanation": "After converting the wish into a goal, the child starts collecting these Noor points to achieve it.",
+"pointsMustBePositive": "Points must be greater than zero",
+"convertToGoal": "Convert to Goal",
+"reject": "Reject",
+"goalCreated": "Goal Created",
+"wishApprovedSubtitle": "This wish has been approved",
+"selectedPointsGoal": "Selected Points Goal",
+"wishAchieved": "Achieved",
+"wishAchievedSuccessfully": "This wish was achieved successfully 🎉",
+"completedNoorPointsGoal": "The child completed the Noor Points goal",
+"failedToLoadWishes": "An error occurred while loading wishes. Please try again.",
+"noWishesYet": "No wishes yet.",
+"more": "More",
+"comingSoonMessage": "This feature is coming soon.",
+"personalProfile": "Personal profile",
+"familySettings": "Family settings",
+"language": "Language",
+"notifications": "Notifications",
+"helpAndSupport": "Help and support",
+"soon": "Soon",
+"logOut": "Log out",
+"logoutFailed": "Unable to log out. Please try again.",
+"failedToLoadDashboard": "Failed to load the dashboard.",
+"failedToRefreshDashboard": "Failed to refresh the dashboard.",
+"failedToDeleteChild": "Failed to delete the child. Please try again.",
+"childNotFoundForFamily": "The child was not found or is no longer linked to this family.",
+"parentAccountNotFound": "The parent account could not be found.",
+"parentAccessRequired": "This action is available to parent accounts only.",
+"failedToDeleteChildRelatedData": "Failed to delete the child and the related data.",
+"yourChildren": "Your children",
+"addChild": "Add child",
+"reviewTasks": "Review tasks",
+"childAgeYears": "{age} years old",
+"@childAgeYears": {
+  "placeholders": {
+    "age": {
+      "type": "int"
+    }
+  }
+},
+"pointsCount": "{count} points",
+"@pointsCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"noChildrenAddedYet": "No children added yet",
+"welcome": "Welcome",
+"buildingWonderfulGeneration": "You are building a wonderful generation",
+"failedToLoadChildTasks": "Could not load the child tasks.",
+"failedToRefreshChildTasks": "Could not refresh the child tasks.",
+"couldNotIdentifyChild": "Could not identify the child.",
+"onlyCreatorCanDeleteTask": "You can only delete tasks you created.",
+"failedToDeleteTask": "Could not delete the task.",
+"deleteChildConfirmationTitle": "Delete {childName}?",
+"@deleteChildConfirmationTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"deleteChildConfirmationDescription": "The child account and all related data will be permanently deleted. This action cannot be undone.",
+"childDeletedSuccessfully": "Child deleted successfully",
+"childDetails": "Child details",
+"noorPoints": "Noor Points",
+"weeklyProgress": "Weekly progress",
+"noorPointsHistory": "Noor Points History",
+"viewPointsHistory": "View points history",
+"rateChildDayAndViewHistory": "Rate {childName}'s day and view history",
+"@rateChildDayAndViewHistory": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"viewChildTasks": "View {childName}'s tasks",
+"@viewChildTasks": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"editChildInformation": "Edit child information",
+"deleting": "Deleting...",
+"deleteChild": "Delete child",
+"childAccessCode": "Child access code",
+"childAccessCodeCopied": "Child access code copied",
+"copyCode": "Copy code",
+"tasks": "Tasks",
+"deleteTaskTitle": "Delete task?",
+"deleteTaskConfirmation": "The task \"{taskTitle}\" will be permanently deleted. This action cannot be undone.",
+"@deleteTaskConfirmation": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskDeletedSuccessfully": "Task deleted successfully",
+"childTasksTitle": "{childName}'s Tasks",
+"@childTasksTitle": {
+  "placeholders": {
+    "childName": {
+      "type": "String"
+    }
+  }
+},
+"all": "All",
+"upcoming": "Upcoming",
+"active": "Active",
+"awaitingReview": "Awaiting review",
+"completed": "Completed",
+"rejected": "Rejected",
+"noTasks": "No tasks",
+"noUpcomingTasks": "No upcoming tasks",
+"noActiveTasks": "No active tasks",
+"noTasksAwaitingReview": "No tasks awaiting review",
+"noCompletedTasks": "No completed tasks",
+"noRejectedTasks": "No rejected tasks",
+"childHasNoTasks": "This child has no tasks yet",
+"failedToLoadTasks": "Failed to load tasks",
+"weekly": "Weekly",
+"monthly": "Monthly",
+"nextTaskDate": "Next date: {date}",
+"@nextTaskDate": {
+  "placeholders": {
+    "date": {
+      "type": "String"
+    }
+  }
+},
+"deleteTask": "Delete task",
+"failedToLoadFamilySettings": "Failed to load family settings.",
+"familyNameTooShort": "Family name must be at least two characters.",
+"invalidGuardianEmail": "Enter a valid email address.",
+"failedToUpdateFamilyName": "Failed to update the family name.",
+"failedToSendInvitation": "Failed to send the invitation.",
+"failedToAcceptInvitation": "Failed to accept the invitation.",
+"failedToRejectInvitation": "Failed to reject the invitation.",
+"familySettingsGenericError": "An unexpected error occurred.",
+"familyName": "Family name",
+"saveFamilyName": "Save name",
+"guardians": "Guardians",
+"noGuardians": "No guardians",
+"father": "Father",
+"mother": "Mother",
+"guardian": "Guardian",
+"you": "You",
+"incomingInvitations": "Incoming invitations",
+"noIncomingInvitations": "There are no incoming invitations",
+"incomingInvitationsDescription": "Family invitations will appear here",
+"family": "the family",
+"invitationToJoinFamily": "Invitation to join {familyName}",
+"@invitationToJoinFamily": {
+  "placeholders": {
+    "familyName": {
+      "type": "String"
+    }
+  }
+},
+"invitationSentBy": "Sent by {name}",
+"@invitationSentBy": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"accept": "Accept",
+"inviteAnotherGuardian": "Invite another guardian",
+"guardianEmailAddress": "Guardian email address",
+"sending": "Sending...",
+"sendInvitation": "Send invitation",
+"guardianInvitationExplanation": "The guardian must already have a registered account, and the invitation will appear in their account.",
+"pendingSentInvitations": "Pending sent invitations",
+"noPendingSentInvitations": "There are no pending sent invitations",
+"pendingInvitationsDescription": "Invitations you sent that have not yet been accepted will appear here",
+"waitingForInvitationAcceptance": "Waiting for invitation acceptance",
+"invitationAcceptedSuccessfully": "Invitation accepted and joined the family",
+"invitationRejectedSuccessfully": "Invitation rejected",
+"familyNameUpdatedSuccessfully": "Family name updated",
+"invitationSentSuccessfully": "Invitation sent successfully",
+"familyNameDisplay": "{name} Family",
+"@familyNameDisplay": {
+  "placeholders": {
+    "name": {
+      "type": "String"
+    }
+  }
+},
+"unableToLoadReviewTasks": "Unable to load tasks for review.",
+"unableToApproveTask": "Unable to accept the task.",
+"onlyTaskCreatorCanApprove": "Only the guardian who created this task can accept it.",
+"unableToSendTaskForRetry": "Unable to send the task back for another try.",
+"onlyTaskCreatorCanRequestRetry": "Only the guardian who created this task can send it back for another try.",
+"completedRecently": "Completed recently",
+"completedAt": "Completed at {time}",
+"@completedAt": {
+  "placeholders": {
+    "time": {
+      "type": "String"
+    }
+  }
+},
+"taskReview": "Task review",
+"reviewCompletedTasks": "Review your children’s completed tasks",
+"pendingReview": "Pending review",
+"tasksCount": "{count} tasks",
+"@tasksCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"acceptTask": "Accept",
+"tryAgain": "Try again",
+"noTasksPendingReview": "No tasks are pending review",
+"taskAcceptedSuccessfully": "Task accepted: \"{taskTitle}\"",
+"@taskAcceptedSuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskSentForRetrySuccessfully": "Task sent back for another try: \"{taskTitle}\"",
+"@taskSentForRetrySuccessfully": {
+  "placeholders": {
+    "taskTitle": {
+      "type": "String"
+    }
+  }
+},
+"taskReviewGenericError": "An unexpected error occurred while reviewing the task.",
+ "addChildSubtitle": "Add your child's information to begin their journey",
+  "editChildSubtitle": "Update the child information, then save",
+  "chooseAvatar": "Choose an avatar",
+
+  "childName": "Child name",
+  "dateOfBirth": "Date of birth",
+  "selectDateOfBirth": "Select date of birth",
+  "select": "Select",
+  "openCalendarToSelectDate": "Open the calendar to select a date",
+
+  "phoneNumberOptional": "Phone number (optional)",
+
+  "saveChanges": "Save Changes",
+
+  "childAddedSuccessfully": "Child added successfully",
+  "childUpdatedSuccessfully": "Child information updated successfully",
+
+  "childNameRequired": "Child name is required",
+  "childNameTooShort": "Child name must contain at least 2 characters",
+  "childNameTooLong": "Child name must not exceed 100 characters",
+  "childNameLettersOnly": "The name must contain letters only",
+
+  "birthDateRequired": "Date of birth is required",
+  "invalidChildAge": "Child age must be between 6 and 18 years",
+
+  "invalidSaudiPhone": "Enter a valid Saudi phone number starting with 05",
+
+  "failedToAddChild": "Could not add the child. Please try again.",
+  "failedToUpdateChild": "Could not update the child. Please try again.",
+
+  "phoneAlreadyUsed": "This phone number is already in use.",
+  "parentNotLinkedToFamily": "The parent account is not linked to a family.",
+  "onlyParentsCanAddChildren": "Only parents can add children.",
+  "onlyParentsCanUpdateChildren": "Only parents can update child information.",
+  "parentAccountNotFound": "The parent account could not be found.",
+  "childNotFound": "The child was not found.",
+  "couldNotCreateChild": "Could not create the child account.",
+  "couldNotSaveChildChanges": "Could not save the changes.",
+  "couldNotIdentifyChildToUpdate": "Could not identify the child to update.",
+
+  "unexpectedAddChildError": "An unexpected error occurred while adding the child.",
+  "unexpectedUpdateChildError": "An unexpected error occurred while updating the child.",
+  "profile": "Profile",
+"firstName": "First Name",
+"lastName": "Last Name",
+"email": "Email",
+"phoneNumber": "Phone Number",
+"familyRelationship": "Family Relationship",
+
+"profileUpdatedSuccessfully": "Changes saved successfully ✓",
+
+"failedToLoadProfile": "Unable to load profile data.",
+"failedToSaveProfile": "Unable to save changes.",
+"unexpectedProfileSaveError": "An error occurred while saving changes.",
+
+"firstNameTooShort": "First name must be at least two characters.",
+"lastNameTooShort": "Last name must be at least two characters.",
+"invalidEmailAddress": "Please enter a valid email address.",
+"phoneNumberRequired": "Please enter a phone number.",
+"emailAlreadyUsed": "Email is already in use.",
+"failedToLoadUserInformation": "Could not load user information.",
+"invitedUserNotFound": "No parent account exists with this email address.",
+"cannotInviteYourself": "You cannot invite your own account.",
+"userAlreadyInFamily": "This parent is already in the family.",
+"guardianTypeAlreadyExists": "A parent with the same guardian type already exists in the family.",
+"invitationAlreadyPending": "An invitation is already pending for this email.",
+"familyInformationNotFound": "Unable to find the family information.",
+"invalidEnteredData": "Please check the entered information.",
+"parentNavigationTasks": "Tasks",
+"parentNavigationWishes": "Wishes",
+"parentNavigationHome": "Home",
+"parentNavigationRewards": "Rewards",
+"parentNavigationMore": "More",
+"childNavigationHome": "Home",
+"childNavigationWishes": "Wishes",
+"childNavigationRewards": "Rewards",
+"childNavigationProgress": "Progress",
+"switchLanguage": "English",
+"childTaskAutoApprovedSuccess": "Well done! The task is complete and your points were added.",
+"childTaskSentForReviewSuccess": "Well done! The task was sent to your guardian for review.",
+"childTaskCompleteFailed": "Could not complete the task. Please try again.",
+"childTaskUnexpectedError": "An error occurred while completing the task.",
+"childTaskCompletedApproved": "Completed and approved",
+"childTaskWaitingGuardianReview": "Waiting for guardian review",
+"childTaskReadyToComplete": "Ready to complete",
+"childTaskApproved": "Task approved",
+"childTaskCompleteButton": "I completed the task",
+"childTaskAutoVerificationMessage": "This task will be approved automatically when completed, and the points will be added directly to your balance.",
+"childTaskGuardianVerificationMessage": "After you complete the task, your guardian will review it. Once approved, the points will be added to your balance.",
+"childTaskNoDescription": "There is no description for this task.",
+"noorPointsCount": "{points} Noor Points",
+"@noorPointsCount": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"notSpecified": "Not specified",
+"once": "One time",
+"childNoTasksToday": "No tasks today",
+"childNoTasksMessage": "Enjoy your time and come back later for new tasks.",
+"childEncouragementMessage": "Every task you complete brings you closer to a new goal and a better reward!",
+"childTodayEncouragement": "Today's Encouragement",
+"childFromFamily": "From your family",
+"childTodayGoal": "Today's Goal",
+"childNoTasksGoalMessage": "There are no tasks today. Enjoy your day!",
+"childAllTasksCompletedMessage": "Great! You completed all of today's tasks 🎉",
+"childOneTaskRemainingMessage": "You have one task left to complete today's goal!",
+"childTasksRemainingMessage": "You have {count} tasks left to complete today's goal",
+"@childTasksRemainingMessage": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"todayTasks": "Today's Tasks",
+"approved": "Approved",
+"ready": "Ready",
+"childGreetingGirl": "Hello, champion! 👋",
+"childGreetingBoy": "Hello, champion! 👋",
+"childHomeSubtitle": "A new day and new achievements await you",
+"settings": "Settings",
+"childHomeChildNotFound": "We could not find the child's information.",
+"childHomeLoadFailed": "The page could not be loaded.",
+"childAccount": "Child account",
+"childSwitchLanguage": "Switch to Arabic",
+"childLogoutConfirmation": "Are you sure you want to log out?",
+"childRewardsLoadFailed": "Could not load rewards",
+"childRewardsSubtitle": "A weekly reward connected to your progress",
+"childRewardsEmpty": "There are no rewards yet.\nAsk your parents to add a reward!",
+"childRewardClaimedSuccess": "Reward claimed! 🎉",
+"childRewardClaimFailed": "Could not claim the reward",
+"childRewardClaim": "Claim",
+"childRewardClaimedBadge": "🎉 Claimed",
+"childRewardAvailableNow": "Available now! Tap to claim ✓",
+"childRewardClaimedStatus": "Claimed 🎉",
+"childRewardUnlocksOn": "Unlocks on {day}",
+"@childRewardUnlocksOn": {
+  "placeholders": {
+    "day": {
+      "type": "String"
+    }
+  }
+},
+"wishlistApprovedStatus": "Approved ✓",
+"wishlistRejectedStatus": "Rejected ✗",
+"wishlistAchievedStatus": "Achieved! 🌟",
+"wishlistPendingStatus": "Pending...",
+"wishlistTargetPoints": "Target: {points} points",
+"@wishlistTargetPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistCurrentPoints": "You have: {points} points",
+"@wishlistCurrentPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"wishlistTargetNotSpecified": "Required points were not specified",
+"wishlistAchieveButton": "I achieved my wish! 🌟",
+"wishlistCollectMorePoints": "Collect more points",
+"childWishlistLoadFailed": "Could not load wishes.",
+"childWishlistTitle": "My Wishes",
+"childWishlistSubtitle": "Choose a wish and collect Noor Points to achieve it",
+"childWishlistPoints": "Your current balance: {points} points",
+"@childWishlistPoints": {
+  "placeholders": {
+    "points": {
+      "type": "int"
+    }
+  }
+},
+"childAddWish": "Add a Wish",
+"childWishlistEmpty": "No wishes yet",
+"childWishlistEmptySubtitle": "Add your first wish and start collecting points to achieve it",
+"deleteWishTitle": "Delete Wish",
+"deleteWishConfirmation": "Do you want to delete the wish \"{wishName}\"?",
+"@deleteWishConfirmation": {
+  "placeholders": {
+    "wishName": {
+      "type": "String"
+    }
+  }
+},
+"deleteWishFailed": "Could not delete the wish.",
+"deleteWishSuccess": "Wish deleted.",
+"achieveWishFailed": "Could not achieve the wish.",
+"achieveWishSuccess": "Wish achieved! 🌟",
+"createWishFailed": "Could not add the wish.",
+"wishlistLimitReached": "You have reached the maximum number of pending wishes.",
+"wishNameTooShort": "The wish name is too short.",
+"wishNameTooLong": "The wish name is too long.",
+"addWishTitle": "Add a Wish",
+"chooseWishesCarefully": "Choose your wishes carefully",
+"pendingWishesCount": "You have {count} of {maximum} wishes awaiting review",
+"@pendingWishesCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    },
+    "maximum": {
+      "type": "int"
+    }
+  }
+},
+"wishNameLabel": "Wish name",
+"wishNameHint": "Example: A bicycle",
+"wishlistLimitExplanation": "You can add up to 5 wishes awaiting your guardian's review. After a wish is approved, your guardian will set the number of points required to achieve it.",
+"maximumWishLimitReached": "Maximum limit reached",
+"saveWish": "Save wish",
+"childProgressTitle": "My Progress",
+"progressThisWeek": "This week",
+"progressLoadFailed": "Could not load progress data.",
+"progressNoTasksThisWeek": "No tasks assigned this week",
+"progressAllTasksCompleted": "Great! You completed all tasks this week",
+"progressCompletedOfTotal": "Well done! You completed {completed} of {total} tasks this week",
+"@progressCompletedOfTotal": {
+  "placeholders": {
+    "completed": {
+      "type": "int"
+    },
+    "total": {
+      "type": "int"
+    }
+  }
+},
+"progressDayStreak": "Day streak",
+"progressCompletedTasks": "Completed tasks",
+"progressPointsBalance": "Points balance",
+"progressMyBadges": "My Badges",
+"progressBadgeUnlockExplanation": "Each badge unlocks after completing 5 tasks in its category",
+"progressDailyTasksBadge": "Daily\nTasks",
+"progressCulturalTasksBadge": "Cultural\nTasks",
+"progressFinancialTasksBadge": "Financial\nTasks",
+"progressReligiousTasksBadge": "Religious\nTasks",
+"progressBadgeCompleted": "Completed 5/5",
+"progressBadgeCount": "{count}/5",
+"@progressBadgeCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"progressWeeklyActivity": "Weekly Activity",
+"progressSundayShort": "Sun",
+"progressMondayShort": "Mon",
+"progressTuesdayShort": "Tue",
+"progressWednesdayShort": "Wed",
+"progressThursdayShort": "Thu",
+"progressFridayShort": "Fri",
+"progressSaturdayShort": "Sat",
+"childPinWelcome": "Welcome!",
+"childPinInstructions": "Enter the code given to you by your parent",
+"childPinAccessCode": "Access code",
+"childPinVerifying": "Verifying...",
+"childPinLogin": "Login",
+"childPinIncompleteCode": "Enter the complete access code",
+"childPinInvalidCode": "The access code is incorrect",
+"childPinLoginFailed": "Could not log in. Please try again.",
+"authWelcomeBack": "Welcome back!",
+"authCreateAccountTitle": "Create a new account",
+"authSignInSubtitle": "Sign in or create a new account",
+"authRegisterSubtitle": "Please fill in your details to create your account",
+"authNoAccount": "Don't have an account?",
+"authCreateAccountButton": "Create account",
+"authEnterEmail": "Enter your email",
+"authEnterPassword": "Enter your password",
+"authSignInButton": "Sign In",
+"authEnterFirstName": "Enter your first name",
+"authEnterFamilyName": "Enter your family name",
+"authEnterPhone": "Enter your phone number",
+"authConfirmPasswordHint": "Re-enter your password",
+"authPasswordsDoNotMatch": "Passwords do not match",
+"authLoginSuccess": "Login successful",
+"authAccountCreatedSuccess": "Account created successfully",
+"authServerError": "Server error",
+"authEmailAlreadyRegistered": "Email already registered",
+"authPhoneAlreadyUsed": "Phone number already used",
+"authEmailOrPhoneAlreadyRegistered": "Email or phone number already registered",
+"password": "Password",
+"confirmPassword": "Confirm password",
+"welcomeTitle": "Welcome to Asalah",
+"welcomeTagline": "Where values are built and achievements are rewarded.",
+"welcomeSubtitle": "A platform that helps children build financial habits and develop their values",
+"parentRole": "Parent",
+"parentRoleDescription": "Manage your children, tasks, and rewards",
+"childRole": "Child",
+"childRoleDescription": "Complete tasks, earn points, and unlock rewards"
+}

@@ -33,8 +33,8 @@ class TaskApiService {
   }
 
   Future<void> deleteTask(String taskId) async {
-  await _apiService.deleteTask(taskId);
-}
+    await _apiService.deleteTask(taskId);
+  }
 
   Future<List<TaskModel>> getTasksByChild(String childId) async {
     final response = await _apiService.getTasksByChild(childId);
@@ -94,15 +94,11 @@ class TaskApiService {
     return _convertAssignments(response.data);
   }
 
-  Future<List<TaskAssignmentModel>>
-getPendingReviewAssignments() async {
-  final response =
-      await _apiService.getPendingReviewAssignments();
+  Future<List<TaskAssignmentModel>> getPendingReviewAssignments() async {
+    final response = await _apiService.getPendingReviewAssignments();
 
-  return _convertAssignments(response.data);
-}
-
-
+    return _convertAssignments(response.data);
+  }
 
   Future<void> completeAssignment(String assignmentId) async {
     await _apiService.completeAssignment(assignmentId);

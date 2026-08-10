@@ -4,11 +4,7 @@ class ChildAvatar extends StatelessWidget {
   final int avatarIndex;
   final double size;
 
-  const ChildAvatar({
-    super.key,
-    required this.avatarIndex,
-    this.size = 48,
-  });
+  const ChildAvatar({super.key, required this.avatarIndex, this.size = 48});
 
   static const List<String> _avatars = [
     'assets/avatars/avatar_boy_1v.jpg',

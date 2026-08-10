@@ -1,0 +1,1 @@
+enum ChildFormMode { add, edit }

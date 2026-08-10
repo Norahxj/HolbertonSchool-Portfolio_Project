@@ -18,8 +18,7 @@ class DioFactory {
   /// Called when the refresh token is no longer valid.
   static Future<void> Function()? onSessionExpired;
 
-  static const String _retriedAfterRefreshKey =
-      'retried_after_token_refresh';
+  static const String _retriedAfterRefreshKey = 'retried_after_token_refresh';
 
   static Dio getDio() {
     if (dio != null) {
@@ -36,9 +35,7 @@ class DioFactory {
         sendTimeout: timeout,
         contentType: Headers.jsonContentType,
         responseType: ResponseType.json,
-        headers: const {
-          'Accept': 'application/json',
-        },
+        headers: const {'Accept': 'application/json'},
       ),
     );
 
@@ -95,8 +92,7 @@ class DioFactory {
         onError: (error, handler) async {
           final request = error.requestOptions;
 
-          final alreadyRetried =
-              request.extra[_retriedAfterRefreshKey] == true;
+          final alreadyRetried = request.extra[_retriedAfterRefreshKey] == true;
 
           final isRefreshRequest =
               _normalizePath(request.path) == ApiConstants.refresh;
@@ -121,9 +117,7 @@ class DioFactory {
             final statusCode = refreshError.response?.statusCode;
 
             final sessionIsInvalid =
-                statusCode == 401 ||
-                statusCode == 403 ||
-                statusCode == 404;
+                statusCode == 401 || statusCode == 403 || statusCode == 404;
 
             if (sessionIsInvalid) {
               await _expireSession();
@@ -131,8 +125,7 @@ class DioFactory {
 
             handler.next(error);
           } catch (_) {
-            final refreshToken =
-                await SecureStorage.getRefreshToken();
+            final refreshToken = await SecureStorage.getRefreshToken();
 
             if (refreshToken == null || refreshToken.isEmpty) {
               await _expireSession();
@@ -183,13 +176,11 @@ class DioFactory {
 
     late final Future<String> refreshFuture;
 
-    refreshFuture = AuthApiService()
-        .refreshAccessToken()
-        .whenComplete(() {
-          if (identical(_refreshingToken, refreshFuture)) {
-            _refreshingToken = null;
-          }
-        });
+    refreshFuture = AuthApiService().refreshAccessToken().whenComplete(() {
+      if (identical(_refreshingToken, refreshFuture)) {
+        _refreshingToken = null;
+      }
+    });
 
     _refreshingToken = refreshFuture;
 

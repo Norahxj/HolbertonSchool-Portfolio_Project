@@ -30,13 +30,11 @@ class ChildModel {
       age: (json['age'] as num?)?.toInt() ?? 0,
       accessCode: json['access_code']?.toString() ?? '',
       role: json['role']?.toString() ?? 'child',
-      weeklyProgress:
-          (json['weekly_progress'] as num?)?.toInt() ?? 0,
+      weeklyProgress: (json['weekly_progress'] as num?)?.toInt() ?? 0,
 
       // Children created before this change will use
       // the pink girl avatar as a fallback.
-      avatarIndex:
-    (json['avatar_index'] as num?)?.toInt() ?? 0,
+      avatarIndex: (json['avatar_index'] as num?)?.toInt() ?? 0,
     );
   }
 }

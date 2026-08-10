@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/localization/localization_extension.dart';
 
 class ParentGenderToggle extends StatelessWidget {
   final String selectedType;
-  final bool isArabic;
   final ValueChanged<String> onTypeSelected;
 
   const ParentGenderToggle({
     super.key,
     required this.selectedType,
-    required this.isArabic,
     required this.onTypeSelected,
   });
 
@@ -26,19 +25,19 @@ class ParentGenderToggle extends StatelessWidget {
       child: Row(
         children: [
           _GenderOption(
-            label: isArabic ? 'أب' : 'Father',
+            label: context.l10n.father,
             icon: Icons.man,
             isSelected: selectedType == 'father',
             onTap: () => onTypeSelected('father'),
           ),
           _GenderOption(
-            label: isArabic ? 'أم' : 'Mother',
+            label: context.l10n.mother,
             icon: Icons.woman,
             isSelected: selectedType == 'mother',
             onTap: () => onTypeSelected('mother'),
           ),
           _GenderOption(
-            label: isArabic ? 'وصيّ' : 'Guardian',
+            label: context.l10n.guardian,
             icon: Icons.supervisor_account,
             isSelected: selectedType == 'guardian',
             onTap: () => onTypeSelected('guardian'),

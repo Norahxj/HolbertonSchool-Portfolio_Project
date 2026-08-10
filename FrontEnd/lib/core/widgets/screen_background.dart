@@ -4,10 +4,7 @@ import '../constants/app_colors.dart';
 class ScreenBackground extends StatelessWidget {
   final Widget child;
 
-  const ScreenBackground({
-    super.key,
-    required this.child,
-  });
+  const ScreenBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +14,7 @@ class ScreenBackground extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFEFE7FA),
-              AppColors.background,
-            ],
+            colors: [Color(0xFFEFE7FA), AppColors.background],
           ),
         ),
         child: Stack(
@@ -49,9 +43,7 @@ class ScreenBackground extends StatelessWidget {
 class _SoftCircle extends StatelessWidget {
   final double size;
 
-  const _SoftCircle({
-    required this.size,
-  });
+  const _SoftCircle({required this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +51,7 @@ class _SoftCircle extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withValues(alpha:0.6),
+        color: AppColors.primaryLight.withValues(alpha: 0.6),
         shape: BoxShape.circle,
       ),
     );
