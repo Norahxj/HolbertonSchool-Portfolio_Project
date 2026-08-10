@@ -695,5 +695,13 @@
 "progressWednesdayShort": "أربعاء",
 "progressThursdayShort": "خميس",
 "progressFridayShort": "جمعة",
-"progressSaturdayShort": "سبت"
+"progressSaturdayShort": "سبت",
+"childPinWelcome": "أهلاً بك!",
+"childPinInstructions": "أدخل الرمز الذي أعطاك إياه ولي أمرك",
+"childPinAccessCode": "رمز الدخول",
+"childPinVerifying": "جاري التحقق...",
+"childPinLogin": "دخول",
+"childPinIncompleteCode": "أدخل رمز الدخول كاملًا",
+"childPinInvalidCode": "رمز الدخول غير صحيح",
+"childPinLoginFailed": "تعذّر تسجيل الدخول. حاول مرة أخرى."
 }

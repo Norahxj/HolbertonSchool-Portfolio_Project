@@ -7,7 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/language_toggle.dart';
 import '../../../core/widgets/screen_background.dart';
 import '../../auth/screens/auth_screen.dart';
-import '../../child/screens/child_pin_login_screen.dart';
+import '../../child/pin_login/screens/child_pin_login_screen.dart';
 import '../widgets/role_card.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -43,7 +43,6 @@ class WelcomeScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) {
           return ChildPinLoginScreen(
-            isArabic: isArabic,
             onLanguageToggle: onLanguageToggle,
           );
         },

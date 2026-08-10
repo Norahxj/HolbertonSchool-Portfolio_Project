@@ -1396,4 +1396,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get progressSaturdayShort => 'سبت';
+
+  @override
+  String get childPinWelcome => 'أهلاً بك!';
+
+  @override
+  String get childPinInstructions => 'أدخل الرمز الذي أعطاك إياه ولي أمرك';
+
+  @override
+  String get childPinAccessCode => 'رمز الدخول';
+
+  @override
+  String get childPinVerifying => 'جاري التحقق...';
+
+  @override
+  String get childPinLogin => 'دخول';
+
+  @override
+  String get childPinIncompleteCode => 'أدخل رمز الدخول كاملًا';
+
+  @override
+  String get childPinInvalidCode => 'رمز الدخول غير صحيح';
+
+  @override
+  String get childPinLoginFailed => 'تعذّر تسجيل الدخول. حاول مرة أخرى.';
 }

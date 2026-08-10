@@ -1436,4 +1436,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressSaturdayShort => 'Sat';
+
+  @override
+  String get childPinWelcome => 'Welcome!';
+
+  @override
+  String get childPinInstructions =>
+      'Enter the code given to you by your parent';
+
+  @override
+  String get childPinAccessCode => 'Access code';
+
+  @override
+  String get childPinVerifying => 'Verifying...';
+
+  @override
+  String get childPinLogin => 'Login';
+
+  @override
+  String get childPinIncompleteCode => 'Enter the complete access code';
+
+  @override
+  String get childPinInvalidCode => 'The access code is incorrect';
+
+  @override
+  String get childPinLoginFailed => 'Could not log in. Please try again.';
 }

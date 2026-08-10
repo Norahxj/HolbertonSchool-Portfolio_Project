@@ -695,5 +695,13 @@
 "progressWednesdayShort": "Wed",
 "progressThursdayShort": "Thu",
 "progressFridayShort": "Fri",
-"progressSaturdayShort": "Sat"
+"progressSaturdayShort": "Sat",
+"childPinWelcome": "Welcome!",
+"childPinInstructions": "Enter the code given to you by your parent",
+"childPinAccessCode": "Access code",
+"childPinVerifying": "Verifying...",
+"childPinLogin": "Login",
+"childPinIncompleteCode": "Enter the complete access code",
+"childPinInvalidCode": "The access code is incorrect",
+"childPinLoginFailed": "Could not log in. Please try again."
 }

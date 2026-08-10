@@ -2665,6 +2665,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sat'**
   String get progressSaturdayShort;
+
+  /// No description provided for @childPinWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome!'**
+  String get childPinWelcome;
+
+  /// No description provided for @childPinInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code given to you by your parent'**
+  String get childPinInstructions;
+
+  /// No description provided for @childPinAccessCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Access code'**
+  String get childPinAccessCode;
+
+  /// No description provided for @childPinVerifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying...'**
+  String get childPinVerifying;
+
+  /// No description provided for @childPinLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get childPinLogin;
+
+  /// No description provided for @childPinIncompleteCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the complete access code'**
+  String get childPinIncompleteCode;
+
+  /// No description provided for @childPinInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'The access code is incorrect'**
+  String get childPinInvalidCode;
+
+  /// No description provided for @childPinLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not log in. Please try again.'**
+  String get childPinLoginFailed;
 }
 
 class _AppLocalizationsDelegate
