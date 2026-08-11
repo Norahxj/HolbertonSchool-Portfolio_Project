@@ -11,3 +11,4 @@ from app.models.task_child_model import TaskChild
 from app.models.task_model import Task
 from app.models.user_model import User
 from app.models.wishlist_model import Wishlist
+from app.models.weekly_plan_proposal_model import WeeklyPlanProposal

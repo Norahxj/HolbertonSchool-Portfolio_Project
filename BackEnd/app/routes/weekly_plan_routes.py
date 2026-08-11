@@ -66,9 +66,6 @@ class WeeklyPlanResource(Resource):
         if error:
             return error
 
-        # Lazy initialization:
-        # AI agents are created only when this endpoint
-        # is actually called.
         weekly_plan_service = WeeklyPlanService()
 
         result, service_error = (
@@ -121,6 +118,14 @@ class WeeklyPlanResource(Resource):
                 )
             }, 500
 
+        if service_error == "proposal_create_failed":
+            return {
+                "error": (
+                    "Weekly plan was generated, "
+                    "but could not be saved"
+                )
+            }, 500
+
         if service_error:
             return {
                 "error": (
@@ -146,10 +151,191 @@ class WeeklyPlanResource(Resource):
             "message": (
                 "Weekly plan generated successfully"
             ),
+            "proposal_id": result["proposal_id"],
+            "proposal_status": result[
+                "proposal_status"
+            ],
             "child_id": child_id,
-            "plan": plan.model_dump(),
+            "plan": plan.model_dump(
+                mode="json"
+            ),
             "revision_count": result.get(
                 "revision_count",
                 0,
             ),
+        }, 200
+
+
+@api.route("/<proposal_id>/approve")
+class WeeklyPlanApprovalResource(Resource):
+
+    @jwt_required()
+    @api.doc(security="JWT")
+    @api.response(
+        200,
+        "Weekly plan approved successfully",
+    )
+    @api.response(
+        400,
+        "Invalid request",
+    )
+    @api.response(
+        401,
+        "Missing or invalid access token",
+    )
+    @api.response(
+        403,
+        "Parent access required",
+    )
+    @api.response(
+        404,
+        "Weekly plan proposal not found",
+    )
+    @api.response(
+        409,
+        "Weekly plan already approved",
+    )
+    @api.response(
+        500,
+        "Failed to approve weekly plan",
+    )
+    def post(self, proposal_id):
+        parent_id = get_jwt_identity()
+
+        error = require_parent()
+
+        if error:
+            return error
+
+        payload = api.payload or {}
+
+        language = payload.get(
+            "language",
+            "ar",
+        )
+
+        if language not in {
+            "ar",
+            "en",
+        }:
+            return {
+                "error": (
+                    "Language must be either "
+                    "'ar' or 'en'"
+                )
+            }, 400
+
+        weekly_plan_service = WeeklyPlanService()
+
+        result, service_error = (
+            weekly_plan_service
+            .approve_weekly_plan(
+                proposal_id=proposal_id,
+                guardian_id=parent_id,
+                language=language,
+            )
+        )
+
+        if service_error == "proposal_not_found":
+            return {
+                "error": (
+                    "Weekly plan proposal not found"
+                )
+            }, 404
+
+        if service_error == "proposal_already_approved":
+            return {
+                "error": (
+                    "Weekly plan has already been approved"
+                )
+            }, 409
+
+        if service_error == "proposal_not_pending":
+            return {
+                "error": (
+                    "Weekly plan is no longer pending"
+                )
+            }, 409
+
+        if service_error == "child_not_found":
+            return {
+                "error": "Child not found"
+            }, 404
+
+        if service_error == "tasks_required":
+            return {
+                "error": (
+                    "Weekly plan does not contain tasks"
+                )
+            }, 400
+
+        if service_error == "invalid_plan_data":
+            return {
+                "error": (
+                    "Weekly plan data is invalid"
+                )
+            }, 400
+
+        if service_error == "invalid_language":
+            return {
+                "error": (
+                    "Invalid task language"
+                )
+            }, 400
+
+        if service_error == "invalid_frequency":
+            return {
+                "error": (
+                    "Weekly plan contains an invalid "
+                    "task frequency"
+                )
+            }, 400
+
+        if service_error == "invalid_task_data":
+            return {
+                "error": (
+                    "Weekly plan contains invalid "
+                    "task data"
+                )
+            }, 400
+
+        if service_error in {
+            "create_failed",
+            "task_child_failed",
+            "assignment_failed",
+            "proposal_update_failed",
+            "approval_failed",
+        }:
+            return {
+                "error": (
+                    "Failed to approve weekly plan"
+                )
+            }, 500
+
+        if service_error:
+            return {
+                "error": (
+                    "Failed to approve weekly plan"
+                )
+            }, 500
+
+        return {
+            "message": (
+                "Weekly plan approved successfully"
+            ),
+            "proposal_id": result[
+                "proposal_id"
+            ],
+            "proposal_status": result[
+                "proposal_status"
+            ],
+            "child_id": result[
+                "child_id"
+            ],
+            "created_tasks_count": result[
+                "created_tasks_count"
+            ],
+            "created_task_ids": result[
+                "created_task_ids"
+            ],
         }, 200
