@@ -120,11 +120,16 @@ class WeeklyPlanWorkflow:
         state: WeeklyPlanState,
     ):
         result = self.performance_agent.analyze(
-            state["child_context"]
+            state["child_context"],
+            state.get(
+                "revision_feedback",
+                "",
+            ),
         )
 
         return {
             "performance_analysis": result,
+            "revision_feedback": "",
         }
 
     def _strategy_node(
@@ -134,10 +139,15 @@ class WeeklyPlanWorkflow:
         result = self.strategy_agent.create_strategy(
             state["child_context"],
             state["performance_analysis"],
+            state.get(
+                "revision_feedback",
+                "",
+            ),
         )
 
         return {
             "strategy": result,
+            "revision_feedback": "",
         }
 
     def _bank_node(
@@ -148,30 +158,35 @@ class WeeklyPlanWorkflow:
             state["child_context"],
             state["performance_analysis"],
             state["strategy"],
+            state.get(
+                "revision_feedback",
+                "",
+            ),
         )
 
         return {
             "bank_selection": result,
+            "revision_feedback": "",
         }
 
     def _creative_node(
-    self,
-    state: WeeklyPlanState,
-):
+        self,
+        state: WeeklyPlanState,
+    ):
         result = self.creative_agent.generate_tasks(
-        state["child_context"],
-        state["performance_analysis"],
-        state["strategy"],
-        state["bank_selection"],
-        state.get(
-            "revision_feedback",
-            "",
-        ),
+            state["child_context"],
+            state["performance_analysis"],
+            state["strategy"],
+            state["bank_selection"],
+            state.get(
+                "revision_feedback",
+                "",
+            ),
         )
 
         return {
-        "creative_selection": result,
-        "revision_feedback": "",
+            "creative_selection": result,
+            "revision_feedback": "",
         }
 
     def _planner_node(
@@ -184,28 +199,33 @@ class WeeklyPlanWorkflow:
             state["strategy"],
             state["bank_selection"],
             state["creative_selection"],
+            state.get(
+                "revision_feedback",
+                "",
+            ),
         )
 
         return {
             "plan": result,
+            "revision_feedback": "",
         }
 
     def _evaluator_node(
-    self,
-    state: WeeklyPlanState,
+        self,
+        state: WeeklyPlanState,
     ):
         result = self.evaluator_agent.evaluate(
-        state["child_context"],
-        state["performance_analysis"],
-        state["strategy"],
-        state["bank_selection"],
-        state["creative_selection"],
-        state["plan"],
+            state["child_context"],
+            state["performance_analysis"],
+            state["strategy"],
+            state["bank_selection"],
+            state["creative_selection"],
+            state["plan"],
         )
 
         revision_count = state.get(
-        "revision_count",
-        0,
+            "revision_count",
+            0,
         )
 
         revision_feedback = ""
@@ -218,15 +238,18 @@ class WeeklyPlanWorkflow:
             for issue in result.issues:
                 feedback_parts.append(
                     (
-                    f"[{issue.issue_type}] "
-                    f"[{issue.severity}] "
-                    f"{issue.description}"
+                        f"[{issue.issue_type}] "
+                        f"[{issue.severity}] "
+                        f"{issue.description}"
                     )
                 )
 
             if result.feedback:
                 feedback_parts.append(
-                    f"Evaluator feedback: {result.feedback}"
+                    (
+                        "Evaluator feedback: "
+                        f"{result.feedback}"
+                    )
                 )
 
             revision_feedback = "\n".join(
@@ -234,9 +257,9 @@ class WeeklyPlanWorkflow:
             )
 
         return {
-        "evaluation": result,
-        "revision_count": revision_count,
-        "revision_feedback": revision_feedback,
+            "evaluation": result,
+            "revision_count": revision_count,
+            "revision_feedback": revision_feedback,
         }
 
     # ==========================================================
@@ -270,7 +293,7 @@ class WeeklyPlanWorkflow:
             3,
         )
 
-        if revision_count >= max_revisions:
+        if revision_count > max_revisions:
             return "max_revisions"
 
         # -----------------------------------
@@ -312,10 +335,7 @@ class WeeklyPlanWorkflow:
             ),
         )
 
-        issue_type = (
-            most_important_issue
-            .issue_type
-        )
+        issue_type = most_important_issue.issue_type
 
         # -----------------------------------
         # Route to responsible agent
@@ -350,12 +370,16 @@ class WeeklyPlanWorkflow:
     ):
         initial_state = {
             "child_context": child_context,
+            "revision_feedback": "",
             "revision_count": 0,
             "max_revisions": max_revisions,
         }
 
         result = self.graph.invoke(
-            initial_state
+            initial_state,
+            config={
+                "recursion_limit": 50,
+            },
         )
 
         return result
