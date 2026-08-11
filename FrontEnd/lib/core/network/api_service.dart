@@ -205,4 +205,17 @@ abstract class ApiService {
   );
   @GET('/dashboard/')
   Future<HttpResponse<List<ChildDashboardModel>>> getDashboard();
+
+  // Weekly Plan
+
+@POST('/weekly-plan/children/{childId}')
+Future<HttpResponse<dynamic>> generateWeeklyPlan(
+  @Path('childId') String childId,
+);
+
+@POST('/weekly-plan/{proposalId}/approve')
+Future<HttpResponse<dynamic>> approveWeeklyPlan(
+  @Path('proposalId') String proposalId,
+  @Body() Map<String, dynamic> body,
+);
 }
