@@ -40,38 +40,63 @@ class StrategyAgent:
         self,
         child_context,
         performance_analysis: ChildPerformanceAnalysis,
+        revision_feedback="",
     ):
-        prompt = self._build_prompt(
-            child_context,
-            performance_analysis,
-        )
+        max_attempts = 3
+        validation_errors = []
 
-        response = self.structured_llm.invoke(prompt)
-
-        result = response.get("parsed")
-        parsing_error = response.get("parsing_error")
-
-        if parsing_error:
-            raise ValueError(
-                f"StrategyAgent parsing failed: {parsing_error}"
+        for attempt in range(max_attempts):
+            prompt = self._build_prompt(
+                child_context,
+                performance_analysis,
+                validation_errors,
+                revision_feedback,
             )
 
-        if result is None:
-            raise ValueError(
-                "StrategyAgent failed to return structured output."
-            )
+            response = self.structured_llm.invoke(prompt)
 
-        self._validate_strategy(
-            result,
-            performance_analysis,
+            result = response.get("parsed")
+            parsing_error = response.get("parsing_error")
+
+            if parsing_error:
+                validation_errors = [
+                    (
+                        "Structured output parsing failed: "
+                        f"{parsing_error}"
+                    )
+                ]
+                continue
+
+            if result is None:
+                validation_errors = [
+                    "No valid structured strategy was returned."
+                ]
+                continue
+
+            try:
+                self._validate_strategy(
+                    result,
+                    performance_analysis,
+                )
+
+                return result
+
+            except ValueError as error:
+                validation_errors = [
+                    str(error)
+                ]
+
+        raise ValueError(
+            "StrategyAgent failed to produce a valid strategy "
+            "after 3 attempts."
         )
-
-        return result
 
     def _build_prompt(
         self,
         child_context,
         performance_analysis,
+        validation_errors=None,
+        revision_feedback="",
     ):
         context_json = json.dumps(
             child_context,
@@ -80,9 +105,56 @@ class StrategyAgent:
             default=str,
         )
 
-        analysis_json = performance_analysis.model_dump_json(
-            indent=2,
+        analysis_json = (
+            performance_analysis.model_dump_json(
+                indent=2,
+            )
         )
+
+        validation_feedback = ""
+
+        if validation_errors:
+            errors_text = "\n".join(
+                f"- {error}"
+                for error in validation_errors
+            )
+
+            validation_feedback = f"""
+PREVIOUS STRATEGY ATTEMPT WAS REJECTED
+BY THE STRATEGY VALIDATOR.
+
+VALIDATION ERRORS:
+{errors_text}
+
+Correct every validation error in the new strategy.
+"""
+
+        evaluator_feedback = ""
+
+        if revision_feedback:
+            evaluator_feedback = f"""
+THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED
+BY THE EVALUATOR.
+
+EVALUATOR FEEDBACK:
+{revision_feedback}
+
+Correct the problems relevant to the Strategy Agent.
+
+Revise the composition of the weekly plan when needed.
+
+You may change:
+- bank_tasks
+- generated_tasks
+- category distribution
+- focus
+- avoid patterns
+
+You MUST still respect the Performance Agent's
+recommended task count and workload.
+
+Do not repeat the same rejected strategic pattern.
+"""
 
         return f"""
 You are the Weekly Planning Strategy Agent for Asalah.
@@ -150,22 +222,36 @@ Rules:
 - Do not assume information that does not appear
   in the child data.
 
-- A weak category should normally receive gradual attention
-  rather than being completely removed from the plan.
+- A weak category should normally receive gradual
+  attention rather than being completely removed
+  from the plan.
 
-- If a category is weak, prefer assigning one easier task
-  in that category unless there is strong evidence that the
-  category should temporarily be excluded.
+- If a category is weak, prefer assigning one easier
+  task in that category unless there is strong evidence
+  that the category should temporarily be excluded.
 
-- Do not confuse a rejected task with a rejected category.
-  Avoid repeating an unsuccessful task pattern, but you may
-  approach the same category in a different way.
+- Do not confuse a rejected task with a rejected
+  category.
+
+- Avoid repeating an unsuccessful task pattern,
+  but you may approach the same category differently.
 
 - Never invent time periods for historical totals.
 
 - Do not claim that a recommendation came from the
   Performance Agent unless that recommendation actually
   appears in the provided Performance Analysis.
+
+- Keep the Performance Agent's recommended weekly point
+  target in mind when deciding how much work should come
+  from the bank versus generated tasks.
+
+- Do not push the child harder simply to reach a wishlist
+  goal faster.
+
+{validation_feedback}
+
+{evaluator_feedback}
 
 Return only the required structured strategy.
 """

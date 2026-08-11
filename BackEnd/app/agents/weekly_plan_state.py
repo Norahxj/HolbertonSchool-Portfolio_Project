@@ -38,3 +38,5 @@ class WeeklyPlanState(TypedDict, total=False):
     revision_count: int
 
     max_revisions: int
+
+    revision_feedback: str

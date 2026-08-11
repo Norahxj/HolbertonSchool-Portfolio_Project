@@ -43,6 +43,7 @@ class BankAgent:
         child_context,
         performance_analysis,
         strategy,
+        revision_feedback="",
     ):
         age = child_context["child"]["age"]
 
@@ -61,6 +62,7 @@ class BankAgent:
                 strategy,
                 suitable_tasks,
                 validation_errors,
+                revision_feedback,
             )
 
             response = self.structured_llm.invoke(prompt)
@@ -110,6 +112,7 @@ class BankAgent:
         strategy,
         suitable_tasks,
         validation_errors=None,
+        revision_feedback="",
     ):
         context_json = json.dumps(
             child_context,
@@ -144,12 +147,39 @@ class BankAgent:
             )
 
             validation_feedback = f"""
-PREVIOUS ATTEMPT WAS REJECTED.
+PREVIOUS ATTEMPT WAS REJECTED BY THE
+BANK AGENT VALIDATOR.
 
 VALIDATION ERRORS:
 {errors_text}
 
 Correct every validation error in the new selection.
+"""
+
+        evaluator_feedback = ""
+
+        if revision_feedback:
+            evaluator_feedback = f"""
+THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED
+BY THE EVALUATOR.
+
+EVALUATOR FEEDBACK:
+{revision_feedback}
+
+Correct the problems relevant to the Bank Agent.
+
+Select different bank tasks when necessary.
+
+You may also adjust the planned points when appropriate.
+
+Do not repeat the same rejected selection or problematic
+pattern.
+
+Remember that changing planned points does NOT modify
+the original task bank.
+
+You must still preserve the original bank task identity,
+titles, descriptions, category, and frequency.
 """
 
         return f"""
@@ -243,6 +273,8 @@ Your job:
 - Explain briefly why each task was selected.
 
 {validation_feedback}
+
+{evaluator_feedback}
 
 Return only the required structured bank task selection.
 """

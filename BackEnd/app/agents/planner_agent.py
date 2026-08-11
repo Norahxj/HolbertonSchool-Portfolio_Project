@@ -41,44 +41,67 @@ class PlannerAgent:
         strategy,
         bank_selection,
         creative_selection,
+        revision_feedback="",
     ):
-        prompt = self._build_prompt(
-            child_context,
-            performance_analysis,
-            strategy,
-            bank_selection,
-            creative_selection,
-        )
+        max_attempts = 3
+        validation_errors = []
 
-        response = self.structured_llm.invoke(prompt)
-
-        result = response.get("parsed")
-        parsing_error = response.get("parsing_error")
-
-        if parsing_error:
-            raise ValueError(
-                f"PlannerAgent parsing failed: {parsing_error}"
+        for attempt in range(max_attempts):
+            prompt = self._build_prompt(
+                child_context,
+                performance_analysis,
+                strategy,
+                bank_selection,
+                creative_selection,
+                validation_errors,
+                revision_feedback,
             )
 
-        if result is None:
-            raise ValueError(
-                "PlannerAgent failed to return structured output."
-            )
+            response = self.structured_llm.invoke(prompt)
 
-        result = self._normalize_plan(
-            result,
-            child_context,
-            bank_selection,
-            creative_selection,
+            result = response.get("parsed")
+            parsing_error = response.get("parsing_error")
+
+            if parsing_error:
+                validation_errors = [
+                    (
+                        "Structured output parsing failed: "
+                        f"{parsing_error}"
+                    )
+                ]
+                continue
+
+            if result is None:
+                validation_errors = [
+                    "No valid structured weekly plan was returned."
+                ]
+                continue
+
+            try:
+                result = self._normalize_plan(
+                    result,
+                    child_context,
+                    bank_selection,
+                    creative_selection,
+                )
+
+                self._validate_plan(
+                    result,
+                    performance_analysis,
+                    strategy,
+                )
+
+                return result
+
+            except ValueError as error:
+                validation_errors = [
+                    str(error)
+                ]
+
+        raise ValueError(
+            "PlannerAgent failed to produce a valid plan "
+            "after 3 attempts."
         )
-
-        self._validate_plan(
-            result,
-            performance_analysis,
-            strategy,
-        )
-
-        return result
 
     def _build_prompt(
         self,
@@ -87,6 +110,8 @@ class PlannerAgent:
         strategy,
         bank_selection,
         creative_selection,
+        validation_errors=None,
+        revision_feedback="",
     ):
         context_json = json.dumps(
             child_context,
@@ -112,6 +137,53 @@ class PlannerAgent:
         creative_json = creative_selection.model_dump_json(
             indent=2,
         )
+
+        validation_feedback = ""
+
+        if validation_errors:
+            errors_text = "\n".join(
+                f"- {error}"
+                for error in validation_errors
+            )
+
+            validation_feedback = f"""
+PREVIOUS PLANNER ATTEMPT WAS REJECTED
+BY THE PLANNER VALIDATOR.
+
+VALIDATION ERRORS:
+{errors_text}
+
+Correct every validation error in the new plan.
+"""
+
+        evaluator_feedback = ""
+
+        if revision_feedback:
+            evaluator_feedback = f"""
+THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED
+BY THE EVALUATOR.
+
+EVALUATOR FEEDBACK:
+{revision_feedback}
+
+Correct only the problems relevant to the Planner Agent.
+
+You may revise:
+- summary_en
+- summary_ar
+- the presentation and wording of the final plan
+
+You MUST NOT:
+- create new tasks
+- remove tasks
+- alter selected tasks
+- change task points
+- change categories
+- change frequencies
+- change task sources
+
+Do not repeat the same rejected planner-level issue.
+"""
 
         return f"""
 You are the Weekly Plan Assembly Agent for Asalah.
@@ -168,10 +240,20 @@ Rules:
 - Produce a short Arabic and English summary for the
   parent explaining the general purpose of the plan.
 
+- The summary should reflect the actual strategy and
+  selected tasks.
+
+- Do not claim facts about the child that are not
+  supported by the child context.
+
 - Do not expose internal agent reasoning.
 
 - Do not mention agents, prompts, models, validators,
   or technical implementation details.
+
+{validation_feedback}
+
+{evaluator_feedback}
 
 Return only the required structured weekly plan.
 """

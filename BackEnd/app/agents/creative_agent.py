@@ -39,6 +39,7 @@ class CreativeAgent:
         performance_analysis,
         strategy,
         bank_selection,
+        revision_feedback="",
     ):
         max_attempts = 3
         validation_errors = []
@@ -50,6 +51,7 @@ class CreativeAgent:
                 strategy,
                 bank_selection,
                 validation_errors,
+                revision_feedback,
             )
 
             response = self.structured_llm.invoke(prompt)
@@ -102,6 +104,7 @@ class CreativeAgent:
         strategy,
         bank_selection,
         validation_errors=None,
+        revision_feedback="",
     ):
         context_json = json.dumps(
             child_context,
@@ -139,6 +142,22 @@ VALIDATION ERRORS:
 {errors_text}
 
 Generate a new selection that corrects every error.
+"""
+
+        evaluator_feedback = ""
+
+        if revision_feedback:
+            evaluator_feedback = f"""
+THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED
+BY THE EVALUATOR.
+
+EVALUATOR FEEDBACK:
+{revision_feedback}
+
+Correct the problems relevant to the Creative Agent.
+
+Do not repeat the same rejected task, unsupported
+assumption, or problematic pattern.
 """
 
         return f"""
@@ -230,6 +249,8 @@ Rules:
   child context.
 
 {validation_feedback}
+
+{evaluator_feedback}
 
 Return only the required structured generated tasks.
 """

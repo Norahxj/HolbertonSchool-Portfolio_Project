@@ -155,18 +155,23 @@ class WeeklyPlanWorkflow:
         }
 
     def _creative_node(
-        self,
-        state: WeeklyPlanState,
-    ):
+    self,
+    state: WeeklyPlanState,
+):
         result = self.creative_agent.generate_tasks(
-            state["child_context"],
-            state["performance_analysis"],
-            state["strategy"],
-            state["bank_selection"],
+        state["child_context"],
+        state["performance_analysis"],
+        state["strategy"],
+        state["bank_selection"],
+        state.get(
+            "revision_feedback",
+            "",
+        ),
         )
 
         return {
-            "creative_selection": result,
+        "creative_selection": result,
+        "revision_feedback": "",
         }
 
     def _planner_node(
@@ -186,29 +191,52 @@ class WeeklyPlanWorkflow:
         }
 
     def _evaluator_node(
-        self,
-        state: WeeklyPlanState,
+    self,
+    state: WeeklyPlanState,
     ):
         result = self.evaluator_agent.evaluate(
-            state["child_context"],
-            state["performance_analysis"],
-            state["strategy"],
-            state["bank_selection"],
-            state["creative_selection"],
-            state["plan"],
+        state["child_context"],
+        state["performance_analysis"],
+        state["strategy"],
+        state["bank_selection"],
+        state["creative_selection"],
+        state["plan"],
         )
 
         revision_count = state.get(
-            "revision_count",
-            0,
+        "revision_count",
+        0,
         )
+
+        revision_feedback = ""
 
         if not result.approved:
             revision_count += 1
 
+            feedback_parts = []
+
+            for issue in result.issues:
+                feedback_parts.append(
+                    (
+                    f"[{issue.issue_type}] "
+                    f"[{issue.severity}] "
+                    f"{issue.description}"
+                    )
+                )
+
+            if result.feedback:
+                feedback_parts.append(
+                    f"Evaluator feedback: {result.feedback}"
+                )
+
+            revision_feedback = "\n".join(
+                feedback_parts
+            )
+
         return {
-            "evaluation": result,
-            "revision_count": revision_count,
+        "evaluation": result,
+        "revision_count": revision_count,
+        "revision_feedback": revision_feedback,
         }
 
     # ==========================================================
