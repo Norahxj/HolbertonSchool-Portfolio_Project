@@ -13,8 +13,6 @@ api = Namespace(
     description="AI weekly plan operations",
 )
 
-weekly_plan_service = WeeklyPlanService()
-
 
 def require_parent():
     claims = get_jwt()
@@ -53,6 +51,10 @@ class WeeklyPlanResource(Resource):
         "Unable to generate a suitable weekly plan",
     )
     @api.response(
+        503,
+        "AI service temporarily unavailable",
+    )
+    @api.response(
         500,
         "Failed to generate weekly plan",
     )
@@ -63,6 +65,11 @@ class WeeklyPlanResource(Resource):
 
         if error:
             return error
+
+        # Lazy initialization:
+        # AI agents are created only when this endpoint
+        # is actually called.
+        weekly_plan_service = WeeklyPlanService()
 
         result, service_error = (
             weekly_plan_service
@@ -82,6 +89,22 @@ class WeeklyPlanResource(Resource):
             return {
                 "error": "Child context not found"
             }, 404
+
+        if service_error == "ai_rate_limit":
+            return {
+                "error": (
+                    "AI service usage limit has been reached. "
+                    "Please try again later."
+                )
+            }, 503
+
+        if service_error == "ai_service_unavailable":
+            return {
+                "error": (
+                    "AI service is temporarily unavailable. "
+                    "Please try again later."
+                )
+            }, 503
 
         if service_error == "evaluation_missing":
             return {

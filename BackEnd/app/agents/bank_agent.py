@@ -21,22 +21,30 @@ class BankAgent:
         model_name = os.getenv("OPENROUTER_MODEL")
 
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY is missing")
+            raise ValueError(
+                "OPENROUTER_API_KEY is missing"
+            )
 
         if not model_name:
-            raise ValueError("OPENROUTER_MODEL is missing")
+            raise ValueError(
+                "OPENROUTER_MODEL is missing"
+            )
 
         self.llm = ChatOpenRouter(
             model=model_name,
             api_key=api_key,
         )
 
-        self.structured_llm = self.llm.with_structured_output(
-            BankTaskSelection,
-            include_raw=True,
+        self.structured_llm = (
+            self.llm.with_structured_output(
+                BankTaskSelection,
+                include_raw=True,
+            )
         )
 
-        self.task_bank_service = TaskBankService()
+        self.task_bank_service = (
+            TaskBankService()
+        )
 
     def select_tasks(
         self,
@@ -45,12 +53,50 @@ class BankAgent:
         strategy,
         revision_feedback="",
     ):
-        age = child_context["child"]["age"]
+        age = child_context[
+            "child"
+        ]["age"]
 
-        suitable_tasks = (
+        category_counts = {
+            "RELIGIOUS": (
+                strategy
+                .category_distribution
+                .RELIGIOUS
+            ),
+            "FINANCIAL": (
+                strategy
+                .category_distribution
+                .FINANCIAL
+            ),
+            "MORAL": (
+                strategy
+                .category_distribution
+                .MORAL
+            ),
+            "SOCIAL": (
+                strategy
+                .category_distribution
+                .SOCIAL
+            ),
+        }
+
+        candidate_tasks = (
             self.task_bank_service
-            .get_suitable_tasks_for_age(age)
+            .get_ai_candidates(
+                age=age,
+                child_context=child_context,
+                category_counts=(
+                    category_counts
+                ),
+                limit=24,
+            )
         )
+
+        if len(candidate_tasks) < strategy.bank_tasks:
+            raise ValueError(
+                "Not enough suitable task-bank "
+                "candidates for the weekly strategy."
+            )
 
         max_attempts = 3
         validation_errors = []
@@ -60,20 +106,29 @@ class BankAgent:
                 child_context,
                 performance_analysis,
                 strategy,
-                suitable_tasks,
+                candidate_tasks,
                 validation_errors,
                 revision_feedback,
             )
 
-            response = self.structured_llm.invoke(prompt)
+            response = (
+                self.structured_llm
+                .invoke(prompt)
+            )
 
-            result = response.get("parsed")
-            parsing_error = response.get("parsing_error")
+            result = response.get(
+                "parsed"
+            )
+
+            parsing_error = response.get(
+                "parsing_error"
+            )
 
             if parsing_error:
                 validation_errors = [
                     (
-                        "Structured output parsing failed: "
+                        "Structured output parsing "
+                        "failed: "
                         f"{parsing_error}"
                     )
                 ]
@@ -81,14 +136,17 @@ class BankAgent:
 
             if result is None:
                 validation_errors = [
-                    "No valid structured selection was returned."
+                    (
+                        "No valid structured "
+                        "selection was returned."
+                    )
                 ]
                 continue
 
             try:
                 self._validate_selection(
                     result,
-                    suitable_tasks,
+                    candidate_tasks,
                     strategy,
                     performance_analysis,
                 )
@@ -101,8 +159,8 @@ class BankAgent:
                 ]
 
         raise ValueError(
-            "BankAgent failed to produce a valid selection "
-            "after 3 attempts."
+            "BankAgent failed to produce a valid "
+            "selection after 3 attempts."
         )
 
     def _build_prompt(
@@ -110,7 +168,7 @@ class BankAgent:
         child_context,
         performance_analysis,
         strategy,
-        suitable_tasks,
+        candidate_tasks,
         validation_errors=None,
         revision_feedback="",
     ):
@@ -122,17 +180,20 @@ class BankAgent:
         )
 
         performance_json = (
-            performance_analysis.model_dump_json(
+            performance_analysis
+            .model_dump_json(
                 indent=2,
             )
         )
 
-        strategy_json = strategy.model_dump_json(
-            indent=2,
+        strategy_json = (
+            strategy.model_dump_json(
+                indent=2,
+            )
         )
 
         bank_json = json.dumps(
-            suitable_tasks,
+            candidate_tasks,
             ensure_ascii=False,
             indent=2,
             default=str,
@@ -143,7 +204,8 @@ class BankAgent:
         if validation_errors:
             errors_text = "\n".join(
                 f"- {error}"
-                for error in validation_errors
+                for error
+                in validation_errors
             )
 
             validation_feedback = f"""
@@ -186,7 +248,7 @@ titles, descriptions, category, and frequency.
 You are the Task Bank Selection Agent for Asalah.
 
 Your responsibility is ONLY to choose tasks from
-the provided Asalah task bank.
+the provided Asalah task bank candidates.
 
 You MUST NOT create new tasks.
 
@@ -199,16 +261,21 @@ PERFORMANCE ANALYSIS:
 WEEKLY STRATEGY:
 {strategy_json}
 
-AVAILABLE TASK BANK:
+PRE-FILTERED TASK BANK CANDIDATES:
 {bank_json}
+
+The backend has already filtered the full task bank
+for age, relevant categories, and obvious unsupported
+assumptions.
 
 Your job:
 
 - Select exactly strategy.bank_tasks tasks.
 
-- Every selected task MUST exist in AVAILABLE TASK BANK.
+- Every selected task MUST exist in
+  PRE-FILTERED TASK BANK CANDIDATES.
 
-- Copy the exact bank_id from the task bank.
+- Copy the exact bank_id.
 
 - Preserve the original task titles.
 
@@ -218,23 +285,23 @@ Your job:
 
 - Preserve the original suggested frequency.
 
-- You MAY adjust the task points for this weekly plan.
+- You MAY adjust task points for this weekly plan.
 
-- Changing points does NOT modify the original task bank.
+- Changing points does NOT modify the original
+  task bank.
 
-- default_points from the task bank is only a reference
-  value, not a required value for this weekly plan.
+- default_points is only a reference value.
 
-- Adjust points when necessary so the task fits the
-  child's workload, difficulty level, and recommended
-  weekly point target.
+- Adjust points when necessary so the task fits
+  the child's workload and recommended weekly
+  point target.
 
 - Points must remain proportional to task difficulty.
 
-- DAILY tasks may repeat up to 7 times during the week.
+- DAILY tasks may repeat up to 7 times.
 
-- DAILY tasks should normally be worth between
-  2 and 5 points per completion.
+- DAILY tasks should normally be worth
+  between 2 and 5 points per completion.
 
 - For weekly point estimation:
   DAILY = points × 7
@@ -243,17 +310,17 @@ Your job:
 - Consider the Performance Agent's
   recommended_weekly_points.
 
-- Do not choose bank tasks whose combined weekly point
-  contribution would make it impossible to build a
-  reasonable complete weekly plan.
+- Do not let bank-selected tasks alone consume
+  the entire weekly point budget when generated
+  tasks still need room.
 
-- Choose tasks that match the Strategy Agent's
-  category distribution as closely as possible.
+- Match the Strategy Agent's category distribution
+  as closely as possible.
 
 - Consider the child's previous task history.
 
 - Avoid repeating previously rejected task patterns
-  when a more suitable bank task exists.
+  when a more suitable candidate exists.
 
 - A rejected task does not mean the entire category
   should be avoided.
@@ -261,14 +328,7 @@ Your job:
 - Weak categories should normally receive a simpler
   or more suitable task.
 
-- Do not assume siblings, pets, allowance, school
-  circumstances, holidays, possessions, or other
-  personal details that are not present in the
-  child context.
-
-- Do not select seasonal tasks such as Ramadan or Eid
-  unless the child context explicitly indicates that
-  they are currently relevant.
+- Do not introduce unsupported assumptions.
 
 - Explain briefly why each task was selected.
 
@@ -282,33 +342,43 @@ Return only the required structured bank task selection.
     def _validate_selection(
         self,
         selection,
-        suitable_tasks,
+        candidate_tasks,
         strategy,
         performance_analysis,
     ):
-        if len(selection.tasks) != strategy.bank_tasks:
+        if (
+            len(selection.tasks)
+            != strategy.bank_tasks
+        ):
             raise ValueError(
-                "BankAgent returned the wrong number of tasks."
+                "BankAgent returned the wrong "
+                "number of tasks."
             )
 
         available_by_id = {
             task["bank_id"]: task
-            for task in suitable_tasks
+            for task in candidate_tasks
         }
 
         selected_ids = set()
-
         weekly_points = 0
 
         for selected_task in selection.tasks:
-            if selected_task.bank_id not in available_by_id:
+            if (
+                selected_task.bank_id
+                not in available_by_id
+            ):
                 raise ValueError(
-                    f"Unknown bank_id: {selected_task.bank_id}"
+                    "Unknown bank_id: "
+                    f"{selected_task.bank_id}"
                 )
 
-            if selected_task.bank_id in selected_ids:
+            if (
+                selected_task.bank_id
+                in selected_ids
+            ):
                 raise ValueError(
-                    f"Duplicate bank task: "
+                    "Duplicate bank task: "
                     f"{selected_task.bank_id}"
                 )
 
@@ -320,13 +390,19 @@ Return only the required structured bank task selection.
                 selected_task.bank_id
             ]
 
-            if selected_task.title_en != original["title_en"]:
+            if (
+                selected_task.title_en
+                != original["title_en"]
+            ):
                 raise ValueError(
                     "BankAgent changed title_en for "
                     f"{selected_task.bank_id}"
                 )
 
-            if selected_task.title_ar != original["title_ar"]:
+            if (
+                selected_task.title_ar
+                != original["title_ar"]
+            ):
                 raise ValueError(
                     "BankAgent changed title_ar for "
                     f"{selected_task.bank_id}"
@@ -337,7 +413,8 @@ Return only the required structured bank task selection.
                 != original["description_en"]
             ):
                 raise ValueError(
-                    "BankAgent changed description_en for "
+                    "BankAgent changed "
+                    "description_en for "
                     f"{selected_task.bank_id}"
                 )
 
@@ -346,11 +423,15 @@ Return only the required structured bank task selection.
                 != original["description_ar"]
             ):
                 raise ValueError(
-                    "BankAgent changed description_ar for "
+                    "BankAgent changed "
+                    "description_ar for "
                     f"{selected_task.bank_id}"
                 )
 
-            if selected_task.category != original["category"]:
+            if (
+                selected_task.category
+                != original["category"]
+            ):
                 raise ValueError(
                     "BankAgent changed category for "
                     f"{selected_task.bank_id}"
@@ -358,7 +439,9 @@ Return only the required structured bank task selection.
 
             if (
                 selected_task.frequency
-                != original["suggested_frequency"]
+                != original[
+                    "suggested_frequency"
+                ]
             ):
                 raise ValueError(
                     "BankAgent changed frequency for "
@@ -367,24 +450,31 @@ Return only the required structured bank task selection.
 
             if selected_task.points < 1:
                 raise ValueError(
-                    f'Bank task "{selected_task.title_en}" '
+                    f'Bank task '
+                    f'"{selected_task.title_en}" '
                     "must have at least 1 point."
                 )
 
             if selected_task.points > 50:
                 raise ValueError(
-                    f'Bank task "{selected_task.title_en}" '
+                    f'Bank task '
+                    f'"{selected_task.title_en}" '
                     "cannot exceed 50 points."
                 )
 
-            if selected_task.frequency == "DAILY":
+            if (
+                selected_task.frequency
+                == "DAILY"
+            ):
                 if selected_task.points > 5:
                     raise ValueError(
                         f'DAILY bank task '
                         f'"{selected_task.title_en}" '
-                        f"has {selected_task.points} points. "
-                        "DAILY tasks must have no more than "
-                        "5 points per completion."
+                        f"has "
+                        f"{selected_task.points} "
+                        "points. DAILY tasks must "
+                        "have no more than 5 points "
+                        "per completion."
                     )
 
                 weekly_points += (
@@ -392,18 +482,24 @@ Return only the required structured bank task selection.
                 )
 
             else:
-                weekly_points += selected_task.points
+                weekly_points += (
+                    selected_task.points
+                )
 
         recommended_weekly_points = (
             performance_analysis
             .recommended_weekly_points
         )
 
-        if weekly_points > recommended_weekly_points:
+        if (
+            weekly_points
+            > recommended_weekly_points
+        ):
             raise ValueError(
-                "Bank-selected tasks alone exceed the "
-                "Performance Agent's recommended weekly "
-                f"point target. Bank contribution: "
+                "Bank-selected tasks alone exceed "
+                "the Performance Agent's "
+                "recommended weekly point target. "
+                f"Bank contribution: "
                 f"{weekly_points}, target: "
                 f"{recommended_weekly_points}."
             )
