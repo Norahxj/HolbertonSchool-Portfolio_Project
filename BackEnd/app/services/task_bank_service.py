@@ -20,6 +20,30 @@ class TaskBankService:
     def get_categories(self):
         return list(TASK_BANK.keys())
 
+    def get_suitable_tasks_for_age(self, age):
+        suitable_tasks = []
+
+        for category, tasks in TASK_BANK.items():
+            for index, task in enumerate(tasks):
+                if task["age_min"] <= age <= task["age_max"]:
+                    suitable_tasks.append({
+                    "bank_id": f"{category}_{index}",
+                    "title_en": task["title_en"],
+                    "title_ar": task["title_ar"],
+                    "description_en": task["description_en"],
+                    "description_ar": task["description_ar"],
+                    "default_points": task["default_points"],
+                    "age_min": task["age_min"],
+                    "age_max": task["age_max"],
+                    "suggested_frequency": task.get(
+                        "suggested_frequency",
+                        "ONCE",
+                    ),
+                    "category": category,
+                    })
+
+        return suitable_tasks
+
     def _default_recurrence_day(self, task_frequency):
         today = riyadh_today()
         if task_frequency == "WEEKLY":
