@@ -10,11 +10,15 @@ class WeeklyPlanService:
     def generate_weekly_plan(
         self,
         child_id,
+        guardian_id,
         max_revisions=3,
     ):
         child_context, error = (
             self.child_context_service
-            .get_child_context(child_id)
+            .get_child_context(
+                child_id,
+                guardian_id,
+            )
         )
 
         if error:

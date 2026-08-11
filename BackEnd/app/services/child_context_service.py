@@ -1,18 +1,36 @@
 from app.repositories.child_repository import ChildRepository
-from app.repositories.task_assignment_repository import TaskAssignmentRepository
-from app.repositories.points_history_repository import PointsHistoryRepository
+from app.repositories.task_assignment_repository import (
+    TaskAssignmentRepository,
+)
+from app.repositories.points_history_repository import (
+    PointsHistoryRepository,
+)
 from app.repositories.wishlist_repository import WishlistRepository
 
 
 class ChildContextService:
     def __init__(self):
         self.child_repository = ChildRepository()
-        self.task_assignment_repository = TaskAssignmentRepository()
-        self.points_history_repository = PointsHistoryRepository()
+        self.task_assignment_repository = (
+            TaskAssignmentRepository()
+        )
+        self.points_history_repository = (
+            PointsHistoryRepository()
+        )
         self.wishlist_repository = WishlistRepository()
 
-    def get_child_context(self, child_id):
-        child = self.child_repository.get_child_by_id(child_id)
+    def get_child_context(
+        self,
+        child_id,
+        guardian_id,
+    ):
+        child = (
+            self.child_repository
+            .get_child_for_guardian(
+                child_id,
+                guardian_id,
+            )
+        )
 
         if not child:
             return None, "child_not_found"
@@ -94,13 +112,27 @@ class ChildContextService:
                     else None
                 ),
             })
-        history_summary = self._build_history_summary(assignments)
-        points_summary = self._build_points_summary(points_history, current_points,)
 
-        wishlist_summary = self._build_wishlist_summary(
-            wishes,
-            current_points,
+        history_summary = (
+            self._build_history_summary(
+                assignments
+            )
         )
+
+        points_summary = (
+            self._build_points_summary(
+                points_history,
+                current_points,
+            )
+        )
+
+        wishlist_summary = (
+            self._build_wishlist_summary(
+                wishes,
+                current_points,
+            )
+        )
+
         context = {
             "child": {
                 "id": child.id,
@@ -118,7 +150,10 @@ class ChildContextService:
 
         return context, None
 
-    def _build_history_summary(self, assignments):
+    def _build_history_summary(
+        self,
+        assignments,
+    ):
         total_tasks = len(assignments)
 
         approved_tasks = 0
@@ -129,26 +164,26 @@ class ChildContextService:
         total_approved_points = 0
 
         categories = {
-        "RELIGIOUS": {
-            "total": 0,
-            "approved": 0,
-            "rejected": 0,
-        },
-        "FINANCIAL": {
-            "total": 0,
-            "approved": 0,
-            "rejected": 0,
-        },
-        "MORAL": {
-            "total": 0,
-            "approved": 0,
-            "rejected": 0,
-        },
-        "SOCIAL": {
-            "total": 0,
-            "approved": 0,
-            "rejected": 0,
-        },
+            "RELIGIOUS": {
+                "total": 0,
+                "approved": 0,
+                "rejected": 0,
+            },
+            "FINANCIAL": {
+                "total": 0,
+                "approved": 0,
+                "rejected": 0,
+            },
+            "MORAL": {
+                "total": 0,
+                "approved": 0,
+                "rejected": 0,
+            },
+            "SOCIAL": {
+                "total": 0,
+                "approved": 0,
+                "rejected": 0,
+            },
         }
 
         for assignment in assignments:
@@ -174,12 +209,19 @@ class ChildContextService:
                 categories[category]["total"] += 1
 
                 if status == "APPROVED":
-                    categories[category]["approved"] += 1
+                    categories[
+                        category
+                    ]["approved"] += 1
 
                 elif status == "REJECTED":
-                    categories[category]["rejected"] += 1
+                    categories[
+                        category
+                    ]["rejected"] += 1
 
-        decided_tasks = approved_tasks + rejected_tasks
+        decided_tasks = (
+            approved_tasks
+            + rejected_tasks
+        )
 
         if decided_tasks > 0:
             completion_rate = round(
@@ -191,7 +233,10 @@ class ChildContextService:
 
         if approved_tasks > 0:
             average_completed_task_points = round(
-                total_approved_points / approved_tasks,
+                (
+                    total_approved_points
+                    / approved_tasks
+                ),
                 2,
             )
         else:
@@ -204,28 +249,47 @@ class ChildContextService:
             )
 
             if category_decided > 0:
-                category_data["completion_rate"] = round(
-                    category_data["approved"] / category_decided,
+                category_data[
+                    "completion_rate"
+                ] = round(
+                    (
+                        category_data["approved"]
+                        / category_decided
+                    ),
                     2,
                 )
             else:
-                category_data["completion_rate"] = 0
+                category_data[
+                    "completion_rate"
+                ] = 0
 
-        has_enough_history = decided_tasks >= 5
+        has_enough_history = (
+            decided_tasks >= 5
+        )
 
         return {
-        "total_tasks": total_tasks,
-        "approved_tasks": approved_tasks,
-        "rejected_tasks": rejected_tasks,
-        "pending_tasks": pending_tasks,
-        "pending_review_tasks": pending_review_tasks,
-        "completion_rate": completion_rate,
-        "average_completed_task_points": average_completed_task_points,
-        "categories": categories,
-        "has_enough_history": has_enough_history,
+            "total_tasks": total_tasks,
+            "approved_tasks": approved_tasks,
+            "rejected_tasks": rejected_tasks,
+            "pending_tasks": pending_tasks,
+            "pending_review_tasks": (
+                pending_review_tasks
+            ),
+            "completion_rate": completion_rate,
+            "average_completed_task_points": (
+                average_completed_task_points
+            ),
+            "categories": categories,
+            "has_enough_history": (
+                has_enough_history
+            ),
         }
 
-    def _build_points_summary(self, points_history, current_points):
+    def _build_points_summary(
+        self,
+        points_history,
+        current_points,
+    ):
         total_earned = 0
         total_spent = 0
 
@@ -237,23 +301,39 @@ class ChildContextService:
                 total_earned += history.points
 
             elif history.points < 0:
-                total_spent += abs(history.points)
+                total_spent += abs(
+                    history.points
+                )
 
-            if history.task_assignment_id and history.points > 0:
-                task_points_earned += history.points
+            if (
+                history.task_assignment_id
+                and history.points > 0
+            ):
+                task_points_earned += (
+                    history.points
+                )
 
-            if history.action == "WISH_ACHIEVED":
+            if (
+                history.action
+                == "WISH_ACHIEVED"
+            ):
                 wishes_achieved += 1
 
         return {
-        "current_points": current_points,
-        "total_earned": total_earned,
-        "total_spent": total_spent,
-        "task_points_earned": task_points_earned,
-        "wishes_achieved": wishes_achieved,
+            "current_points": current_points,
+            "total_earned": total_earned,
+            "total_spent": total_spent,
+            "task_points_earned": (
+                task_points_earned
+            ),
+            "wishes_achieved": wishes_achieved,
         }
 
-    def _build_wishlist_summary(self, wishes, current_points):
+    def _build_wishlist_summary(
+        self,
+        wishes,
+        current_points,
+    ):
         pending_wishes = 0
         approved_wishes = 0
         rejected_wishes = 0
@@ -269,25 +349,39 @@ class ChildContextService:
                 approved_wishes += 1
 
                 remaining_points = max(
-                    wish.target_points - current_points,
+                    (
+                        wish.target_points
+                        - current_points
+                    ),
                     0,
                 )
 
                 progress_percentage = round(
                     min(
-                        current_points / wish.target_points,
+                        (
+                            current_points
+                            / wish.target_points
+                        ),
                         1,
                     ),
                     2,
                 )
 
                 active_goals.append({
-                "id": wish.id,
-                "name": wish.name,
-                "target_points": wish.target_points,
-                "current_points": current_points,
-                "remaining_points": remaining_points,
-                "progress_percentage": progress_percentage,
+                    "id": wish.id,
+                    "name": wish.name,
+                    "target_points": (
+                        wish.target_points
+                    ),
+                    "current_points": (
+                        current_points
+                    ),
+                    "remaining_points": (
+                        remaining_points
+                    ),
+                    "progress_percentage": (
+                        progress_percentage
+                    ),
                 })
 
             elif wish.status == "REJECTED":
@@ -297,9 +391,9 @@ class ChildContextService:
                 achieved_wishes += 1
 
         return {
-        "pending_wishes": pending_wishes,
-        "approved_wishes": approved_wishes,
-        "rejected_wishes": rejected_wishes,
-        "achieved_wishes": achieved_wishes,
-        "active_goals": active_goals,
+            "pending_wishes": pending_wishes,
+            "approved_wishes": approved_wishes,
+            "rejected_wishes": rejected_wishes,
+            "achieved_wishes": achieved_wishes,
+            "active_goals": active_goals,
         }
