@@ -42,24 +42,24 @@ class PlannedTask(BaseModel):
 class WeeklyPlanSummary(BaseModel):
     summary_en: str = Field(
         min_length=10,
-        max_length=250,
+        max_length=350,
     )
 
     summary_ar: str = Field(
         min_length=10,
-        max_length=250,
+        max_length=350,
     )
 
 
 class WeeklyPlanDraft(BaseModel):
     summary_en: str = Field(
         min_length=10,
-        max_length=250,
+        max_length=350,
     )
 
     summary_ar: str = Field(
         min_length=10,
-        max_length=250,
+        max_length=350,
     )
 
     total_tasks: int = Field(

@@ -60,6 +60,11 @@ class BankAgent:
         strategy,
         revision_feedback="",
     ):
+        if strategy.bank_tasks == 0:
+            return BankTaskSelection(
+                tasks=[]
+            )
+
         age = (
             child_context
             .get("child", {})
@@ -95,13 +100,17 @@ class BankAgent:
             ),
         }
 
+        candidate_limit = (
+            strategy.bank_tasks * 3
+        )
+
         candidate_tasks = (
             self.task_bank_service
             .get_ai_candidates(
                 age=age,
                 child_context=child_context,
                 category_counts=category_counts,
-                limit=24,
+                limit=candidate_limit,
             )
         )
 

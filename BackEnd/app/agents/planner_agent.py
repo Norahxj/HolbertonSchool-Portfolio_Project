@@ -230,7 +230,11 @@ RULES:
 
 - Write summary_ar in natural Arabic.
 
-- Keep both summaries short and clear.
+- Each summary MUST be no more than 300 characters.
+
+- Aim for 2 to 3 short sentences.
+
+- Keep both summaries concise, natural, and clear.
 
 - Describe the overall purpose and balance of
   the plan.

@@ -293,7 +293,7 @@ class WeeklyPlanWorkflow:
             3,
         )
 
-        if revision_count > max_revisions:
+        if revision_count >= max_revisions:
             return "max_revisions"
 
         # -----------------------------------
