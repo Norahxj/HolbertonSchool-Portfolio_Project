@@ -1554,4 +1554,101 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get childRoleDescription =>
       'Complete tasks, earn points, and unlock rewards';
+
+  @override
+  String get weeklyPlanTitle => 'Smart Weekly Plan';
+
+  @override
+  String get weeklyPlanIntro =>
+      'Choose your child and we will suggest a balanced weekly plan based on their progress.';
+
+  @override
+  String get weeklyPlanChooseChild => 'Choose a child';
+
+  @override
+  String get weeklyPlanChooseChildSubtitle =>
+      'We will use task history, points, and wishes to build a suitable plan.';
+
+  @override
+  String get weeklyPlanGenerate => 'Generate weekly plan';
+
+  @override
+  String get weeklyPlanGenerating => 'Generating plan...';
+
+  @override
+  String get weeklyPlanAnalyzing =>
+      'We are analyzing your child\'s performance and building a suitable plan...';
+
+  @override
+  String get weeklyPlanSuggestedPlan => 'Suggested plan';
+
+  @override
+  String get weeklyPlanTasks => 'Weekly tasks';
+
+  @override
+  String get weeklyPlanTaskCount => 'Tasks';
+
+  @override
+  String get weeklyPlanPoints => 'Weekly points';
+
+  @override
+  String get weeklyPlanApprove => 'Approve plan';
+
+  @override
+  String get weeklyPlanApproving => 'Approving plan...';
+
+  @override
+  String get weeklyPlanApprovedSuccess =>
+      'Plan approved and tasks added successfully.';
+
+  @override
+  String get weeklyPlanApprovedMessage =>
+      'This plan has been approved and its tasks were added.';
+
+  @override
+  String get weeklyPlanNoChildren => 'No children yet.';
+
+  @override
+  String get weeklyPlanCategoryReligious => 'Religious';
+
+  @override
+  String get weeklyPlanCategoryFinancial => 'Financial';
+
+  @override
+  String get weeklyPlanCategoryMoral => 'Moral';
+
+  @override
+  String get weeklyPlanCategorySocial => 'Social';
+
+  @override
+  String get weeklyPlanFrequencyDaily => 'Daily';
+
+  @override
+  String get weeklyPlanFrequencyWeekly => 'Weekly';
+
+  @override
+  String get weeklyPlanFrequencyMonthly => 'Monthly';
+
+  @override
+  String get weeklyPlanFrequencyOnce => 'Once';
+
+  @override
+  String get weeklyPlanGenerateFailed =>
+      'Unable to generate the weekly plan. Please try again.';
+
+  @override
+  String get weeklyPlanApproveFailed =>
+      'Unable to approve the weekly plan. Please try again.';
+
+  @override
+  String get weeklyPlanServiceUnavailable =>
+      'The AI service is temporarily unavailable. Please try again later.';
+
+  @override
+  String get weeklyPlanNoSuitablePlan =>
+      'We could not create a suitable weekly plan. Please try again.';
+
+  @override
+  String get weeklyPlanCardSubtitle =>
+      'Create a weekly task plan tailored to your child based on their performance and progress.';
 }

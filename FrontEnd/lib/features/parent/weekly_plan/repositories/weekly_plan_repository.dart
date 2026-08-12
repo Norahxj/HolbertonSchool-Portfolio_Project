@@ -1,19 +1,22 @@
 import 'package:dio/dio.dart';
 
-import '../models/weekly_plan_models.dart';
 import '../../../../services/weekly_plan_api_service.dart';
+import '../models/weekly_plan_models.dart';
 
+enum WeeklyPlanErrorType {
+  generateFailed,
+  approveFailed,
+  serviceUnavailable,
+  noSuitablePlan,
+}
 
 class WeeklyPlanRepository {
   final WeeklyPlanApiService _weeklyPlanApiService;
 
   WeeklyPlanRepository({
     WeeklyPlanApiService? weeklyPlanApiService,
-  }) : _weeklyPlanApiService = (
-         weeklyPlanApiService
-         ?? WeeklyPlanApiService()
-       );
-
+  }) : _weeklyPlanApiService =
+            weeklyPlanApiService ?? WeeklyPlanApiService();
 
   Future<WeeklyPlanResult> generateWeeklyPlan(
     String childId,
@@ -24,18 +27,17 @@ class WeeklyPlanRepository {
       );
     } on DioException catch (error) {
       throw WeeklyPlanException(
-        _readBackendMessage(
+        _resolveErrorType(
           error,
-          fallback: 'Unable to generate weekly plan.',
+          fallback: WeeklyPlanErrorType.generateFailed,
         ),
       );
     } catch (_) {
       throw const WeeklyPlanException(
-        'Unable to generate weekly plan.',
+        WeeklyPlanErrorType.generateFailed,
       );
     }
   }
-
 
   Future<WeeklyPlanApprovalResult> approveWeeklyPlan({
     required String proposalId,
@@ -48,56 +50,39 @@ class WeeklyPlanRepository {
       );
     } on DioException catch (error) {
       throw WeeklyPlanException(
-        _readBackendMessage(
+        _resolveErrorType(
           error,
-          fallback: 'Unable to approve weekly plan.',
+          fallback: WeeklyPlanErrorType.approveFailed,
         ),
       );
     } catch (_) {
       throw const WeeklyPlanException(
-        'Unable to approve weekly plan.',
+        WeeklyPlanErrorType.approveFailed,
       );
     }
   }
 
-
-  String _readBackendMessage(
+  WeeklyPlanErrorType _resolveErrorType(
     DioException error, {
-    required String fallback,
+    required WeeklyPlanErrorType fallback,
   }) {
-    final data = error.response?.data;
+    switch (error.response?.statusCode) {
+      case 503:
+        return WeeklyPlanErrorType.serviceUnavailable;
 
-    if (data is Map) {
-      final message = (
-        data['error']
-        ?? data['message']
-      );
+      case 422:
+        return WeeklyPlanErrorType.noSuitablePlan;
 
-      if (message != null) {
-        return message.toString();
-      }
+      default:
+        return fallback;
     }
-
-    if (error.response?.statusCode == 503) {
-      return 'AI service is temporarily unavailable.';
-    }
-
-    if (error.response?.statusCode == 422) {
-      return 'Unable to generate a suitable weekly plan.';
-    }
-
-    return fallback;
   }
 }
 
-
 class WeeklyPlanException implements Exception {
-  final String message;
+  final WeeklyPlanErrorType type;
 
   const WeeklyPlanException(
-    this.message,
+    this.type,
   );
-
-  @override
-  String toString() => message;
 }

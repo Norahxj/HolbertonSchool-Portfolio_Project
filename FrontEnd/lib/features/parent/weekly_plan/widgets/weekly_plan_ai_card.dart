@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-
+import '../../../../core/localization/localization_extension.dart';
 
 class WeeklyPlanAiCard extends StatelessWidget {
   final VoidCallback onTap;
@@ -14,6 +14,8 @@ class WeeklyPlanAiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -48,24 +50,24 @@ class WeeklyPlanAiCard extends StatelessWidget {
               const SizedBox(
                 width: AppSpacing.md,
               ),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'خطتك الأسبوعية الذكية',
-                      style: TextStyle(
+                      l10n.weeklyPlanTitle,
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: AppSpacing.xs,
                     ),
                     Text(
-                      'أنشئ خطة مهام أسبوعية مناسبة لطفلك بناءً على أدائه وتقدمه',
-                      style: TextStyle(
+                      l10n.weeklyPlanCardSubtitle,
+                      style: const TextStyle(
                         fontSize: 12,
                         height: 1.5,
                         color: AppColors.textSecondary,
@@ -77,9 +79,11 @@ class WeeklyPlanAiCard extends StatelessWidget {
               const SizedBox(
                 width: AppSpacing.sm,
               ),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
+              Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward_rounded
+                    : Icons.arrow_back_rounded,
+                size: 18,
                 color: AppColors.primary,
               ),
             ],

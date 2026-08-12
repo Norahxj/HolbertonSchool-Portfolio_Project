@@ -2887,6 +2887,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete tasks, earn points, and unlock rewards'**
   String get childRoleDescription;
+
+  /// No description provided for @weeklyPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Weekly Plan'**
+  String get weeklyPlanTitle;
+
+  /// No description provided for @weeklyPlanIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your child and we will suggest a balanced weekly plan based on their progress.'**
+  String get weeklyPlanIntro;
+
+  /// No description provided for @weeklyPlanChooseChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a child'**
+  String get weeklyPlanChooseChild;
+
+  /// No description provided for @weeklyPlanChooseChildSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We will use task history, points, and wishes to build a suitable plan.'**
+  String get weeklyPlanChooseChildSubtitle;
+
+  /// No description provided for @weeklyPlanGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate weekly plan'**
+  String get weeklyPlanGenerate;
+
+  /// No description provided for @weeklyPlanGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating plan...'**
+  String get weeklyPlanGenerating;
+
+  /// No description provided for @weeklyPlanAnalyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'We are analyzing your child\'s performance and building a suitable plan...'**
+  String get weeklyPlanAnalyzing;
+
+  /// No description provided for @weeklyPlanSuggestedPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested plan'**
+  String get weeklyPlanSuggestedPlan;
+
+  /// No description provided for @weeklyPlanTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly tasks'**
+  String get weeklyPlanTasks;
+
+  /// No description provided for @weeklyPlanTaskCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get weeklyPlanTaskCount;
+
+  /// No description provided for @weeklyPlanPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly points'**
+  String get weeklyPlanPoints;
+
+  /// No description provided for @weeklyPlanApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve plan'**
+  String get weeklyPlanApprove;
+
+  /// No description provided for @weeklyPlanApproving.
+  ///
+  /// In en, this message translates to:
+  /// **'Approving plan...'**
+  String get weeklyPlanApproving;
+
+  /// No description provided for @weeklyPlanApprovedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan approved and tasks added successfully.'**
+  String get weeklyPlanApprovedSuccess;
+
+  /// No description provided for @weeklyPlanApprovedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This plan has been approved and its tasks were added.'**
+  String get weeklyPlanApprovedMessage;
+
+  /// No description provided for @weeklyPlanNoChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'No children yet.'**
+  String get weeklyPlanNoChildren;
+
+  /// No description provided for @weeklyPlanCategoryReligious.
+  ///
+  /// In en, this message translates to:
+  /// **'Religious'**
+  String get weeklyPlanCategoryReligious;
+
+  /// No description provided for @weeklyPlanCategoryFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial'**
+  String get weeklyPlanCategoryFinancial;
+
+  /// No description provided for @weeklyPlanCategoryMoral.
+  ///
+  /// In en, this message translates to:
+  /// **'Moral'**
+  String get weeklyPlanCategoryMoral;
+
+  /// No description provided for @weeklyPlanCategorySocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get weeklyPlanCategorySocial;
+
+  /// No description provided for @weeklyPlanFrequencyDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get weeklyPlanFrequencyDaily;
+
+  /// No description provided for @weeklyPlanFrequencyWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weeklyPlanFrequencyWeekly;
+
+  /// No description provided for @weeklyPlanFrequencyMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get weeklyPlanFrequencyMonthly;
+
+  /// No description provided for @weeklyPlanFrequencyOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Once'**
+  String get weeklyPlanFrequencyOnce;
+
+  /// No description provided for @weeklyPlanGenerateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to generate the weekly plan. Please try again.'**
+  String get weeklyPlanGenerateFailed;
+
+  /// No description provided for @weeklyPlanApproveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to approve the weekly plan. Please try again.'**
+  String get weeklyPlanApproveFailed;
+
+  /// No description provided for @weeklyPlanServiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI service is temporarily unavailable. Please try again later.'**
+  String get weeklyPlanServiceUnavailable;
+
+  /// No description provided for @weeklyPlanNoSuitablePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not create a suitable weekly plan. Please try again.'**
+  String get weeklyPlanNoSuitablePlan;
+
+  /// No description provided for @weeklyPlanCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a weekly task plan tailored to your child based on their performance and progress.'**
+  String get weeklyPlanCardSubtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -4,10 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/child_avatar.dart';
 
-/// A reusable child selection card.
-///
-/// This widget is shared by the Tasks and Rewards screens so the child cards
-/// always have the same size and appearance.
+
 class ChildCard extends StatelessWidget {
   final String name;
   final int avatarIndex;

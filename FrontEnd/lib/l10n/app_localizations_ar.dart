@@ -1510,4 +1510,100 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get childRoleDescription =>
       'أنجز المهام واجمع النقاط واحصل على المكافآت';
+
+  @override
+  String get weeklyPlanTitle => 'الخطة الأسبوعية الذكية';
+
+  @override
+  String get weeklyPlanIntro =>
+      'اختر طفلك وسنقترح له خطة أسبوعية متوازنة ومناسبة لأدائه.';
+
+  @override
+  String get weeklyPlanChooseChild => 'اختر الطفل';
+
+  @override
+  String get weeklyPlanChooseChildSubtitle =>
+      'سنستخدم سجل المهام والنقاط والأمنيات لبناء خطة مناسبة له.';
+
+  @override
+  String get weeklyPlanGenerate => 'إنشاء الخطة الأسبوعية';
+
+  @override
+  String get weeklyPlanGenerating => 'جاري إنشاء الخطة...';
+
+  @override
+  String get weeklyPlanAnalyzing => 'نحلل أداء الطفل ونبني الخطة المناسبة...';
+
+  @override
+  String get weeklyPlanSuggestedPlan => 'الخطة المقترحة';
+
+  @override
+  String get weeklyPlanTasks => 'مهام الأسبوع';
+
+  @override
+  String get weeklyPlanTaskCount => 'مهام';
+
+  @override
+  String get weeklyPlanPoints => 'نقطة أسبوعية';
+
+  @override
+  String get weeklyPlanApprove => 'اعتماد الخطة';
+
+  @override
+  String get weeklyPlanApproving => 'جاري اعتماد الخطة...';
+
+  @override
+  String get weeklyPlanApprovedSuccess =>
+      'تم اعتماد الخطة وإضافة المهام للطفل بنجاح.';
+
+  @override
+  String get weeklyPlanApprovedMessage =>
+      'تم اعتماد هذه الخطة وإضافة المهام للطفل.';
+
+  @override
+  String get weeklyPlanNoChildren => 'لا يوجد أطفال حاليًا.';
+
+  @override
+  String get weeklyPlanCategoryReligious => 'ديني';
+
+  @override
+  String get weeklyPlanCategoryFinancial => 'مالي';
+
+  @override
+  String get weeklyPlanCategoryMoral => 'سلوكي';
+
+  @override
+  String get weeklyPlanCategorySocial => 'اجتماعي';
+
+  @override
+  String get weeklyPlanFrequencyDaily => 'يومي';
+
+  @override
+  String get weeklyPlanFrequencyWeekly => 'أسبوعي';
+
+  @override
+  String get weeklyPlanFrequencyMonthly => 'شهري';
+
+  @override
+  String get weeklyPlanFrequencyOnce => 'مرة واحدة';
+
+  @override
+  String get weeklyPlanGenerateFailed =>
+      'تعذّر إنشاء الخطة الأسبوعية. حاول مرة أخرى.';
+
+  @override
+  String get weeklyPlanApproveFailed =>
+      'تعذّر اعتماد الخطة الأسبوعية. حاول مرة أخرى.';
+
+  @override
+  String get weeklyPlanServiceUnavailable =>
+      'خدمة الذكاء الاصطناعي غير متاحة مؤقتًا. حاول مرة أخرى لاحقًا.';
+
+  @override
+  String get weeklyPlanNoSuitablePlan =>
+      'تعذّر إنشاء خطة أسبوعية مناسبة. حاول مرة أخرى.';
+
+  @override
+  String get weeklyPlanCardSubtitle =>
+      'أنشئ خطة مهام أسبوعية مناسبة لطفلك بناءً على أدائه وتقدمه.';
 }

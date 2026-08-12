@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../models/weekly_plan_models.dart';
 import '../repositories/weekly_plan_repository.dart';
 
-
 class WeeklyPlanController extends ChangeNotifier {
   final WeeklyPlanRepository repository;
 
@@ -17,8 +16,8 @@ class WeeklyPlanController extends ChangeNotifier {
   bool _isGenerating = false;
   bool _isApproving = false;
 
-  String? _errorMessage;
-  String? _successMessage;
+  WeeklyPlanErrorType? _errorType;
+  bool _approvalSucceeded = false;
 
   String? get selectedChildId => _selectedChildId;
 
@@ -32,39 +31,32 @@ class WeeklyPlanController extends ChangeNotifier {
 
   bool get hasPlan => _result != null;
 
-  String? get errorMessage => _errorMessage;
+  WeeklyPlanErrorType? get errorType => _errorType;
 
-  String? get successMessage => _successMessage;
+  bool get approvalSucceeded => _approvalSucceeded;
 
   bool get canGenerate {
-    return (
-      _selectedChildId != null
-      && !_isGenerating
-      && !_isApproving
-    );
+    return _selectedChildId != null &&
+        !_isGenerating &&
+        !_isApproving;
   }
 
   bool get canApprove {
-    return (
-      _result != null
-      && _result!.proposalStatus == 'PENDING'
-      && !_isGenerating
-      && !_isApproving
-    );
+    return _result != null &&
+        _result!.proposalStatus == 'PENDING' &&
+        !_isGenerating &&
+        !_isApproving;
   }
 
-  void selectChild(
-    String childId,
-  ) {
+  void selectChild(String childId) {
     if (_selectedChildId == childId) {
       return;
     }
 
     _selectedChildId = childId;
-
     _result = null;
-    _errorMessage = null;
-    _successMessage = null;
+    _errorType = null;
+    _approvalSucceeded = false;
 
     notifyListeners();
   }
@@ -77,8 +69,8 @@ class WeeklyPlanController extends ChangeNotifier {
     }
 
     _isGenerating = true;
-    _errorMessage = null;
-    _successMessage = null;
+    _errorType = null;
+    _approvalSucceeded = false;
     _result = null;
 
     notifyListeners();
@@ -88,11 +80,9 @@ class WeeklyPlanController extends ChangeNotifier {
         childId,
       );
     } on WeeklyPlanException catch (error) {
-      _errorMessage = error.message;
+      _errorType = error.type;
     } catch (_) {
-      _errorMessage = (
-        'Unable to generate weekly plan.'
-      );
+      _errorType = WeeklyPlanErrorType.generateFailed;
     } finally {
       _isGenerating = false;
       notifyListeners();
@@ -109,8 +99,8 @@ class WeeklyPlanController extends ChangeNotifier {
     }
 
     _isApproving = true;
-    _errorMessage = null;
-    _successMessage = null;
+    _errorType = null;
+    _approvalSucceeded = false;
 
     notifyListeners();
 
@@ -128,18 +118,14 @@ class WeeklyPlanController extends ChangeNotifier {
         revisionCount: currentResult.revisionCount,
       );
 
-      _successMessage = (
-        'Weekly plan approved successfully.'
-      );
+      _approvalSucceeded = true;
 
       return true;
     } on WeeklyPlanException catch (error) {
-      _errorMessage = error.message;
+      _errorType = error.type;
       return false;
     } catch (_) {
-      _errorMessage = (
-        'Unable to approve weekly plan.'
-      );
+      _errorType = WeeklyPlanErrorType.approveFailed;
       return false;
     } finally {
       _isApproving = false;
@@ -148,8 +134,8 @@ class WeeklyPlanController extends ChangeNotifier {
   }
 
   void clearMessages() {
-    _errorMessage = null;
-    _successMessage = null;
+    _errorType = null;
+    _approvalSucceeded = false;
     notifyListeners();
   }
 
@@ -158,8 +144,8 @@ class WeeklyPlanController extends ChangeNotifier {
     _result = null;
     _isGenerating = false;
     _isApproving = false;
-    _errorMessage = null;
-    _successMessage = null;
+    _errorType = null;
+    _approvalSucceeded = false;
 
     notifyListeners();
   }
