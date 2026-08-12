@@ -17,23 +17,33 @@ load_dotenv()
 
 class StrategyAgent:
     def __init__(self):
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        model_name = os.getenv("OPENROUTER_MODEL")
+        api_key = os.getenv(
+            "OPENROUTER_API_KEY"
+        )
+        model_name = os.getenv(
+            "OPENROUTER_MODEL"
+        )
 
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY is missing")
+            raise ValueError(
+                "OPENROUTER_API_KEY is missing"
+            )
 
         if not model_name:
-            raise ValueError("OPENROUTER_MODEL is missing")
+            raise ValueError(
+                "OPENROUTER_MODEL is missing"
+            )
 
         self.llm = ChatOpenRouter(
             model=model_name,
             api_key=api_key,
         )
 
-        self.structured_llm = self.llm.with_structured_output(
-            WeeklyPlanStrategy,
-            include_raw=True,
+        self.structured_llm = (
+            self.llm.with_structured_output(
+                WeeklyPlanStrategy,
+                include_raw=True,
+            )
         )
 
     def create_strategy(
@@ -45,7 +55,7 @@ class StrategyAgent:
         max_attempts = 3
         validation_errors = []
 
-        for attempt in range(max_attempts):
+        for _ in range(max_attempts):
             prompt = self._build_prompt(
                 child_context,
                 performance_analysis,
@@ -53,15 +63,24 @@ class StrategyAgent:
                 revision_feedback,
             )
 
-            response = self.structured_llm.invoke(prompt)
+            response = (
+                self.structured_llm
+                .invoke(prompt)
+            )
 
-            result = response.get("parsed")
-            parsing_error = response.get("parsing_error")
+            result = response.get(
+                "parsed"
+            )
+
+            parsing_error = response.get(
+                "parsing_error"
+            )
 
             if parsing_error:
                 validation_errors = [
                     (
-                        "Structured output parsing failed: "
+                        "Structured output parsing "
+                        "failed: "
                         f"{parsing_error}"
                     )
                 ]
@@ -69,7 +88,10 @@ class StrategyAgent:
 
             if result is None:
                 validation_errors = [
-                    "No valid structured strategy was returned."
+                    (
+                        "No valid structured "
+                        "strategy was returned."
+                    )
                 ]
                 continue
 
@@ -87,8 +109,8 @@ class StrategyAgent:
                 ]
 
         raise ValueError(
-            "StrategyAgent failed to produce a valid strategy "
-            "after 3 attempts."
+            "StrategyAgent failed to produce "
+            "a valid strategy after 3 attempts."
         )
 
     def _build_prompt(
@@ -98,17 +120,22 @@ class StrategyAgent:
         validation_errors=None,
         revision_feedback="",
     ):
+        compact_context = (
+            self._build_compact_child_context(
+                child_context
+            )
+        )
+
         context_json = json.dumps(
-            child_context,
+            compact_context,
             ensure_ascii=False,
-            indent=2,
+            separators=(",", ":"),
             default=str,
         )
 
         analysis_json = (
-            performance_analysis.model_dump_json(
-                indent=2,
-            )
+            performance_analysis
+            .model_dump_json()
         )
 
         validation_feedback = ""
@@ -120,35 +147,31 @@ class StrategyAgent:
             )
 
             validation_feedback = f"""
-PREVIOUS STRATEGY ATTEMPT WAS REJECTED
-BY THE STRATEGY VALIDATOR.
+PREVIOUS STRATEGY ATTEMPT FAILED VALIDATION.
 
-VALIDATION ERRORS:
+ERRORS:
 {errors_text}
 
-Correct every validation error in the new strategy.
+Correct every listed error.
 """
 
         evaluator_feedback = ""
 
         if revision_feedback:
             evaluator_feedback = f"""
-THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED
-BY THE EVALUATOR.
+THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED.
 
 EVALUATOR FEEDBACK:
 {revision_feedback}
 
-Correct the problems relevant to the Strategy Agent.
+Correct only the problems relevant to strategy.
 
-Revise the composition of the weekly plan when needed.
-
-You may change:
+You may revise:
 - bank_tasks
 - generated_tasks
-- category distribution
+- category_distribution
 - focus
-- avoid patterns
+- avoid
 
 You MUST still respect the Performance Agent's
 recommended task count and workload.
@@ -161,35 +184,35 @@ You are the Weekly Planning Strategy Agent for Asalah.
 
 You DO NOT choose actual tasks.
 
-Your responsibility is only to design the strategy
-for how the next weekly plan should be composed.
+Your ONLY responsibility is to decide how the weekly
+plan should be composed.
 
-CHILD CONTEXT:
+The Performance Agent has already analyzed the child's
+raw history.
+
+CHILD SUMMARY:
 {context_json}
 
 PERFORMANCE ANALYSIS:
 {analysis_json}
 
-The Performance Agent has already decided the
-recommended number of tasks and weekly workload.
+DECIDE:
 
-Your job is to determine:
+1. How many tasks come from the task bank.
 
-1. How many tasks should come from the existing task bank.
+2. How many tasks are newly generated.
 
-2. How many tasks should be newly generated by AI.
-
-3. How the tasks should be distributed across:
+3. How total tasks are distributed across:
    RELIGIOUS
    FINANCIAL
    MORAL
    SOCIAL
 
-4. What the primary focus of this week's plan should be.
+4. The main focus of this week's plan.
 
-5. What patterns or task types should be avoided.
+5. Patterns or task types that should be avoided.
 
-Rules:
+RULES:
 
 - total_tasks MUST equal
   performance_analysis.recommended_task_count.
@@ -199,54 +222,50 @@ Rules:
 - The sum of all category_distribution values
   MUST equal total_tasks.
 
-- Do not create task titles or descriptions.
+- Do not create task titles.
+
+- Do not create task descriptions.
 
 - Do not recommend specific tasks.
 
-- Use the child's history and Performance Agent analysis.
+- Use the Performance Analysis as the primary source
+  for strengths, weaknesses, workload, and point target.
 
-- Weak categories may receive more attention,
-  but the plan should not become completely unbalanced.
+- Use the child summary only as supporting context.
 
-- Strong categories should still be represented
-  when appropriate.
+- Weak categories may receive extra attention, but
+  the plan must remain reasonably balanced.
 
-- If the child is a cold-start case,
-  prefer a balanced distribution and avoid assuming
-  strengths or weaknesses.
+- Strong categories may still be represented.
 
-- The task bank should be used as a stable source
-  of proven tasks, while AI-generated tasks should
-  add personalization and variety.
+- For cold-start cases, prefer a balanced distribution
+  and do not invent strengths or weaknesses.
 
-- Do not assume information that does not appear
-  in the child data.
+- The task bank should provide stable proven tasks.
 
-- A weak category should normally receive gradual
-  attention rather than being completely removed
-  from the plan.
+- Generated tasks should provide personalization
+  and variety.
 
-- If a category is weak, prefer assigning one easier
-  task in that category unless there is strong evidence
-  that the category should temporarily be excluded.
+- Do not assume facts that are not present in the data.
 
-- Do not confuse a rejected task with a rejected
-  category.
+- A rejected task does NOT mean the entire category
+  should be avoided.
 
-- Avoid repeating an unsuccessful task pattern,
-  but you may approach the same category differently.
+- Avoid unsuccessful task patterns, but the same
+  category may be approached differently.
 
-- Never invent time periods for historical totals.
+- Weak categories should normally receive gradual,
+  easier attention rather than being removed.
 
-- Do not claim that a recommendation came from the
-  Performance Agent unless that recommendation actually
-  appears in the provided Performance Analysis.
+- Do not invent historical time periods.
 
-- Keep the Performance Agent's recommended weekly point
-  target in mind when deciding how much work should come
-  from the bank versus generated tasks.
+- Do not claim that the Performance Agent recommended
+  something unless it appears in PERFORMANCE ANALYSIS.
 
-- Do not push the child harder simply to reach a wishlist
+- Respect the Performance Agent's recommended weekly
+  point target.
+
+- Do not increase workload simply to reach a wishlist
   goal faster.
 
 {validation_feedback}
@@ -256,19 +275,130 @@ Rules:
 Return only the required structured strategy.
 """
 
+    def _build_compact_child_context(
+        self,
+        child_context,
+    ):
+        child = child_context.get(
+            "child",
+            {},
+        )
+
+        history_summary = (
+            child_context.get(
+                "history_summary",
+                {},
+            )
+        )
+
+        wishlist_summary = (
+            child_context.get(
+                "wishlist_summary",
+                {},
+            )
+        )
+
+        task_history = (
+            child_context.get(
+                "task_history",
+                [],
+            )
+        )
+
+        rejected_tasks = []
+
+        for task in task_history:
+            if (
+                task.get("status")
+                != "REJECTED"
+            ):
+                continue
+
+            rejected_tasks.append({
+                "title": task.get(
+                    "title",
+                    "",
+                ),
+                "category": task.get(
+                    "category",
+                    "",
+                ),
+                "frequency": task.get(
+                    "frequency",
+                    "",
+                ),
+            })
+
+        active_goals = []
+
+        for goal in wishlist_summary.get(
+            "active_goals",
+            [],
+        ):
+            active_goals.append({
+                "name": goal.get(
+                    "name",
+                    "",
+                ),
+                "target_points": goal.get(
+                    "target_points",
+                    0,
+                ),
+                "remaining_points": goal.get(
+                    "remaining_points",
+                    0,
+                ),
+            })
+
+        return {
+            "age": child.get(
+                "age"
+            ),
+            "current_points": child.get(
+                "current_points",
+                0,
+            ),
+            "completion_rate": (
+                history_summary.get(
+                    "completion_rate",
+                    0,
+                )
+            ),
+            "has_enough_history": (
+                history_summary.get(
+                    "has_enough_history",
+                    False,
+                )
+            ),
+            "category_history": (
+                history_summary.get(
+                    "categories",
+                    {},
+                )
+            ),
+            "rejected_task_patterns": (
+                rejected_tasks
+            ),
+            "active_goals": (
+                active_goals
+            ),
+        }
+
     def _validate_strategy(
         self,
         strategy,
         performance_analysis,
     ):
         expected_total = (
-            performance_analysis.recommended_task_count
+            performance_analysis
+            .recommended_task_count
         )
 
         if strategy.total_tasks != expected_total:
             raise ValueError(
-                "Strategy total_tasks does not match "
-                "PerformanceAgent recommendation."
+                "Strategy total_tasks does not "
+                "match PerformanceAgent "
+                "recommendation."
             )
 
         source_total = (
@@ -278,17 +408,27 @@ Return only the required structured strategy.
 
         if source_total != strategy.total_tasks:
             raise ValueError(
-                "bank_tasks + generated_tasks must equal total_tasks."
+                "bank_tasks + generated_tasks "
+                "must equal total_tasks."
             )
 
         category_total = (
-            strategy.category_distribution.RELIGIOUS
-            + strategy.category_distribution.FINANCIAL
-            + strategy.category_distribution.MORAL
-            + strategy.category_distribution.SOCIAL
+            strategy
+            .category_distribution
+            .RELIGIOUS
+            + strategy
+            .category_distribution
+            .FINANCIAL
+            + strategy
+            .category_distribution
+            .MORAL
+            + strategy
+            .category_distribution
+            .SOCIAL
         )
 
         if category_total != strategy.total_tasks:
             raise ValueError(
-                "Category distribution must equal total_tasks."
+                "Category distribution must "
+                "equal total_tasks."
             )
