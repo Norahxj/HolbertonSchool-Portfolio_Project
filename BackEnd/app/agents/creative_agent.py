@@ -217,6 +217,27 @@ class CreativeAgent:
             default=str,
         )
 
+        bank_weekly_points = (
+            self._calculate_bank_weekly_points(
+                bank_selection
+            )
+        )
+
+        recommended_weekly_points = (
+            performance_analysis
+            .recommended_weekly_points
+        )
+
+        creative_point_budget = max(
+            recommended_weekly_points
+            - bank_weekly_points,
+            0,
+        )
+
+        generated_task_count = (
+            strategy.generated_tasks
+        )
+
         validation_feedback = ""
 
         if validation_errors:
@@ -270,11 +291,49 @@ WEEKLY STRATEGY:
 SELECTED BANK TASKS:
 {bank_json}
 
-Generate exactly strategy.generated_tasks new tasks.
+POINT BUDGET:
+
+- Recommended complete weekly points:
+  {recommended_weekly_points}
+
+- Weekly points already used by bank tasks:
+  {bank_weekly_points}
+
+- Remaining point budget for generated tasks:
+  {creative_point_budget}
+
+- Generated tasks required:
+  {generated_task_count}
+
+Generate exactly {generated_task_count} new tasks.
 
 The generated tasks must complement the selected bank
 tasks so the COMPLETE weekly plan follows the Strategy
 Agent's category distribution.
+
+IMPORTANT POINT RULE:
+
+The point value of a DAILY task counts for every day
+of the week.
+
+For example:
+
+- DAILY task worth 2 points contributes
+  14 weekly points.
+
+- DAILY task worth 3 points contributes
+  21 weekly points.
+
+WEEKLY and ONCE tasks contribute their point value once.
+
+Choose generated task points so their TOTAL WEEKLY
+CONTRIBUTION stays as close as reasonably possible
+to the remaining point budget of
+{creative_point_budget} points.
+
+Do not spend the full weekly target again.
+The bank tasks have already contributed
+{bank_weekly_points} weekly points.
 
 RULES:
 
@@ -311,14 +370,14 @@ RULES:
 - DAILY tasks should normally be worth between
   2 and 5 points per completion.
 
+- Remember that DAILY points are multiplied by 7
+  when calculating the weekly total.
+
 - WEEKLY and ONCE tasks may have higher points according
   to effort.
 
-- Consider the weekly points already contributed by
-  selected bank tasks.
-
-- Keep the complete weekly plan close to the Performance
-  Agent's recommended weekly point target.
+- Keep the COMPLETE plan close to the recommended
+  weekly point target.
 
 - Provide both Arabic and English titles and descriptions.
 
@@ -450,6 +509,20 @@ Return only the required structured generated tasks.
             "tasks": compact_tasks
         }
 
+    def _calculate_bank_weekly_points(
+        self,
+        bank_selection,
+    ):
+        total = 0
+
+        for task in bank_selection.tasks:
+            if task.frequency == "DAILY":
+                total += task.points * 7
+            else:
+                total += task.points
+
+        return total
+
     def _validate_generated_tasks(
         self,
         selection,
@@ -579,17 +652,11 @@ Return only the required structured generated tasks.
                         f'"{phrase}".'
                     )
 
-        total_weekly_points = 0
-
-        for task in bank_selection.tasks:
-            if task.frequency == "DAILY":
-                total_weekly_points += (
-                    task.points * 7
-                )
-            else:
-                total_weekly_points += (
-                    task.points
-                )
+        total_weekly_points = (
+            self._calculate_bank_weekly_points(
+                bank_selection
+            )
+        )
 
         for task in selection.tasks:
             if task.frequency == "DAILY":

@@ -123,6 +123,13 @@ class BankAgent:
                 "candidates for the weekly strategy."
             )
 
+        bank_point_budget = (
+            self._calculate_bank_point_budget(
+                performance_analysis,
+                strategy,
+            )
+        )
+
         max_attempts = 3
         validation_errors = []
 
@@ -132,6 +139,7 @@ class BankAgent:
                 performance_analysis,
                 strategy,
                 candidate_tasks,
+                bank_point_budget,
                 validation_errors,
                 revision_feedback,
             )
@@ -157,7 +165,6 @@ class BankAgent:
                         f"{parsing_error}"
                     )
                 ]
-
                 continue
 
             if result is None:
@@ -167,7 +174,6 @@ class BankAgent:
                         "selection was returned."
                     )
                 ]
-
                 continue
 
             try:
@@ -176,6 +182,7 @@ class BankAgent:
                     candidate_tasks,
                     strategy,
                     performance_analysis,
+                    bank_point_budget,
                 )
 
                 return self._build_selection(
@@ -199,6 +206,7 @@ class BankAgent:
         performance_analysis,
         strategy,
         candidate_tasks,
+        bank_point_budget,
         validation_errors=None,
         revision_feedback="",
     ):
@@ -235,6 +243,11 @@ class BankAgent:
             ensure_ascii=False,
             separators=(",", ":"),
             default=str,
+        )
+
+        weekly_target = (
+            performance_analysis
+            .recommended_weekly_points
         )
 
         validation_feedback = ""
@@ -298,6 +311,23 @@ WEEKLY STRATEGY:
 TASK BANK CANDIDATES:
 {bank_json}
 
+POINT BUDGET:
+
+- Complete weekly point target:
+  {weekly_target}
+
+- Bank tasks required:
+  {strategy.bank_tasks}
+
+- Generated tasks required:
+  {strategy.generated_tasks}
+
+- Maximum weekly contribution for bank tasks:
+  {bank_point_budget}
+
+Select bank tasks whose combined WEEKLY contribution
+stays within the bank point budget.
+
 For every selected task, return ONLY:
 
 - bank_id
@@ -313,6 +343,32 @@ Do NOT return or rewrite:
 The backend will restore those fields directly
 from the task bank.
 
+POINT RULES:
+
+- default_points is ONLY a starting reference.
+
+- You MAY change the points of a selected bank task.
+
+- You are NOT required to keep default_points unchanged.
+
+- Adjust points when needed to stay within the bank
+  point budget.
+
+- Points must still remain reasonable and proportional
+  to the task's actual effort and frequency.
+
+- Do not reduce a difficult task to an unrealistically
+  small point value only to satisfy the budget.
+
+- DAILY tasks should normally be worth
+  2 to 5 points per completion.
+
+- DAILY tasks may repeat up to 7 times.
+
+- Weekly point calculation:
+  DAILY = points × 7
+  all other frequencies = points once.
+
 RULES:
 
 - Select exactly strategy.bank_tasks tasks.
@@ -321,22 +377,10 @@ RULES:
 
 - Do not select the same bank_id more than once.
 
-- Points must remain proportional to task difficulty.
+- Do not exceed the bank weekly point budget of
+  {bank_point_budget}.
 
-- DAILY tasks should normally be worth
-  2 to 5 points per completion.
-
-- DAILY tasks may repeat up to 7 times.
-
-- Weekly point estimation:
-  DAILY = points × 7
-  other frequencies = points once.
-
-- Respect the Performance Agent's
-  recommended_weekly_points.
-
-- Bank-selected tasks must leave room in the weekly
-  points target for generated tasks.
+- Leave enough weekly points for the generated tasks.
 
 - Match the Strategy Agent's category distribution
   as closely as possible.
@@ -363,6 +407,33 @@ RULES:
 
 Return only the required structured bank-task decision.
 """
+
+    def _calculate_bank_point_budget(
+        self,
+        performance_analysis,
+        strategy,
+    ):
+        weekly_target = (
+            performance_analysis
+            .recommended_weekly_points
+        )
+
+        if strategy.total_tasks <= 0:
+            return weekly_target
+
+        if strategy.generated_tasks == 0:
+            return weekly_target
+
+        budget = round(
+            weekly_target
+            * strategy.bank_tasks
+            / strategy.total_tasks
+        )
+
+        return max(
+            budget,
+            strategy.bank_tasks,
+        )
 
     def _build_compact_child_context(
         self,
@@ -472,6 +543,7 @@ Return only the required structured bank-task decision.
         candidate_tasks,
         strategy,
         performance_analysis,
+        bank_point_budget,
     ):
         if (
             len(decision.tasks)
@@ -556,6 +628,19 @@ Return only the required structured bank-task decision.
                     selected_task.points
                 )
 
+        if (
+            weekly_points
+            > bank_point_budget
+        ):
+            raise ValueError(
+                "Bank-selected tasks exceed "
+                "their weekly point budget. "
+                f"Bank contribution: "
+                f"{weekly_points}, "
+                f"bank budget: "
+                f"{bank_point_budget}."
+            )
+
         recommended_weekly_points = (
             performance_analysis
             .recommended_weekly_points
@@ -567,10 +652,10 @@ Return only the required structured bank-task decision.
         ):
             raise ValueError(
                 "Bank-selected tasks alone exceed "
-                "the Performance Agent's "
-                "recommended weekly point target. "
+                "the complete weekly point target. "
                 f"Bank contribution: "
-                f"{weekly_points}, target: "
+                f"{weekly_points}, "
+                f"weekly target: "
                 f"{recommended_weekly_points}."
             )
 
