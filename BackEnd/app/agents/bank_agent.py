@@ -265,6 +265,9 @@ ERRORS:
 {errors_text}
 
 Correct every listed error.
+
+Do not explain why the previous answer failed.
+Return a corrected structured selection only.
 """
 
         evaluator_feedback = ""
@@ -322,11 +325,29 @@ POINT BUDGET:
 - Generated tasks required:
   {strategy.generated_tasks}
 
-- Maximum weekly contribution for bank tasks:
+- Maximum WEEKLY contribution for bank tasks:
   {bank_point_budget}
 
-Select bank tasks whose combined WEEKLY contribution
-stays within the bank point budget.
+HARD POINT CONSTRAINT:
+
+The combined WEEKLY contribution of ALL selected bank
+tasks MUST NOT exceed {bank_point_budget} points.
+
+This value is already a WEEKLY budget.
+
+Do NOT reinterpret it as:
+- a daily budget
+- a per-task budget
+- an estimate
+- a recommendation
+
+It is a strict validation limit.
+
+A result above {bank_point_budget} points is INVALID.
+
+Before returning the answer, calculate the combined
+weekly contribution of your selected tasks and make
+sure it is <= {bank_point_budget}.
 
 For every selected task, return ONLY:
 
@@ -351,10 +372,15 @@ POINT RULES:
 
 - You are NOT required to keep default_points unchanged.
 
-- Adjust points when needed to stay within the bank
-  point budget.
+- If the default points would cause the bank selection
+  to exceed {bank_point_budget}, you MUST either:
+  1. reduce the selected task points reasonably, or
+  2. choose another suitable candidate.
 
-- Points must still remain reasonable and proportional
+- Do NOT keep default points if doing so violates
+  the bank point budget.
+
+- Points must remain reasonable and proportional
   to the task's actual effort and frequency.
 
 - Do not reduce a difficult task to an unrealistically
@@ -369,6 +395,18 @@ POINT RULES:
   DAILY = points × 7
   all other frequencies = points once.
 
+EXAMPLE:
+
+If the bank budget is 27 and two selected WEEKLY tasks
+have default points of 20 and 15, returning 20 and 15
+is INVALID because 35 exceeds 27.
+
+Instead, choose reasonable adjusted values such as
+14 and 13, or choose different suitable candidates.
+
+The final combined WEEKLY contribution must always
+stay at or below the bank budget.
+
 RULES:
 
 - Select exactly strategy.bank_tasks tasks.
@@ -377,8 +415,8 @@ RULES:
 
 - Do not select the same bank_id more than once.
 
-- Do not exceed the bank weekly point budget of
-  {bank_point_budget}.
+- The combined WEEKLY contribution MUST be
+  <= {bank_point_budget}.
 
 - Leave enough weekly points for the generated tasks.
 
@@ -400,6 +438,14 @@ RULES:
 - Do not introduce unsupported assumptions.
 
 - Keep each reason short and practical.
+
+- Do NOT output analysis.
+
+- Do NOT explain your calculations.
+
+- Do NOT discuss the point budget.
+
+- Return only the required structured selection.
 
 {validation_feedback}
 
