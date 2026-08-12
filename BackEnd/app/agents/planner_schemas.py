@@ -39,6 +39,18 @@ class PlannedTask(BaseModel):
     reason: str
 
 
+class WeeklyPlanSummary(BaseModel):
+    summary_en: str = Field(
+        min_length=10,
+        max_length=500,
+    )
+
+    summary_ar: str = Field(
+        min_length=10,
+        max_length=500,
+    )
+
+
 class WeeklyPlanDraft(BaseModel):
     summary_en: str = Field(
         min_length=10,

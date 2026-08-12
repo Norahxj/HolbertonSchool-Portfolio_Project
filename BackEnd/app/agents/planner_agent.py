@@ -7,6 +7,7 @@ from langchain_openrouter import ChatOpenRouter
 from app.agents.planner_schemas import (
     PlannedTask,
     WeeklyPlanDraft,
+    WeeklyPlanSummary,
 )
 
 
@@ -15,23 +16,33 @@ load_dotenv()
 
 class PlannerAgent:
     def __init__(self):
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        model_name = os.getenv("OPENROUTER_MODEL")
+        api_key = os.getenv(
+            "OPENROUTER_API_KEY"
+        )
+        model_name = os.getenv(
+            "OPENROUTER_MODEL"
+        )
 
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY is missing")
+            raise ValueError(
+                "OPENROUTER_API_KEY is missing"
+            )
 
         if not model_name:
-            raise ValueError("OPENROUTER_MODEL is missing")
+            raise ValueError(
+                "OPENROUTER_MODEL is missing"
+            )
 
         self.llm = ChatOpenRouter(
             model=model_name,
             api_key=api_key,
         )
 
-        self.structured_llm = self.llm.with_structured_output(
-            WeeklyPlanDraft,
-            include_raw=True,
+        self.structured_llm = (
+            self.llm.with_structured_output(
+                WeeklyPlanSummary,
+                include_raw=True,
+            )
         )
 
     def build_plan(
@@ -46,7 +57,7 @@ class PlannerAgent:
         max_attempts = 3
         validation_errors = []
 
-        for attempt in range(max_attempts):
+        for _ in range(max_attempts):
             prompt = self._build_prompt(
                 child_context,
                 performance_analysis,
@@ -57,41 +68,53 @@ class PlannerAgent:
                 revision_feedback,
             )
 
-            response = self.structured_llm.invoke(prompt)
+            response = (
+                self.structured_llm
+                .invoke(prompt)
+            )
 
-            result = response.get("parsed")
-            parsing_error = response.get("parsing_error")
+            summary = response.get(
+                "parsed"
+            )
+
+            parsing_error = response.get(
+                "parsing_error"
+            )
 
             if parsing_error:
                 validation_errors = [
                     (
-                        "Structured output parsing failed: "
+                        "Structured output parsing "
+                        "failed: "
                         f"{parsing_error}"
                     )
                 ]
                 continue
 
-            if result is None:
+            if summary is None:
                 validation_errors = [
-                    "No valid structured weekly plan was returned."
+                    (
+                        "No valid structured "
+                        "plan summary was returned."
+                    )
                 ]
                 continue
 
             try:
-                result = self._normalize_plan(
-                    result,
+                plan = self._assemble_plan(
+                    summary,
                     child_context,
                     bank_selection,
                     creative_selection,
                 )
 
                 self._validate_plan(
-                    result,
+                    plan,
                     performance_analysis,
                     strategy,
                 )
 
-                return result
+                return plan
 
             except ValueError as error:
                 validation_errors = [
@@ -99,8 +122,8 @@ class PlannerAgent:
                 ]
 
         raise ValueError(
-            "PlannerAgent failed to produce a valid plan "
-            "after 3 attempts."
+            "PlannerAgent failed to produce "
+            "a valid plan after 3 attempts."
         )
 
     def _build_prompt(
@@ -113,29 +136,36 @@ class PlannerAgent:
         validation_errors=None,
         revision_feedback="",
     ):
-        context_json = json.dumps(
-            child_context,
-            ensure_ascii=False,
-            indent=2,
-            default=str,
-        )
-
-        performance_json = (
-            performance_analysis.model_dump_json(
-                indent=2,
+        compact_context = (
+            self._build_compact_context(
+                child_context,
+                performance_analysis,
             )
         )
 
-        strategy_json = strategy.model_dump_json(
-            indent=2,
+        selected_tasks = (
+            self._build_task_summary(
+                bank_selection,
+                creative_selection,
+            )
         )
 
-        bank_json = bank_selection.model_dump_json(
-            indent=2,
+        context_json = json.dumps(
+            compact_context,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            default=str,
         )
 
-        creative_json = creative_selection.model_dump_json(
-            indent=2,
+        strategy_json = (
+            strategy.model_dump_json()
+        )
+
+        tasks_json = json.dumps(
+            selected_tasks,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            default=str,
         )
 
         validation_feedback = ""
@@ -147,120 +177,161 @@ class PlannerAgent:
             )
 
             validation_feedback = f"""
-PREVIOUS PLANNER ATTEMPT WAS REJECTED
-BY THE PLANNER VALIDATOR.
+PREVIOUS PLANNER ATTEMPT FAILED VALIDATION.
 
-VALIDATION ERRORS:
+ERRORS:
 {errors_text}
 
-Correct every validation error in the new plan.
+Correct every listed error.
 """
 
         evaluator_feedback = ""
 
         if revision_feedback:
             evaluator_feedback = f"""
-THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED
-BY THE EVALUATOR.
+THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED.
 
 EVALUATOR FEEDBACK:
 {revision_feedback}
 
-Correct only the problems relevant to the Planner Agent.
+Correct only planner-level summary issues.
 
 You may revise:
 - summary_en
 - summary_ar
-- the presentation and wording of the final plan
 
-You MUST NOT:
-- create new tasks
-- remove tasks
-- alter selected tasks
-- change task points
-- change categories
-- change frequencies
-- change task sources
+You MUST NOT invent tasks or change the selected
+task composition.
 
-Do not repeat the same rejected planner-level issue.
+Do not repeat the same rejected summary issue.
 """
 
         return f"""
-You are the Weekly Plan Assembly Agent for Asalah.
+You are the Weekly Plan Summary Agent for Asalah.
 
-You do NOT create new tasks.
+The weekly tasks have ALREADY been selected.
 
-Your responsibility is to combine the already selected
-bank tasks and AI-generated tasks into one coherent
-weekly plan for the parent.
+Your ONLY responsibility is to write a short,
+parent-friendly summary of the final weekly plan
+in English and Arabic.
 
-CHILD CONTEXT:
+CHILD SUMMARY:
 {context_json}
-
-PERFORMANCE ANALYSIS:
-{performance_json}
 
 WEEKLY STRATEGY:
 {strategy_json}
 
-BANK TASKS:
-{bank_json}
+SELECTED TASKS:
+{tasks_json}
 
-AI-GENERATED TASKS:
-{creative_json}
+RULES:
 
-Rules:
+- Write summary_en in natural English.
 
-- Include every provided bank task.
+- Write summary_ar in natural Arabic.
 
-- Include every provided AI-generated task.
+- Keep both summaries short and clear.
 
-- Do not remove tasks.
+- Describe the overall purpose and balance of
+  the plan.
 
-- Do not add tasks.
+- Reflect the actual selected tasks and strategy.
 
-- Do not change task titles.
+- Do not create new tasks.
 
-- Do not change descriptions.
+- Do not remove or modify tasks.
 
-- Do not change categories.
+- Do not invent facts about the child.
 
-- Do not change frequencies.
+- Do not mention unsupported possessions,
+  family circumstances, school situations,
+  pets, siblings, allowance, holidays, or
+  other facts unless explicitly supported.
 
-- Do not change points.
+- Do not expose internal reasoning.
 
-- TASK BANK tasks must have source = TASK_BANK.
+- Do not mention agents, prompts, models,
+  validators, or implementation details.
 
-- AI-generated tasks must have source = AI_GENERATED.
+- Avoid mixing English words into summary_ar.
 
-- Bank tasks must preserve their bank_id.
-
-- AI-generated tasks must have bank_id = null.
-
-- Produce a short Arabic and English summary for the
-  parent explaining the general purpose of the plan.
-
-- The summary should reflect the actual strategy and
-  selected tasks.
-
-- Do not claim facts about the child that are not
-  supported by the child context.
-
-- Do not expose internal agent reasoning.
-
-- Do not mention agents, prompts, models, validators,
-  or technical implementation details.
+- Avoid mixing Arabic words into summary_en.
 
 {validation_feedback}
 
 {evaluator_feedback}
 
-Return only the required structured weekly plan.
+Return only the required structured summaries.
 """
 
-    def _normalize_plan(
+    def _build_compact_context(
         self,
-        plan,
+        child_context,
+        performance_analysis,
+    ):
+        child = child_context.get(
+            "child",
+            {},
+        )
+
+        return {
+            "age": child.get(
+                "age"
+            ),
+            "performance_level": (
+                performance_analysis
+                .performance_level
+            ),
+            "strong_categories": (
+                performance_analysis
+                .strong_categories
+            ),
+            "weak_categories": (
+                performance_analysis
+                .weak_categories
+            ),
+            "is_cold_start": (
+                performance_analysis
+                .is_cold_start
+            ),
+            "recommended_weekly_points": (
+                performance_analysis
+                .recommended_weekly_points
+            ),
+        }
+
+    def _build_task_summary(
+        self,
+        bank_selection,
+        creative_selection,
+    ):
+        tasks = []
+
+        for task in bank_selection.tasks:
+            tasks.append({
+                "source": "TASK_BANK",
+                "title_en": task.title_en,
+                "title_ar": task.title_ar,
+                "category": task.category,
+                "points": task.points,
+                "frequency": task.frequency,
+            })
+
+        for task in creative_selection.tasks:
+            tasks.append({
+                "source": "AI_GENERATED",
+                "title_en": task.title_en,
+                "title_ar": task.title_ar,
+                "category": task.category,
+                "points": task.points,
+                "frequency": task.frequency,
+            })
+
+        return tasks
+
+    def _assemble_plan(
+        self,
+        summary,
         child_context,
         bank_selection,
         creative_selection,
@@ -274,8 +345,12 @@ Return only the required structured weekly plan.
                     bank_id=task.bank_id,
                     title_en=task.title_en,
                     title_ar=task.title_ar,
-                    description_en=task.description_en,
-                    description_ar=task.description_ar,
+                    description_en=(
+                        task.description_en
+                    ),
+                    description_ar=(
+                        task.description_ar
+                    ),
                     category=task.category,
                     points=task.points,
                     frequency=task.frequency,
@@ -290,8 +365,12 @@ Return only the required structured weekly plan.
                     bank_id=None,
                     title_en=task.title_en,
                     title_ar=task.title_ar,
-                    description_en=task.description_en,
-                    description_ar=task.description_ar,
+                    description_en=(
+                        task.description_en
+                    ),
+                    description_ar=(
+                        task.description_ar
+                    ),
                     category=task.category,
                     points=task.points,
                     frequency=task.frequency,
@@ -299,26 +378,36 @@ Return only the required structured weekly plan.
                 )
             )
 
-        plan.tasks = tasks
-        plan.total_tasks = len(tasks)
-
         weekly_points = 0
 
         for task in tasks:
             if task.frequency == "DAILY":
-                weekly_points += task.points * 7
+                weekly_points += (
+                    task.points * 7
+                )
             else:
                 weekly_points += task.points
 
-        plan.weekly_points = weekly_points
-
-        plan.is_cold_start = not (
+        is_cold_start = not (
             child_context
-            .get("history_summary", {})
-            .get("has_enough_history", False)
+            .get(
+                "history_summary",
+                {},
+            )
+            .get(
+                "has_enough_history",
+                False,
+            )
         )
 
-        return plan
+        return WeeklyPlanDraft(
+            summary_en=summary.summary_en,
+            summary_ar=summary.summary_ar,
+            total_tasks=len(tasks),
+            weekly_points=weekly_points,
+            is_cold_start=is_cold_start,
+            tasks=tasks,
+        )
 
     def _validate_plan(
         self,
@@ -326,16 +415,22 @@ Return only the required structured weekly plan.
         performance_analysis,
         strategy,
     ):
-        if plan.total_tasks != strategy.total_tasks:
+        if (
+            plan.total_tasks
+            != strategy.total_tasks
+        ):
             raise ValueError(
-                "PlannerAgent plan task count does not match "
-                "the strategy."
+                "PlannerAgent plan task count "
+                "does not match the strategy."
             )
 
-        if len(plan.tasks) != strategy.total_tasks:
+        if (
+            len(plan.tasks)
+            != strategy.total_tasks
+        ):
             raise ValueError(
-                "PlannerAgent tasks list does not match "
-                "the strategy task count."
+                "PlannerAgent tasks list does "
+                "not match the strategy task count."
             )
 
         category_counts = {
@@ -346,9 +441,13 @@ Return only the required structured weekly plan.
         }
 
         for task in plan.tasks:
-            category_counts[task.category] += 1
+            category_counts[
+                task.category
+            ] += 1
 
-        expected = strategy.category_distribution
+        expected = (
+            strategy.category_distribution
+        )
 
         expected_counts = {
             "RELIGIOUS": expected.RELIGIOUS,
@@ -357,32 +456,38 @@ Return only the required structured weekly plan.
             "SOCIAL": expected.SOCIAL,
         }
 
-        if category_counts != expected_counts:
+        if (
+            category_counts
+            != expected_counts
+        ):
             raise ValueError(
-                "Final plan category distribution does not "
-                "match the strategy."
+                "Final plan category distribution "
+                "does not match the strategy."
             )
 
         recommended_points = (
-            performance_analysis.recommended_weekly_points
+            performance_analysis
+            .recommended_weekly_points
         )
 
         allowed_difference = 20
 
         if (
             plan.weekly_points
-            > recommended_points + allowed_difference
+            > recommended_points
+            + allowed_difference
         ):
             raise ValueError(
-                "Final weekly plan exceeds the recommended "
-                "point target too much."
+                "Final weekly plan exceeds the "
+                "recommended point target too much."
             )
 
         if (
             plan.weekly_points
-            < recommended_points - allowed_difference
+            < recommended_points
+            - allowed_difference
         ):
             raise ValueError(
-                "Final weekly plan is too far below the "
-                "recommended point target."
+                "Final weekly plan is too far below "
+                "the recommended point target."
             )
