@@ -1609,16 +1609,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weeklyPlanNoChildren => 'No children yet.';
 
   @override
-  String get weeklyPlanCategoryReligious => 'Religious';
+  String get weeklyPlanCategoryReligious => 'Religious Tasks';
 
   @override
-  String get weeklyPlanCategoryFinancial => 'Financial';
+  String get weeklyPlanCategoryFinancial => 'Financial Tasks';
 
   @override
-  String get weeklyPlanCategoryMoral => 'Moral';
+  String get weeklyPlanCategoryMoral => 'Daily Tasks';
 
   @override
-  String get weeklyPlanCategorySocial => 'Social';
+  String get weeklyPlanCategorySocial => 'Cultural Tasks';
 
   @override
   String get weeklyPlanFrequencyDaily => 'Daily';
@@ -1651,4 +1651,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get weeklyPlanCardSubtitle =>
       'Create a weekly task plan tailored to your child based on their performance and progress.';
+
+  @override
+  String get weeklyPlanReject => 'Reject plan';
+
+  @override
+  String get weeklyPlanRejecting => 'Rejecting plan...';
+
+  @override
+  String get weeklyPlanRejectedMessage => 'This plan has been rejected.';
+
+  @override
+  String get weeklyPlanRejectFailed =>
+      'Unable to reject the weekly plan. Please try again.';
 }

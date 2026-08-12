@@ -15,9 +15,12 @@ class WeeklyPlanController extends ChangeNotifier {
 
   bool _isGenerating = false;
   bool _isApproving = false;
+  bool _isRejecting = false;
 
   WeeklyPlanErrorType? _errorType;
+
   bool _approvalSucceeded = false;
+  bool _rejectionSucceeded = false;
 
   String? get selectedChildId => _selectedChildId;
 
@@ -29,23 +32,37 @@ class WeeklyPlanController extends ChangeNotifier {
 
   bool get isApproving => _isApproving;
 
+  bool get isRejecting => _isRejecting;
+
   bool get hasPlan => _result != null;
 
   WeeklyPlanErrorType? get errorType => _errorType;
 
   bool get approvalSucceeded => _approvalSucceeded;
 
+  bool get rejectionSucceeded => _rejectionSucceeded;
+
   bool get canGenerate {
     return _selectedChildId != null &&
         !_isGenerating &&
-        !_isApproving;
+        !_isApproving &&
+        !_isRejecting;
   }
 
   bool get canApprove {
     return _result != null &&
         _result!.proposalStatus == 'PENDING' &&
         !_isGenerating &&
-        !_isApproving;
+        !_isApproving &&
+        !_isRejecting;
+  }
+
+  bool get canReject {
+    return _result != null &&
+        _result!.proposalStatus == 'PENDING' &&
+        !_isGenerating &&
+        !_isApproving &&
+        !_isRejecting;
   }
 
   void selectChild(String childId) {
@@ -57,6 +74,7 @@ class WeeklyPlanController extends ChangeNotifier {
     _result = null;
     _errorType = null;
     _approvalSucceeded = false;
+    _rejectionSucceeded = false;
 
     notifyListeners();
   }
@@ -71,6 +89,7 @@ class WeeklyPlanController extends ChangeNotifier {
     _isGenerating = true;
     _errorType = null;
     _approvalSucceeded = false;
+    _rejectionSucceeded = false;
     _result = null;
 
     notifyListeners();
@@ -101,6 +120,7 @@ class WeeklyPlanController extends ChangeNotifier {
     _isApproving = true;
     _errorType = null;
     _approvalSucceeded = false;
+    _rejectionSucceeded = false;
 
     notifyListeners();
 
@@ -133,19 +153,68 @@ class WeeklyPlanController extends ChangeNotifier {
     }
   }
 
+  Future<bool> rejectPlan() async {
+    final currentResult = _result;
+
+    if (currentResult == null) {
+      return false;
+    }
+
+    _isRejecting = true;
+    _errorType = null;
+    _approvalSucceeded = false;
+    _rejectionSucceeded = false;
+
+    notifyListeners();
+
+    try {
+      await repository.rejectWeeklyPlan(
+        proposalId: currentResult.proposalId,
+      );
+
+      _result = WeeklyPlanResult(
+        proposalId: currentResult.proposalId,
+        proposalStatus: 'REJECTED',
+        childId: currentResult.childId,
+        plan: currentResult.plan,
+        revisionCount: currentResult.revisionCount,
+      );
+
+      _rejectionSucceeded = true;
+
+      return true;
+    } on WeeklyPlanException catch (error) {
+      _errorType = error.type;
+      return false;
+    } catch (_) {
+      _errorType = WeeklyPlanErrorType.rejectFailed;
+      return false;
+    } finally {
+      _isRejecting = false;
+      notifyListeners();
+    }
+  }
+
   void clearMessages() {
     _errorType = null;
     _approvalSucceeded = false;
+    _rejectionSucceeded = false;
+
     notifyListeners();
   }
 
   void reset() {
     _selectedChildId = null;
     _result = null;
+
     _isGenerating = false;
     _isApproving = false;
+    _isRejecting = false;
+
     _errorType = null;
+
     _approvalSucceeded = false;
+    _rejectionSucceeded = false;
 
     notifyListeners();
   }

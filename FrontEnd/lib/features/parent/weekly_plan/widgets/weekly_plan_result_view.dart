@@ -23,7 +23,8 @@ class WeeklyPlanResultView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<WeeklyPlanController>();
     final l10n = context.l10n;
-    final languageCode = Localizations.localeOf(context).languageCode;
+    final languageCode =
+        Localizations.localeOf(context).languageCode;
 
     final plan = result.plan;
 
@@ -31,7 +32,11 @@ class WeeklyPlanResultView extends StatelessWidget {
         ? plan.summaryAr
         : plan.summaryEn;
 
-    final approved = result.proposalStatus == 'APPROVED';
+    final approved =
+        result.proposalStatus == 'APPROVED';
+
+    final rejected =
+        result.proposalStatus == 'REJECTED';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -85,80 +90,150 @@ class WeeklyPlanResultView extends StatelessWidget {
           ),
         ],
 
+        if (controller.rejectionSucceeded) ...[
+          const SizedBox(height: AppSpacing.sm),
+          WeeklyPlanSuccessCard(
+            message: l10n.weeklyPlanRejectedMessage,
+          ),
+        ],
+
         const SizedBox(height: AppSpacing.lg),
 
-        if (!approved)
-          SizedBox(
-            height: 52,
-            child: FilledButton.icon(
-              onPressed: controller.canApprove
-                  ? () async {
-                      final success = await controller.approvePlan(
-                        languageCode: languageCode,
-                      );
+        if (!approved && !rejected)
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 52,
+                  child: OutlinedButton.icon(
+                    onPressed: controller.canReject
+                        ? () async {
+                            final success =
+                                await controller.rejectPlan();
 
-                      if (success && context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              l10n.weeklyPlanApprovedSuccess,
+                            if (
+                              success &&
+                              context.mounted
+                            ) {
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    l10n
+                                        .weeklyPlanRejectedMessage,
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        : null,
+                    icon: controller.isRejecting
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child:
+                                CircularProgressIndicator(
+                              strokeWidth: 2,
                             ),
+                          )
+                        : const Icon(
+                            Icons.close_rounded,
                           ),
-                        );
-                      }
-                    }
-                  : null,
-              icon: controller.isApproving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(
-                      Icons.check_circle_outline,
+                    label: Text(
+                      controller.isRejecting
+                          ? l10n.weeklyPlanRejecting
+                          : l10n.weeklyPlanReject,
                     ),
-              label: Text(
-                controller.isApproving
-                    ? l10n.weeklyPlanApproving
-                    : l10n.weeklyPlanApprove,
-              ),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-            ),
-          )
-        else
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.check_circle,
-                  color: AppColors.primary,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    l10n.weeklyPlanApprovedMessage,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textPrimary,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor:
+                          AppColors.textPrimary,
+                      side: const BorderSide(
+                        color: AppColors.border,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(16),
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(width: AppSpacing.sm),
+
+              Expanded(
+                child: SizedBox(
+                  height: 52,
+                  child: FilledButton.icon(
+                    onPressed: controller.canApprove
+                        ? () async {
+                            final success =
+                                await controller.approvePlan(
+                              languageCode:
+                                  languageCode,
+                            );
+
+                            if (
+                              success &&
+                              context.mounted
+                            ) {
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    l10n
+                                        .weeklyPlanApprovedSuccess,
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        : null,
+                    icon: controller.isApproving
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child:
+                                CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(
+                            Icons
+                                .check_circle_outline,
+                          ),
+                    label: Text(
+                      controller.isApproving
+                          ? l10n.weeklyPlanApproving
+                          : l10n.weeklyPlanApprove,
+                    ),
+                    style: FilledButton.styleFrom(
+                      backgroundColor:
+                          AppColors.primary,
+                      foregroundColor:
+                          Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        else if (approved)
+          _StatusMessage(
+            icon: Icons.check_circle,
+            message: l10n.weeklyPlanApprovedMessage,
+          )
+        else
+          _StatusMessage(
+            icon: Icons.cancel_outlined,
+            message: l10n.weeklyPlanRejectedMessage,
           ),
 
         const SizedBox(height: AppSpacing.md),
@@ -179,11 +254,57 @@ class WeeklyPlanResultView extends StatelessWidget {
       case WeeklyPlanErrorType.approveFailed:
         return l10n.weeklyPlanApproveFailed;
 
+      case WeeklyPlanErrorType.rejectFailed:
+        return l10n.weeklyPlanRejectFailed;
+
       case WeeklyPlanErrorType.serviceUnavailable:
         return l10n.weeklyPlanServiceUnavailable;
 
       case WeeklyPlanErrorType.noSuitablePlan:
         return l10n.weeklyPlanNoSuitablePlan;
     }
+  }
+}
+
+class _StatusMessage extends StatelessWidget {
+  final IconData icon;
+  final String message;
+
+  const _StatusMessage({
+    required this.icon,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(
+        AppSpacing.md,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: AppColors.primary,
+          ),
+          const SizedBox(
+            width: AppSpacing.sm,
+          ),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

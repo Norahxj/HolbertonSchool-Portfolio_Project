@@ -44,7 +44,9 @@ class _WeeklyPlanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<WeeklyPlanController>();
+    final controller =
+        context.watch<WeeklyPlanController>();
+
     final l10n = context.l10n;
 
     return Scaffold(
@@ -62,30 +64,47 @@ class _WeeklyPlanView extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.all(
+            AppSpacing.lg,
+          ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment:
+                CrossAxisAlignment.stretch,
             children: [
               const WeeklyPlanIntroCard(),
 
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(
+                height: AppSpacing.xl,
+              ),
 
               if (!controller.hasPlan) ...[
                 WeeklyPlanChildSelection(
                   children: children,
                 ),
-                const SizedBox(height: AppSpacing.xl),
+
+                const SizedBox(
+                  height: AppSpacing.xl,
+                ),
+
                 const WeeklyPlanGenerateButton(),
               ],
 
               if (controller.isGenerating) ...[
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(
+                  height: AppSpacing.xl,
+                ),
+
                 const WeeklyPlanGeneratingView(),
               ],
 
-              if (controller.errorType != null &&
-                  !controller.hasPlan) ...[
-                const SizedBox(height: AppSpacing.lg),
+              if (
+                controller.errorType != null &&
+                !controller.hasPlan
+              ) ...[
+                const SizedBox(
+                  height: AppSpacing.lg,
+                ),
+
                 WeeklyPlanErrorCard(
                   message: _errorMessage(
                     context,
@@ -94,8 +113,10 @@ class _WeeklyPlanView extends StatelessWidget {
                 ),
               ],
 
-              if (controller.hasPlan &&
-                  !controller.isGenerating)
+              if (
+                controller.hasPlan &&
+                !controller.isGenerating
+              )
                 WeeklyPlanResultView(
                   result: controller.result!,
                 ),
@@ -118,6 +139,9 @@ class _WeeklyPlanView extends StatelessWidget {
 
       case WeeklyPlanErrorType.approveFailed:
         return l10n.weeklyPlanApproveFailed;
+
+      case WeeklyPlanErrorType.rejectFailed:
+        return l10n.weeklyPlanRejectFailed;
 
       case WeeklyPlanErrorType.serviceUnavailable:
         return l10n.weeklyPlanServiceUnavailable;

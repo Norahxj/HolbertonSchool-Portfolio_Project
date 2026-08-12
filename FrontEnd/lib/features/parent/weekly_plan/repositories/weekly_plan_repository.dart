@@ -6,6 +6,7 @@ import '../models/weekly_plan_models.dart';
 enum WeeklyPlanErrorType {
   generateFailed,
   approveFailed,
+  rejectFailed,
   serviceUnavailable,
   noSuitablePlan,
 }
@@ -58,6 +59,27 @@ class WeeklyPlanRepository {
     } catch (_) {
       throw const WeeklyPlanException(
         WeeklyPlanErrorType.approveFailed,
+      );
+    }
+  }
+
+  Future<void> rejectWeeklyPlan({
+    required String proposalId,
+  }) async {
+    try {
+      await _weeklyPlanApiService.rejectWeeklyPlan(
+        proposalId: proposalId,
+      );
+    } on DioException catch (error) {
+      throw WeeklyPlanException(
+        _resolveErrorType(
+          error,
+          fallback: WeeklyPlanErrorType.rejectFailed,
+        ),
+      );
+    } catch (_) {
+      throw const WeeklyPlanException(
+        WeeklyPlanErrorType.rejectFailed,
       );
     }
   }

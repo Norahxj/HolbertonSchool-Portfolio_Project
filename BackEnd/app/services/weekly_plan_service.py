@@ -303,6 +303,12 @@ class WeeklyPlanService:
                 "proposal_already_approved",
             )
 
+        if proposal.status == "REJECTED":
+            return (
+                None,
+                "proposal_already_rejected",
+            )
+
         if proposal.status != "PENDING":
             return None, "proposal_not_pending"
 
@@ -380,3 +386,63 @@ class WeeklyPlanService:
         except Exception:
             db.session.rollback()
             return None, "approval_failed"
+
+    def reject_weekly_plan(
+        self,
+        proposal_id,
+        guardian_id,
+    ):
+        proposal = (
+            self.proposal_repository
+            .get_for_creator(
+                proposal_id,
+                guardian_id,
+            )
+        )
+
+        if not proposal:
+            return None, "proposal_not_found"
+
+        if proposal.status == "APPROVED":
+            return (
+                None,
+                "proposal_already_approved",
+            )
+
+        if proposal.status == "REJECTED":
+            return (
+                None,
+                "proposal_already_rejected",
+            )
+
+        if proposal.status != "PENDING":
+            return None, "proposal_not_pending"
+
+        proposal.status = "REJECTED"
+
+        try:
+            success, proposal_error = (
+                self.proposal_repository
+                .update_proposal()
+            )
+
+            if (
+                not success
+                or proposal_error
+            ):
+                db.session.rollback()
+
+                return (
+                    None,
+                    "proposal_update_failed",
+                )
+
+            return {
+                "proposal_id": proposal.id,
+                "proposal_status": proposal.status,
+                "child_id": proposal.child_id,
+            }, None
+
+        except Exception:
+            db.session.rollback()
+            return None, "rejection_failed"

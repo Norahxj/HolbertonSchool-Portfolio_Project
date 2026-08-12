@@ -5,7 +5,9 @@ from flask_jwt_extended import (
 )
 from flask_restx import Namespace, Resource
 
-from app.services.weekly_plan_service import WeeklyPlanService
+from app.services.weekly_plan_service import (
+    WeeklyPlanService,
+)
 
 
 api = Namespace(
@@ -90,7 +92,8 @@ class WeeklyPlanResource(Resource):
         if service_error == "ai_rate_limit":
             return {
                 "error": (
-                    "AI service usage limit has been reached. "
+                    "AI service usage limit "
+                    "has been reached. "
                     "Please try again later."
                 )
             }, 503
@@ -98,7 +101,8 @@ class WeeklyPlanResource(Resource):
         if service_error == "ai_service_unavailable":
             return {
                 "error": (
-                    "AI service is temporarily unavailable. "
+                    "AI service is temporarily "
+                    "unavailable. "
                     "Please try again later."
                 )
             }, 503
@@ -151,7 +155,9 @@ class WeeklyPlanResource(Resource):
             "message": (
                 "Weekly plan generated successfully"
             ),
-            "proposal_id": result["proposal_id"],
+            "proposal_id": result[
+                "proposal_id"
+            ],
             "proposal_status": result[
                 "proposal_status"
             ],
@@ -193,7 +199,7 @@ class WeeklyPlanApprovalResource(Resource):
     )
     @api.response(
         409,
-        "Weekly plan already approved",
+        "Weekly plan cannot be approved",
     )
     @api.response(
         500,
@@ -246,7 +252,16 @@ class WeeklyPlanApprovalResource(Resource):
         if service_error == "proposal_already_approved":
             return {
                 "error": (
-                    "Weekly plan has already been approved"
+                    "Weekly plan has already "
+                    "been approved"
+                )
+            }, 409
+
+        if service_error == "proposal_already_rejected":
+            return {
+                "error": (
+                    "Rejected weekly plan "
+                    "cannot be approved"
                 )
             }, 409
 
@@ -265,7 +280,8 @@ class WeeklyPlanApprovalResource(Resource):
         if service_error == "tasks_required":
             return {
                 "error": (
-                    "Weekly plan does not contain tasks"
+                    "Weekly plan does not "
+                    "contain tasks"
                 )
             }, 400
 
@@ -286,16 +302,16 @@ class WeeklyPlanApprovalResource(Resource):
         if service_error == "invalid_frequency":
             return {
                 "error": (
-                    "Weekly plan contains an invalid "
-                    "task frequency"
+                    "Weekly plan contains "
+                    "an invalid task frequency"
                 )
             }, 400
 
         if service_error == "invalid_task_data":
             return {
                 "error": (
-                    "Weekly plan contains invalid "
-                    "task data"
+                    "Weekly plan contains "
+                    "invalid task data"
                 )
             }, 400
 
@@ -337,5 +353,115 @@ class WeeklyPlanApprovalResource(Resource):
             ],
             "created_task_ids": result[
                 "created_task_ids"
+            ],
+        }, 200
+
+
+@api.route("/<proposal_id>/reject")
+class WeeklyPlanRejectionResource(Resource):
+
+    @jwt_required()
+    @api.doc(security="JWT")
+    @api.response(
+        200,
+        "Weekly plan rejected successfully",
+    )
+    @api.response(
+        401,
+        "Missing or invalid access token",
+    )
+    @api.response(
+        403,
+        "Parent access required",
+    )
+    @api.response(
+        404,
+        "Weekly plan proposal not found",
+    )
+    @api.response(
+        409,
+        "Weekly plan cannot be rejected",
+    )
+    @api.response(
+        500,
+        "Failed to reject weekly plan",
+    )
+    def post(self, proposal_id):
+        parent_id = get_jwt_identity()
+
+        error = require_parent()
+
+        if error:
+            return error
+
+        weekly_plan_service = WeeklyPlanService()
+
+        result, service_error = (
+            weekly_plan_service
+            .reject_weekly_plan(
+                proposal_id=proposal_id,
+                guardian_id=parent_id,
+            )
+        )
+
+        if service_error == "proposal_not_found":
+            return {
+                "error": (
+                    "Weekly plan proposal not found"
+                )
+            }, 404
+
+        if service_error == "proposal_already_approved":
+            return {
+                "error": (
+                    "Approved weekly plan "
+                    "cannot be rejected"
+                )
+            }, 409
+
+        if service_error == "proposal_already_rejected":
+            return {
+                "error": (
+                    "Weekly plan has already "
+                    "been rejected"
+                )
+            }, 409
+
+        if service_error == "proposal_not_pending":
+            return {
+                "error": (
+                    "Weekly plan is no longer pending"
+                )
+            }, 409
+
+        if service_error in {
+            "proposal_update_failed",
+            "rejection_failed",
+        }:
+            return {
+                "error": (
+                    "Failed to reject weekly plan"
+                )
+            }, 500
+
+        if service_error:
+            return {
+                "error": (
+                    "Failed to reject weekly plan"
+                )
+            }, 500
+
+        return {
+            "message": (
+                "Weekly plan rejected successfully"
+            ),
+            "proposal_id": result[
+                "proposal_id"
+            ],
+            "proposal_status": result[
+                "proposal_status"
+            ],
+            "child_id": result[
+                "child_id"
             ],
         }, 200

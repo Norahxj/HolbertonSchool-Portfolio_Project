@@ -2987,25 +2987,25 @@ abstract class AppLocalizations {
   /// No description provided for @weeklyPlanCategoryReligious.
   ///
   /// In en, this message translates to:
-  /// **'Religious'**
+  /// **'Religious Tasks'**
   String get weeklyPlanCategoryReligious;
 
   /// No description provided for @weeklyPlanCategoryFinancial.
   ///
   /// In en, this message translates to:
-  /// **'Financial'**
+  /// **'Financial Tasks'**
   String get weeklyPlanCategoryFinancial;
 
   /// No description provided for @weeklyPlanCategoryMoral.
   ///
   /// In en, this message translates to:
-  /// **'Moral'**
+  /// **'Daily Tasks'**
   String get weeklyPlanCategoryMoral;
 
   /// No description provided for @weeklyPlanCategorySocial.
   ///
   /// In en, this message translates to:
-  /// **'Social'**
+  /// **'Cultural Tasks'**
   String get weeklyPlanCategorySocial;
 
   /// No description provided for @weeklyPlanFrequencyDaily.
@@ -3061,6 +3061,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create a weekly task plan tailored to your child based on their performance and progress.'**
   String get weeklyPlanCardSubtitle;
+
+  /// No description provided for @weeklyPlanReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject plan'**
+  String get weeklyPlanReject;
+
+  /// No description provided for @weeklyPlanRejecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejecting plan...'**
+  String get weeklyPlanRejecting;
+
+  /// No description provided for @weeklyPlanRejectedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This plan has been rejected.'**
+  String get weeklyPlanRejectedMessage;
+
+  /// No description provided for @weeklyPlanRejectFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to reject the weekly plan. Please try again.'**
+  String get weeklyPlanRejectFailed;
 }
 
 class _AppLocalizationsDelegate

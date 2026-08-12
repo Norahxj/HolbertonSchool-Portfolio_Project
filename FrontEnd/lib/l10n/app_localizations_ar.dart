@@ -1564,16 +1564,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get weeklyPlanNoChildren => 'لا يوجد أطفال حاليًا.';
 
   @override
-  String get weeklyPlanCategoryReligious => 'ديني';
+  String get weeklyPlanCategoryReligious => 'المهام الدينية';
 
   @override
-  String get weeklyPlanCategoryFinancial => 'مالي';
+  String get weeklyPlanCategoryFinancial => 'المهام المالية';
 
   @override
-  String get weeklyPlanCategoryMoral => 'سلوكي';
+  String get weeklyPlanCategoryMoral => 'المهام اليومية';
 
   @override
-  String get weeklyPlanCategorySocial => 'اجتماعي';
+  String get weeklyPlanCategorySocial => 'المهام الثقافية';
 
   @override
   String get weeklyPlanFrequencyDaily => 'يومي';
@@ -1606,4 +1606,17 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get weeklyPlanCardSubtitle =>
       'أنشئ خطة مهام أسبوعية مناسبة لطفلك بناءً على أدائه وتقدمه.';
+
+  @override
+  String get weeklyPlanReject => 'رفض الخطة';
+
+  @override
+  String get weeklyPlanRejecting => 'جارٍ رفض الخطة...';
+
+  @override
+  String get weeklyPlanRejectedMessage => 'تم رفض هذه الخطة.';
+
+  @override
+  String get weeklyPlanRejectFailed =>
+      'تعذّر رفض الخطة الأسبوعية. حاول مرة أخرى.';
 }

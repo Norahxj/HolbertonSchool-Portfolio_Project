@@ -749,10 +749,10 @@
 "weeklyPlanApprovedSuccess": "Plan approved and tasks added successfully.",
 "weeklyPlanApprovedMessage": "This plan has been approved and its tasks were added.",
 "weeklyPlanNoChildren": "No children yet.",
-"weeklyPlanCategoryReligious": "Religious",
-"weeklyPlanCategoryFinancial": "Financial",
-"weeklyPlanCategoryMoral": "Moral",
-"weeklyPlanCategorySocial": "Social",
+"weeklyPlanCategoryReligious": "Religious Tasks",
+"weeklyPlanCategoryFinancial": "Financial Tasks",
+"weeklyPlanCategoryMoral": "Daily Tasks",
+"weeklyPlanCategorySocial": "Cultural Tasks",
 "weeklyPlanFrequencyDaily": "Daily",
 "weeklyPlanFrequencyWeekly": "Weekly",
 "weeklyPlanFrequencyMonthly": "Monthly",
@@ -761,5 +761,9 @@
 "weeklyPlanApproveFailed": "Unable to approve the weekly plan. Please try again.",
 "weeklyPlanServiceUnavailable": "The AI service is temporarily unavailable. Please try again later.",
 "weeklyPlanNoSuitablePlan": "We could not create a suitable weekly plan. Please try again.",
-"weeklyPlanCardSubtitle": "Create a weekly task plan tailored to your child based on their performance and progress."
+"weeklyPlanCardSubtitle": "Create a weekly task plan tailored to your child based on their performance and progress.",
+"weeklyPlanReject": "Reject plan",
+"weeklyPlanRejecting": "Rejecting plan...",
+"weeklyPlanRejectedMessage": "This plan has been rejected.",
+"weeklyPlanRejectFailed": "Unable to reject the weekly plan. Please try again."
 }

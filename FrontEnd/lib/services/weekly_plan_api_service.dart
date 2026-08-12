@@ -41,4 +41,12 @@ class WeeklyPlanApiService {
       ),
     );
   }
+
+  Future<void> rejectWeeklyPlan({
+    required String proposalId,
+  }) async {
+    await _dio.post<dynamic>(
+      '/weekly-plan/$proposalId/reject',
+    );
+  }
 }
