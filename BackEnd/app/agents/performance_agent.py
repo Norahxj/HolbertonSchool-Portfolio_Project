@@ -14,23 +14,33 @@ load_dotenv()
 
 class PerformanceAgent:
     def __init__(self):
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        model_name = os.getenv("OPENROUTER_MODEL")
+        api_key = os.getenv(
+            "OPENROUTER_API_KEY"
+        )
+        model_name = os.getenv(
+            "OPENROUTER_MODEL"
+        )
 
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY is missing")
+            raise ValueError(
+                "OPENROUTER_API_KEY is missing"
+            )
 
         if not model_name:
-            raise ValueError("OPENROUTER_MODEL is missing")
+            raise ValueError(
+                "OPENROUTER_MODEL is missing"
+            )
 
         self.llm = ChatOpenRouter(
             model=model_name,
             api_key=api_key,
         )
 
-        self.structured_llm = self.llm.with_structured_output(
-            ChildPerformanceAnalysis,
-            include_raw=True,
+        self.structured_llm = (
+            self.llm.with_structured_output(
+                ChildPerformanceAnalysis,
+                include_raw=True,
+            )
         )
 
     def analyze(
@@ -41,22 +51,31 @@ class PerformanceAgent:
         max_attempts = 3
         validation_errors = []
 
-        for attempt in range(max_attempts):
+        for _ in range(max_attempts):
             prompt = self._build_prompt(
                 child_context,
                 validation_errors,
                 revision_feedback,
             )
 
-            response = self.structured_llm.invoke(prompt)
+            response = (
+                self.structured_llm
+                .invoke(prompt)
+            )
 
-            result = response.get("parsed")
-            parsing_error = response.get("parsing_error")
+            result = response.get(
+                "parsed"
+            )
+
+            parsing_error = response.get(
+                "parsing_error"
+            )
 
             if parsing_error:
                 validation_errors = [
                     (
-                        "Structured output parsing failed: "
+                        "Structured output parsing "
+                        "failed: "
                         f"{parsing_error}"
                     )
                 ]
@@ -65,16 +84,19 @@ class PerformanceAgent:
             if result is None:
                 validation_errors = [
                     (
-                        "No valid structured performance "
-                        "analysis was returned."
+                        "No valid structured "
+                        "performance analysis "
+                        "was returned."
                     )
                 ]
                 continue
 
             try:
-                result = self._normalize_analysis(
-                    result,
-                    child_context,
+                result = (
+                    self._normalize_analysis(
+                        result,
+                        child_context,
+                    )
                 )
 
                 self._validate_analysis(
@@ -90,8 +112,8 @@ class PerformanceAgent:
                 ]
 
         raise ValueError(
-            "PerformanceAgent failed to produce a valid "
-            "analysis after 3 attempts."
+            "PerformanceAgent failed to produce "
+            "a valid analysis after 3 attempts."
         )
 
     def _build_prompt(
@@ -100,10 +122,16 @@ class PerformanceAgent:
         validation_errors=None,
         revision_feedback="",
     ):
+        compact_context = (
+            self._build_compact_context(
+                child_context
+            )
+        )
+
         context_json = json.dumps(
-            child_context,
+            compact_context,
             ensure_ascii=False,
-            indent=2,
+            separators=(",", ":"),
             default=str,
         )
 
@@ -135,13 +163,13 @@ BY THE EVALUATOR.
 EVALUATOR FEEDBACK:
 {revision_feedback}
 
-Reconsider the parts of the Performance Analysis that
-may have caused the rejected weekly plan.
+Reconsider only the Performance Analysis conclusions
+that may have contributed to the rejected plan.
 
-Correct only conclusions that are not sufficiently
-supported by the child's actual data.
+Correct conclusions that are not sufficiently supported
+by the child's actual data.
 
-Do not invent new facts to justify a different analysis.
+Do not invent new facts.
 """
 
         return f"""
@@ -151,20 +179,20 @@ Your only responsibility is to analyze the child's
 historical performance and recommend an appropriate
 weekly workload.
 
-You MUST NOT create or suggest any tasks.
+You MUST NOT create or suggest tasks.
 
 CHILD DATA:
 {context_json}
 
 Analyze:
 
-- the child's age
-- overall task completion
+- age
+- overall completion
 - rejected tasks
-- pending tasks
-- performance across categories
+- pending and pending-review tasks
+- category performance
 - previous task points
-- points history
+- points summary
 - active wishlist goals
 
 If history_summary.has_enough_history is false:
@@ -175,69 +203,55 @@ If history_summary.has_enough_history is false:
 
 Determine:
 
-1. Overall performance level:
-   LOW, MODERATE, or HIGH.
+1. performance_level:
+   LOW, MODERATE, or HIGH
 
-2. Recommended number of tasks for the next week.
+2. recommended_task_count
 
-3. Recommended total achievable weekly points.
+3. recommended_weekly_points
 
-4. Difficulty level:
-   LOW, MEDIUM, or HIGH.
+4. difficulty_level:
+   LOW, MEDIUM, or HIGH
 
-5. Strong categories based only on evidence.
+5. strong_categories
 
-6. Weak categories based only on evidence.
+6. weak_categories
 
-7. A concise explanation of your analysis.
+7. a concise analysis
 
-General guidance:
+Rules:
 
-- Children with low completion should receive fewer
+- Low completion should generally lead to fewer
   and easier tasks.
 
-- Children with consistently strong completion may
-  receive slightly more tasks.
+- Consistently strong completion may support a
+  slightly larger workload.
 
-- Do not overload the child simply to reach a wishlist
+- Do not overload the child to reach a wishlist
   goal faster.
 
-- Do not invent facts about the child.
+- Historical total_earned and total_spent are not
+  weekly or monthly values unless explicitly stated.
 
-Important interpretation rules:
+- A weak category should normally receive gradual
+  improvement rather than automatic exclusion.
 
-- total_earned and total_spent are historical totals.
-  Never interpret them as weekly or monthly values unless
-  the child data explicitly provides a time period.
-
-- A weak category does NOT automatically mean it should
-  be avoided.
-
-- Weak categories usually need gradual improvement using
-  easier or more suitable tasks.
-
-- Recommend avoiding a category entirely only when there
-  is strong evidence that including it would be
-  inappropriate.
-
-- Do not infer behavioral causes from statistics alone.
-
-- A rejected task does not prove why the child rejected it.
+- A rejected task does not prove why it was rejected.
 
 - Pending and pending-review tasks are not failures.
 
-- Do not treat pending tasks as rejected tasks.
+- Use history_summary.completion_rate exactly as
+  provided by the backend.
 
-- Use history_summary.completion_rate according to how it
-  is provided by the backend.
+- Strong and weak categories must be supported by
+  actual category history.
 
-- Do not silently reinterpret the completion-rate formula.
+- Wishlist progress may influence motivation but
+  must not determine performance level by itself.
 
-- Strong and weak categories must be supported by actual
-  category history.
+- Do not infer behavioral causes from statistics alone.
 
-- Wishlist progress may influence motivation, but should
-  not determine performance level by itself.
+- Do not invent facts about the child.
 
 {validation_feedback}
 
@@ -246,6 +260,118 @@ Important interpretation rules:
 Return only the required structured analysis.
 """
 
+    def _build_compact_context(
+        self,
+        child_context,
+    ):
+        child = child_context.get(
+            "child",
+            {},
+        )
+
+        history_summary = (
+            child_context.get(
+                "history_summary",
+                {},
+            )
+        )
+
+        points_summary = (
+            child_context.get(
+                "points_summary",
+                {},
+            )
+        )
+
+        wishlist_summary = (
+            child_context.get(
+                "wishlist_summary",
+                {},
+            )
+        )
+
+        task_history = (
+            child_context.get(
+                "task_history",
+                [],
+            )
+        )
+
+        rejected_tasks = []
+
+        for task in task_history:
+            if (
+                task.get("status")
+                != "REJECTED"
+            ):
+                continue
+
+            rejected_tasks.append({
+                "title": task.get(
+                    "title",
+                    "",
+                ),
+                "category": task.get(
+                    "category",
+                    "",
+                ),
+                "points": task.get(
+                    "points",
+                    0,
+                ),
+                "frequency": task.get(
+                    "frequency",
+                    "",
+                ),
+            })
+
+        active_goals = []
+
+        for goal in wishlist_summary.get(
+            "active_goals",
+            [],
+        ):
+            active_goals.append({
+                "name": goal.get(
+                    "name",
+                    "",
+                ),
+                "target_points": goal.get(
+                    "target_points",
+                    0,
+                ),
+                "current_points": goal.get(
+                    "current_points",
+                    0,
+                ),
+                "remaining_points": goal.get(
+                    "remaining_points",
+                    0,
+                ),
+                "progress_percentage": goal.get(
+                    "progress_percentage",
+                    0,
+                ),
+            })
+
+        return {
+            "age": child.get(
+                "age"
+            ),
+            "history_summary": (
+                history_summary
+            ),
+            "points_summary": (
+                points_summary
+            ),
+            "active_goals": (
+                active_goals
+            ),
+            "rejected_tasks": (
+                rejected_tasks
+            ),
+        }
+
     def _normalize_analysis(
         self,
         analysis,
@@ -253,11 +379,19 @@ Return only the required structured analysis.
     ):
         has_enough_history = (
             child_context
-            .get("history_summary", {})
-            .get("has_enough_history", False)
+            .get(
+                "history_summary",
+                {},
+            )
+            .get(
+                "has_enough_history",
+                False,
+            )
         )
 
-        analysis.is_cold_start = not has_enough_history
+        analysis.is_cold_start = (
+            not has_enough_history
+        )
 
         if analysis.is_cold_start:
             analysis.strong_categories = []
@@ -270,42 +404,67 @@ Return only the required structured analysis.
         analysis,
         child_context,
     ):
-        history_summary = child_context.get(
-            "history_summary",
-            {},
+        history_summary = (
+            child_context.get(
+                "history_summary",
+                {},
+            )
         )
 
-        has_enough_history = history_summary.get(
-            "has_enough_history",
-            False,
+        has_enough_history = (
+            history_summary.get(
+                "has_enough_history",
+                False,
+            )
         )
 
-        expected_cold_start = not has_enough_history
+        expected_cold_start = (
+            not has_enough_history
+        )
 
-        if analysis.is_cold_start != expected_cold_start:
+        if (
+            analysis.is_cold_start
+            != expected_cold_start
+        ):
             raise ValueError(
-                "PerformanceAgent returned an incorrect "
-                "is_cold_start value."
+                "PerformanceAgent returned "
+                "an incorrect is_cold_start value."
             )
 
-        if analysis.recommended_task_count < 3:
+        if (
+            analysis.recommended_task_count
+            < 3
+        ):
             raise ValueError(
-                "Recommended task count cannot be below 3."
+                "Recommended task count "
+                "cannot be below 3."
             )
 
-        if analysis.recommended_task_count > 7:
+        if (
+            analysis.recommended_task_count
+            > 7
+        ):
             raise ValueError(
-                "Recommended task count cannot exceed 7."
+                "Recommended task count "
+                "cannot exceed 7."
             )
 
-        if analysis.recommended_weekly_points < 40:
+        if (
+            analysis.recommended_weekly_points
+            < 40
+        ):
             raise ValueError(
-                "Recommended weekly points cannot be below 40."
+                "Recommended weekly points "
+                "cannot be below 40."
             )
 
-        if analysis.recommended_weekly_points > 120:
+        if (
+            analysis.recommended_weekly_points
+            > 120
+        ):
             raise ValueError(
-                "Recommended weekly points cannot exceed 120."
+                "Recommended weekly points "
+                "cannot exceed 120."
             )
 
         valid_categories = {
@@ -327,16 +486,16 @@ Return only the required structured analysis.
             valid_categories
         ):
             raise ValueError(
-                "PerformanceAgent returned an invalid "
-                "strong category."
+                "PerformanceAgent returned "
+                "an invalid strong category."
             )
 
         if not weak_categories.issubset(
             valid_categories
         ):
             raise ValueError(
-                "PerformanceAgent returned an invalid "
-                "weak category."
+                "PerformanceAgent returned "
+                "an invalid weak category."
             )
 
         overlap = (
@@ -346,18 +505,19 @@ Return only the required structured analysis.
 
         if overlap:
             raise ValueError(
-                "A category cannot be both strong and weak."
+                "A category cannot be both "
+                "strong and weak."
             )
 
         if expected_cold_start:
             if analysis.strong_categories:
                 raise ValueError(
-                    "Cold-start child must not have "
-                    "strong categories."
+                    "Cold-start child must not "
+                    "have strong categories."
                 )
 
             if analysis.weak_categories:
                 raise ValueError(
-                    "Cold-start child must not have "
-                    "weak categories."
+                    "Cold-start child must not "
+                    "have weak categories."
                 )

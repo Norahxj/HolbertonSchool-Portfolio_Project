@@ -1,6 +1,22 @@
-from typing import Literal
-
 from pydantic import BaseModel, Field
+
+
+class SelectedBankTaskDecision(BaseModel):
+    bank_id: str
+
+    points: int = Field(
+        ge=1,
+        le=50,
+    )
+
+    reason: str = Field(
+        min_length=10,
+        max_length=250,
+    )
+
+
+class BankTaskSelectionDecision(BaseModel):
+    tasks: list[SelectedBankTaskDecision]
 
 
 class SelectedBankTask(BaseModel):
@@ -12,28 +28,18 @@ class SelectedBankTask(BaseModel):
     description_en: str
     description_ar: str
 
-    category: Literal[
-        "RELIGIOUS",
-        "FINANCIAL",
-        "MORAL",
-        "SOCIAL",
-    ]
+    category: str
 
     points: int = Field(
         ge=1,
         le=50,
     )
 
-    frequency: Literal[
-        "ONCE",
-        "DAILY",
-        "WEEKLY",
-        "MONTHLY",
-    ]
+    frequency: str
 
     reason: str = Field(
         min_length=10,
-        max_length=500,
+        max_length=250,
     )
 
 

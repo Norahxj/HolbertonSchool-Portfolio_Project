@@ -14,7 +14,7 @@ class PlanIssue(BaseModel):
 
     description: str = Field(
         min_length=5,
-        max_length=500,
+        max_length=250,
     )
 
     severity: Literal[
@@ -36,5 +36,5 @@ class PlanEvaluation(BaseModel):
 
     feedback: str = Field(
         min_length=5,
-        max_length=1000,
+        max_length=400,
     )

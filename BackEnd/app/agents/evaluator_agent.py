@@ -17,6 +17,7 @@ class EvaluatorAgent:
         api_key = os.getenv(
             "OPENROUTER_API_KEY"
         )
+
         model_name = os.getenv(
             "OPENROUTER_MODEL"
         )
@@ -162,7 +163,7 @@ class EvaluatorAgent:
             )
 
             validation_feedback = f"""
-PREVIOUS EVALUATION ATTEMPT FAILED VALIDATION.
+PREVIOUS EVALUATION FAILED VALIDATION.
 
 ERRORS:
 {errors_text}
@@ -173,17 +174,10 @@ Correct every listed error.
         return f"""
 You are the Weekly Plan Evaluation Agent for Asalah.
 
-Your responsibility is to evaluate the COMPLETE final
-weekly plan before it is shown to the parent.
+Evaluate the COMPLETE final weekly plan before it is
+shown to the parent.
 
-You do NOT create tasks.
-You do NOT modify the plan.
-
-The final plan already includes all selected bank and
-AI-generated tasks.
-
-Use each task's source field to identify whether the
-task came from TASK_BANK or AI_GENERATED.
+You do NOT create or modify tasks.
 
 CHILD SUMMARY:
 {context_json}
@@ -197,160 +191,114 @@ STRATEGY:
 FINAL WEEKLY PLAN:
 {plan_json}
 
-Evaluate the plan carefully.
-
 CHECK:
 
-1. AGE APPROPRIATENESS
-   Are all tasks suitable for the child's age?
+1. AGE
+   Tasks must suit the child's age.
 
 2. SAFETY
-   Are all tasks safe and appropriate for a family
-   environment?
+   Tasks must be safe and family-appropriate.
 
 3. PERSONALIZATION
-   Does the plan reasonably reflect the child's actual
-   history, strengths, weak areas, and goals?
-
-   Do not reward invented personalization.
+   The plan should reflect actual history, strengths,
+   weak areas, and active goals.
 
 4. UNSUPPORTED ASSUMPTIONS
-   Does any task assume facts that are not established
-   in the child summary?
-
-   Examples include:
-   siblings,
-   pets,
-   allowance,
-   possessions,
-   specific resources,
-   school circumstances,
-   friends,
-   neighbors,
-   holidays,
-   or similar assumptions.
+   Reject tasks that assume unsupported siblings, pets,
+   allowance, possessions, specific resources, school
+   circumstances, friends, neighbors, or holidays.
 
 5. HISTORY
-   Does the plan avoid blindly repeating unsuccessful
-   task patterns?
-
-   A rejected task does NOT mean the whole category
+   Avoid blindly repeating unsuccessful task patterns.
+   A rejected task does not mean the whole category
    should be avoided.
 
 6. BALANCE
-   Does the plan follow the intended category
-   distribution and provide reasonable variety?
+   The category distribution and overall variety should
+   follow the strategy.
 
 7. POINTS
-   Are points proportional to difficulty?
-
+   Points must be proportional to difficulty.
    DAILY tasks may repeat up to 7 times.
-
-   Compare the complete weekly point total with the
-   Performance Agent's recommended_weekly_points.
+   Compare weekly_points with the Performance Agent's
+   recommended_weekly_points.
 
 8. DUPLICATION
-   Are any tasks duplicates or essentially the same
-   activity with slightly different wording?
+   Tasks should not duplicate the same activity.
 
 9. ACTIONABILITY
-   Is every task clear enough for the parent and child
-   to understand what must be done?
+   Each task must be clear and actionable.
 
-10. TASK BANK INTEGRITY
-    TASK_BANK tasks may have adjusted points.
-
-    Changing points is allowed.
-
-    However, report a BANK issue if a bank task appears
-    inappropriate, unsuitable, or based on an unsupported
-    assumption.
+10. BANK INTEGRITY
+    TASK_BANK tasks may have adjusted points, but report
+    BANK issues when a selected bank task is unsuitable
+    or relies on an unsupported assumption.
 
 11. STRATEGY QUALITY
-    Check whether the strategy reasonably follows the
-    Performance Analysis.
+    Strategy should reasonably follow Performance.
 
-12. PERFORMANCE ANALYSIS QUALITY
-    Check whether the Performance Analysis contains
-    unsupported claims or unreasonable recommendations
-    based on the provided child summary.
+12. PERFORMANCE QUALITY
+    Performance conclusions must be supported by the
+    child summary.
 
 13. PLANNER QUALITY
-    Check whether summary_en and summary_ar accurately
-    represent the actual plan.
-
-    Arabic summary should not contain unnecessary
-    English words.
-
-    English summary should not contain unnecessary
-    Arabic words.
+    summary_en and summary_ar must accurately represent
+    the actual plan and should avoid unnecessary language
+    mixing.
 
 ISSUE OWNERSHIP:
 
-Use PERFORMANCE when the root problem comes from the
-Performance Analysis.
+- PERFORMANCE:
+  root problem is Performance Analysis
 
-Use STRATEGY when the Performance Analysis is reasonable
-but the weekly strategy is poor.
+- STRATEGY:
+  root problem is strategy composition
 
-Use BANK when the problem comes from a TASK_BANK task.
+- BANK:
+  problem comes from a TASK_BANK task
 
-Use CREATIVE when the problem comes from an
-AI_GENERATED task.
+- CREATIVE:
+  problem comes from an AI_GENERATED task
 
-Use PLANNER when the final summary or representation
-of the plan is the problem.
+- PLANNER:
+  problem is in the final summary or representation
 
-For multiple issues:
-
-- Create one issue per meaningful problem.
-
-- Assign each issue to the agent responsible for the
-  root cause.
-
-- Do not assign every issue to STRATEGY.
+Use one issue per meaningful problem.
 
 SEVERITY:
 
 HIGH:
-- safety problem
-- serious age-inappropriateness
+- safety
+- serious age mismatch
 - major unsupported assumption
 
 MEDIUM:
 - meaningful quality problem that should be fixed
-  before showing the plan
 
 LOW:
 - minor concern that does not prevent showing the plan
 
 SCORING:
 
-10 = excellent and ready to show
-
-9 = very strong, only trivial concerns
-
+10 = excellent
+9 = very strong
 8 = good and safe to show
+7 = acceptable but needs meaningful improvement
+6 or below = revise before showing
 
-7 = acceptable but meaningful improvement is possible
+APPROVAL:
 
-6 or below = should not be shown without revision
-
-APPROVAL RULE:
-
-approved is true only when:
-
+approved = true only when:
 - score >= 8
 - and there are no HIGH severity issues
 
 Be critical but reasonable.
 
-Do not invent problems unsupported by the provided data.
+Do not invent unsupported problems.
 
-If the plan is strong and safe, do not create issues
-merely to force revision.
+Do not create issues only to force revision.
 
-Keep feedback concise and useful.
+Keep issue descriptions and feedback concise.
 
 {validation_feedback}
 
@@ -401,10 +349,6 @@ Return only the required structured evaluation.
                     "title",
                     "",
                 ),
-                "description": task.get(
-                    "description",
-                    "",
-                ),
                 "category": task.get(
                     "category",
                     "",
@@ -426,10 +370,6 @@ Return only the required structured evaluation.
                     "name",
                     "",
                 ),
-                "target_points": goal.get(
-                    "target_points",
-                    0,
-                ),
                 "remaining_points": goal.get(
                     "remaining_points",
                     0,
@@ -440,20 +380,10 @@ Return only the required structured evaluation.
             "age": child.get(
                 "age"
             ),
-            "current_points": child.get(
-                "current_points",
-                0,
-            ),
             "completion_rate": (
                 history_summary.get(
                     "completion_rate",
                     0,
-                )
-            ),
-            "has_enough_history": (
-                history_summary.get(
-                    "has_enough_history",
-                    False,
                 )
             ),
             "category_history": (

@@ -187,10 +187,16 @@ You DO NOT choose actual tasks.
 Your ONLY responsibility is to decide how the weekly
 plan should be composed.
 
-The Performance Agent has already analyzed the child's
-raw history.
+The Performance Agent has already analyzed:
+- completion performance
+- category strengths
+- category weaknesses
+- workload
+- difficulty
+- cold-start status
+- weekly point target
 
-CHILD SUMMARY:
+CHILD SUPPORTING CONTEXT:
 {context_json}
 
 PERFORMANCE ANALYSIS:
@@ -229,12 +235,14 @@ RULES:
 - Do not recommend specific tasks.
 
 - Use the Performance Analysis as the primary source
-  for strengths, weaknesses, workload, and point target.
+  for strengths, weaknesses, workload, difficulty,
+  cold-start status, and weekly point target.
 
-- Use the child summary only as supporting context.
+- Use the child supporting context only for age,
+  rejected task patterns, and active goals.
 
-- Weak categories may receive extra attention, but
-  the plan must remain reasonably balanced.
+- Weak categories may receive extra attention,
+  but the plan must remain reasonably balanced.
 
 - Strong categories may still be represented.
 
@@ -268,6 +276,10 @@ RULES:
 - Do not increase workload simply to reach a wishlist
   goal faster.
 
+- Keep focus concise.
+
+- Keep strategy_reasoning concise and practical.
+
 {validation_feedback}
 
 {evaluator_feedback}
@@ -282,13 +294,6 @@ Return only the required structured strategy.
         child = child_context.get(
             "child",
             {},
-        )
-
-        history_summary = (
-            child_context.get(
-                "history_summary",
-                {},
-            )
         )
 
         wishlist_summary = (
@@ -353,28 +358,6 @@ Return only the required structured strategy.
         return {
             "age": child.get(
                 "age"
-            ),
-            "current_points": child.get(
-                "current_points",
-                0,
-            ),
-            "completion_rate": (
-                history_summary.get(
-                    "completion_rate",
-                    0,
-                )
-            ),
-            "has_enough_history": (
-                history_summary.get(
-                    "has_enough_history",
-                    False,
-                )
-            ),
-            "category_history": (
-                history_summary.get(
-                    "categories",
-                    {},
-                )
             ),
             "rejected_task_patterns": (
                 rejected_tasks

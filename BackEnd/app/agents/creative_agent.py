@@ -14,8 +14,13 @@ load_dotenv()
 
 class CreativeAgent:
     def __init__(self):
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        model_name = os.getenv("OPENROUTER_MODEL")
+        api_key = os.getenv(
+            "OPENROUTER_API_KEY"
+        )
+
+        model_name = os.getenv(
+            "OPENROUTER_MODEL"
+        )
 
         if not api_key:
             raise ValueError(
@@ -176,30 +181,40 @@ class CreativeAgent:
         validation_errors=None,
         revision_feedback="",
     ):
+        compact_context = (
+            self._build_compact_child_context(
+                child_context
+            )
+        )
+
+        compact_bank = (
+            self._build_compact_bank_selection(
+                bank_selection
+            )
+        )
+
         context_json = json.dumps(
-            child_context,
+            compact_context,
             ensure_ascii=False,
-            indent=2,
+            separators=(",", ":"),
             default=str,
         )
 
         performance_json = (
             performance_analysis
-            .model_dump_json(
-                indent=2,
-            )
+            .model_dump_json()
         )
 
         strategy_json = (
-            strategy.model_dump_json(
-                indent=2,
-            )
+            strategy
+            .model_dump_json()
         )
 
-        bank_json = (
-            bank_selection.model_dump_json(
-                indent=2,
-            )
+        bank_json = json.dumps(
+            compact_bank,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            default=str,
         )
 
         validation_feedback = ""
@@ -229,7 +244,7 @@ BY THE EVALUATOR.
 EVALUATOR FEEDBACK:
 {revision_feedback}
 
-Correct the problems relevant to the Creative Agent.
+Correct only the problems relevant to the Creative Agent.
 
 Do not repeat the same rejected task, unsupported
 assumption, or problematic pattern.
@@ -241,9 +256,9 @@ You are the Creative Task Generation Agent for Asalah.
 Your responsibility is to create NEW personalized tasks
 for the child.
 
-Do NOT copy tasks from the selected bank tasks.
+You MUST NOT copy tasks from the selected bank tasks.
 
-CHILD CONTEXT:
+CHILD SUPPORTING CONTEXT:
 {context_json}
 
 PERFORMANCE ANALYSIS:
@@ -252,42 +267,46 @@ PERFORMANCE ANALYSIS:
 WEEKLY STRATEGY:
 {strategy_json}
 
-TASKS ALREADY SELECTED FROM THE BANK:
+SELECTED BANK TASKS:
 {bank_json}
 
 Generate exactly strategy.generated_tasks new tasks.
 
-Your generated tasks should complement the bank tasks
-so that the COMPLETE weekly plan follows the Strategy
-Agent's category distribution as closely as possible.
+The generated tasks must complement the selected bank
+tasks so the COMPLETE weekly plan follows the Strategy
+Agent's category distribution.
 
-Rules:
+RULES:
 
 - Tasks must be appropriate for the child's age.
 
 - Tasks must be safe, realistic, and clearly actionable.
 
+- Use the Performance Analysis as the primary source for
+  strengths, weaknesses, difficulty, workload, and point
+  target.
+
+- Use the Strategy as the primary source for category
+  distribution, focus, and avoid patterns.
+
+- Use CHILD SUPPORTING CONTEXT only for age, rejected
+  patterns, and active goals.
+
 - Do not assume siblings, pets, allowance, possessions,
-  school circumstances, holidays, or access to specific
-  resources unless present in the child data.
+  school circumstances, holidays, or specific resources
+  unless explicitly present in the child data.
 
-- Do not generate seasonal Ramadan or Eid tasks unless
-  currently relevant according to the child context.
+- Do not generate Ramadan or Eid tasks unless currently
+  relevant in the child context.
 
-- Consider previous rejected tasks.
-
-- Do not simply repeat a rejected task using different
-  wording.
+- Do not simply rephrase a previously rejected task.
 
 - Weak categories should be approached gradually with
   achievable tasks.
 
-- Do not duplicate the bank-selected tasks.
+- Do not duplicate selected bank tasks.
 
 - Do not generate two tasks that are essentially the same.
-
-- DAILY tasks should have low points because they can
-  repeat throughout the week.
 
 - DAILY tasks should normally be worth between
   2 and 5 points per completion.
@@ -295,33 +314,26 @@ Rules:
 - WEEKLY and ONCE tasks may have higher points according
   to effort.
 
-- Consider how many weekly points are already contributed
-  by the selected bank tasks.
+- Consider the weekly points already contributed by
+  selected bank tasks.
 
-- Keep the Performance Agent's recommended weekly point
-  target in mind.
-
-- The combined points from bank tasks and generated tasks
-  should remain close to the recommended weekly target.
+- Keep the complete weekly plan close to the Performance
+  Agent's recommended weekly point target.
 
 - Provide both Arabic and English titles and descriptions.
 
-- Explain why each generated task is appropriate for this
-  specific plan.
+- Keep descriptions concise and actionable.
+
+- Give a short practical reason for each generated task.
 
 - Never assume the child owns toys, books, money,
   devices, pets, or other possessions unless explicitly
-  stated in the child context.
+  established.
 
 - Never assume the child has siblings.
 
 - Do not require a specific friend, neighbor, or other
-  person unless the child context establishes that such
-  a person is available.
-
-- Prefer tasks that the child can perform using only
-  information and resources explicitly known from the
-  child context.
+  person unless the context establishes availability.
 
 {validation_feedback}
 
@@ -329,6 +341,114 @@ Rules:
 
 Return only the required structured generated tasks.
 """
+
+    def _build_compact_child_context(
+        self,
+        child_context,
+    ):
+        child = child_context.get(
+            "child",
+            {},
+        )
+
+        wishlist_summary = (
+            child_context.get(
+                "wishlist_summary",
+                {},
+            )
+        )
+
+        task_history = (
+            child_context.get(
+                "task_history",
+                [],
+            )
+        )
+
+        rejected_tasks = []
+
+        for task in task_history:
+            if (
+                task.get("status")
+                != "REJECTED"
+            ):
+                continue
+
+            rejected_tasks.append({
+                "title": task.get(
+                    "title",
+                    "",
+                ),
+                "description": task.get(
+                    "description",
+                    "",
+                ),
+                "category": task.get(
+                    "category",
+                    "",
+                ),
+                "frequency": task.get(
+                    "frequency",
+                    "",
+                ),
+            })
+
+        active_goals = []
+
+        for goal in wishlist_summary.get(
+            "active_goals",
+            [],
+        ):
+            active_goals.append({
+                "name": goal.get(
+                    "name",
+                    "",
+                ),
+                "target_points": goal.get(
+                    "target_points",
+                    0,
+                ),
+                "remaining_points": goal.get(
+                    "remaining_points",
+                    0,
+                ),
+                "progress_percentage": goal.get(
+                    "progress_percentage",
+                    0,
+                ),
+            })
+
+        return {
+            "age": child.get(
+                "age"
+            ),
+            "rejected_task_patterns": (
+                rejected_tasks
+            ),
+            "active_goals": (
+                active_goals
+            ),
+        }
+
+    def _build_compact_bank_selection(
+        self,
+        bank_selection,
+    ):
+        compact_tasks = []
+
+        for task in bank_selection.tasks:
+            compact_tasks.append({
+                "bank_id": task.bank_id,
+                "title_en": task.title_en,
+                "title_ar": task.title_ar,
+                "category": task.category,
+                "points": task.points,
+                "frequency": task.frequency,
+            })
+
+        return {
+            "tasks": compact_tasks
+        }
 
     def _validate_generated_tasks(
         self,
@@ -446,9 +566,7 @@ Return only the required structured generated tasks.
                 f"{task.description_ar}"
             ).lower()
 
-            for phrase in (
-                forbidden_assumptions
-            ):
+            for phrase in forbidden_assumptions:
                 if (
                     phrase.lower()
                     in combined_text
