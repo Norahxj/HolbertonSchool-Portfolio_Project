@@ -144,30 +144,25 @@ class PerformanceAgent:
             )
 
             validation_feedback = f"""
-PREVIOUS PERFORMANCE ANALYSIS ATTEMPT WAS REJECTED
-BY THE PERFORMANCE VALIDATOR.
+PREVIOUS PERFORMANCE ANALYSIS ATTEMPT WAS REJECTED.
 
-VALIDATION ERRORS:
+ERRORS:
 {errors_text}
 
-Correct every validation error in the new analysis.
+Correct every listed error.
 """
 
         evaluator_feedback = ""
 
         if revision_feedback:
             evaluator_feedback = f"""
-THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED
-BY THE EVALUATOR.
+THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED.
 
 EVALUATOR FEEDBACK:
 {revision_feedback}
 
-Reconsider only the Performance Analysis conclusions
-that may have contributed to the rejected plan.
-
-Correct conclusions that are not sufficiently supported
-by the child's actual data.
+Reconsider only unsupported or unreasonable
+Performance Analysis conclusions.
 
 Do not invent new facts.
 """
@@ -176,30 +171,13 @@ Do not invent new facts.
 You are the Performance Analysis Agent for Asalah.
 
 Your only responsibility is to analyze the child's
-historical performance and recommend an appropriate
+historical performance and recommend a manageable
 weekly workload.
 
 You MUST NOT create or suggest tasks.
 
 CHILD DATA:
 {context_json}
-
-Analyze:
-
-- age
-- overall completion
-- rejected tasks
-- pending and pending-review tasks
-- category performance
-- previous task points
-- points summary
-- active wishlist goals
-
-If history_summary.has_enough_history is false:
-
-- treat the child as a cold-start case
-- do not invent strengths or weaknesses
-- recommend a small and manageable starter workload
 
 Determine:
 
@@ -219,7 +197,24 @@ Determine:
 
 7. a concise analysis
 
-Rules:
+COLD START:
+
+If history.has_enough_history is false:
+
+- is_cold_start MUST be true
+- strong_categories MUST be []
+- weak_categories MUST be []
+- do not spend effort inferring category strengths
+  or weaknesses
+- recommend a small and manageable starter workload
+
+If history.has_enough_history is true:
+
+- is_cold_start MUST be false
+- strong and weak categories must be supported by
+  category history
+
+RULES:
 
 - Low completion should generally lead to fewer
   and easier tasks.
@@ -227,31 +222,28 @@ Rules:
 - Consistently strong completion may support a
   slightly larger workload.
 
-- Do not overload the child to reach a wishlist
-  goal faster.
+- Pending and pending-review tasks are not failures.
 
-- Historical total_earned and total_spent are not
-  weekly or monthly values unless explicitly stated.
+- A rejected task does not prove why it was rejected.
 
 - A weak category should normally receive gradual
   improvement rather than automatic exclusion.
 
-- A rejected task does not prove why it was rejected.
-
-- Pending and pending-review tasks are not failures.
-
-- Use history_summary.completion_rate exactly as
-  provided by the backend.
-
-- Strong and weak categories must be supported by
-  actual category history.
-
-- Wishlist progress may influence motivation but
-  must not determine performance level by itself.
+- Use history.completion_rate exactly as provided.
 
 - Do not infer behavioral causes from statistics alone.
 
-- Do not invent facts about the child.
+- Historical total_earned and total_spent are
+  historical totals, not weekly values.
+
+- Active goals may influence motivation but must not
+  determine performance level by themselves.
+
+- Do not overload the child to reach a goal faster.
+
+- Keep analysis under 250 characters.
+
+- Do not invent facts.
 
 {validation_feedback}
 
@@ -332,44 +324,85 @@ Return only the required structured analysis.
             [],
         ):
             active_goals.append({
-                "name": goal.get(
-                    "name",
-                    "",
-                ),
                 "target_points": goal.get(
                     "target_points",
-                    0,
-                ),
-                "current_points": goal.get(
-                    "current_points",
                     0,
                 ),
                 "remaining_points": goal.get(
                     "remaining_points",
                     0,
                 ),
-                "progress_percentage": goal.get(
-                    "progress_percentage",
+            })
+
+        history = {
+            "total_tasks": history_summary.get(
+                "total_tasks",
+                0,
+            ),
+            "approved_tasks": history_summary.get(
+                "approved_tasks",
+                0,
+            ),
+            "rejected_tasks": history_summary.get(
+                "rejected_tasks",
+                0,
+            ),
+            "pending_tasks": history_summary.get(
+                "pending_tasks",
+                0,
+            ),
+            "pending_review_tasks": (
+                history_summary.get(
+                    "pending_review_tasks",
+                    0,
+                )
+            ),
+            "completion_rate": history_summary.get(
+                "completion_rate",
+                0,
+            ),
+            "average_completed_task_points": (
+                history_summary.get(
+                    "average_completed_task_points",
+                    0,
+                )
+            ),
+            "has_enough_history": history_summary.get(
+                "has_enough_history",
+                False,
+            ),
+            "categories": history_summary.get(
+                "categories",
+                {},
+            ),
+        }
+
+        points = {
+            "current_points": points_summary.get(
+                "current_points",
+                child.get(
+                    "current_points",
                     0,
                 ),
-            })
+            ),
+            "total_earned": points_summary.get(
+                "total_earned",
+                0,
+            ),
+            "total_spent": points_summary.get(
+                "total_spent",
+                0,
+            ),
+        }
 
         return {
             "age": child.get(
                 "age"
             ),
-            "history_summary": (
-                history_summary
-            ),
-            "points_summary": (
-                points_summary
-            ),
-            "active_goals": (
-                active_goals
-            ),
-            "rejected_tasks": (
-                rejected_tasks
-            ),
+            "history": history,
+            "points": points,
+            "rejected_tasks": rejected_tasks,
+            "active_goals": active_goals,
         }
 
     def _normalize_analysis(

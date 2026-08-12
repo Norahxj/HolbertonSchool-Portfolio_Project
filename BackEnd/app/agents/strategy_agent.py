@@ -20,6 +20,7 @@ class StrategyAgent:
         api_key = os.getenv(
             "OPENROUTER_API_KEY"
         )
+
         model_name = os.getenv(
             "OPENROUTER_MODEL"
         )
@@ -164,7 +165,7 @@ THE PREVIOUS COMPLETE WEEKLY PLAN WAS REJECTED.
 EVALUATOR FEEDBACK:
 {revision_feedback}
 
-Correct only the problems relevant to strategy.
+Correct only strategy-level problems.
 
 You may revise:
 - bank_tasks
@@ -182,19 +183,19 @@ Do not repeat the same rejected strategic pattern.
         return f"""
 You are the Weekly Planning Strategy Agent for Asalah.
 
-You DO NOT choose actual tasks.
-
 Your ONLY responsibility is to decide how the weekly
 plan should be composed.
 
-The Performance Agent has already analyzed:
-- completion performance
-- category strengths
-- category weaknesses
+You DO NOT choose actual tasks.
+
+The Performance Agent has already determined:
+- performance level
 - workload
-- difficulty
-- cold-start status
 - weekly point target
+- difficulty
+- strong categories
+- weak categories
+- cold-start status
 
 CHILD SUPPORTING CONTEXT:
 {context_json}
@@ -204,19 +205,19 @@ PERFORMANCE ANALYSIS:
 
 DECIDE:
 
-1. How many tasks come from the task bank.
+1. bank_tasks
 
-2. How many tasks are newly generated.
+2. generated_tasks
 
-3. How total tasks are distributed across:
+3. category_distribution across:
    RELIGIOUS
    FINANCIAL
    MORAL
    SOCIAL
 
-4. The main focus of this week's plan.
+4. a short weekly focus
 
-5. Patterns or task types that should be avoided.
+5. task patterns to avoid
 
 RULES:
 
@@ -225,60 +226,44 @@ RULES:
 
 - bank_tasks + generated_tasks MUST equal total_tasks.
 
-- The sum of all category_distribution values
-  MUST equal total_tasks.
+- category_distribution values MUST sum to total_tasks.
 
-- Do not create task titles.
+- Do not create or suggest specific tasks.
 
-- Do not create task descriptions.
+- Use Performance Analysis as the primary source for
+  workload, strengths, weaknesses, difficulty,
+  cold-start status, and weekly points.
 
-- Do not recommend specific tasks.
+- Use child context only for age and rejected patterns.
 
-- Use the Performance Analysis as the primary source
-  for strengths, weaknesses, workload, difficulty,
-  cold-start status, and weekly point target.
+- Weak categories may receive gradual attention.
 
-- Use the child supporting context only for age,
-  rejected task patterns, and active goals.
-
-- Weak categories may receive extra attention,
-  but the plan must remain reasonably balanced.
+- A weak category does not need to be excluded.
 
 - Strong categories may still be represented.
 
-- For cold-start cases, prefer a balanced distribution
-  and do not invent strengths or weaknesses.
+- Cold-start plans should be reasonably balanced.
 
-- The task bank should provide stable proven tasks.
+- Do not invent strengths or weaknesses for cold start.
 
-- Generated tasks should provide personalization
-  and variety.
+- The bank provides stable existing tasks.
 
-- Do not assume facts that are not present in the data.
+- Generated tasks provide personalization and variety.
 
-- A rejected task does NOT mean the entire category
+- A rejected task does not mean the whole category
   should be avoided.
 
-- Avoid unsuccessful task patterns, but the same
-  category may be approached differently.
+- Avoid unsuccessful task patterns when possible.
 
-- Weak categories should normally receive gradual,
-  easier attention rather than being removed.
+- Do not increase workload to reach goals faster.
 
-- Do not invent historical time periods.
+- Keep focus under 150 characters.
 
-- Do not claim that the Performance Agent recommended
-  something unless it appears in PERFORMANCE ANALYSIS.
+- Keep strategy_reasoning under 250 characters.
 
-- Respect the Performance Agent's recommended weekly
-  point target.
+- Keep avoid concise.
 
-- Do not increase workload simply to reach a wishlist
-  goal faster.
-
-- Keep focus concise.
-
-- Keep strategy_reasoning concise and practical.
+- Do not invent facts.
 
 {validation_feedback}
 
@@ -296,17 +281,17 @@ Return only the required structured strategy.
             {},
         )
 
-        wishlist_summary = (
-            child_context.get(
-                "wishlist_summary",
-                {},
-            )
-        )
-
         task_history = (
             child_context.get(
                 "task_history",
                 [],
+            )
+        )
+
+        wishlist_summary = (
+            child_context.get(
+                "wishlist_summary",
+                {},
             )
         )
 
@@ -334,27 +319,6 @@ Return only the required structured strategy.
                 ),
             })
 
-        active_goals = []
-
-        for goal in wishlist_summary.get(
-            "active_goals",
-            [],
-        ):
-            active_goals.append({
-                "name": goal.get(
-                    "name",
-                    "",
-                ),
-                "target_points": goal.get(
-                    "target_points",
-                    0,
-                ),
-                "remaining_points": goal.get(
-                    "remaining_points",
-                    0,
-                ),
-            })
-
         return {
             "age": child.get(
                 "age"
@@ -362,8 +326,11 @@ Return only the required structured strategy.
             "rejected_task_patterns": (
                 rejected_tasks
             ),
-            "active_goals": (
-                active_goals
+            "active_goals_count": len(
+                wishlist_summary.get(
+                    "active_goals",
+                    [],
+                )
             ),
         }
 
@@ -380,8 +347,7 @@ Return only the required structured strategy.
         if strategy.total_tasks != expected_total:
             raise ValueError(
                 "Strategy total_tasks does not "
-                "match PerformanceAgent "
-                "recommendation."
+                "match PerformanceAgent recommendation."
             )
 
         source_total = (

@@ -172,12 +172,15 @@ Correct every listed error.
 """
 
         return f"""
-You are the Weekly Plan Evaluation Agent for Asalah.
+You are the final Weekly Plan Evaluation Agent
+for Asalah.
 
-Evaluate the COMPLETE final weekly plan before it is
-shown to the parent.
+Evaluate whether the completed weekly plan is safe
+and suitable to show to the parent.
 
-You do NOT create or modify tasks.
+You do NOT create tasks.
+You do NOT modify tasks.
+You do NOT search for minor criticisms.
 
 CHILD SUMMARY:
 {context_json}
@@ -191,114 +194,171 @@ STRATEGY:
 FINAL WEEKLY PLAN:
 {plan_json}
 
-CHECK:
+CHECK ONLY MEANINGFUL PROBLEMS:
 
-1. AGE
-   Tasks must suit the child's age.
+1. AGE AND SAFETY
 
-2. SAFETY
-   Tasks must be safe and family-appropriate.
+Tasks must be suitable for the child's age and safe
+for a normal family environment.
 
-3. PERSONALIZATION
-   The plan should reflect actual history, strengths,
-   weak areas, and active goals.
+2. UNSUPPORTED ASSUMPTIONS
 
-4. UNSUPPORTED ASSUMPTIONS
-   Reject tasks that assume unsupported siblings, pets,
-   allowance, possessions, specific resources, school
-   circumstances, friends, neighbors, or holidays.
+Tasks must not require facts or resources that are not
+reasonably supported.
 
-5. HISTORY
-   Avoid blindly repeating unsuccessful task patterns.
-   A rejected task does not mean the whole category
-   should be avoided.
+Examples:
+- siblings
+- pets
+- allowance
+- specific possessions
+- specific school circumstances
+- holidays
+- uncommon required resources
 
-6. BALANCE
-   The category distribution and overall variety should
-   follow the strategy.
+Normal everyday family or community interactions are
+not automatically unsupported assumptions.
 
-7. POINTS
-   Points must be proportional to difficulty.
-   DAILY tasks may repeat up to 7 times.
-   Compare weekly_points with the Performance Agent's
-   recommended_weekly_points.
+3. PERSONALIZATION AND HISTORY
 
-8. DUPLICATION
-   Tasks should not duplicate the same activity.
+The plan should reasonably use the child's actual
+performance and history.
 
-9. ACTIONABILITY
-   Each task must be clear and actionable.
+Do not invent reasons for past rejection.
 
-10. BANK INTEGRITY
-    TASK_BANK tasks may have adjusted points, but report
-    BANK issues when a selected bank task is unsuitable
-    or relies on an unsupported assumption.
+Pending or pending-review tasks are not failures.
 
-11. STRATEGY QUALITY
-    Strategy should reasonably follow Performance.
+A rejected task does not mean its entire category
+must be avoided.
 
-12. PERFORMANCE QUALITY
-    Performance conclusions must be supported by the
-    child summary.
+4. CATEGORY BALANCE
 
-13. PLANNER QUALITY
-    summary_en and summary_ar must accurately represent
-    the actual plan and should avoid unnecessary language
-    mixing.
+The final task categories must follow the Strategy
+Agent's category_distribution.
+
+A weak category MAY be included intentionally for
+gradual improvement.
+
+Do NOT report an issue merely because a weak category
+appears in the plan.
+
+Not every category must appear every week.
+
+Do NOT report an issue merely because one category
+has zero tasks when the strategy itself assigns zero
+tasks to that category.
+
+5. POINTS
+
+Points should be proportional to effort.
+
+DAILY tasks may repeat up to 7 times.
+
+The final weekly_points should remain reasonably close
+to Performance recommended_weekly_points.
+
+6. DUPLICATION AND ACTIONABILITY
+
+Tasks should not be duplicates.
+
+Each task should clearly explain what the child needs
+to do.
+
+7. BANK TASKS
+
+TASK_BANK tasks may have adjusted points.
+
+Do NOT second-guess the bank category simply because
+you personally think another category could also fit.
+
+Report a BANK issue only when the task itself is
+clearly unsuitable, unsafe, contradictory, or based
+on a meaningful unsupported assumption.
+
+8. PERFORMANCE AND STRATEGY
+
+Report a PERFORMANCE issue only when the Performance
+Analysis makes a clearly unsupported or unreasonable
+conclusion.
+
+Report a STRATEGY issue only when the strategy clearly
+conflicts with the Performance Analysis or violates
+the intended workload.
+
+9. PLANNER SUMMARY
+
+summary_en and summary_ar must accurately represent
+the actual tasks and strategy.
+
+Minor wording preferences are not issues.
 
 ISSUE OWNERSHIP:
 
-- PERFORMANCE:
-  root problem is Performance Analysis
+PERFORMANCE:
+The root problem is Performance Analysis.
 
-- STRATEGY:
-  root problem is strategy composition
+STRATEGY:
+The root problem is strategy composition.
 
-- BANK:
-  problem comes from a TASK_BANK task
+BANK:
+The root problem is a TASK_BANK selection.
 
-- CREATIVE:
-  problem comes from an AI_GENERATED task
+CREATIVE:
+The root problem is an AI_GENERATED task.
 
-- PLANNER:
-  problem is in the final summary or representation
+PLANNER:
+The root problem is the final summary.
 
-Use one issue per meaningful problem.
+IMPORTANT ISSUE RULE:
+
+Only create an issue when the problem should actually
+be revised before showing the plan.
+
+Do NOT create LOW issues.
+
+Do NOT create observations, optional improvements,
+or stylistic preferences as issues.
+
+If the plan is good and safe to show:
+- score must be 8, 9, or 10
+- approved must be true
+- issues MUST be empty
+
+If the plan should be revised:
+- approved must be false
+- create only the meaningful MEDIUM or HIGH issues
+  responsible for the revision
 
 SEVERITY:
 
 HIGH:
-- safety
+- safety problem
 - serious age mismatch
 - major unsupported assumption
 
 MEDIUM:
-- meaningful quality problem that should be fixed
-
-LOW:
-- minor concern that does not prevent showing the plan
+- meaningful problem that should be corrected before
+  showing the plan
 
 SCORING:
 
 10 = excellent
 9 = very strong
 8 = good and safe to show
-7 = acceptable but needs meaningful improvement
-6 or below = revise before showing
+7 = meaningful revision needed
+6 or below = significant revision needed
 
 APPROVAL:
 
 approved = true only when:
 - score >= 8
-- and there are no HIGH severity issues
+- there are no HIGH issues
+- there is no meaningful issue requiring revision
 
-Be critical but reasonable.
+Keep feedback very short.
 
-Do not invent unsupported problems.
+For an approved plan, one concise sentence is enough.
 
-Do not create issues only to force revision.
-
-Keep issue descriptions and feedback concise.
+Do not invent problems.
 
 {validation_feedback}
 
@@ -409,10 +469,19 @@ Return only the required structured evaluation.
             for issue in evaluation.issues
         )
 
+        has_medium_issue = any(
+            issue.severity == "MEDIUM"
+            for issue in evaluation.issues
+        )
+
         evaluation.approved = (
             evaluation.score >= 8
             and not has_high_issue
+            and not has_medium_issue
         )
+
+        if evaluation.approved:
+            evaluation.issues = []
 
         return evaluation
 
@@ -429,7 +498,6 @@ Return only the required structured evaluation.
         }
 
         valid_severities = {
-            "LOW",
             "MEDIUM",
             "HIGH",
         }
@@ -460,9 +528,15 @@ Return only the required structured evaluation.
             for issue in evaluation.issues
         )
 
+        has_medium_issue = any(
+            issue.severity == "MEDIUM"
+            for issue in evaluation.issues
+        )
+
         expected_approved = (
             evaluation.score >= 8
             and not has_high_issue
+            and not has_medium_issue
         )
 
         if (
@@ -471,6 +545,15 @@ Return only the required structured evaluation.
         ):
             raise ValueError(
                 "EvaluatorAgent approval state "
-                "is inconsistent with the score "
-                "and issue severity."
+                "is inconsistent with score "
+                "and meaningful issues."
+            )
+
+        if (
+            evaluation.approved
+            and evaluation.issues
+        ):
+            raise ValueError(
+                "Approved evaluation must not "
+                "contain revision issues."
             )

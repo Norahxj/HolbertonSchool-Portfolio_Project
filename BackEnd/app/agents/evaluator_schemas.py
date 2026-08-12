@@ -18,7 +18,6 @@ class PlanIssue(BaseModel):
     )
 
     severity: Literal[
-        "LOW",
         "MEDIUM",
         "HIGH",
     ]

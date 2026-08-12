@@ -48,5 +48,5 @@ class ChildPerformanceAnalysis(BaseModel):
 
     analysis: str = Field(
         min_length=10,
-        max_length=1000,
+        max_length=300,
     )
