@@ -376,10 +376,18 @@ class WeeklyPlanWorkflow:
         }
 
         result = self.graph.invoke(
-            initial_state,
-            config={
-                "recursion_limit": 50,
-            },
-        )
+    initial_state,
+    config={
+        "recursion_limit": 50,
+        "run_name": "asalah_weekly_plan",
+        "tags": [
+            "weekly-plan",
+            "multi-agent",
+        ],
+        "metadata": {
+            "max_revisions": max_revisions,
+        },
+    },
+)
 
         return result
