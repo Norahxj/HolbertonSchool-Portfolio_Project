@@ -18,19 +18,25 @@ class CreativeAgent:
         model_name = os.getenv("OPENROUTER_MODEL")
 
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY is missing")
+            raise ValueError(
+                "OPENROUTER_API_KEY is missing"
+            )
 
         if not model_name:
-            raise ValueError("OPENROUTER_MODEL is missing")
+            raise ValueError(
+                "OPENROUTER_MODEL is missing"
+            )
 
         self.llm = ChatOpenRouter(
             model=model_name,
             api_key=api_key,
         )
 
-        self.structured_llm = self.llm.with_structured_output(
-            GeneratedTaskSelection,
-            include_raw=True,
+        self.structured_llm = (
+            self.llm.with_structured_output(
+                GeneratedTaskSelection,
+                include_raw=True,
+            )
         )
 
     def generate_tasks(
@@ -45,6 +51,14 @@ class CreativeAgent:
         validation_errors = []
 
         for attempt in range(max_attempts):
+            attempt_number = attempt + 1
+
+            print(
+                "[CREATIVE_AGENT] "
+                f"Attempt {attempt_number} started",
+                flush=True,
+            )
+
             prompt = self._build_prompt(
                 child_context,
                 performance_analysis,
@@ -54,27 +68,57 @@ class CreativeAgent:
                 revision_feedback,
             )
 
-            response = self.structured_llm.invoke(prompt)
+            response = (
+                self.structured_llm
+                .invoke(prompt)
+            )
 
-            result = response.get("parsed")
-            parsing_error = response.get("parsing_error")
+            result = response.get(
+                "parsed"
+            )
+
+            parsing_error = response.get(
+                "parsing_error"
+            )
 
             if parsing_error:
+                error_message = (
+                    "Structured output parsing "
+                    "failed: "
+                    f"{parsing_error}"
+                )
+
                 validation_errors = [
-                    (
-                        "Structured output parsing failed: "
-                        f"{parsing_error}"
-                    )
+                    error_message
                 ]
+
+                print(
+                    "[CREATIVE_AGENT] "
+                    f"Attempt {attempt_number} "
+                    f"parsing failed: "
+                    f"{parsing_error}",
+                    flush=True,
+                )
+
                 continue
 
             if result is None:
+                error_message = (
+                    "No valid structured generated "
+                    "tasks were returned."
+                )
+
                 validation_errors = [
-                    (
-                        "No valid structured generated "
-                        "tasks were returned."
-                    )
+                    error_message
                 ]
+
+                print(
+                    "[CREATIVE_AGENT] "
+                    f"Attempt {attempt_number} "
+                    "returned no parsed result",
+                    flush=True,
+                )
+
                 continue
 
             try:
@@ -85,16 +129,42 @@ class CreativeAgent:
                     performance_analysis,
                 )
 
+                print(
+                    "[CREATIVE_AGENT] "
+                    f"Attempt {attempt_number} "
+                    "passed validation",
+                    flush=True,
+                )
+
                 return result
 
             except ValueError as error:
+                error_message = str(
+                    error
+                )
+
                 validation_errors = [
-                    str(error)
+                    error_message
                 ]
 
+                print(
+                    "[CREATIVE_AGENT] "
+                    f"Attempt {attempt_number} "
+                    "failed validation: "
+                    f"{error_message}",
+                    flush=True,
+                )
+
+        final_error = (
+            validation_errors[-1]
+            if validation_errors
+            else "Unknown validation error."
+        )
+
         raise ValueError(
-            "CreativeAgent failed to produce valid tasks "
-            "after 3 attempts."
+            "CreativeAgent failed to produce "
+            "valid tasks after 3 attempts. "
+            f"Last error: {final_error}"
         )
 
     def _build_prompt(
@@ -114,17 +184,22 @@ class CreativeAgent:
         )
 
         performance_json = (
-            performance_analysis.model_dump_json(
+            performance_analysis
+            .model_dump_json(
                 indent=2,
             )
         )
 
-        strategy_json = strategy.model_dump_json(
-            indent=2,
+        strategy_json = (
+            strategy.model_dump_json(
+                indent=2,
+            )
         )
 
-        bank_json = bank_selection.model_dump_json(
-            indent=2,
+        bank_json = (
+            bank_selection.model_dump_json(
+                indent=2,
+            )
         )
 
         validation_feedback = ""
@@ -262,9 +337,13 @@ Return only the required structured generated tasks.
         bank_selection,
         performance_analysis,
     ):
-        if len(selection.tasks) != strategy.generated_tasks:
+        if (
+            len(selection.tasks)
+            != strategy.generated_tasks
+        ):
             raise ValueError(
-                "CreativeAgent returned the wrong number of tasks."
+                "CreativeAgent returned the wrong "
+                "number of tasks."
             )
 
         forbidden_assumptions = [
@@ -301,35 +380,56 @@ Return only the required structured generated tasks.
         generated_titles_ar = set()
 
         for task in selection.tasks:
-            title_en = task.title_en.strip().lower()
-            title_ar = task.title_ar.strip()
+            title_en = (
+                task.title_en
+                .strip()
+                .lower()
+            )
+
+            title_ar = (
+                task.title_ar
+                .strip()
+            )
 
             if title_en in bank_titles_en:
                 raise ValueError(
-                    "Generated task duplicates bank task: "
+                    "Generated task duplicates "
+                    "bank task: "
                     f'"{task.title_en}"'
                 )
 
             if title_ar in bank_titles_ar:
                 raise ValueError(
-                    "Generated task duplicates bank task: "
+                    "Generated task duplicates "
+                    "bank task: "
                     f'"{task.title_ar}"'
                 )
 
-            if title_en in generated_titles_en:
+            if (
+                title_en
+                in generated_titles_en
+            ):
                 raise ValueError(
                     "Duplicate generated task: "
                     f'"{task.title_en}"'
                 )
 
-            if title_ar in generated_titles_ar:
+            if (
+                title_ar
+                in generated_titles_ar
+            ):
                 raise ValueError(
                     "Duplicate generated task: "
                     f'"{task.title_ar}"'
                 )
 
-            generated_titles_en.add(title_en)
-            generated_titles_ar.add(title_ar)
+            generated_titles_en.add(
+                title_en
+            )
+
+            generated_titles_ar.add(
+                title_ar
+            )
 
             if task.frequency == "DAILY":
                 if task.points > 5:
@@ -346,27 +446,42 @@ Return only the required structured generated tasks.
                 f"{task.description_ar}"
             ).lower()
 
-            for phrase in forbidden_assumptions:
-                if phrase.lower() in combined_text:
+            for phrase in (
+                forbidden_assumptions
+            ):
+                if (
+                    phrase.lower()
+                    in combined_text
+                ):
                     raise ValueError(
-                        f'Generated task "{task.title_en}" '
-                        "may rely on an unsupported "
-                        f'assumption: "{phrase}".'
+                        f'Generated task '
+                        f'"{task.title_en}" '
+                        "may rely on an "
+                        "unsupported assumption: "
+                        f'"{phrase}".'
                     )
 
         total_weekly_points = 0
 
         for task in bank_selection.tasks:
             if task.frequency == "DAILY":
-                total_weekly_points += task.points * 7
+                total_weekly_points += (
+                    task.points * 7
+                )
             else:
-                total_weekly_points += task.points
+                total_weekly_points += (
+                    task.points
+                )
 
         for task in selection.tasks:
             if task.frequency == "DAILY":
-                total_weekly_points += task.points * 7
+                total_weekly_points += (
+                    task.points * 7
+                )
             else:
-                total_weekly_points += task.points
+                total_weekly_points += (
+                    task.points
+                )
 
         recommended_weekly_points = (
             performance_analysis
@@ -377,22 +492,30 @@ Return only the required structured generated tasks.
 
         if (
             total_weekly_points
-            > recommended_weekly_points + allowed_difference
+            > recommended_weekly_points
+            + allowed_difference
         ):
             raise ValueError(
-                "Combined bank and generated tasks exceed "
-                "the recommended weekly point target too much. "
-                f"Current total: {total_weekly_points}, "
-                f"recommended: {recommended_weekly_points}."
+                "Combined bank and generated tasks "
+                "exceed the recommended weekly point "
+                "target too much. "
+                f"Current total: "
+                f"{total_weekly_points}, "
+                f"recommended: "
+                f"{recommended_weekly_points}."
             )
 
         if (
             total_weekly_points
-            < recommended_weekly_points - allowed_difference
+            < recommended_weekly_points
+            - allowed_difference
         ):
             raise ValueError(
-                "Combined bank and generated tasks are too far "
-                "below the recommended weekly point target. "
-                f"Current total: {total_weekly_points}, "
-                f"recommended: {recommended_weekly_points}."
+                "Combined bank and generated tasks "
+                "are too far below the recommended "
+                "weekly point target. "
+                f"Current total: "
+                f"{total_weekly_points}, "
+                f"recommended: "
+                f"{recommended_weekly_points}."
             )
