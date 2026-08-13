@@ -32,7 +32,7 @@ class TaskAssignmentService:
             days=days_since_friday
         )
 
-        week_end = week_start + timedelta(days=6)
+        week_end = week_start + timedelta(days=7)
 
         return (
         self.task_assignment_repository
